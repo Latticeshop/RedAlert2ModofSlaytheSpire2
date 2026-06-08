@@ -1,0 +1,11 @@
+{
+	"id": "Ra2Mod",
+	"name": "红警2mod",
+	"author": "小格子铺",
+	"description": "内测版本，尽情期待",
+	"version": "v0.1.0",
+	"has_pck": true,
+	"has_dll": false,
+	"dependencies": [],
+	"affect_gameplay": false,
+}
