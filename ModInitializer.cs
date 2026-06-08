@@ -1,34 +1,21 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using HarmonyLib;
-using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
-using MegaCrit.Sts2.Core.Models.CardPools;
-using MegaCrit.Sts2.Core.Models.Cards;
-using MegaCrit.Sts2.Core.Models.PotionPools;
-using MegaCrit.Sts2.Core.Models.RelicPools;
-using MegaCrit.Sts2.Core.Saves.Runs;
-using Ra2Mod.Cards;// ← 这里如果报红就删掉，其他爆红的别动。
 
-namespace Ra2Mod   // ← 这里改成你的模组ID（必须和你的.json文件中的"id"一致！）
+namespace Ra2Mod;
+
+[ModInitializer(nameof(Initialize))]
+public static class ModInitializer
 {
-    // 通用 ModInitializer
-    [ModInitializer(nameof(Initialize))]
-    public static class ModInitializer
+    public const string ModId = "Ra2Mod";
+    
+    public static void Initialize()
     {
-        public static void Initialize()
-        {
-            {
-                // 1. 初始化 Harmony（强烈推荐这样写，避免与其他模组冲突。）
-                var harmony = new Harmony("你的模组名字.作者");   // 格式：模组ID.作者名
-                harmony.PatchAll();
-
-                // 2. 在这里添加你的注册逻辑（卡牌、遗物、药水等）
-                //ModHelper.AddModelToPool(typeof( 卡牌池 ), typeof( 卡牌名字 ));
-                //ModHelper.AddModelToPool(typeof( 遗物池 ), typeof( 遗物名字 ));
-                //ModHelper.AddModelToPool(typeof( 药水池 ), typeof( 药水名字 ));
-            }
-            Log.Info("加载成功！");// 可以删掉
-        }
+        var harmony = new Harmony(ModId);
+        harmony.PatchAll();
+        
+        Godot.Bridge.ScriptManagerBridge.LookupScriptsInAssembly(Assembly.GetExecutingAssembly());
+        
+        MegaCrit.Sts2.Core.Logging.Log.Info("[Ra2Mod] 红警2Mod加载成功！");
     }
 }

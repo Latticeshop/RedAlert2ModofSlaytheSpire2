@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3 uid="uid://dupx31p3evbag"]
+
+[ext_resource type="Texture2D" uid="uid://hp25yj4mfyyh" path="res://images/character/allies_character.png" id="1_7joir"]
+
+[node name="Allies" type="Node2D"]
+
+[node name="Visuals" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -150)
+texture = ExtResource("1_7joir")
+
+[node name="Bounds" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
+offset_left = -100.0
+offset_top = -300.0
+offset_right = 100.0
+mouse_filter = 2
+
+[node name="CenterPos" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -150)
+
+[node name="IntentPos" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -280)

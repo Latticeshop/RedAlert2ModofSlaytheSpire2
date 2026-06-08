@@ -1,18 +1,31 @@
 <Project Sdk="Godot.NET.Sdk/4.5.1">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
+    <ImplicitUsings>true</ImplicitUsings>
+    
+    <!-- BaseLib路径配置 -->
+    <BaseLibDir>$(MSBuildProjectDirectory)\BaseLib</BaseLibDir>
+    <BaseLibDllPath>$(BaseLibDir)\BaseLib.dll</BaseLibDllPath>
   </PropertyGroup>
+  
+  <!-- 引用游戏程序集（使用项目根目录的DLL） -->
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="GodotSharp">
-      <HintPath>GodotSharp.dll</HintPath>
+      <HintPath>$(MSBuildProjectDirectory)/0Harmony.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="sts2">
-      <HintPath>sts2.dll</HintPath>
+      <HintPath>$(MSBuildProjectDirectory)/sts2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+  
+  <!-- 引用BaseLib -->
+  <ItemGroup Condition="Exists('$(BaseLibDllPath)')">
+    <Reference Include="BaseLib">
+      <HintPath>$(BaseLibDllPath)</HintPath>
+      <Private>false</Private>
     </Reference>
   </ItemGroup>
 </Project>

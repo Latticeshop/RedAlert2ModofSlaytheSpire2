@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://alliesbg001"]
+
+[node name="AlliesBg" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Bg" type="Sprite2D" parent="."]
+position = Vector2(1477.7916, 637.00006)
+scale = Vector2(0.7565103, 0.75651044)

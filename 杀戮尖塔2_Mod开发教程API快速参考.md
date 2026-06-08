@@ -4,6 +4,50 @@
 
 ---
 
+## 📂 项目路径配置
+
+### 当前项目路径
+```
+项目根目录: D:\RedAlert2Project\red-alert-2-mod
+游戏解包目录: D:\RedAlert2Project\SlayTheSpire2Mod
+Godot引擎: Godot_v4.5.1-stable_mono_win64
+红警2图标: D:\RedAlert2Project\icons\红警2图标PNG\
+```
+
+### 游戏解包资源结构（参考）
+```
+D:\RedAlert2Project\SlayTheSpire2Mod\
+├── resources/
+│   ├── scenes/
+│   │   ├── creature_visuals/      # 角色/怪物待机动画
+│   │   │   ├── ironclad.tscn
+│   │   │   ├── silent.tscn
+│   │   │   └── ...
+│   │   ├── ui/
+│   │   │   └── character_icons/   # 角色头像图标
+│   │   │       ├── ironclad_icon.tscn
+│   │   │       └── ...
+│   │   └── combat/
+│   │       └── energy_counters/   # 能量计数器
+│   │           ├── ironclad_energy_counter.tscn
+│   │           └── ...
+│   ├── images/
+│   │   ├── packed/
+│   │   │   └── character_select/  # 角色选择立绘
+│   │   │       ├── char_select_ironclad.png
+│   │   │       └── ...
+│   │   ├── atlases/               # 裁切纹理
+│   │   ├── relics/                # 遗物图标
+│   │   ├── potions/               # 药水图标
+│   │   └── powers/                # 能力图标
+│   └── localization/              # 本地化文件
+└── data_sts2_<platform>/
+    ├── sts2.dll                   # 游戏核心DLL
+    └── 0Harmony.dll               # Harmony库
+```
+
+---
+
 ## 📦 Mod结构
 
 ```
@@ -236,7 +280,7 @@ public static class CharactersPatch
 // 同样需要Patch AllCardPools, AllRelicPools, AllPotionPools
 ```
 
-### 必需资源
+### 必需资源（从解包目录复制）
 ```
 res://scenes/creature_visuals/<char_id>.tscn
 res://images/packed/character_select/char_select_<char_id>.png

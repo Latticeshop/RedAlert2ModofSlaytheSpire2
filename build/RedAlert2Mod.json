@@ -5,7 +5,9 @@
 	"description": "内测版本，尽情期待",
 	"version": "v0.1.0",
 	"has_pck": true,
-	"has_dll": false,
-	"dependencies": [],
+	"has_dll": true,
+	"dependencies": [
+		"BaseLib"
+	],
 	"affect_gameplay": false
 }
