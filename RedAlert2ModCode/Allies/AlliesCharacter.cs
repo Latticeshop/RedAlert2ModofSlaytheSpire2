@@ -33,11 +33,26 @@ public sealed class Allies : PlaceholderCharacterModel
     public override CharacterGender Gender => CharacterGender.Masculine;
     public override int StartingHp => 80;
     
-    // 起始卡组（暂时为空，后续添加自定义卡牌）
-    public override IEnumerable<CardModel> StartingDeck => [];
+    // 起始卡组（使用铁卫基础卡组避免空数组崩溃）
+    public override IEnumerable<CardModel> StartingDeck => new List<CardModel>
+    {
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeIronclad>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeIronclad>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeIronclad>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeIronclad>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendIronclad>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendIronclad>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendIronclad>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendIronclad>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.Bash>(),
+        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.Neutralize>(),
+    };
     
-    // 起始遗物（暂时为空）
-    public override IReadOnlyList<RelicModel> StartingRelics => [];
+    // 起始遗物（使用燃烧之血避免空数组崩溃）
+    public override IReadOnlyList<RelicModel> StartingRelics => new List<RelicModel>
+    {
+        ModelDb.Relic<MegaCrit.Sts2.Core.Models.Relics.BurningBlood>()
+    };
     
     // 卡池、遗物池、药水池
     public override CardPoolModel CardPool => ModelDb.CardPool<AlliesCardPool>();
