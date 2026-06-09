@@ -16,8 +16,8 @@ public sealed class Allies : PlaceholderCharacterModel
 {
     public const string CharacterId = "Allies";
     
-    // 不再借用铁卫的资源，使用自定义场景
-    // public override string PlaceholderID => "ironclad";  // 注释掉这行
+    // 借用铁卫的基础场景，然后用自定义资源覆盖
+    public override string PlaceholderID => "ironclad";
     
     // 自定义资源路径
     public override string CustomIconPath => "res://scenes/ui/character_icons/allies_icon.tscn";

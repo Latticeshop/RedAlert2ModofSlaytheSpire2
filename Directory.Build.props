@@ -1,0 +1,15 @@
+<Project>
+    <PropertyGroup>
+        <!-- Megadot current version is 4.5.1, and the game won't load your .pck if the Godot version used is newer. -->
+        <!-- MegaDot / Godot 4.5.1 mono executable used for export-pack when publishing -->
+        
+        <!-- 主要Godot路径（取消注释并使用你的实际路径） -->
+        <GodotPath>D:/RedAlert2Project/Godot_v4.5.1-stable_mono_win64/Godot_v4.5.1-stable_mono_win64.exe</GodotPath>
+        
+        <!-- 备选路径示例（如果主要路径不存在，可以手动切换） -->
+        <!-- <GodotPath>C:/megadot/MegaDot_v4.5.1-stable_mono_win64.exe</GodotPath> -->
+
+        <!-- If sts2 is not found automatically, uncomment the following and set it manually -->
+        <!-- <Sts2Path>?/steamapps/common/Slay the Spire 2</Sts2Path> -->
+    </PropertyGroup>
+</Project>
