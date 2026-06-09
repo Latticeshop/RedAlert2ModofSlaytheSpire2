@@ -4,6 +4,10 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <ImplicitUsings>true</ImplicitUsings>
     
+    <!-- Debug符号配置：build时生成，publish时不包含 -->
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    
     <!-- BaseLib路径配置 -->
     <BaseLibDir>$(MSBuildProjectDirectory)\BaseLib</BaseLibDir>
     <BaseLibDllPath>$(BaseLibDir)\BaseLib.dll</BaseLibDllPath>
@@ -28,4 +32,24 @@
       <Private>false</Private>
     </Reference>
   </ItemGroup>
+  
+  <!-- 发布时自动生成Godot .pck文件 -->
+  <Target Name="NeedGodotForPublish" BeforeTargets="Publish">
+    <Error Text=" Godot path must be set up before publishing; Godot not found at path '$(GodotPath)'. Check Directory.Build.props file."
+           Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')"/>
+  </Target>
+  
+  <Target Name="GodotPublish" AfterTargets="Publish" Condition="'$(GodotPath)' != '' and Exists('$(GodotPath)') and '$(IsInnerGodotExport)' != 'true'">
+    <Message Text="Exporting Godot .pck to mods folder" Importance="high"/>
+    <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;Windows Desktop&quot; &quot;$(MSBuildProjectDirectory)/build/$(MSBuildProjectName).pck&quot;"
+          EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
+          ContinueOnError="WarnAndContinue"/>
+  </Target>
+  
+  <!-- 构建后复制到mods文件夹（可选，仅复制dll和json，不包含pdb） -->
+  <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent">
+    <Message Text="Copying .dll and .json to mods folder (excluding .pdb for release)." Importance="high" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/" />
+    <Copy SourceFiles="build/$(AssemblyName).json" DestinationFolder="$(ModsPath)$(MSBuildProjectName)/" />
+  </Target>
 </Project>

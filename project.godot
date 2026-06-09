@@ -12,8 +12,30 @@ config_version=5
 
 config/name="RedAlert2Mod"
 config/features=PackedStringArray("4.5", "C#", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://RedAlert2ModResources/mod_image.png"
 
 [dotnet]
 
 project/assembly_name="RedAlert2Mod"
+
+[preset.0]
+
+name="Windows Desktop"
+platform="Windows Desktop"
+runnable=true
+dedicated_server=false
+custom_features=""
+export_filter="all_resources"
+include_filter=""
+exclude_filter=""
+export_path=""
+patches=PackedStringArray()
+
+[preset.0.options]
+
+custom_template/debug=""
+custom_template/release=""
+binary_format/embed_pck=false
+texture_format/s3tc_bptc=true
+texture_format/etc2_astc=false
+binary_format/architecture="x86_64"
