@@ -4,7 +4,7 @@ using MegaCrit.Sts2.Core.Models.PotionPools;
 using MegaCrit.Sts2.Core.Models.Potions;
 using System.Collections.Generic;
 
-namespace Ra2Mod.Characters.Allies;
+namespace RedAlert2Mod.Characters.Allies;
 
 /// <summary>
 /// 盟军药水池

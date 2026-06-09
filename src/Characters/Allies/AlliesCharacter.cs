@@ -1,23 +1,29 @@
 using BaseLib.Abstracts;
-using Ra2Mod.Extensions;
+using RedAlert2Mod.Extensions;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Relics;
 
-namespace Ra2Mod.Characters.Allies;
+namespace RedAlert2Mod.Characters.Allies;
 
 /// <summary>
-/// 盟军角色 - 使用BaseLib的PlaceholderCharacterModel简化开发
-/// PlaceholderID设为"ironclad"，自动借用铁卫的资源（动画、UI等）
+/// 盟军角色 - 使用BaseLib的PlaceholderCharacterModel
+/// 覆盖所有资源路径以使用自定义资源
 /// </summary>
 public sealed class Allies : PlaceholderCharacterModel
 {
     public const string CharacterId = "Allies";
     
-    // 借用铁卫的资源作为占位符
-    public override string PlaceholderID => "ironclad";
+    // 不再借用铁卫的资源，使用自定义场景
+    // public override string PlaceholderID => "ironclad";  // 注释掉这行
+    
+    // 自定义资源路径
+    public override string CustomIconPath => "res://scenes/ui/character_icons/allies_icon.tscn";
+    public override string CustomCharacterSelectIconPath => "res://images/packed/character_select/char_select_allies.png";
+    public override string CustomVisualPath => "res://scenes/creature_visuals/allies.tscn";
+    public override string CustomCharacterSelectBg => "res://scenes/allies_bg.tscn";
     
     // 角色颜色配置
     public static readonly Color Color = new("2060a0"); // 盟军蓝色

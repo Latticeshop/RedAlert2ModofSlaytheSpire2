@@ -4,7 +4,7 @@ using MegaCrit.Sts2.Core.Models.RelicPools;
 using MegaCrit.Sts2.Core.Models.Relics;
 using System.Collections.Generic;
 
-namespace Ra2Mod.Characters.Allies;
+namespace RedAlert2Mod.Characters.Allies;
 
 /// <summary>
 /// 盟军遗物池

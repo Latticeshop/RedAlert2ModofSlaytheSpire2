@@ -1,7 +1,7 @@
 using BaseLib.Abstracts;
 using Godot;
 
-namespace Ra2Mod.Characters.Allies;
+namespace RedAlert2Mod.Characters.Allies;
 
 /// <summary>
 /// 盟军卡池 - 使用BaseLib的CustomCardPoolModel

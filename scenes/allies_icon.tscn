@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://allies_icon001"]
+[gd_scene load_steps=2 format=3 uid="uid://bqcdgyfxcj74o"]
+
+[ext_resource type="Texture2D" uid="uid://cu2tshxfjq41l" path="res://images/packed/character_select/char_select_allies.png" id="1_ger3t"]
 
 [node name="AlliesIcon" type="Control"]
 layout_mode = 3
@@ -11,3 +13,4 @@ grow_vertical = 2
 [node name="CharacterIconCharName" type="Sprite2D" parent="."]
 position = Vector2(28.874998, 28.874998)
 scale = Vector2(0.43945315, 0.43945315)
+texture = ExtResource("1_ger3t")

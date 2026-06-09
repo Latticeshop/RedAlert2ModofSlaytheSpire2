@@ -1,4 +1,4 @@
-namespace Ra2Mod.Cards;
+namespace RedAlert2Mod.Cards;
 
 public class e2
 {

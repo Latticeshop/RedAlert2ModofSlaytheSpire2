@@ -504,6 +504,65 @@ await RelicCmd.Obtain(relic.ToMutable(), owner);
 
 ## ⚠️ 常见问题
 
+### 📋 游戏日志路径
+遇到问题时，第一个要查看的就是游戏日志：
+
+**日志位置**：
+```
+C:\Users\<你的用户名>\AppData\Roaming\SlayTheSpire2\logs\
+```
+
+**关键文件**：`godot.log` - 包含所有启动和运行时错误信息
+
+---
+
+### Mod文件无法加载 - 致命错误
+**症状**：游戏启动时报错找不到DLL或PCK文件
+
+**原因**：JSON中的 `"id"` 字段必须与文件名完全一致！
+
+```json
+// RedAlert2Mod.json
+{
+  "id": "RedAlert2Mod",  // ← 这个ID
+  ...
+}
+```
+
+**必须确保三个文件同名**：
+- `RedAlert2Mod.json` （ID必须匹配）
+- `RedAlert2Mod.dll`
+- `RedAlert2Mod.pck`
+
+如果ID是 `"Ra2Mod"`，文件名必须是 `Ra2Mod.json/dll/pck`，否则游戏找不到文件！
+
+**解决步骤**：
+1. 打开 `godot.log` 查看具体报错
+2. 检查JSON中的 `"id"` 字段
+3. 确保三个文件名完全一致
+4. 重新复制到游戏mods文件夹
+
+###  资源不显示（场景文件缺少Texture）
+**症状**：角色场景文件已创建，但游戏中图标/立绘/背景显示为空白
+
+**原因**：Godot场景文件中的 `Sprite2D` 节点没有设置 `texture` 属性
+
+**解决方案**：
+1. 在Godot中打开 `.tscn` 场景文件
+2. 选中 `Sprite2D` 节点（如 `Visuals`、`Bg`、`CharacterIconCharName`）
+3. 在右侧检查器找到 **Texture** 属性
+4. 点击下拉箭头 → **快速加载** → 选择对应的图片资源
+5. 保存场景并重新导出PCK
+
+**示例场景文件**：
+```gdscript
+# allies.tscn - 角色立绘场景
+[node name="Visuals" type="Sprite2D" parent="."]
+texture = ExtResource("1_allies")  # ← 必须有这行！
+
+[ext_resource type="Texture2D" path="res://images/character/allies_character.png" id="1_allies"]
+```
+
 ### PlatformNotSupportedException
 修改 `GodotPlugins.runtimeconfig.json` 中的 version 为 `9.0.0`
 
@@ -512,7 +571,7 @@ await RelicCmd.Obtain(relic.ToMutable(), owner);
 Godot.Bridge.ScriptManagerBridge.LookupScriptsInAssembly(Assembly.GetExecutingAssembly());
 ```
 
-### 资源不显示
+### 资源不显示（其他原因）
 - 检查路径大小写
 - 确认已导出PCK
 - 验证裁切纹理存在

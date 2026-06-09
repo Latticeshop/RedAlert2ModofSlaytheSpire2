@@ -1,4 +1,4 @@
-namespace Ra2Mod.Extensions;
+namespace RedAlert2Mod.Extensions;
 
 /// <summary>
 /// 路径扩展方法 - 简化资源路径编写

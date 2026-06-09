@@ -7,11 +7,15 @@ using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.RelicPools;
 using MegaCrit.Sts2.Core.Models.PotionPools;
 
-namespace Ra2Mod.Characters.Allies;
+namespace RedAlert2Mod.Characters.Allies;
 
 /// <summary>
 /// 注册盟军角色到游戏
+/// 注意：使用BaseLib的PlaceholderCharacterModel后，角色会自动注册
+/// 这里只需要注册卡池、遗物池、药水池
 /// </summary>
+
+/* 已注释 - BaseLib会自动处理角色注册，不需要手动HarmonyPatch
 [HarmonyPatch(typeof(ModelDb), nameof(ModelDb.AllCharacters), MethodType.Getter)]
 public static class AlliesCharacterRegistrationPatch
 {
@@ -21,6 +25,7 @@ public static class AlliesCharacterRegistrationPatch
         __result = __result.Append(new Allies()).Distinct();
     }
 }
+*/
 
 /// <summary>
 /// 注册盟军卡池
