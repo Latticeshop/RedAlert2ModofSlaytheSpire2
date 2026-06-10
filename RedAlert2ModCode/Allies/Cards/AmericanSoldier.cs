@@ -7,12 +7,13 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.Helpers;
+using System.Collections.Generic;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
 /// 美国大兵 - 类似于打击的基础攻击牌
-/// 1费5伤害
+/// 1费4伤害两次
 /// </summary>
 public sealed class AmericanSoldier : CardModel
 {
@@ -22,7 +23,8 @@ public sealed class AmericanSoldier : CardModel
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new DamageVar(5m, ValueProp.Move)
+		new DamageVar(4m, ValueProp.Move),
+		new RepeatVar(2)
 	};
 
 	protected override HashSet<CardTag> CanonicalTags => new() { CardTag.Strike };
@@ -30,6 +32,7 @@ public sealed class AmericanSoldier : CardModel
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+			.WithHitCount(DynamicVars.Repeat.IntValue)
 			.FromCard(this)
 			.Targeting(play.Target)
 			.Execute(ctx);
@@ -37,6 +40,6 @@ public sealed class AmericanSoldier : CardModel
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(3m);
+		DynamicVars.Damage.UpgradeValueBy(2m);
 	}
 }
