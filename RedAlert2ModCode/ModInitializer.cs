@@ -1,6 +1,8 @@
-﻿using System.Reflection;
+using System.Reflection;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Modding;
+using RedAlert2ModCode.Allies;
+using RedAlert2ModCode.Allies.Cards;
 
 namespace RedAlert2ModCode;
 
@@ -17,6 +19,9 @@ public static class ModInitializer
     {
         var harmony = new Harmony(ModId);
         harmony.PatchAll();
+        
+        // 注册卡牌到盟军卡池
+        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AmericanSoldier));
         
         Godot.Bridge.ScriptManagerBridge.LookupScriptsInAssembly(Assembly.GetExecutingAssembly());
         

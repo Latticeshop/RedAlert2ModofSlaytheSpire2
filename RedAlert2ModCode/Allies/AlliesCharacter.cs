@@ -1,5 +1,6 @@
 using BaseLib.Abstracts;
 using RedAlert2ModCode.Extensions;
+using RedAlert2ModCode.Allies.Cards;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Models;
@@ -33,13 +34,13 @@ public sealed class Allies : PlaceholderCharacterModel
     public override CharacterGender Gender => CharacterGender.Masculine;
     public override int StartingHp => 80;
     
-    // 起始卡组（使用铁卫基础卡组避免空数组崩溃）
+    // 起始卡组（使用美国大兵替代打击）
     public override IEnumerable<CardModel> StartingDeck => new List<CardModel>
     {
-        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeIronclad>(),
-        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeIronclad>(),
-        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeIronclad>(),
-        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.StrikeIronclad>(),
+        ModelDb.Card<AmericanSoldier>(),
+        ModelDb.Card<AmericanSoldier>(),
+        ModelDb.Card<AmericanSoldier>(),
+        ModelDb.Card<AmericanSoldier>(),
         ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendIronclad>(),
         ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendIronclad>(),
         ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendIronclad>(),

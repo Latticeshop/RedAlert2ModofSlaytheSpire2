@@ -14,6 +14,53 @@ Godot引擎: Godot_v4.5.1-stable_mono_win64
 红警2图标: D:\RedAlert2Project\icons\红警2图标PNG\
 ```
 
+### 项目目录结构模板
+```
+red-alert-2-mod/
+├── .idea/                      # IDE配置
+├── BaseLib/                    # 基础库（可选）
+│   ├── BaseLib.dll
+│   ├── BaseLib.json
+│   └── BaseLib.pck
+├── RedAlert2Mod/               # Mod输出目录
+│   ├── RedAlert2Mod.dll
+│   ├── RedAlert2Mod.json
+│   └── RedAlert2Mod.pdb
+├── RedAlert2ModCode/           # C#源代码
+│   ├── Allies/                 # 角色相关代码
+│   │   ├── AlliesCharacter.cs
+│   │   ├── AlliesCardPool.cs
+│   │   ├── AlliesRelicPool.cs
+│   │   ├── AlliesPotionPool.cs
+│   │   └── AlliesRegistration.cs
+│   ├── Extensions/             # 扩展方法
+│   └── ModInitializer.cs       # Mod入口
+├── RedAlert2ModResources/      # Godot资源
+│   ├── images/                 # 图片资源
+│   │   ├── character/          # 角色立绘
+│   │   ├── charui/             # UI角色图
+│   │   ├── packed/character_select/  # 角色选择立绘
+│   │   └── powers/             # 能力图标
+│   ├── localization/zhs/       # 中文本地化
+│   │   ├── cards.json
+│   │   ├── characters.json
+│   │   ├── relics.json
+│   │   └── ...
+│   └── scenes/                 # Godot场景
+│       ├── creature_visuals/   # 角色待机动画
+│       └── ui/character_icons/ # 角色头像图标
+├── build/                      # 构建输出
+│   ├── RedAlert2Mod.json
+│   ├── RedAlert2Mod.pck
+│   └── RedAlert2Mod.dll
+├── localization/zhs/           # 本地化文件（游戏读取路径）
+├── 0Harmony.dll                # Harmony库
+├── sts2.dll                    # 游戏核心DLL
+├── RedAlert2Mod.csproj         # C#项目文件
+├── RedAlert2Mod.sln            # 解决方案文件
+└── project.godot               # Godot项目配置
+```
+
 ### 游戏解包资源结构（参考）
 ```
 D:\RedAlert2Project\SlayTheSpire2Mod\
