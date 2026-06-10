@@ -1,4 +1,6 @@
 {
     "AMERICAN_SOLDIER.title": "美国大兵",
-    "AMERICAN_SOLDIER.description": "造成 {Damage} 点伤害。"
+    "AMERICAN_SOLDIER.description": "造成 {Damage} 点伤害。",
+    "GRIZZLY_TANK.title": "灰熊坦克",
+    "GRIZZLY_TANK.description": "造成 {Damage} 点伤害，获得 {Block} 点格挡。"
 }

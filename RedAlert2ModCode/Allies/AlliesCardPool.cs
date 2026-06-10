@@ -9,7 +9,7 @@ namespace RedAlert2ModCode.Allies;
 public sealed class AlliesCardPool : CustomCardPoolModel
 {
     public override string Title => "allies";
-    public override string EnergyColorName => "allies";
+    public override string EnergyColorName => "defect"; // 使用故障机器人的蓝色能量图标
     public override bool IsColorless => false;
     
     // 卡牌框材质路径 - 使用蓝色框

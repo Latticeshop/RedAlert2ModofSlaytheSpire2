@@ -22,6 +22,7 @@ public static class ModInitializer
         
         // 注册卡牌到盟军卡池
         ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AmericanSoldier));
+        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(GrizzlyTank));
         
         Godot.Bridge.ScriptManagerBridge.LookupScriptsInAssembly(Assembly.GetExecutingAssembly());
         

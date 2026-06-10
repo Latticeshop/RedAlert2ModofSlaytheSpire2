@@ -34,19 +34,21 @@ public sealed class Allies : PlaceholderCharacterModel
     public override CharacterGender Gender => CharacterGender.Masculine;
     public override int StartingHp => 80;
     
-    // 起始卡组（使用美国大兵替代打击）
+    // 起始卡组（7张美国大兵 + 5张灰熊坦克）
     public override IEnumerable<CardModel> StartingDeck => new List<CardModel>
     {
         ModelDb.Card<AmericanSoldier>(),
         ModelDb.Card<AmericanSoldier>(),
         ModelDb.Card<AmericanSoldier>(),
         ModelDb.Card<AmericanSoldier>(),
-        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendIronclad>(),
-        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendIronclad>(),
-        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendIronclad>(),
-        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.DefendIronclad>(),
-        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.Bash>(),
-        ModelDb.Card<MegaCrit.Sts2.Core.Models.Cards.Neutralize>(),
+        ModelDb.Card<AmericanSoldier>(),
+        ModelDb.Card<AmericanSoldier>(),
+        ModelDb.Card<AmericanSoldier>(),
+        ModelDb.Card<GrizzlyTank>(),
+        ModelDb.Card<GrizzlyTank>(),
+        ModelDb.Card<GrizzlyTank>(),
+        ModelDb.Card<GrizzlyTank>(),
+        ModelDb.Card<GrizzlyTank>(),
     };
     
     // 起始遗物（使用燃烧之血避免空数组崩溃）
