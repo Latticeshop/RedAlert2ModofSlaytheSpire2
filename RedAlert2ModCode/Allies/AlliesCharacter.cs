@@ -34,7 +34,7 @@ public sealed class Allies : PlaceholderCharacterModel
     public override CharacterGender Gender => CharacterGender.Masculine;
     public override int StartingHp => 80;
     
-    // 起始卡组（7张美国大兵 + 5张灰熊坦克）
+    // 起始卡组（7张美国大兵 + 5张灰熊坦克 + 1张盟军基地车）
     public override IEnumerable<CardModel> StartingDeck => new List<CardModel>
     {
         ModelDb.Card<AmericanSoldier>(),
@@ -49,6 +49,7 @@ public sealed class Allies : PlaceholderCharacterModel
         ModelDb.Card<GrizzlyTank>(),
         ModelDb.Card<GrizzlyTank>(),
         ModelDb.Card<GrizzlyTank>(),
+        ModelDb.Card<AlliedMCV>(),
     };
     
     // 起始遗物（使用燃烧之血避免空数组崩溃）

@@ -13,7 +13,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
 /// 美国大兵 - 类似于打击的基础攻击牌
-/// 1费4伤害两次
+/// 1费3伤害两次，升级后4伤害两次
 /// </summary>
 public sealed class AmericanSoldier : CardModel
 {
@@ -23,7 +23,7 @@ public sealed class AmericanSoldier : CardModel
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new DamageVar(4m, ValueProp.Move),
+		new DamageVar(3m, ValueProp.Move),
 		new RepeatVar(2)
 	};
 
@@ -40,6 +40,6 @@ public sealed class AmericanSoldier : CardModel
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(2m);
+		DynamicVars.Damage.UpgradeValueBy(1m);
 	}
 }
