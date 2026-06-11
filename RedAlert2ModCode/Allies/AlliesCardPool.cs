@@ -31,7 +31,8 @@ public sealed class AlliesCardPool : CardPoolModel
         {
             ModelDb.Card<AmericanSoldier>(),
             ModelDb.Card<GrizzlyTank>(),
-            ModelDb.Card<AlliedMCV>()
+            ModelDb.Card<AlliedMCV>(),
+            ModelDb.Card<BarracksCard>()
         };
     }
 }
