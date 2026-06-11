@@ -25,7 +25,8 @@ public sealed class BarracksCard : CardModel
 			{
 				Owner.Creature.CombatState.CreateCard(ModelDb.Card<AmericanSoldier>(), Owner),
 				Owner.Creature.CombatState.CreateCard(ModelDb.Card<DogSoldier>(), Owner),
-				Owner.Creature.CombatState.CreateCard(ModelDb.Card<RocketSoldier>(), Owner)
+				Owner.Creature.CombatState.CreateCard(ModelDb.Card<RocketSoldier>(), Owner),
+				Owner.Creature.CombatState.CreateCard(ModelDb.Card<Engineer>(), Owner)
 			};
 
 			CardModel? selectedCard = await CardSelectCmd.FromChooseACardScreen(ctx, availableCards, Owner, canSkip: false);

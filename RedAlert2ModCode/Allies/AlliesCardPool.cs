@@ -36,7 +36,8 @@ public sealed class AlliesCardPool : CardPoolModel
             ModelDb.Card<DogSoldier>(),
             ModelDb.Card<RocketSoldier>(),
             ModelDb.Card<Ifv>(),
-            ModelDb.Card<AlliedWarFactory>()
+            ModelDb.Card<AlliedWarFactory>(),
+            ModelDb.Card<Engineer>()
         };
     }
 }

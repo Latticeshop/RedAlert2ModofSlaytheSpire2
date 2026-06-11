@@ -14,5 +14,7 @@
     "IFV.title": "IFV",
     "IFV.description": "本回合获得 1 点敏捷。造成 {Damage} 点伤害 {Repeat} 次，获得 2 点护盾。",
     "ALLIED_WAR_FACTORY.title": "盟军重工",
-    "ALLIED_WAR_FACTORY.description": "选择一张装甲单位，之后每回合在摸牌堆添加一张临时的0费消耗的单位序列。{IfUpgraded:show:单位序列升级。|}"
+    "ALLIED_WAR_FACTORY.description": "选择一张装甲单位，之后每回合在摸牌堆添加一张临时的0费消耗的单位序列。{IfUpgraded:show:单位序列升级。|}",
+    "ENGINEER.title": "工程师",
+    "ENGINEER.description": "获得 {Block} 点护盾。"
 }
