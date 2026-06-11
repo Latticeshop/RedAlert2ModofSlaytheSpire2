@@ -77,7 +77,9 @@ public sealed class TrainingQueuePower : PowerModel
         get
         {
             var locString = new LocString("powers", base.Id.Entry + ".description");
-            locString.Add("UnitName", UnitName);
+            // 如果是升级过的单位，在名称后面加上+
+            string displayName = IsUpgraded ? UnitName + "+" : UnitName;
+            locString.Add("UnitName", displayName);
             return locString;
         }
     }

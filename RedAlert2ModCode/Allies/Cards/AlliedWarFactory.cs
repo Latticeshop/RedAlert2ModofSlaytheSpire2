@@ -11,11 +11,15 @@ using RedAlert2ModCode.Allies.Powers;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
-public sealed class BarracksCard : CardModel
+/// <summary>
+/// 盟军重工 - 能力牌
+/// 效果类似兵营，但提供装甲单位（灰熊坦克、IFV）
+/// </summary>
+public sealed class AlliedWarFactory : CardModel
 {
-    public BarracksCard() : base(1, CardType.Power, CardRarity.Common, TargetType.Self) { }
+    public AlliedWarFactory() : base(1, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
-    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/brrkicon.png";
+    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/gwepicon.png";
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
@@ -23,9 +27,7 @@ public sealed class BarracksCard : CardModel
 
         List<CardModel> availableCards = new()
         {
-            Owner.Creature.CombatState.CreateCard(ModelDb.Card<AmericanSoldier>(), Owner),
-            Owner.Creature.CombatState.CreateCard(ModelDb.Card<DogSoldier>(), Owner),
-            Owner.Creature.CombatState.CreateCard(ModelDb.Card<RocketSoldier>(), Owner),
+            Owner.Creature.CombatState.CreateCard(ModelDb.Card<GrizzlyTank>(), Owner),
             Owner.Creature.CombatState.CreateCard(ModelDb.Card<Ifv>(), Owner)
         };
 

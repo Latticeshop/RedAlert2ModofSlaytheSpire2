@@ -13,11 +13,12 @@ namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
 /// 盟军基地车 - 能力牌
-/// 1费，升级后0费，打出后在["美国大兵", "灰熊坦克"]中选择一张加入手牌，并显示能力图标
+/// 0费，打出后在["兵营", "盟军重工"]中选择一张加入手牌
+/// 升级后：获得的卡牌为升级版本
 /// </summary>
 public sealed class AlliedMCV : CardModel
 {
-    public AlliedMCV() : base(1, CardType.Power, CardRarity.Rare, TargetType.Self) { }
+    public AlliedMCV() : base(0, CardType.Power, CardRarity.Rare, TargetType.Self) { }
 
     // 修正图片路径为实际文件名 mcvicon.png
     public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/mcvicon.png";
@@ -36,8 +37,8 @@ public sealed class AlliedMCV : CardModel
         // 使用 CombatState.CreateCard 创建正确初始化的卡牌副本
         List<CardModel> availableCards = new()
         {
-            Owner.Creature.CombatState.CreateCard(ModelDb.Card<AmericanSoldier>(), Owner),
-            Owner.Creature.CombatState.CreateCard(ModelDb.Card<GrizzlyTank>(), Owner)
+            Owner.Creature.CombatState.CreateCard(ModelDb.Card<BarracksCard>(), Owner),
+            Owner.Creature.CombatState.CreateCard(ModelDb.Card<AlliedWarFactory>(), Owner)
         };
 
         // 显示选牌界面，让玩家选择一张卡牌
@@ -46,13 +47,17 @@ public sealed class AlliedMCV : CardModel
         // 如果玩家选择了卡牌，将其加入手牌
         if (selectedCard != null)
         {
+            // 如果盟军基地车是升级过的，则获得的卡牌也是升级版本
+            if (base.IsUpgraded)
+            {
+                CardCmd.Upgrade(selectedCard);
+            }
             await CardPileCmd.AddGeneratedCardToCombat(selectedCard, PileType.Hand, addedByPlayer: true);
         }
     }
 
     protected override void OnUpgrade()
     {
-        // 升级后费用从1变为0
-        base.EnergyCost.UpgradeBy(-1);
+        // 升级后：获得的卡牌为升级版本（费用不变，仍为0费）
     }
 }

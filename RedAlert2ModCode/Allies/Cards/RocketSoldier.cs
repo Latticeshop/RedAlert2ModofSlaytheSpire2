@@ -19,7 +19,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class RocketSoldier : CardModel
 {
-	public RocketSoldier() : base(0, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
+	public RocketSoldier() : base(0, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/jjeticon.png";
 
