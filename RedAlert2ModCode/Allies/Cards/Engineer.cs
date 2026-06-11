@@ -17,22 +17,22 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class Engineer : CardModel
 {
-    public Engineer() : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+	public Engineer() : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
 
-    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/aengicon.png";
+	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/aengicon.png";
 
-    protected override List<DynamicVar> CanonicalVars => new()
-    {
-        new BlockVar(5m, ValueProp.Unpowered)
-    };
+	protected override List<DynamicVar> CanonicalVars => new()
+	{
+		new BlockVar(5m, ValueProp.Unpowered)
+	};
 
-    protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
-    {
-        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
-    }
+	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+	{
+		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
+	}
 
-    protected override void OnUpgrade()
-    {
-        DynamicVars.Block.UpgradeValueBy(3m);
-    }
+	protected override void OnUpgrade()
+	{
+		DynamicVars.Block.UpgradeValueBy(3m);
+	}
 }

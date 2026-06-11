@@ -66,8 +66,8 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         MarginContainer margin = new();
         margin.AddThemeConstantOverride("margin_left", 30);
         margin.AddThemeConstantOverride("margin_right", 30);
-        margin.AddThemeConstantOverride("margin_top", 20);
-        margin.AddThemeConstantOverride("margin_bottom", 20);
+        margin.AddThemeConstantOverride("margin_top", 40);
+        margin.AddThemeConstantOverride("margin_bottom", 30);
         panel.AddChild(margin);
 
         VBoxContainer root = new() { Alignment = BoxContainer.AlignmentMode.Center };
@@ -103,7 +103,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
             SizeFlagsVertical = SizeFlags.ExpandFill
         };
-        _cardsRow.AddThemeConstantOverride("separation", 8);
+        _cardsRow.AddThemeConstantOverride("separation", 15);
         _scrollContainer.AddChild(_cardsRow);
 
         foreach (var card in _cards)
@@ -137,10 +137,10 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         VBoxContainer content = new()
         {
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
-            SizeFlagsVertical = SizeFlags.ShrinkCenter,
+            SizeFlagsVertical = SizeFlags.ShrinkBegin,
             Alignment = BoxContainer.AlignmentMode.Center
         };
-        content.AddThemeConstantOverride("separation", 6);
+        content.AddThemeConstantOverride("separation", 4);
         contentMargin.AddChild(content);
 
         if (!string.IsNullOrEmpty(card.PortraitPath) && ResourceLoader.Exists(card.PortraitPath))
@@ -194,8 +194,8 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         {
             Text = descText,
             HorizontalAlignment = HorizontalAlignment.Left,
-            MaxFontSize = 12,
-            MinFontSize = 10,
+            MaxFontSize = 18,
+            MinFontSize = 16,
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
             SizeFlagsVertical = SizeFlags.ShrinkCenter
@@ -245,52 +245,69 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
 
     private string GetEnergyCostText(CardModel card)
     {
-        if (card.EnergyCost == null)
-        {
-            return "0";
-        }
-        
-        // 尝试通过反射获取能量费用的实际值
-        var costType = card.EnergyCost.GetType();
-        var baseCostProp = costType.GetProperty("BaseCost");
+        // 首先尝试直接获取 card 的 BaseCost 属性
+        var cardType = card.GetType();
+        var baseCostProp = cardType.GetProperty("BaseCost");
         if (baseCostProp != null)
         {
-            var baseCost = baseCostProp.GetValue(card.EnergyCost);
+            var baseCost = baseCostProp.GetValue(card);
             if (baseCost != null)
             {
                 return baseCost.ToString();
             }
         }
         
-        // 尝试获取 Value 属性
-        var valueProp = costType.GetProperty("Value");
-        if (valueProp != null)
+        // 尝试获取 Cost 属性
+        var costProp = cardType.GetProperty("Cost");
+        if (costProp != null)
         {
-            var value = valueProp.GetValue(card.EnergyCost);
-            if (value != null)
+            var cost = costProp.GetValue(card);
+            if (cost != null)
             {
-                return value.ToString();
+                return cost.ToString();
             }
         }
         
-        // 尝试获取整数形式的值
-        var intValueProp = costType.GetProperty("IntValue");
-        if (intValueProp != null)
+        // 如果 card.EnergyCost 不为空，尝试从这里获取
+        if (card.EnergyCost != null)
         {
-            var intValue = intValueProp.GetValue(card.EnergyCost);
-            if (intValue != null)
+            var costType = card.EnergyCost.GetType();
+            
+            // 尝试获取 Value 属性
+            var valueProp = costType.GetProperty("Value");
+            if (valueProp != null)
             {
-                return intValue.ToString();
+                var value = valueProp.GetValue(card.EnergyCost);
+                if (value != null)
+                {
+                    return value.ToString();
+                }
+            }
+            
+            // 尝试获取 IntegerValue 属性
+            var intValueProp = costType.GetProperty("IntegerValue");
+            if (intValueProp != null)
+            {
+                var intValue = intValueProp.GetValue(card.EnergyCost);
+                if (intValue != null)
+                {
+                    return intValue.ToString();
+                }
+            }
+            
+            // 尝试获取 _value 字段
+            var valueField = costType.GetField("_value", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            if (valueField != null)
+            {
+                var value = valueField.GetValue(card.EnergyCost);
+                if (value != null)
+                {
+                    return value.ToString();
+                }
             }
         }
         
-        // 默认返回类型名中的数字或0
-        string costStr = card.EnergyCost.ToString();
-        if (costStr.StartsWith("MegaCrit.Sts2.Core.Entities.Cards"))
-        {
-            return "0";
-        }
-        return costStr;
+        return "0";
     }
 
     private string GetCardTitle(CardModel card)
