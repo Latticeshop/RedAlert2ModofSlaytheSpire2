@@ -169,15 +169,53 @@ public class MyCard : CardModel
 ```
 
 ### 注册
+
+**方法一：使用 ModHelper（推荐）**
 ```csharp
 ModHelper.AddModelToPool(typeof(IroncladCardPool), typeof(MyCard));
 ```
+
+**方法二：在卡池类中注册（适用于自定义阵营）**
+
+创建自定义卡池类并在 `GenerateAllCards()` 方法中注册所有卡牌：
+```csharp
+public sealed class AlliesCardPool : CardPoolModel
+{
+    public override string Title => "allies";
+    
+    protected override CardModel[] GenerateAllCards()
+    {
+        return new CardModel[]
+        {
+            ModelDb.Card<AmericanSoldier>(),
+            ModelDb.Card<DogSoldier>(),
+            ModelDb.Card<RocketSoldier>()
+            // ... 其他卡牌
+        };
+    }
+}
+```
+
+> **重要**：新卡牌必须注册到对应阵营的卡池才能被游戏识别和使用。
 
 ### 资源路径
 ```
 res://images/atlases/card_atlas.sprites/<pool>/<card_id>.tres
 res://images/packed/card_portraits/<pool>/<card_id>.png
 ```
+
+### 编译与部署
+
+每次代码更新后，需要重新编译生成新的 `RedAlert2Mod.dll` 文件：
+
+```bash
+dotnet build RedAlert2Mod.csproj -c Release -o build
+```
+
+编译成功后，游戏需要的是 `build/RedAlert2Mod.dll` 文件。确保将以下文件复制到游戏的 `mods/RedAlert2Mod/` 目录：
+- `RedAlert2Mod.dll` - 主程序集（必须）
+- `RedAlert2Mod.json` - Mod配置文件（必须）
+- `RedAlert2Mod.pck` - 资源包（如果有资源）
 
 ---
 
