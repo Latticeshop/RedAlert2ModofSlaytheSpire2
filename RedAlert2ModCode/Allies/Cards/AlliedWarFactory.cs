@@ -17,40 +17,50 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class AlliedWarFactory : CardModel
 {
-    public AlliedWarFactory() : base(1, CardType.Power, CardRarity.Common, TargetType.Self) { }
+	public AlliedWarFactory() : base(1, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
-    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/gwepicon.png";
+	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/gwepicon.png";
 
-    protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
-    {
-        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+	{
+		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
-        List<CardModel> availableCards = new()
-        {
-            Owner.Creature.CombatState.CreateCard(ModelDb.Card<GrizzlyTank>(), Owner),
-            Owner.Creature.CombatState.CreateCard(ModelDb.Card<Ifv>(), Owner)
-        };
+		List<CardModel> availableCards = new();
+		
+		// 创建单位卡牌
+		var tankCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<GrizzlyTank>(), Owner);
+		var ifvCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<Ifv>(), Owner);
+		
+		// 如果盟军重工是升级过的，创建的卡牌也显示为升级版本
+		if (base.IsUpgraded)
+		{
+			CardCmd.Upgrade(tankCard);
+			CardCmd.Upgrade(ifvCard);
+		}
+		
+		availableCards.Add(tankCard);
+		availableCards.Add(ifvCard);
 
-        CardModel? selectedCard = await CardSelectCmd.FromChooseACardScreen(ctx, availableCards, Owner, canSkip: false);
+		CardModel? selectedCard = await CardSelectCmd.FromChooseACardScreen(ctx, availableCards, Owner, canSkip: false);
 
-        if (selectedCard != null)
-        {
-            var trainingPower = await PowerCmd.Apply<TrainingQueuePower>(Owner.Creature, 1m, Owner.Creature, this);
-            
-            if (trainingPower != null)
-            {
-                trainingPower.TrainedCardId = selectedCard.Id.Entry;
-                trainingPower.UnitName = selectedCard.Title.ToString();
-                trainingPower.IsUpgraded = base.IsUpgraded;
-                
-                // 使用图标管理器设置能力图标
-                PowerIconManager.SetIcon(trainingPower, selectedCard.PortraitPath);
-            }
-        }
-    }
+		if (selectedCard != null)
+		{
+			var trainingPower = await PowerCmd.Apply<TrainingQueuePower>(Owner.Creature, 1m, Owner.Creature, this);
+			
+			if (trainingPower != null)
+			{
+				trainingPower.TrainedCardId = selectedCard.Id.Entry;
+				trainingPower.UnitName = selectedCard.Title.ToString();
+				trainingPower.IsUpgraded = base.IsUpgraded;
+				
+				// 使用图标管理器设置能力图标
+				PowerIconManager.SetIcon(trainingPower, selectedCard.PortraitPath);
+			}
+		}
+	}
 
-    protected override void OnUpgrade()
-    {
-        // 升级效果：生成的单位序列卡牌也会升级（费用不变）
-    }
+	protected override void OnUpgrade()
+	{
+		// 升级效果：生成的单位序列卡牌也会升级（费用不变）
+	}
 }
