@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.Models.Powers;
 using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Allies.UI;
 using System.Collections.Generic;
 
 namespace RedAlert2ModCode.Allies.Cards;
@@ -50,8 +51,8 @@ public sealed class AlliedMCV : CardModel
 		availableCards.Add(barracksCard);
 		availableCards.Add(warFactoryCard);
 
-		// 显示选牌界面，让玩家选择一张卡牌
-		CardModel? selectedCard = await CardSelectCmd.FromChooseACardScreen(ctx, availableCards, Owner, canSkip: false);
+		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
+		CardModel selectedCard = await CardSelectionScreen.ShowSelection(availableCards);
 
 		// 如果玩家选择了卡牌，将其加入手牌
 		if (selectedCard != null)

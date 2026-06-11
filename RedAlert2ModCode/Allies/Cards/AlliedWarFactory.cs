@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Allies.UI;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -41,7 +42,8 @@ public sealed class AlliedWarFactory : CardModel
 		availableCards.Add(tankCard);
 		availableCards.Add(ifvCard);
 
-		CardModel? selectedCard = await CardSelectCmd.FromChooseACardScreen(ctx, availableCards, Owner, canSkip: false);
+		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
+		CardModel selectedCard = await CardSelectionScreen.ShowSelection(availableCards);
 
 		if (selectedCard != null)
 		{
