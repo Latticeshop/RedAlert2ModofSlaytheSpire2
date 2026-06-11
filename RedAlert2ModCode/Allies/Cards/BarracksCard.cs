@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -34,14 +35,17 @@ public sealed class BarracksCard : CardModel
             if (trainingPower != null)
             {
                 trainingPower.TrainedCardId = selectedCard.Id.Entry;
-                // 设置训练单位的名称（使用卡牌的本地化名称）
                 trainingPower.UnitName = selectedCard.Title.ToString();
+                trainingPower.IsUpgraded = base.IsUpgraded;
+                
+                // 使用图标管理器设置能力图标
+                PowerIconManager.SetIcon(trainingPower, selectedCard.PortraitPath);
             }
         }
     }
 
     protected override void OnUpgrade()
     {
-        base.EnergyCost.UpgradeBy(-1);
+        // 升级效果：生成的单位序列卡牌也会升级（费用不变）
     }
 }

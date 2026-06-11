@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -24,6 +25,8 @@ public sealed class TrainingQueuePower : PowerModel
 
     public string UnitName { get; set; } = string.Empty;
 
+    public bool IsUpgraded { get; set; } = false;
+
     protected override void DeepCloneFields()
     {
         base.DeepCloneFields();
@@ -33,12 +36,39 @@ public sealed class TrainingQueuePower : PowerModel
     {
         get
         {
+            string? customPath = PowerIconManager.GetIconPath(this);
+            if (!string.IsNullOrEmpty(customPath))
+            {
+                return customPath;
+            }
+            
             CardModel? cardModel = GetCardModel(TrainedCardId);
             if (cardModel != null && !string.IsNullOrEmpty(cardModel.PortraitPath))
             {
                 return cardModel.PortraitPath;
             }
             return "res://RedAlert2ModResources/images/packed/card_portraits/allies/brrkicon.png";
+        }
+    }
+
+    public new string IconPath => PackedIconPath;
+
+    public new Texture2D Icon
+    {
+        get
+        {
+            Texture2D? customIcon = PowerIconManager.GetIcon(this);
+            if (customIcon != null)
+            {
+                return customIcon;
+            }
+            
+            string path = PackedIconPath;
+            if (ResourceLoader.Exists(path))
+            {
+                return ResourceLoader.Load<Texture2D>(path, null, ResourceLoader.CacheMode.Reuse);
+            }
+            return ResourceLoader.Load<Texture2D>("res://RedAlert2ModResources/images/packed/card_portraits/allies/brrkicon.png", null, ResourceLoader.CacheMode.Reuse);
         }
     }
 
@@ -66,9 +96,13 @@ public sealed class TrainingQueuePower : PowerModel
 
         CardModel tempCard = combatState.CreateCard(cardModel, base.Owner.Player);
         
+        if (IsUpgraded)
+        {
+            CardCmd.Upgrade(tempCard);
+        }
+        
         tempCard.EnergyCost.SetCustomBaseCost(0);
         
-        // 使用AddKeyword方法添加消耗词条
         tempCard.AddKeyword(CardKeyword.Exhaust);
 
         await CardPileCmd.AddGeneratedCardToCombat(tempCard, PileType.Draw, addedByPlayer: true, CardPilePosition.Top);
@@ -82,7 +116,7 @@ public sealed class TrainingQueuePower : PowerModel
         string[] parts = cardId.Split('_');
         string typeName = string.Concat(parts.Select(p => char.ToUpper(p[0]) + p.Substring(1).ToLower()));
         
-        var cardType = System.Reflection.Assembly.GetExecutingAssembly()
+        var cardType = Assembly.GetExecutingAssembly()
             .GetType($"RedAlert2ModCode.Allies.Cards.{typeName}");
         
         if (cardType == null)

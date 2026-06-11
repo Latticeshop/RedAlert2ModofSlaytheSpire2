@@ -6,5 +6,5 @@
     "ALLIED_MC_V.title": "盟军基地车",
     "ALLIED_MC_V.description": "从初始建筑中选择一张加入手牌。",
     "BARRACKS_CARD.title": "兵营",
-    "BARRACKS_CARD.description": "选择一张单位卡牌，之后每回合在摸牌堆添加一张临时的0费消耗的对应卡牌。"
+    "BARRACKS_CARD.description": "选择一张单位卡牌，之后每回合在摸牌堆添加一张临时的0费消耗的单位序列。{IfUpgraded:show:单位序列升级。|}"
 }
