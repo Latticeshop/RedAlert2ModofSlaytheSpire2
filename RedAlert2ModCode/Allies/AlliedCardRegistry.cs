@@ -40,13 +40,14 @@ public static class AlliedCardRegistry
     {
         () => ModelDb.Card<BarracksCard>(),
         () => ModelDb.Card<AlliedWarFactory>(),
-        () => ModelDb.Card<AlliedMCV>()
+        () => ModelDb.Card<AlliedMCV>(),
+        () => ModelDb.Card<PowerPlantCard>()
     };
 
     // 盟军技能卡
     public static List<Func<CardModel>> PowerCards { get; } = new()
     {
-        // 待添加
+        () => ModelDb.Card<AlliedWallCard>()
     };
 
     // 盟军特殊卡

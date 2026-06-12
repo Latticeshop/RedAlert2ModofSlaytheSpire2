@@ -14,7 +14,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
 /// 盟军基地车 - 能力牌
-/// 0费，打出后在["兵营", "盟军重工"]中选择一张加入手牌
+/// 0费，打出后在["兵营", "盟军重工", "发电厂"]中选择一张加入手牌
 /// 升级后：获得的卡牌为升级版本
 /// </summary>
 public sealed class AlliedMCV : CardModel
@@ -39,15 +39,18 @@ public sealed class AlliedMCV : CardModel
 		List<CardModel> availableCards = new();
 		
 		// 如果基地车是升级过的，创建的卡牌也显示为升级版本
+		var powerPlantCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<PowerPlantCard>(), Owner);
 		var barracksCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<BarracksCard>(), Owner);
 		var warFactoryCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<AlliedWarFactory>(), Owner);
 		
 		if (base.IsUpgraded)
 		{
+			CardCmd.Upgrade(powerPlantCard);
 			CardCmd.Upgrade(barracksCard);
 			CardCmd.Upgrade(warFactoryCard);
 		}
 		
+		availableCards.Add(powerPlantCard);
 		availableCards.Add(barracksCard);
 		availableCards.Add(warFactoryCard);
 
