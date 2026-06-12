@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.Helpers;
 using System.Collections.Generic;
+using RedAlert2ModCode.Allies.Powers;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -50,8 +51,8 @@ public sealed class RocketSoldier : CardModel
 				.Execute(ctx);
 		}
 		
-		// 本回合获得两点敏捷
-		await PowerCmd.Apply<DexterityPower>(Owner.Creature, 2, Owner.Creature, this);
+		// 本回合获得两点敏捷（临时，回合结束时自动扣除）
+		await PowerCmd.Apply<RocketSoldierTemporaryDexterityPower>(Owner.Creature, 2, Owner.Creature, this);
 	}
 
 	protected override void OnUpgrade()

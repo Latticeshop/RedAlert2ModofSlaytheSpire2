@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.Helpers;
 using System.Collections.Generic;
+using RedAlert2ModCode.Allies.Powers;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -31,8 +32,8 @@ public sealed class Ifv : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
-		// 本回合获得1点敏捷
-		await PowerCmd.Apply<DexterityPower>(Owner.Creature, 1, Owner.Creature, this);
+		// 本回合获得1点敏捷（临时，回合结束时自动扣除）
+		await PowerCmd.Apply<IfvTemporaryDexterityPower>(Owner.Creature, 1, Owner.Creature, this);
 		
 		// 造成2点伤害2次
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
