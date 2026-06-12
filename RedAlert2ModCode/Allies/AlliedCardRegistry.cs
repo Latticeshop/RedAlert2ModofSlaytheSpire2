@@ -22,7 +22,8 @@ public static class AlliedCardRegistry
     public static List<Func<CardModel>> Vehicles { get; } = new()
     {
         () => ModelDb.Card<GrizzlyTank>(),
-        () => ModelDb.Card<Ifv>()
+        () => ModelDb.Card<Ifv>(),
+        () => ModelDb.Card<ChronoMiner>()
     };
 
     public static List<Func<CardModel>> Aircraft { get; } = new()

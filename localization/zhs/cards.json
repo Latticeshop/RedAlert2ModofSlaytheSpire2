@@ -20,5 +20,7 @@
     "POWER_PLANT_CARD.title": "发电厂",
     "POWER_PLANT_CARD.description": "每抽 {IfUpgraded:show:7|10} 张牌获得 1 点能量。",
     "ALLIED_WALL_CARD.title": "盟军围墙",
-    "ALLIED_WALL_CARD.description": "获得 {Block} 点护盾。"
+    "ALLIED_WALL_CARD.description": "获得 {Block} 点护盾。",
+    "CHRONO_MINER.title": "超时空矿车",
+    "CHRONO_MINER.description": "获得 {Block} 点护盾。"
 }
