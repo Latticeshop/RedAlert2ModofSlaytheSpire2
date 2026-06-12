@@ -15,6 +15,10 @@ namespace RedAlert2ModCode.Allies.Powers;
 
 public sealed class TrainingQueuePower : PowerModel
 {
+    // 用于追踪实例创建顺序
+    private static int _instanceCounter = 0;
+    private readonly int _instanceId;
+    
     public override PowerType Type => PowerType.Buff;
     
     public override PowerStackType StackType => PowerStackType.Counter;
@@ -27,48 +31,126 @@ public sealed class TrainingQueuePower : PowerModel
 
     public bool IsUpgraded { get; set; } = false;
 
+    /// <summary>
+    /// 训练单位的图标路径（直接存储，避免依赖PowerIconManager的对象引用）
+    /// </summary>
+    public string TrainedUnitIconPath { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 追踪实例ID
+    /// </summary>
+    public int InstanceId => _instanceId;
+
+    public TrainingQueuePower()
+    {
+        _instanceId = ++_instanceCounter;
+        GD.Print($"[TrainingQueuePower] 构造函数被调用 - InstanceId={_instanceId}");
+    }
+
+    /// <summary>
+    /// 设置训练单位的属性（从卡牌信息）
+    /// </summary>
+    public void SetTrainedUnit(string cardId, string unitName, string iconPath, bool isUpgraded = false)
+    {
+        TrainedCardId = cardId;
+        UnitName = unitName;
+        IsUpgraded = isUpgraded;
+        TrainedUnitIconPath = iconPath;
+        
+        GD.Print($"[TrainingQueuePower] SetTrainedUnit 设置完成 - TrainedCardId={cardId}, TrainedUnitIconPath={iconPath}, InstanceId={_instanceId}");
+        
+        // 同时保存到 PowerIconManager
+        PowerIconManager.SetIcon(this, iconPath);
+    }
+
     protected override void DeepCloneFields()
     {
         base.DeepCloneFields();
+        
+        GD.Print($"[TrainingQueuePower] DeepCloneFields 被调用 - InstanceId={_instanceId}, TrainedCardId='{TrainedCardId}', TrainedUnitIconPath='{TrainedUnitIconPath}'");
+        
+        // 注册当前实例的哈希码
+        PowerIconManager.RegisterPowerHashCode(this);
+        
+        // 首先尝试从 PowerIconManager 获取已存储的图标路径
+        string? storedIconPath = PowerIconManager.GetIconPath(this);
+        if (!string.IsNullOrEmpty(storedIconPath))
+        {
+            GD.Print($"[TrainingQueuePower] DeepCloneFields: 从PowerIconManager恢复图标路径: {storedIconPath}");
+            // 由于我们不知道完整的卡牌信息，只设置图标路径
+            TrainedUnitIconPath = storedIconPath;
+            return;
+        }
+        
+        // 获取原始对象引用（通过反射获取私有字段，遍历所有基类）
+        System.Reflection.FieldInfo? originalField = null;
+        Type? currentType = GetType();
+        while (currentType != null)
+        {
+            originalField = currentType.GetField("_original", 
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            if (originalField != null)
+                break;
+            currentType = currentType.BaseType;
+        }
+        
+        if (originalField != null)
+        {
+            var original = originalField.GetValue(this) as TrainingQueuePower;
+            if (original != null)
+            {
+                GD.Print($"[TrainingQueuePower] 原始对象 - TrainedCardId={original.TrainedCardId}, TrainedUnitIconPath={original.TrainedUnitIconPath}");
+                // 手动复制所有自定义字段
+                TrainedCardId = original.TrainedCardId;
+                UnitName = original.UnitName;
+                IsUpgraded = original.IsUpgraded;
+                TrainedUnitIconPath = original.TrainedUnitIconPath;
+                GD.Print($"[TrainingQueuePower] 克隆后 - TrainedCardId={TrainedCardId}, TrainedUnitIconPath={TrainedUnitIconPath}");
+            }
+            else
+            {
+                GD.PrintErr($"[TrainingQueuePower] 警告: 无法获取原始对象引用");
+            }
+        }
+        else
+        {
+            GD.PrintErr($"[TrainingQueuePower] 警告: 无法找到 _original 字段");
+        }
     }
 
+    /// <summary>
+    /// 动态获取图标路径
+    /// 优先显示训练单位的图标，默认使用兵营卡牌的图标
+    /// </summary>
     public new string PackedIconPath
     {
         get
         {
+            // 1. 优先使用 TrainedUnitIconPath（直接存储，克隆后仍然有效，最可靠）
+            if (!string.IsNullOrEmpty(TrainedUnitIconPath))
+            {
+                return TrainedUnitIconPath;
+            }
+            
+            // 2. 通过 TrainedCardId 动态获取图标
+            if (!string.IsNullOrEmpty(TrainedCardId))
+            {
+                CardModel? cardModel = GetCardModel(TrainedCardId);
+                if (cardModel != null && !string.IsNullOrEmpty(cardModel.PortraitPath))
+                {
+                    return cardModel.PortraitPath;
+                }
+            }
+            
+            // 3. 检查 PowerIconManager（原始对象可用时）
             string? customPath = PowerIconManager.GetIconPath(this);
             if (!string.IsNullOrEmpty(customPath))
             {
                 return customPath;
             }
             
-            CardModel? cardModel = GetCardModel(TrainedCardId);
-            if (cardModel != null && !string.IsNullOrEmpty(cardModel.PortraitPath))
-            {
-                return cardModel.PortraitPath;
-            }
+            // 4. 默认回退到兵营图标
             return "res://RedAlert2ModResources/images/packed/card_portraits/allies/brrkicon.png";
-        }
-    }
-
-    public new string IconPath => PackedIconPath;
-
-    public new Texture2D Icon
-    {
-        get
-        {
-            Texture2D? customIcon = PowerIconManager.GetIcon(this);
-            if (customIcon != null)
-            {
-                return customIcon;
-            }
-            
-            string path = PackedIconPath;
-            if (ResourceLoader.Exists(path))
-            {
-                return ResourceLoader.Load<Texture2D>(path, null, ResourceLoader.CacheMode.Reuse);
-            }
-            return ResourceLoader.Load<Texture2D>("res://RedAlert2ModResources/images/packed/card_portraits/allies/brrkicon.png", null, ResourceLoader.CacheMode.Reuse);
         }
     }
 

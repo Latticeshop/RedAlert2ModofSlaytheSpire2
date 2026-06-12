@@ -14,12 +14,8 @@ public sealed class AlliedMCVPower : PowerModel
     public override PowerStackType StackType => PowerStackType.Counter;
 
     /// <summary>
-    /// 使用mod资源路径，而不是游戏默认路径
+    /// 使用盟军基地车卡牌的图标
+    /// 注意：Icon属性使用的是PackedIconPath，所以必须重写这个属性
     /// </summary>
-    public new string IconPath => "res://RedAlert2ModResources/images/packed/powers/allied_mc_v_power.png";
-
-    /// <summary>
-    /// 使用mod资源路径加载图标
-    /// </summary>
-    public new Texture2D Icon => ResourceLoader.Load<Texture2D>(IconPath, null, ResourceLoader.CacheMode.Reuse);
+    public new string PackedIconPath => "res://RedAlert2ModResources/images/packed/card_portraits/allies/mcvicon.png";
 }

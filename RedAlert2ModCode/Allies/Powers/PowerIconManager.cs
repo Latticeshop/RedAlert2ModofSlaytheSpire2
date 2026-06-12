@@ -1,53 +1,98 @@
 using System.Collections.Concurrent;
 using Godot;
+using MegaCrit.Sts2.Core.Models;
 
 namespace RedAlert2ModCode.Allies.Powers;
 
 public static class PowerIconManager
 {
-    // 存储能力实例到图标路径的映射
-    private static readonly ConcurrentDictionary<object, string> _powerIconPaths = new ConcurrentDictionary<object, string>();
+    // 存储所有 TrainingQueuePower 的图标路径（按哈希码索引）
+    private static readonly ConcurrentDictionary<int, string> _iconPathsByHashCode = new ConcurrentDictionary<int, string>();
     
-    // 存储能力实例到图标的映射
-    private static readonly ConcurrentDictionary<object, Texture2D> _powerIcons = new ConcurrentDictionary<object, Texture2D>();
+    // 存储所有已知的能力哈希码
+    private static readonly HashSet<int> _knownPowerHashCodes = new HashSet<int>();
+    
+    // 当前活跃的图标路径（用于解决克隆问题）
+    private static string? _currentIconPath = null;
+    private static int _currentIconHashCode = 0;
 
-    public static void SetIcon(object powerInstance, string iconPath)
+    /// <summary>
+    /// 获取能力实例的哈希码
+    /// </summary>
+    public static int GetPowerHashCode(PowerModel power)
     {
-        _powerIconPaths[powerInstance] = iconPath;
+        return System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(power);
+    }
+    
+    /// <summary>
+    /// 注册一个能力实例的哈希码（DeepCloneFields时调用）
+    /// </summary>
+    public static void RegisterPowerHashCode(PowerModel power)
+    {
+        int hashCode = GetPowerHashCode(power);
+        _knownPowerHashCodes.Add(hashCode);
+        GD.Print($"[PowerIconManager] RegisterPowerHashCode - HashCode={hashCode}, CurrentPath={_currentIconPath}");
         
-        // 预加载图标
-        if (ResourceLoader.Exists(iconPath))
+        // 如果当前有活跃的图标路径，立即设置
+        if (_currentIconPath != null)
         {
-            Texture2D icon = ResourceLoader.Load<Texture2D>(iconPath, null, ResourceLoader.CacheMode.Reuse);
-            _powerIcons[powerInstance] = icon;
+            _iconPathsByHashCode[hashCode] = _currentIconPath;
+            GD.Print($"[PowerIconManager] RegisterPowerHashCode: 立即设置图标路径={_currentIconPath}");
         }
     }
 
-    public static Texture2D? GetIcon(object powerInstance)
+    public static void SetIcon(PowerModel power, string iconPath)
     {
-        if (_powerIcons.TryGetValue(powerInstance, out Texture2D icon))
+        int hashCode = GetPowerHashCode(power);
+        _currentIconHashCode = hashCode;
+        _currentIconPath = iconPath;
+        _iconPathsByHashCode[hashCode] = iconPath;
+        _knownPowerHashCodes.Add(hashCode);
+        
+        GD.Print($"[PowerIconManager] SetIcon - HashCode={hashCode}, Path={iconPath}");
+    }
+    
+    /// <summary>
+    /// 直接设置当前活跃的图标路径（不依赖能力实例）
+    /// </summary>
+    public static void SetCurrentIconPath(string iconPath)
+    {
+        _currentIconPath = iconPath;
+        GD.Print($"[PowerIconManager] SetCurrentIconPath - Path={iconPath}");
+        
+        // 同时更新所有已知的哈希码
+        foreach (int hashCode in _knownPowerHashCodes)
         {
-            return icon;
+            _iconPathsByHashCode[hashCode] = iconPath;
+        }
+    }
+
+    public static string? GetIconPath(PowerModel power)
+    {
+        int hashCode = GetPowerHashCode(power);
+        
+        // 直接通过哈希码查找
+        if (_iconPathsByHashCode.TryGetValue(hashCode, out string iconPath))
+        {
+            return iconPath;
         }
         
-        if (_powerIconPaths.TryGetValue(powerInstance, out string iconPath))
+        // 如果是 TrainingQueuePower，尝试使用当前活跃的图标路径
+        if (power is TrainingQueuePower && _currentIconPath != null)
         {
-            if (ResourceLoader.Exists(iconPath))
-            {
-                icon = ResourceLoader.Load<Texture2D>(iconPath, null, ResourceLoader.CacheMode.Reuse);
-                _powerIcons[powerInstance] = icon;
-                return icon;
-            }
+            GD.Print($"[PowerIconManager] GetIconPath: 使用当前活跃图标路径={_currentIconPath}");
+            return _currentIconPath;
         }
         
         return null;
     }
 
-    public static string? GetIconPath(object powerInstance)
+    public static Texture2D? GetIcon(PowerModel power)
     {
-        if (_powerIconPaths.TryGetValue(powerInstance, out string iconPath))
+        string? iconPath = GetIconPath(power);
+        if (!string.IsNullOrEmpty(iconPath) && ResourceLoader.Exists(iconPath))
         {
-            return iconPath;
+            return ResourceLoader.Load<Texture2D>(iconPath, null, ResourceLoader.CacheMode.Reuse);
         }
         return null;
     }

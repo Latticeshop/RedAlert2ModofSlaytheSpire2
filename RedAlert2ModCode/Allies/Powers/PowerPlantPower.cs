@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Powers;
@@ -24,6 +23,7 @@ public sealed class PowerPlantPower : PowerModel
 
     private const int _baseCardsLeft = 10;
     private const int _upgradedCardsLeft = 7;
+    private const string _baseCardsKey = "BaseCards";
 
     public override PowerType Type => PowerType.Buff;
 
@@ -42,11 +42,10 @@ public sealed class PowerPlantPower : PowerModel
     public int CurrentThreshold { get; set; } = _baseCardsLeft;
 
     /// <summary>
-    /// 使用mod资源路径
+    /// 通过 CanonicalVars 提供动态变量，供 smartDescription 使用
     /// </summary>
-    public new string IconPath => "res://RedAlert2ModResources/images/packed/powers/power_plant_power.png";
-
-    public new Texture2D Icon => ResourceLoader.Load<Texture2D>(IconPath, null, ResourceLoader.CacheMode.Reuse);
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+        new DynamicVar[] { new DynamicVar(_baseCardsKey, _baseCardsLeft) };
 
     protected override object InitInternalData()
     {
@@ -61,6 +60,8 @@ public sealed class PowerPlantPower : PowerModel
     public void SetThreshold(int threshold)
     {
         CurrentThreshold = threshold;
+        // 更新动态变量，使 smartDescription 显示正确的数值
+        DynamicVars[_baseCardsKey].BaseValue = threshold;
         var data = GetInternalData<Data>();
         data.cardsLeft = threshold;
         InvokeDisplayAmountChanged();

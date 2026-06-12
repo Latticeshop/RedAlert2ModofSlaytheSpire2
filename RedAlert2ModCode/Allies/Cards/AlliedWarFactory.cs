@@ -26,8 +26,11 @@ public sealed class AlliedWarFactory : CardModel
 	{
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
+		GD.Print($"[AlliedWarFactory] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
+
 		// 使用盟军卡牌注册管理器获取所有装甲单位卡
 		List<CardModel> availableCards = AlliedCardRegistry.CreateVehicles(Owner);
+		GD.Print($"[AlliedWarFactory] 可用卡牌数量: {availableCards.Count}");
 		
 		// 如果盟军重工是升级过的，创建的卡牌也显示为升级版本
 		if (base.IsUpgraded)
@@ -41,18 +44,27 @@ public sealed class AlliedWarFactory : CardModel
 		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
 		CardModel selectedCard = await CardSelectionScreen.ShowSelection(availableCards);
 
+		GD.Print($"[AlliedWarFactory] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
+
 		if (selectedCard != null)
 		{
+			// 首先设置当前活跃的图标路径（这样克隆对象也能获取）
+			PowerIconManager.SetCurrentIconPath(selectedCard.PortraitPath);
+			
 			var trainingPower = await PowerCmd.Apply<TrainingQueuePower>(Owner.Creature, 1m, Owner.Creature, this);
+			
+			GD.Print($"[AlliedWarFactory] 创建的Power: {(trainingPower != null ? trainingPower.GetType().Name : "null")}");
 			
 			if (trainingPower != null)
 			{
-				trainingPower.TrainedCardId = selectedCard.Id.Entry;
-				trainingPower.UnitName = selectedCard.Title.ToString();
-				trainingPower.IsUpgraded = base.IsUpgraded;
-				
-				// 使用图标管理器设置能力图标
-				PowerIconManager.SetIcon(trainingPower, selectedCard.PortraitPath);
+				GD.Print($"[AlliedWarFactory] 设置属性 - TrainedCardId={selectedCard.Id.Entry}, PortraitPath={selectedCard.PortraitPath}");
+				// 使用新的 SetTrainedUnit 方法设置属性
+				trainingPower.SetTrainedUnit(
+					selectedCard.Id.Entry,
+					selectedCard.Title.ToString(),
+					selectedCard.PortraitPath,
+					base.IsUpgraded
+				);
 			}
 		}
 	}

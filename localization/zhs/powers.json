@@ -4,5 +4,6 @@
     "TRAINING_QUEUE_POWER.title": "训练序列",
     "TRAINING_QUEUE_POWER.description": "每回合获得一张0费消耗的{UnitName}卡牌。",
     "POWER_PLANT_POWER.title": "发电厂",
-    "POWER_PLANT_POWER.description": "每抽 {IfUpgraded:show:7|10} 张牌获得 1 点能量。"
+    "POWER_PLANT_POWER.description": "每抽 {BaseCards} 张牌获得 1 点能量。",
+    "POWER_PLANT_POWER.smartDescription": "每抽 [blue]{BaseCards}[/blue] 张牌获得 {Amount:energyIcons()}。"
 }
