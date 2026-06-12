@@ -22,13 +22,8 @@ public sealed class BarracksCard : CardModel
 		{
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
-			List<CardModel> availableCards = new()
-			{
-				Owner.Creature.CombatState.CreateCard(ModelDb.Card<AmericanSoldier>(), Owner),
-				Owner.Creature.CombatState.CreateCard(ModelDb.Card<DogSoldier>(), Owner),
-				Owner.Creature.CombatState.CreateCard(ModelDb.Card<RocketSoldier>(), Owner),
-				Owner.Creature.CombatState.CreateCard(ModelDb.Card<Engineer>(), Owner)
-			};
+			// 使用盟军卡牌注册管理器获取所有士兵单位卡
+			List<CardModel> availableCards = AlliedCardRegistry.CreateSoldiers(Owner);
 
 			// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
 			CardModel selectedCard = await CardSelectionScreen.ShowSelection(availableCards);

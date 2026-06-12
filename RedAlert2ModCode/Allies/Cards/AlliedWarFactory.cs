@@ -26,21 +26,17 @@ public sealed class AlliedWarFactory : CardModel
 	{
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
-		List<CardModel> availableCards = new();
-		
-		// 创建单位卡牌
-		var tankCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<GrizzlyTank>(), Owner);
-		var ifvCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<Ifv>(), Owner);
+		// 使用盟军卡牌注册管理器获取所有装甲单位卡
+		List<CardModel> availableCards = AlliedCardRegistry.CreateVehicles(Owner);
 		
 		// 如果盟军重工是升级过的，创建的卡牌也显示为升级版本
 		if (base.IsUpgraded)
 		{
-			CardCmd.Upgrade(tankCard);
-			CardCmd.Upgrade(ifvCard);
+			foreach (var card in availableCards)
+			{
+				CardCmd.Upgrade(card);
+			}
 		}
-		
-		availableCards.Add(tankCard);
-		availableCards.Add(ifvCard);
 
 		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
 		CardModel selectedCard = await CardSelectionScreen.ShowSelection(availableCards);

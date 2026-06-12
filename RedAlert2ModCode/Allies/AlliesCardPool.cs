@@ -24,20 +24,10 @@ public sealed class AlliesCardPool : CardPoolModel
 
     /// <summary>
     /// 注册所有盟军卡牌
+    /// 从 AlliedCardRegistry 获取，保持单一数据源
     /// </summary>
     protected override CardModel[] GenerateAllCards()
     {
-        return new CardModel[]
-        {
-            ModelDb.Card<AmericanSoldier>(),
-            ModelDb.Card<GrizzlyTank>(),
-            ModelDb.Card<AlliedMCV>(),
-            ModelDb.Card<BarracksCard>(),
-            ModelDb.Card<DogSoldier>(),
-            ModelDb.Card<RocketSoldier>(),
-            ModelDb.Card<Ifv>(),
-            ModelDb.Card<AlliedWarFactory>(),
-            ModelDb.Card<Engineer>()
-        };
+        return AlliedCardRegistry.GetAllCards().ToArray();
     }
 }

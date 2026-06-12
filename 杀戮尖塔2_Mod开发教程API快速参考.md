@@ -27,12 +27,22 @@ red-alert-2-mod/
 │   ├── RedAlert2Mod.json
 │   └── RedAlert2Mod.pdb
 ├── RedAlert2ModCode/           # C#源代码
-│   ├── Allies/                 # 角色相关代码
+│   ├── Allies/                 # 盟军阵营
+│   │   ├── Cards/              # 卡牌定义（士兵、装甲、建筑等）
+│   │   ├── Powers/             # 能力定义
+│   │   ├── UI/                 # UI组件
+│   │   ├── AlliedCardRegistry.cs   # 卡牌注册管理器
+│   │   ├── AlliesCardPool.cs       # 卡池
 │   │   ├── AlliesCharacter.cs
-│   │   ├── AlliesCardPool.cs
 │   │   ├── AlliesRelicPool.cs
 │   │   ├── AlliesPotionPool.cs
 │   │   └── AlliesRegistration.cs
+│   ├── Soviet/                 # 苏军阵营
+│   │   └── SovietCardRegistry.cs
+│   ├── Yuri/                   # 尤里阵营
+│   │   └── YuriCardRegistry.cs
+│   ├── Other/                  # 其他阵营（利赛特、古巴等）
+│   │   └── OtherCardRegistry.cs
 │   ├── Extensions/             # 扩展方法
 │   └── ModInitializer.cs       # Mod入口
 ├── RedAlert2ModResources/      # Godot资源
@@ -664,6 +674,86 @@ Godot.Bridge.ScriptManagerBridge.LookupScriptsInAssembly(Assembly.GetExecutingAs
 ### Mod未加载
 - 检查三个文件同名且同目录
 - 验证JSON中has_pck/has_dll与实际相符
+
+---
+
+## 🏛️ 阵营架构设计
+
+### 设计理念
+为了管理红警2中大量的单位卡牌，采用阵营分类架构：盟军、苏军、尤里、其他四大阵营，每个阵营包含：
+- **单位卡**：士兵、装甲、飞机、船只
+- **建筑卡**：兵营、重工、防御建筑等
+- **技能卡**：用于卡组构造的特殊卡牌
+
+### 卡牌注册管理器（CardRegistry）
+
+每个阵营都有对应的 `CardRegistry` 类，用于统一管理和批量获取卡牌：
+
+```csharp
+public static class AlliedCardRegistry
+{
+    // 单位卡分类
+    public static List<Func<CardModel>> Soldiers { get; } = new()
+    {
+        () => ModelDb.Card<AmericanSoldier>(),
+        () => ModelDb.Card<DogSoldier>(),
+        () => ModelDb.Card<RocketSoldier>(),
+        () => ModelDb.Card<Engineer>()
+    };
+
+    public static List<Func<CardModel>> Vehicles { get; } = new()
+    {
+        () => ModelDb.Card<GrizzlyTank>(),
+        () => ModelDb.Card<Ifv>()
+    };
+
+    // 获取所有士兵卡
+    public static List<CardModel> GetAllSoldiers()
+    {
+        return Soldiers.Select(s => s()).ToList();
+    }
+
+    // 根据玩家创建卡牌实例
+    public static List<CardModel> CreateSoldiers(Player owner)
+    {
+        return Soldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+    }
+}
+```
+
+### 架构优势
+
+**1. 统一导入管理**
+```csharp
+// 在兵营卡牌中直接获取所有士兵单位
+List<CardModel> availableCards = AlliedCardRegistry.CreateSoldiers(Owner);
+```
+
+**2. 模块化扩展**
+- 新增单位只需在对应阵营的 `CardRegistry` 中注册
+- 建筑卡可以轻松获取特定类型的单位卡
+
+**3. 类型安全**
+- 使用 `Func<CardModel>` 延迟初始化，避免过早创建实例
+- 编译时类型检查，减少运行时错误
+
+### 阵营目录结构
+
+```
+RedAlert2ModCode/
+├── Allies/           # 盟军阵营
+│   ├── Cards/        # 卡牌定义
+│   ├── Powers/       # 能力定义
+│   ├── UI/           # UI组件
+│   ├── AlliedCardRegistry.cs   # 卡牌注册管理器
+│   └── AlliesCardPool.cs       # 卡池
+├── Soviet/           # 苏军阵营
+│   └── SovietCardRegistry.cs
+├── Yuri/             # 尤里阵营
+│   └── YuriCardRegistry.cs
+└── Other/            # 其他阵营
+    └── OtherCardRegistry.cs
+```
 
 ---
 
