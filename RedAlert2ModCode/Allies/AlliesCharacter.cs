@@ -53,10 +53,10 @@ public sealed class Allies : PlaceholderCharacterModel
         ModelDb.Card<AlliedWallCard>(),
     };
     
-    // 起始遗物（使用燃烧之血避免空数组崩溃）
+    // 起始遗物（刀乐）
     public override IReadOnlyList<RelicModel> StartingRelics => new List<RelicModel>
     {
-        ModelDb.Relic<MegaCrit.Sts2.Core.Models.Relics.BurningBlood>()
+        ModelDb.Relic<RedAlert2ModCode.Allies.Relics.DollarRelic>(),
     };
     
     // 卡池、遗物池、药水池

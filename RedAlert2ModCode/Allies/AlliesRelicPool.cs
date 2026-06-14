@@ -15,10 +15,12 @@ public class AlliesRelicPool : RelicPoolModel
     
     /// <summary>
     /// 生成该角色专属的遗物列表
-    /// 目前返回空列表，后续可以添加盟军专属遗物
     /// </summary>
     protected override RelicModel[] GenerateAllRelics()
     {
-        return Array.Empty<RelicModel>();
+        return new[]
+        {
+            ModelDb.Relic<Relics.DollarRelic>()
+        };
     }
 }
