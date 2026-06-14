@@ -24,6 +24,7 @@ public static class PowerIconPatch
         { typeof(AlliedMCVPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/mcvicon.png" },
         { typeof(IfvTemporaryDexterityPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/fvicon.png" },
         { typeof(RocketSoldierTemporaryDexterityPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/jjeticon.png" },
+        { typeof(PrismTowerPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/prisicon.png" },
     };
 
     /// <summary>

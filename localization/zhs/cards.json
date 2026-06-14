@@ -26,5 +26,7 @@
     "INTRUDER.title": "入侵者战机",
     "INTRUDER.description": "造成 {Damage} 点伤害，赋予敌人 {Repeat} 层易伤。",
     "AIR_FORCE_COMMAND.title": "空指部",
-    "AIR_FORCE_COMMAND.description": "选择一张空军单位，之后每回合在摸牌堆添加一张临时的0费消耗的单位序列。{IfUpgraded:show:单位序列升级。|}"
+    "AIR_FORCE_COMMAND.description": "选择一张空军单位，之后每回合在摸牌堆添加一张临时的0费消耗的单位序列。{IfUpgraded:show:单位序列升级。|}",
+    "PRISM_TOWER_CARD.title": "光棱塔",
+    "PRISM_TOWER_CARD.description": "回合开始时对随机敌人造成 {Damage} 点伤害 {Repeat} 次。叠加时伤害+{IfUpgraded:show:5|2}。"
 }
