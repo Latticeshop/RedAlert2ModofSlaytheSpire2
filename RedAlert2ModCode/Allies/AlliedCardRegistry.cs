@@ -28,7 +28,7 @@ public static class AlliedCardRegistry
 
     public static List<Func<CardModel>> Aircraft { get; } = new()
     {
-        // 待添加
+        () => ModelDb.Card<Intruder>()
     };
 
     public static List<Func<CardModel>> Ships { get; } = new()
@@ -42,7 +42,8 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<BarracksCard>(),
         () => ModelDb.Card<AlliedWarFactory>(),
         () => ModelDb.Card<AlliedMCV>(),
-        () => ModelDb.Card<PowerPlantCard>()
+        () => ModelDb.Card<PowerPlantCard>(),
+        () => ModelDb.Card<AirForceCommand>()
     };
 
     // 盟军技能卡
@@ -155,6 +156,14 @@ public static class AlliedCardRegistry
     public static List<CardModel> CreateAircraft(Player owner)
     {
         return Aircraft.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+    }
+
+    /// <summary>
+    /// 创建空军单位卡牌列表（用于空指部）
+    /// </summary>
+    public static List<CardModel> CreateAirUnits(Player owner)
+    {
+        return CreateAircraft(owner);
     }
 
     public static List<CardModel> CreateShips(Player owner)

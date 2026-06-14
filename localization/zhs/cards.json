@@ -22,5 +22,9 @@
     "ALLIED_WALL_CARD.title": "盟军围墙",
     "ALLIED_WALL_CARD.description": "获得 {Block} 点护盾。",
     "CHRONO_MINER.title": "超时空矿车",
-    "CHRONO_MINER.description": "获得 {Block} 点护盾。"
+    "CHRONO_MINER.description": "获得 {Block} 点护盾。",
+    "INTRUDER.title": "入侵者战机",
+    "INTRUDER.description": "造成 {Damage} 点伤害，赋予敌人 {Repeat} 层易伤。",
+    "AIR_FORCE_COMMAND.title": "空指部",
+    "AIR_FORCE_COMMAND.description": "选择一张空军单位，之后每回合在摸牌堆添加一张临时的0费消耗的单位序列。{IfUpgraded:show:单位序列升级。|}"
 }
