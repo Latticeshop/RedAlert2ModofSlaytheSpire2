@@ -1,0 +1,66 @@
+using System.Threading.Tasks;
+using Godot;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
+
+namespace RedAlert2ModCode.Allies.Cards;
+
+/// <summary>
+/// 盟军矿场 - 能力牌
+/// 1费，将一张超时空矿车加入手牌
+/// </summary>
+public sealed class AlliedRefinery : CardModel
+{
+	public AlliedRefinery() : base(1, CardType.Power, CardRarity.Common, TargetType.Self) { }
+
+	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/reficon.png";
+
+	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+	{
+		// 检查 Owner 和相关对象
+		if (Owner == null)
+		{
+			GD.Print("[AlliedRefinery] Error: Owner is null");
+			return;
+		}
+		
+		if (Owner.Creature == null)
+		{
+			GD.Print("[AlliedRefinery] Error: Owner.Creature is null");
+			return;
+		}
+		
+		if (Owner.Creature.CombatState == null)
+		{
+			GD.Print("[AlliedRefinery] Error: Owner.Creature.CombatState is null");
+			return;
+		}
+		
+		// 获取 ChronoMiner 模型
+		var minerModel = ModelDb.Card<ChronoMiner>();
+		if (minerModel == null)
+		{
+			GD.Print("[AlliedRefinery] Error: ChronoMiner model is null");
+			return;
+		}
+
+		// 创建超时空矿车卡牌
+		var minerCard = Owner.Creature.CombatState.CreateCard(minerModel, Owner);
+		// 如果矿场是升级过的，矿车也升级
+		if (base.IsUpgraded)
+		{
+			CardCmd.Upgrade(minerCard);
+		}
+		
+		// 将矿车加入手牌
+		await CardPileCmd.AddGeneratedCardToCombat(minerCard, PileType.Hand, addedByPlayer: true);
+	}
+
+	protected override void OnUpgrade()
+	{
+		// 升级后：获得的超时空矿车也会升级
+	}
+}

@@ -48,23 +48,39 @@ public sealed class AlliedWarFactory : CardModel
 
 		if (selectedCard != null)
 		{
-			// 首先设置当前活跃的图标路径（这样克隆对象也能获取）
-			PowerIconManager.SetCurrentIconPath(selectedCard.PortraitPath);
-			
-			var trainingPower = await PowerCmd.Apply<TrainingQueuePower>(Owner.Creature, 1m, Owner.Creature, this);
-			
-			GD.Print($"[AlliedWarFactory] 创建的Power: {(trainingPower != null ? trainingPower.GetType().Name : "null")}");
-			
-			if (trainingPower != null)
+			// 如果选择的是超时空矿车，直接加入摸牌堆
+			if (selectedCard is ChronoMiner)
 			{
-				GD.Print($"[AlliedWarFactory] 设置属性 - TrainedCardId={selectedCard.Id.Entry}, PortraitPath={selectedCard.PortraitPath}");
-				// 使用新的 SetTrainedUnit 方法设置属性
-				trainingPower.SetTrainedUnit(
-					selectedCard.Id.Entry,
-					selectedCard.Title.ToString(),
-					selectedCard.PortraitPath,
-					base.IsUpgraded
-				);
+				GD.Print($"[AlliedWarFactory] 选择超时空矿车，直接加入摸牌堆");
+				// 克隆卡牌并加入摸牌堆
+				var minerCard = selectedCard.CreateClone();
+				if (base.IsUpgraded)
+				{
+					CardCmd.Upgrade(minerCard);
+				}
+				await CardPileCmd.AddGeneratedCardToCombat(minerCard, PileType.Draw, addedByPlayer: true);
+			}
+			else
+			{
+				// 其他单位：创建生产序列能力
+				// 首先设置当前活跃的图标路径（这样克隆对象也能获取）
+				PowerIconManager.SetCurrentIconPath(selectedCard.PortraitPath);
+				
+				var trainingPower = await PowerCmd.Apply<TrainingQueuePower>(Owner.Creature, 1m, Owner.Creature, this);
+				
+				GD.Print($"[AlliedWarFactory] 创建的Power: {(trainingPower != null ? trainingPower.GetType().Name : "null")}");
+				
+				if (trainingPower != null)
+				{
+					GD.Print($"[AlliedWarFactory] 设置属性 - TrainedCardId={selectedCard.Id.Entry}, PortraitPath={selectedCard.PortraitPath}");
+					// 使用新的 SetTrainedUnit 方法设置属性
+					trainingPower.SetTrainedUnit(
+						selectedCard.Id.Entry,
+						selectedCard.Title.ToString(),
+						selectedCard.PortraitPath,
+						base.IsUpgraded
+					);
+				}
 			}
 		}
 	}

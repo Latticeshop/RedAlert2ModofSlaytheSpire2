@@ -44,7 +44,8 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<AlliedMCV>(),
         () => ModelDb.Card<PowerPlantCard>(),
         () => ModelDb.Card<AirForceCommand>(),
-        () => ModelDb.Card<PrismTowerCard>()
+        () => ModelDb.Card<PrismTowerCard>(),
+        () => ModelDb.Card<AlliedRefinery>()
     };
 
     // 盟军技能卡

@@ -24,6 +24,8 @@ public static class ModInitializer
         ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(GrizzlyTank));
         ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AlliedMCV));
         ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(BarracksCard));
+        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(ChronoMiner));
+        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AlliedRefinery));
         
         Godot.Bridge.ScriptManagerBridge.LookupScriptsInAssembly(Assembly.GetExecutingAssembly());
         

@@ -40,17 +40,20 @@ public sealed class AlliedMCV : CardModel
 		
 		// 如果基地车是升级过的，创建的卡牌也显示为升级版本
 		var powerPlantCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<PowerPlantCard>(), Owner);
+		var refineryCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<AlliedRefinery>(), Owner);
 		var barracksCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<BarracksCard>(), Owner);
 		var warFactoryCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<AlliedWarFactory>(), Owner);
 		
 		if (base.IsUpgraded)
 		{
 			CardCmd.Upgrade(powerPlantCard);
+			CardCmd.Upgrade(refineryCard);
 			CardCmd.Upgrade(barracksCard);
 			CardCmd.Upgrade(warFactoryCard);
 		}
 		
 		availableCards.Add(powerPlantCard);
+		availableCards.Add(refineryCard);
 		availableCards.Add(barracksCard);
 		availableCards.Add(warFactoryCard);
 
