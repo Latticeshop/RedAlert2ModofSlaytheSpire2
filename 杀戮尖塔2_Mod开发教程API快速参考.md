@@ -304,6 +304,66 @@ ModHelper.AddModelToPool(typeof(SharedPotionPool), typeof(MyPotion));
 
 ---
 
+## 💰 经济系统（刀乐）
+
+### 设计理念
+
+红警2 Mod引入了经济系统，通过"刀乐"能力来管理资金。建筑和单位的生产需要消耗资金，资源采集会增加资金。
+
+### 刀乐遗物（DollarRelic）
+
+初始遗物，战斗开始时赋予刀乐能力并设置启动资金：
+
+### 刀乐能力（DollarPower）
+
+专门用于存储资金数值的能力：
+
+```csharp
+public class DollarPower : PowerModel
+{
+    public override PowerType Type => PowerType.Buff;
+    public override PowerStackType StackType => PowerStackType.Counter;
+    
+    // 当前资金值
+    public int DollarValue { get; set; } = 0;
+
+    public override LocString Description
+    {
+        get
+        {
+            var locString = new LocString("powers", base.Id.Entry + ".description");
+            locString.Add("dollar_value", DollarValue);
+            return locString;
+        }
+    }
+
+    // 设置资金值
+    public void SetDollar(int value)
+    {
+        DollarValue = value;
+    }
+
+    // 增加资金
+    public void AddDollar(int amount)
+    {
+        DollarValue += amount;
+    }
+
+    // 减少资金（返回是否成功）
+    public bool SpendDollar(int amount)
+    {
+        if (DollarValue >= amount)
+        {
+            DollarValue -= amount;
+            return true;
+        }
+        return false;
+    }
+}
+```
+
+---
+
 ## ⚡ 能力/Buff（PowerModel）
 
 ### 基本结构
