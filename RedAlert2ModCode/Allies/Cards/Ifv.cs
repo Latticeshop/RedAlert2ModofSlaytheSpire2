@@ -19,7 +19,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class Ifv : CardModel
 {
-	public Ifv() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
+	public Ifv() : base(1, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/fvicon.png";
 

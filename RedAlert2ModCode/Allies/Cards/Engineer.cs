@@ -17,7 +17,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class Engineer : CardModel
 {
-	public Engineer() : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+	public Engineer() : base(0, CardType.Skill, CardRarity.Token, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/aengicon.png";
 

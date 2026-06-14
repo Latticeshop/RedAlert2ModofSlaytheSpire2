@@ -152,6 +152,52 @@ public static class MyModInitializer
 
 ## 🎴 卡牌（CardModel）
 
+### 卡牌稀有度（CardRarity）
+
+卡牌的第三个参数 `Rarity` 属性决定卡牌的稀有度，影响卡牌的边框样式、出现逻辑和商店售价：
+
+```csharp
+public enum CardRarity
+{
+    None,     // 无
+    Basic,    // 基础
+    Common,   // 普通
+    Uncommon, // 罕见
+    Rare,     // 稀有
+    Ancient,  // 先古之民
+    Event,    // 事件
+    Token,    // 代币
+    Status,   // 状态
+    Curse,    // 诅咒
+    Quest     // 任务
+}
+```
+
+**稀有度分类说明**：
+
+| 类型 | 是否出现在随机卡池 | 说明 | 示例 |
+|------|------------------|------|------|
+| Basic/Common/Uncommon/Rare | **是** | 可在战斗奖励、商店、事件中随机获取 | 打击、防御、各类攻击牌 |
+| Ancient | 否 | 先古之民专属卡牌 | 先古遗物相关卡牌 |
+| Event | 否 | 事件专属卡牌 | 特定事件奖励 |
+| **Token** | **否** | 衍生卡牌，需通过特定条件获取 | 小刀、巨石、灵魂 |
+| Status | 否 | 状态卡牌 | 虚弱、易伤 |
+| Curse | 否 | 诅咒卡牌 | 痛苦、悔恨 |
+| Quest | 否 | 任务卡牌 | 藏宝图、多尼斯异鸟蛋 |
+
+**Token 类型卡牌的使用场景**：
+
+Token 卡牌类似于游戏内置的"衍生卡"机制，不会出现在奖励卡池中，只能通过特定条件（如建筑生产、卡牌效果）获取。这对于实现"单位卡只能通过兵营/重工生产获得"的设计非常有用。
+
+**示例：将单位卡设置为 Token 类型**：
+```csharp
+public sealed class AmericanSoldier : CardModel
+{
+    // 使用 Token 类型，该卡不会出现在随机奖励池中
+    public AmericanSoldier() : base(1, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
+}
+```
+
 ### 基本结构
 ```csharp
 public class MyCard : CardModel
@@ -922,6 +968,36 @@ ProjectRoot/
 ├── RedAlert2Mod.csproj
 ├── project.godot
 └── ModInitializer.cs
+```
+
+---
+
+## 🎮 联机模式注意事项
+
+### 回合机制
+
+**重要知识点**：回合切换是以"阵营"为单位进行的。
+
+根据 `CombatManager.cs` 的源码逻辑：
+- 所有玩家轮流出牌的过程都发生在同一个"玩家方回合"内
+- 只有当所有玩家都结束回合后，才会切换到 `CombatSide.Enemy`
+- 因此 `AfterSideTurnStart(CombatSide side, CombatState combatState)` 在整个玩家方回合**只会触发一次**
+- 不会因为联机人数而重复触发
+
+**阵营判断**：
+- `side == CombatSide.Player` —— 玩家方回合开始（所有玩家共用一个回合）
+- `side == CombatSide.Enemy` —— 敌方回合开始
+
+**示例**：
+```csharp
+public override async Task AfterSideTurnStart(CombatSide side, CombatState combatState)
+{
+    if (side != CombatSide.Player)
+        return; // 跳过敌方回合
+
+    // 在玩家方回合开始时执行一次
+    await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Unpowered, null);
+}
 ```
 
 ---

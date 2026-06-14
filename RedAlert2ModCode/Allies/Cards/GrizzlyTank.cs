@@ -16,7 +16,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class GrizzlyTank : CardModel
 {
-	public GrizzlyTank() : base(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy) { }
+	public GrizzlyTank() : base(1, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/grizzly_tank.png";
 

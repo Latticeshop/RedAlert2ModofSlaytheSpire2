@@ -19,7 +19,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class ChronoMiner : CardModel
 {
-	public ChronoMiner() : base(0, CardType.Skill, CardRarity.Basic, TargetType.Self) { }
+	public ChronoMiner() : base(0, CardType.Skill, CardRarity.Token, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/ahrvicon.png";
 

@@ -17,7 +17,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class AmericanSoldier : CardModel
 {
-	public AmericanSoldier() : base(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy) { }
+	public AmericanSoldier() : base(1, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/american_soldier.png";
 

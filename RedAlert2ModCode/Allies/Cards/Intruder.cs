@@ -19,7 +19,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class Intruder : CardModel
 {
-	public Intruder() : base(2, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
+	public Intruder() : base(2, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/falcicon.png";
 
