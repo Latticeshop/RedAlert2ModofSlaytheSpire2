@@ -7,7 +7,8 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.Models.Powers;
 using RedAlert2ModCode.Allies.Powers;
-using RedAlert2ModCode.Allies.UI;
+using RedAlert2ModCode.UI;
+using RedAlert2ModCode.Utils;
 using System.Collections.Generic;
 
 namespace RedAlert2ModCode.Allies.Cards;
@@ -31,10 +32,6 @@ public sealed class AlliedMCV : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
-		// 应用基地车能力（用于显示图标）
-		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
-		await PowerCmd.Apply<AlliedMCVPower>(Owner.Creature, 1m, Owner.Creature, this);
-
 		// 使用 CombatState.CreateCard 创建正确初始化的卡牌副本
 		List<CardModel> availableCards = new();
 		
@@ -58,12 +55,22 @@ public sealed class AlliedMCV : CardModel
 		availableCards.Add(warFactoryCard);
 
 		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
-		CardModel selectedCard = await CardSelectionScreen.ShowSelection(availableCards);
+		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards);
 
-		// 如果玩家选择了卡牌，将其加入手牌
+		// 如果玩家选择了卡牌，才执行能力效果
 		if (selectedCard != null)
 		{
+			// 应用基地车能力（用于显示图标）
+			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+			await PowerCmd.Apply<AlliedMCVPower>(Owner.Creature, 1m, Owner.Creature, this);
+			
+			// 将选择的卡牌加入手牌
 			await CardPileCmd.AddGeneratedCardToCombat(selectedCard, PileType.Hand, addedByPlayer: true);
+		}
+		else
+		{
+			// 取消选择：返还费用并将卡牌放回手牌
+			await CardUtils.HandleCardCancellation(play, this, Owner);
 		}
 	}
 

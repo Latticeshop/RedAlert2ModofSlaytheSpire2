@@ -30,13 +30,14 @@ red-alert-2-mod/
 │   ├── Allies/                 # 盟军阵营
 │   │   ├── Cards/              # 卡牌定义（士兵、装甲、建筑等）
 │   │   ├── Powers/             # 能力定义
-│   │   ├── UI/                 # UI组件
+│   │   ├── Relics/             # 遗物定义
 │   │   ├── AlliedCardRegistry.cs   # 卡牌注册管理器
 │   │   ├── AlliesCardPool.cs       # 卡池
-│   │   ├── AlliesCharacter.cs
-│   │   ├── AlliesRelicPool.cs
-│   │   ├── AlliesPotionPool.cs
-│   │   └── AlliesRegistration.cs
+│   │   ├── AlliesCharacter.cs      # 角色定义
+│   │   ├── AlliesRelicPool.cs      # 遗物池
+│   │   ├── AlliesPotionPool.cs     # 药水池
+│   │   ├── AlliesRegistration.cs   # 注册入口
+│   │   └── InitialDeckExhaustPatch.cs  # 初始卡组补丁
 │   ├── Soviet/                 # 苏军阵营
 │   │   └── SovietCardRegistry.cs
 │   ├── Yuri/                   # 尤里阵营
@@ -44,26 +45,37 @@ red-alert-2-mod/
 │   ├── Other/                  # 其他阵营（利赛特、古巴等）
 │   │   └── OtherCardRegistry.cs
 │   ├── Extensions/             # 扩展方法
+│   │   └── PathExtensions.cs
+│   ├── UI/                     # UI组件
+│   │   └── CardSelectionScreen.cs
+│   ├── Utils/                  # 工具类
+│   │   └── CardUtils.cs
 │   └── ModInitializer.cs       # Mod入口
 ├── RedAlert2ModResources/      # Godot资源
 │   ├── images/                 # 图片资源
 │   │   ├── character/          # 角色立绘
 │   │   ├── charui/             # UI角色图
-│   │   ├── packed/character_select/  # 角色选择立绘
-│   │   └── powers/             # 能力图标
-│   ├── localization/zhs/       # 中文本地化
-│   │   ├── cards.json
-│   │   ├── characters.json
-│   │   ├── relics.json
-│   │   └── ...
+│   │   ├── packed/             # 打包图片
+│   │   │   ├── card_portraits/ # 卡牌肖像
+│   │   │   │   └── allies/     # 盟军卡牌
+│   │   │   └── character_select/  # 角色选择立绘
+│   │   ├── powers/             # 能力图标
+│   │   │   └── big/            # 大尺寸能力图标
+│   │   └── relics/             # 遗物图标
 │   └── scenes/                 # Godot场景
 │       ├── creature_visuals/   # 角色待机动画
-│       └── ui/character_icons/ # 角色头像图标
+│       └── ui/                 # UI场景
+│           └── character_icons/ # 角色头像图标
 ├── build/                      # 构建输出
 │   ├── RedAlert2Mod.json
 │   ├── RedAlert2Mod.pck
 │   └── RedAlert2Mod.dll
 ├── localization/zhs/           # 本地化文件（游戏读取路径）
+│   ├── cards.json
+│   ├── characters.json
+│   ├── powers.json
+│   ├── relics.json
+│   └── ...
 ├── 0Harmony.dll                # Harmony库
 ├── sts2.dll                    # 游戏核心DLL
 ├── RedAlert2Mod.csproj         # C#项目文件

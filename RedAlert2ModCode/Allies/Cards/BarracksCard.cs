@@ -10,7 +10,8 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using RedAlert2ModCode.Allies.Powers;
-using RedAlert2ModCode.Allies.UI;
+using RedAlert2ModCode.UI;
+using RedAlert2ModCode.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -22,8 +23,6 @@ public sealed class BarracksCard : CardModel
 
 		protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
-		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
-
 		GD.Print($"[BarracksCard] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
 
 		// 检查是否有空指部能力或牌库中有空军单位
@@ -45,12 +44,15 @@ public sealed class BarracksCard : CardModel
 		GD.Print($"[BarracksCard] 可用卡牌数量: {availableCards.Count}");
 
 		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
-		CardModel selectedCard = await CardSelectionScreen.ShowSelection(availableCards);
+		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards);
 
 		GD.Print($"[BarracksCard] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
 
+		// 如果玩家选择了卡牌，才执行能力效果
 		if (selectedCard != null)
 		{
+			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+			
 			// 首先设置当前活跃的图标路径（这样克隆对象也能获取）
 			PowerIconManager.SetCurrentIconPath(selectedCard.PortraitPath);
 			
@@ -72,6 +74,11 @@ public sealed class BarracksCard : CardModel
 				
 				GD.Print($"[BarracksCard] 属性设置完成 - TrainedCardId={trainingPower.TrainedCardId}, TrainedUnitIconPath={trainingPower.TrainedUnitIconPath}");
 			}
+		}
+		else
+		{
+			// 取消选择：返还费用并将卡牌放回手牌
+			await CardUtils.HandleCardCancellation(play, this, Owner);
 		}
 	}
 

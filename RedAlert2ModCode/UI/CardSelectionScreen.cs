@@ -9,11 +9,11 @@ using MegaCrit.Sts2.addons.mega_text;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Cards;
 
-namespace RedAlert2ModCode.Allies.UI;
+namespace RedAlert2ModCode.UI;
 
 public sealed partial class CardSelectionScreen : Control, IOverlayScreen
 {
-    private readonly TaskCompletionSource<CardModel> _completionSource = new();
+    private readonly TaskCompletionSource<CardModel?> _completionSource = new();
     private readonly List<CardModel> _cards;
     private ScrollContainer _scrollContainer;
     private HBoxContainer _cardsRow;
@@ -33,7 +33,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         BuildUi();
     }
 
-    public static async Task<CardModel> ShowSelection(List<CardModel> cards)
+    public static async Task<CardModel?> ShowSelection(List<CardModel> cards)
     {
         var screen = new CardSelectionScreen(cards);
         NOverlayStack.Instance?.Push(screen);
@@ -110,6 +110,23 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         {
             _cardsRow.AddChild(CreateCardButton(card));
         }
+
+        // 取消按钮
+        Button cancelButton = new()
+        {
+            Text = "X 取消",
+            CustomMinimumSize = new Vector2(160f, 50f),
+            SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
+            FocusMode = FocusModeEnum.All,
+            MouseDefaultCursorShape = CursorShape.PointingHand
+        };
+        cancelButton.AddThemeStyleboxOverride("normal", CreateCancelStyle());
+        cancelButton.AddThemeStyleboxOverride("hover", CreateCancelStyle(new Color(0.6f, 0.15f, 0.15f, 0.9f)));
+        cancelButton.AddThemeStyleboxOverride("pressed", CreateCancelStyle(new Color(0.35f, 0.08f, 0.08f, 0.95f)));
+        cancelButton.AddThemeColorOverride("font_color", new Color(1f, 0.85f, 0.85f));
+        cancelButton.AddThemeFontSizeOverride("font_size", 20);
+        cancelButton.Pressed += OnCancelClicked;
+        root.AddChild(cancelButton);
     }
 
     private Button CreateCardButton(CardModel card)
@@ -417,11 +434,35 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         return style;
     }
 
+    private StyleBoxFlat CreateCancelStyle(Color? bgColor = null)
+    {
+        StyleBoxFlat style = new();
+        style.BgColor = bgColor ?? new Color(0.45f, 0.1f, 0.1f, 0.85f);
+        style.CornerRadiusTopLeft = 8;
+        style.CornerRadiusTopRight = 8;
+        style.CornerRadiusBottomLeft = 8;
+        style.CornerRadiusBottomRight = 8;
+        style.BorderWidthLeft = 2;
+        style.BorderWidthRight = 2;
+        style.BorderWidthTop = 2;
+        style.BorderWidthBottom = 2;
+        style.BorderColor = new Color(0.8f, 0.3f, 0.3f);
+        return style;
+    }
+
     private void OnCardSelected(CardModel card)
     {
         if (_choiceLocked) return;
         _choiceLocked = true;
         _completionSource.TrySetResult(card);
+        NOverlayStack.Instance?.Remove(this);
+    }
+
+    private void OnCancelClicked()
+    {
+        if (_choiceLocked) return;
+        _choiceLocked = true;
+        _completionSource.TrySetResult(null);
         NOverlayStack.Instance?.Remove(this);
     }
 

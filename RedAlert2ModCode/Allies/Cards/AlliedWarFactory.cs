@@ -8,7 +8,8 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Allies.Powers;
-using RedAlert2ModCode.Allies.UI;
+using RedAlert2ModCode.UI;
+using RedAlert2ModCode.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -24,8 +25,6 @@ public sealed class AlliedWarFactory : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
-		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
-
 		GD.Print($"[AlliedWarFactory] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
 
 		// 使用盟军卡牌注册管理器获取所有装甲单位卡
@@ -42,12 +41,15 @@ public sealed class AlliedWarFactory : CardModel
 		}
 
 		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
-		CardModel selectedCard = await CardSelectionScreen.ShowSelection(availableCards);
+		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards);
 
 		GD.Print($"[AlliedWarFactory] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
 
+		// 如果玩家选择了卡牌，才执行能力效果
 		if (selectedCard != null)
 		{
+			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+			
 			// 如果选择的是超时空矿车，直接加入摸牌堆
 			if (selectedCard is ChronoMiner)
 			{
@@ -82,6 +84,11 @@ public sealed class AlliedWarFactory : CardModel
 					);
 				}
 			}
+		}
+		else
+		{
+			// 取消选择：返还费用并将卡牌放回手牌
+			await CardUtils.HandleCardCancellation(play, this, Owner);
 		}
 	}
 
