@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -20,14 +21,17 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class PrismTowerCard : CardModel
 {
-	public PrismTowerCard() : base(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+	// 数值引用
+	private static readonly CardValueStore.CardValues Values = AlliesCardValues.PrismTower;
+	
+	public PrismTowerCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/prisicon.png";
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new DamageVar(5m, ValueProp.Move),
-		new RepeatVar(1)
+		new DamageVar(Values.Damage, ValueProp.Move),
+		new RepeatVar(Values.Repeat)
 	};
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)

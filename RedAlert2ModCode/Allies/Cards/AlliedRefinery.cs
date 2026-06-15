@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using RedAlert2ModCode.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -14,7 +15,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class AlliedRefinery : CardModel
 {
-	public AlliedRefinery() : base(1, CardType.Power, CardRarity.Common, TargetType.Self) { }
+	public AlliedRefinery() : base((int)AlliesCardValues.AlliedRefinery.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/reficon.png";
 

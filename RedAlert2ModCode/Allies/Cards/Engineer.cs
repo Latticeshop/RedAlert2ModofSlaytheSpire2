@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
 using System.Collections.Generic;
+using RedAlert2ModCode.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -17,13 +18,16 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class Engineer : CardModel
 {
-	public Engineer() : base(0, CardType.Skill, CardRarity.Token, TargetType.Self) { }
+	// 数值引用
+	private static readonly CardValueStore.CardValues Values = AlliesCardValues.Engineer;
+	
+	public Engineer() : base((int)Values.Cost, CardType.Skill, CardRarity.Token, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/aengicon.png";
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new BlockVar(5m, ValueProp.Unpowered)
+		new BlockVar(Values.Block, ValueProp.Unpowered)
 	};
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -33,6 +37,6 @@ public sealed class Engineer : CardModel
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Block.UpgradeValueBy(3m);
+		DynamicVars.Block.UpgradeValueBy(Values.BlockUpgraded);
 	}
 }

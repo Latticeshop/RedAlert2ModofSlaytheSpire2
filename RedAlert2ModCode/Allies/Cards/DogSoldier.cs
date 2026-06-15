@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Models.Powers;
 using System.Collections.Generic;
+using RedAlert2ModCode.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -19,14 +20,17 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class DogSoldier : CardModel
 {
-	public DogSoldier() : base(0, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
+	// 数值引用
+	private static readonly CardValueStore.CardValues Values = AlliesCardValues.DogSoldier;
+	
+	public DogSoldier() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/adogicon.png";
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new DamageVar(3m, ValueProp.Move),
-		new RepeatVar(1)
+		new DamageVar(Values.Damage, ValueProp.Move),
+		new RepeatVar(Values.Repeat)
 	};
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -41,7 +45,7 @@ public sealed class DogSoldier : CardModel
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(1m);
-		DynamicVars.Repeat.UpgradeValueBy(1);
+		DynamicVars.Damage.UpgradeValueBy(Values.DamageUpgraded);
+		DynamicVars.Repeat.UpgradeValueBy(Values.RepeatUpgraded);
 	}
 }

@@ -29,8 +29,11 @@ red-alert-2-mod/
 ├── RedAlert2ModCode/           # C#源代码
 │   ├── Allies/                 # 盟军阵营
 │   │   ├── Cards/              # 卡牌定义（士兵、装甲、建筑等）
+│   │   │   └── AlliesCardValues.cs     # 卡牌数值存储
 │   │   ├── Powers/             # 能力定义
+│   │   │   └── AlliesPowerValues.cs    # 能力数值存储
 │   │   ├── Relics/             # 遗物定义
+│   │   │   └── AlliesRelicValues.cs    # 遗物数值存储
 │   │   ├── AlliedCardRegistry.cs   # 卡牌注册管理器
 │   │   ├── AlliesCardPool.cs       # 卡池
 │   │   ├── AlliesCharacter.cs      # 角色定义
@@ -39,17 +42,21 @@ red-alert-2-mod/
 │   │   ├── AlliesRegistration.cs   # 注册入口
 │   │   └── InitialDeckExhaustPatch.cs  # 初始卡组补丁
 │   ├── Soviet/                 # 苏军阵营
-│   │   └── SovietCardRegistry.cs
+│   │   ├── SovietCardRegistry.cs
+│   │   └── SovietCardValues.cs     # 卡牌数值存储
 │   ├── Yuri/                   # 尤里阵营
-│   │   └── YuriCardRegistry.cs
+│   │   ├── YuriCardRegistry.cs
+│   │   └── YuriCardValues.cs       # 卡牌数值存储
 │   ├── Other/                  # 其他阵营（利赛特、古巴等）
-│   │   └── OtherCardRegistry.cs
+│   │   ├── OtherCardRegistry.cs
+│   │   └── OtherCardValues.cs      # 卡牌数值存储
 │   ├── Extensions/             # 扩展方法
 │   │   └── PathExtensions.cs
 │   ├── UI/                     # UI组件
 │   │   └── CardSelectionScreen.cs
 │   ├── Utils/                  # 工具类
-│   │   └── CardUtils.cs
+│   │   ├── CardUtils.cs
+│   │   └── CardValueStore.cs       # 卡牌数值存储基类
 │   └── ModInitializer.cs       # Mod入口
 ├── RedAlert2ModResources/      # Godot资源
 │   ├── images/                 # 图片资源

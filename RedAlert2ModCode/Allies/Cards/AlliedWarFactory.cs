@@ -19,7 +19,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class AlliedWarFactory : CardModel
 {
-	public AlliedWarFactory() : base(1, CardType.Power, CardRarity.Common, TargetType.Self) { }
+	public AlliedWarFactory() : base((int)AlliesCardValues.AlliedWarFactory.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/gwepicon.png";
 
@@ -41,7 +41,9 @@ public sealed class AlliedWarFactory : CardModel
 		}
 
 		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
-		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards);
+		// 传递数值映射，让UI面板能够正确显示费用
+		var cardValuesMap = AlliesCardValues.CreateVehicleValuesMap();
+		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap);
 
 		GD.Print($"[AlliedWarFactory] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
 

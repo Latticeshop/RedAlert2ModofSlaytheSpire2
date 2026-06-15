@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.Helpers;
 using System.Collections.Generic;
+using RedAlert2ModCode.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -17,14 +18,17 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class AmericanSoldier : CardModel
 {
-	public AmericanSoldier() : base(1, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
+	// 数值引用
+	private static readonly CardValueStore.CardValues Values = AlliesCardValues.AmericanSoldier;
+	
+	public AmericanSoldier() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/american_soldier.png";
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new DamageVar(3m, ValueProp.Move),
-		new RepeatVar(2)
+		new DamageVar(Values.Damage, ValueProp.Move),
+		new RepeatVar(Values.Repeat)
 	};
 
 	protected override HashSet<CardTag> CanonicalTags => new() { CardTag.Strike };
@@ -40,6 +44,6 @@ public sealed class AmericanSoldier : CardModel
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(1m);
+		DynamicVars.Damage.UpgradeValueBy(Values.DamageUpgraded);
 	}
 }

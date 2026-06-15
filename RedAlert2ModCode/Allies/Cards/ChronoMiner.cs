@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.Helpers;
 using System.Collections.Generic;
 using System.Linq;
+using RedAlert2ModCode.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -19,13 +20,16 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class ChronoMiner : CardModel
 {
-	public ChronoMiner() : base(0, CardType.Skill, CardRarity.Token, TargetType.Self) { }
+	// 数值引用
+	private static readonly CardValueStore.CardValues Values = AlliesCardValues.ChronoMiner;
+	
+	public ChronoMiner() : base((int)Values.Cost, CardType.Skill, CardRarity.Token, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/ahrvicon.png";
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new IntVar("DollarValue", 500m)
+		new IntVar("DollarValue", Values.DollarValue)
 	};
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -45,6 +49,6 @@ public sealed class ChronoMiner : CardModel
 
 	protected override void OnUpgrade()
 	{
-		base.DynamicVars["DollarValue"].BaseValue = 800m;
+		base.DynamicVars["DollarValue"].BaseValue = Values.DollarValue + Values.DollarValueUpgraded;
 	}
 }

@@ -20,7 +20,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class AlliedMCV : CardModel
 {
-	public AlliedMCV() : base(0, CardType.Power, CardRarity.Rare, TargetType.Self) { }
+	public AlliedMCV() : base((int)AlliesCardValues.AlliedMCV.Cost, CardType.Power, CardRarity.Rare, TargetType.Self) { }
 
 	// 修正图片路径为实际文件名 mcvicon.png
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/mcvicon.png";
@@ -55,7 +55,9 @@ public sealed class AlliedMCV : CardModel
 		availableCards.Add(warFactoryCard);
 
 		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
-		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards);
+		// 传递数值映射，让UI面板能够正确显示费用和描述
+		var cardValuesMap = AlliesCardValues.CreateBuildingValuesMap();
+		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap);
 
 		// 如果玩家选择了卡牌，才执行能力效果
 		if (selectedCard != null)

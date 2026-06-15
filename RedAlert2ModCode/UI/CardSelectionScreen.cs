@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.addons.mega_text;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using RedAlert2ModCode.Utils;
 
 namespace RedAlert2ModCode.UI;
 
@@ -15,6 +16,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
 {
     private readonly TaskCompletionSource<CardModel?> _completionSource = new();
     private readonly List<CardModel> _cards;
+    private readonly Dictionary<string, CardValueStore.CardValues> _cardValuesMap;
     private ScrollContainer _scrollContainer;
     private HBoxContainer _cardsRow;
     private bool _choiceLocked;
@@ -23,9 +25,10 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     public bool UseSharedBackstop => true;
     public Control? DefaultFocusedControl => null;
 
-    private CardSelectionScreen(List<CardModel> cards)
+    private CardSelectionScreen(List<CardModel> cards, Dictionary<string, CardValueStore.CardValues> cardValuesMap = null)
     {
         _cards = cards;
+        _cardValuesMap = cardValuesMap ?? new Dictionary<string, CardValueStore.CardValues>();
         Name = nameof(CardSelectionScreen);
         SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
         MouseFilter = MouseFilterEnum.Stop;
@@ -36,6 +39,13 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     public static async Task<CardModel?> ShowSelection(List<CardModel> cards)
     {
         var screen = new CardSelectionScreen(cards);
+        NOverlayStack.Instance?.Push(screen);
+        return await screen._completionSource.Task;
+    }
+
+    public static async Task<CardModel?> ShowSelection(List<CardModel> cards, Dictionary<string, CardValueStore.CardValues> cardValuesMap)
+    {
+        var screen = new CardSelectionScreen(cards, cardValuesMap);
         NOverlayStack.Instance?.Push(screen);
         return await screen._completionSource.Task;
     }
@@ -173,8 +183,8 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             content.AddChild(texture);
         }
 
-        // 正确获取能量费用
-        string costText = $"费用：{GetEnergyCostText(card)}";
+        // 获取能量费用和价格
+        string costText = $"费用：{GetEnergyCostText(card)}  |  价格：${GetDollarValueText(card)}";
 
         MegaLabel cost = new()
         {
@@ -262,66 +272,23 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
 
     private string GetEnergyCostText(CardModel card)
     {
-        // 首先尝试直接获取 card 的 BaseCost 属性
-        var cardType = card.GetType();
-        var baseCostProp = cardType.GetProperty("BaseCost");
-        if (baseCostProp != null)
+        string cardKey = card.Id.Entry.ToUpper();
+        if (_cardValuesMap.TryGetValue(cardKey, out var values))
         {
-            var baseCost = baseCostProp.GetValue(card);
-            if (baseCost != null)
-            {
-                return baseCost.ToString();
-            }
+            int cost = card.IsUpgraded ? values.Cost + values.CostUpgraded : values.Cost;
+            return cost.ToString();
         }
         
-        // 尝试获取 Cost 属性
-        var costProp = cardType.GetProperty("Cost");
-        if (costProp != null)
+        return "0";
+    }
+    
+    private string GetDollarValueText(CardModel card)
+    {
+        string cardKey = card.Id.Entry.ToUpper();
+        if (_cardValuesMap.TryGetValue(cardKey, out var values))
         {
-            var cost = costProp.GetValue(card);
-            if (cost != null)
-            {
-                return cost.ToString();
-            }
-        }
-        
-        // 如果 card.EnergyCost 不为空，尝试从这里获取
-        if (card.EnergyCost != null)
-        {
-            var costType = card.EnergyCost.GetType();
-            
-            // 尝试获取 Value 属性
-            var valueProp = costType.GetProperty("Value");
-            if (valueProp != null)
-            {
-                var value = valueProp.GetValue(card.EnergyCost);
-                if (value != null)
-                {
-                    return value.ToString();
-                }
-            }
-            
-            // 尝试获取 IntegerValue 属性
-            var intValueProp = costType.GetProperty("IntegerValue");
-            if (intValueProp != null)
-            {
-                var intValue = intValueProp.GetValue(card.EnergyCost);
-                if (intValue != null)
-                {
-                    return intValue.ToString();
-                }
-            }
-            
-            // 尝试获取 _value 字段
-            var valueField = costType.GetField("_value", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            if (valueField != null)
-            {
-                var value = valueField.GetValue(card.EnergyCost);
-                if (value != null)
-                {
-                    return value.ToString();
-                }
-            }
+            decimal value = card.IsUpgraded ? values.DollarValue + values.DollarValueUpgraded : values.DollarValue;
+            return value.ToString();
         }
         
         return "0";
@@ -346,10 +313,12 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         }
 
         // 处理 {IfUpgraded:show:xxx|} 格式的条件标签
-        // 如果是升级卡牌，提取 :show: 和 | 之间的内容；否则移除整个标签
         desc = ProcessIfUpgradedTags(desc, isUpgraded);
 
-        // 转义动态变量（如 {Damage}, {Repeat}, {Block} 等）
+        // 优先从数值映射中获取数值替换变量
+        desc = ReplaceVarsFromStore(card, desc, isUpgraded);
+
+        // 如果还有未替换的变量，尝试从动态变量获取
         desc = ReplaceDynamicVars(card, desc);
 
         return desc;
@@ -357,11 +326,63 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
 
     private string ProcessIfUpgradedTags(string text, bool isUpgraded)
     {
-        // 匹配 {IfUpgraded:show:升级内容|普通内容} 格式
-        // 如果是升级卡牌，保留升级内容；否则保留普通内容
         return System.Text.RegularExpressions.Regex.Replace(text, 
             @"\{IfUpgraded:show:([^|]+)\|([^}]*)\}", 
             match => isUpgraded ? match.Groups[1].Value.Trim() : match.Groups[2].Value.Trim());
+    }
+
+    private string ReplaceVarsFromStore(CardModel card, string text, bool isUpgraded)
+    {
+        CardValueStore.CardValues values = FindCardValues(card.Id.Entry);
+        if (values != null)
+        {
+            text = text.Replace("{Damage}", values.GetDamage(isUpgraded).ToString());
+            text = text.Replace("{Block}", values.GetBlock(isUpgraded).ToString());
+            text = text.Replace("{Repeat}", values.GetRepeat(isUpgraded).ToString());
+            text = text.Replace("{Cost}", values.GetCost(isUpgraded).ToString());
+            text = text.Replace("{MagicNumber}", values.GetMagicNumber(isUpgraded).ToString());
+            text = text.Replace("{DollarValue}", values.GetDollarValue(isUpgraded).ToString());
+        }
+        
+        return text;
+    }
+    
+    private CardValueStore.CardValues FindCardValues(string cardEntry)
+    {
+        string cardKey = cardEntry.ToUpper();
+        
+        if (_cardValuesMap.TryGetValue(cardKey, out var values))
+        {
+            return values;
+        }
+        
+        string withoutUnderscore = cardKey.Replace("_", "");
+        if (_cardValuesMap.TryGetValue(withoutUnderscore, out values))
+        {
+            return values;
+        }
+        
+        string withUnderscore = InsertUnderscores(cardKey);
+        if (_cardValuesMap.TryGetValue(withUnderscore, out values))
+        {
+            return values;
+        }
+        
+        return null;
+    }
+    
+    private string InsertUnderscores(string str)
+    {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        for (int i = 0; i < str.Length; i++)
+        {
+            if (i > 0 && char.IsUpper(str[i]) && char.IsLower(str[i - 1]))
+            {
+                sb.Append('_');
+            }
+            sb.Append(str[i]);
+        }
+        return sb.ToString();
     }
 
     private string ReplaceDynamicVars(CardModel card, string text)
@@ -371,13 +392,11 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             return text;
         }
 
-        // 遍历所有动态变量，替换文本中的 {VarName} 为实际值
         foreach (var varItem in card.DynamicVars)
         {
             string varName = varItem.GetType().Name.Replace("Var", "");
             string pattern = $"\\{{{varName}\\}}";
             
-            // 尝试获取变量值
             object? value = null;
             var valueProp = varItem.GetType().GetProperty("Value");
             if (valueProp != null)

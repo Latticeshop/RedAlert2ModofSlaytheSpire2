@@ -7,23 +7,27 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.Helpers;
+using RedAlert2ModCode.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
 /// 灰熊坦克 - 类似于铁斩波的攻击牌
-/// 1费5攻击5防御
+/// 1费5攻击5防御，升级后8攻击8防御
 /// </summary>
 public sealed class GrizzlyTank : CardModel
 {
-	public GrizzlyTank() : base(1, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
+	// 数值引用
+	private static readonly CardValueStore.CardValues Values = AlliesCardValues.GrizzlyTank;
+	
+	public GrizzlyTank() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/grizzly_tank.png";
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new DamageVar(5m, ValueProp.Move),
-		new BlockVar(5m, ValueProp.Move)
+		new DamageVar(Values.Damage, ValueProp.Move),
+		new BlockVar(Values.Block, ValueProp.Move)
 	};
 
 	protected override HashSet<CardTag> CanonicalTags => new() { CardTag.Defend };
@@ -40,7 +44,7 @@ public sealed class GrizzlyTank : CardModel
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(3m);
-		DynamicVars.Block.UpgradeValueBy(3m);
+		DynamicVars.Damage.UpgradeValueBy(Values.DamageUpgraded);
+		DynamicVars.Block.UpgradeValueBy(Values.BlockUpgraded);
 	}
 }

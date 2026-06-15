@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
+using RedAlert2ModCode.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -18,26 +19,29 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class AlliedWallCard : CardModel
 {
-    public AlliedWallCard() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+	// 数值引用
+	private static readonly CardValueStore.CardValues Values = AlliesCardValues.AlliedWall;
+	
+	public AlliedWallCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
 
-    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/wallicon.png";
+	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/wallicon.png";
 
-    protected override List<DynamicVar> CanonicalVars => new()
-    {
-        new BlockVar(5m, ValueProp.Unpowered)
-    };
+	protected override List<DynamicVar> CanonicalVars => new()
+	{
+		new BlockVar(Values.Block, ValueProp.Unpowered)
+	};
 
-    protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
-    {
-        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
-        
-        // 获得护盾
-        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
-    }
+	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+	{
+		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+		
+		// 获得护盾
+		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
+	}
 
-    protected override void OnUpgrade()
-    {
-        // 升级后护盾从5点提升到8点
-        DynamicVars.Block.UpgradeValueBy(3m);
-    }
+	protected override void OnUpgrade()
+	{
+		// 升级后护盾提升
+		DynamicVars.Block.UpgradeValueBy(Values.BlockUpgraded);
+	}
 }

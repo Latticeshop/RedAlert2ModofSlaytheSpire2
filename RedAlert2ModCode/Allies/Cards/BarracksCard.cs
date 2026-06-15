@@ -17,7 +17,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 
 public sealed class BarracksCard : CardModel
 	{
-		public BarracksCard() : base(1, CardType.Power, CardRarity.Common, TargetType.Self) { }
+		public BarracksCard() : base((int)AlliesCardValues.Barracks.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
 		public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/brrkicon.png";
 
@@ -44,7 +44,9 @@ public sealed class BarracksCard : CardModel
 		GD.Print($"[BarracksCard] 可用卡牌数量: {availableCards.Count}");
 
 		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
-		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards);
+		// 传递数值映射，让UI面板能够正确显示费用
+		var cardValuesMap = AlliesCardValues.CreateSoldierValuesMap();
+		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap);
 
 		GD.Print($"[BarracksCard] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
 
