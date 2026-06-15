@@ -23,6 +23,8 @@
     "POWER_PLANT_CARD.description": "每抽 {IfUpgraded:show:7|10} 张牌获得 1 点能量。",
     "ALLIED_WALL_CARD.title": "盟军围墙",
     "ALLIED_WALL_CARD.description": "获得 {Block} 点护盾。",
+    "PILLBOX_CARD.title": "机枪碉堡",
+    "PILLBOX_CARD.description": "回合开始时对敌人造成 {Damage} 点伤害，获得 {Block} 点防御。",
     "CHRONO_MINER.title": "超时空矿车",
     "CHRONO_MINER.description": "获得 {DollarValue} 资金。超时空：使用后将此牌加入摸牌堆。",
     "INTRUDER.title": "入侵者战机",
@@ -30,5 +32,5 @@
     "AIR_FORCE_COMMAND.title": "空指部",
     "AIR_FORCE_COMMAND.description": "选择一张空军单位，之后每回合在摸牌堆添加一张临时的0费且消耗的单位序列。{IfUpgraded:show:单位序列升级。|}",
     "PRISM_TOWER_CARD.title": "光棱塔",
-    "PRISM_TOWER_CARD.description": "回合开始时对随机敌人造成 {Damage} 点伤害 {Repeat} 次。叠加时伤害+{IfUpgraded:show:5|2}。"
+    "PRISM_TOWER_CARD.description": "回合开始时对敌人造成 {Damage} 点伤害 {Repeat} 次。叠加时伤害+{IfUpgraded:show:5|2}。"
 }

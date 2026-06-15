@@ -44,14 +44,18 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<AlliedMCV>(),
         () => ModelDb.Card<PowerPlantCard>(),
         () => ModelDb.Card<AirForceCommand>(),
+        () => ModelDb.Card<AlliedRefinery>(),
         () => ModelDb.Card<PrismTowerCard>(),
-        () => ModelDb.Card<AlliedRefinery>()
+        () => ModelDb.Card<AlliedWallCard>(),
+        () => ModelDb.Card<PillboxCard>()
     };
 
     // 盟军技能卡
     public static List<Func<CardModel>> PowerCards { get; } = new()
     {
-        () => ModelDb.Card<AlliedWallCard>()
+        () => ModelDb.Card<PrismTowerCard>(),
+        () => ModelDb.Card<AlliedWallCard>(),
+        () => ModelDb.Card<PillboxCard>()
     };
 
     // 盟军特殊卡

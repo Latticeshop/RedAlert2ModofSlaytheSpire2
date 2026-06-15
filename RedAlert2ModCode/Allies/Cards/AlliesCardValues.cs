@@ -144,6 +144,16 @@ public static class AlliesCardValues
 		Repeat = 1
 	};
 	
+	/// <summary>机枪碉堡 - 1费，每回合对随机敌人造成2伤害，自己获得5防御</summary>
+	public static CardValueStore.CardValues Pillbox => new()
+	{
+		Cost = 1,
+		Damage = 2,
+		DamageUpgraded = 1,
+		Block = 5,
+		BlockUpgraded = 3
+	};
+	
 	// ==================== 经济单位 ====================
 	
 	/// <summary>超时空矿车 - 0费获得500资金，升级后800资金</summary>
@@ -196,7 +206,8 @@ public static class AlliesCardValues
 			{ "ALLIEDREFINERY", AlliedRefinery },
 			{ "ALLIEDMCV", AlliedMCV },
 			{ "PRISMTOWERCARD", PrismTower },
-			{ "ALLIEDWALLCARD", AlliedWall }
+			{ "ALLIEDWALLCARD", AlliedWall },
+			{ "PILLBOXCARD", Pillbox }
 		};
 	}
 	

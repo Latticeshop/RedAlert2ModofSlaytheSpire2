@@ -26,6 +26,7 @@ public static class PowerIconPatch
         { typeof(RocketSoldierTemporaryDexterityPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/jjeticon.png" },
         { typeof(PrismTowerPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/prisicon.png" },
         { typeof(DollarPower), "res://RedAlert2ModResources/images/packed/powers/dollar_power.png" },
+        { typeof(PillboxPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/pillicon.png" },
     };
 
     /// <summary>
