@@ -283,7 +283,7 @@ public sealed class AlliesCardPool : CardPoolModel
 **规则2：资金消耗本地化格式**
 - 任何需要消耗"资金"的**非单位**卡牌（如建筑卡、技能卡），必须在本地化描述的开头加上"价格：xxx。"
 - **单位卡**的价格由生产序列能力在选择时消耗，一般不在本地化描述中展示价格
-- 示例：`"ALLIED_WALL_CARD.description": "价格：{MagicNumber}。获得 {Block} 点护盾。将此牌返回你的手牌。"`
+- 示例：`"ALLIED_WALL_CARD.description": "价格：${DollarNumber}。获得 {Block} 点护盾。将此牌返回你的手牌。"`
 
 **数值存储示例**：
 ```csharp

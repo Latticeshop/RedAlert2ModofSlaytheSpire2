@@ -153,7 +153,7 @@ public static class CardUtils
 	}
 	
 	/// <summary>
-	/// 处理卡牌取消选择：返还费用并将卡牌放回手牌
+	/// 处理卡牌取消选择：返还费用和资金，并将卡牌放回手牌
 	/// 参考原版 ParticleWall 卡牌的返回逻辑实现
 	/// </summary>
 	/// <param name="play">卡牌打出信息，包含实际打出的卡牌实体</param>
@@ -165,6 +165,7 @@ public static class CardUtils
 		
 		GD.Print($"[CardUtils] 取消选择卡牌，费用={cost}");
 		
+		// 返还能量
 		if (cost > 0 && owner != null)
 		{
 			await PlayerCmd.GainEnergy(cost, owner);
@@ -173,6 +174,13 @@ public static class CardUtils
 		else if (cost > 0)
 		{
 			GD.PrintErr("[CardUtils] 无法获取 Player 对象，能量返还失败");
+		}
+		
+		// 返还资金（刀乐）
+		// 特殊处理：基地车打出时不消耗资金，所以取消选择时也不返还资金
+		if (!IsMcvCard(cardModel))
+		{
+			await RefundDollarCost(cardModel, owner);
 		}
 		
 		// 使用 play.Card（实际打出的卡牌实体）而不是 cardModel（卡牌模板）
@@ -202,5 +210,85 @@ public static class CardUtils
 		{
 			GD.PrintErr("[CardUtils] 无法获取实际卡牌实体，放回手牌失败");
 		}
+	}
+	
+	/// <summary>
+	/// 返还卡牌的资金消耗
+	/// </summary>
+	/// <param name="cardModel">卡牌模型</param>
+	/// <param name="owner">卡牌拥有者（Player 类型）</param>
+	private static async Task RefundDollarCost(CardModel cardModel, Player owner)
+	{
+		if (owner?.Creature == null)
+		{
+			GD.PrintErr("[CardUtils] 无法获取 Creature 对象，资金返还失败");
+			return;
+		}
+		
+		// 获取卡牌的资金消耗
+		int dollarCost = GetCardDollarCost(cardModel);
+		if (dollarCost <= 0)
+		{
+			return;
+		}
+		
+		// 获取刀乐能力
+		var dollarPower = owner.Creature.Powers.OfType<RedAlert2ModCode.Allies.Powers.DollarPower>().FirstOrDefault();
+		if (dollarPower != null)
+		{
+			dollarPower.AddDollar(dollarCost);
+			GD.Print($"[CardUtils] 已返还 {dollarCost} 资金给玩家");
+		}
+		else
+		{
+			GD.PrintErr("[CardUtils] 无法获取 DollarPower，资金返还失败");
+		}
+	}
+	
+	/// <summary>
+	/// 获取卡牌的资金消耗
+	/// </summary>
+	/// <param name="cardModel">卡牌模型</param>
+	/// <returns>资金消耗值</returns>
+	public static int GetCardDollarCost(CardModel cardModel)
+	{
+		if (cardModel == null || string.IsNullOrEmpty(cardModel.Id.Entry))
+		{
+			return 0;
+		}
+		
+		// 从 AlliesCardValues 获取卡牌的资金消耗
+		return RedAlert2ModCode.Allies.Cards.AlliesCardValues.GetDollarValue(cardModel.Id.Entry);
+	}
+	
+	/// <summary>
+	/// 判断卡牌是否是基地车卡牌
+	/// </summary>
+	/// <param name="cardModel">卡牌模型</param>
+	/// <returns>是否是基地车卡牌</returns>
+	public static bool IsMcvCard(CardModel cardModel)
+	{
+		if (cardModel == null || string.IsNullOrEmpty(cardModel.Id.Entry))
+		{
+			return false;
+		}
+		
+		string cardId = cardModel.Id.Entry.ToUpper();
+		// 去掉下划线后再匹配，避免 "ALLIED_MC_V" 无法匹配 "MCV" 的问题
+		string normalizedId = cardId.Replace("_", "");
+		GD.Print($"[CardUtils] 检查卡牌是否是基地车 - CardId={cardId}, Normalized={normalizedId}");
+		
+		// 检查是否是基地车卡牌（包含盟军、苏军、尤里的基地车）
+		bool isMcv = normalizedId.Contains("MCV") || 
+		             normalizedId.Contains("BASE") || 
+		             normalizedId.Contains("COMMANDCENTER") ||
+		             normalizedId.Contains("ALLIEDMCV");
+		
+		if (isMcv)
+		{
+			GD.Print($"[CardUtils] 识别到基地车卡牌: {cardId}");
+		}
+		
+		return isMcv;
 	}
 }

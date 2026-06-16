@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.addons.mega_text;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Utils;
 
 namespace RedAlert2ModCode.UI;
@@ -273,10 +274,42 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     private string GetEnergyCostText(CardModel card)
     {
         string cardKey = card.Id.Entry.ToUpper();
+        
+        // 1. 尝试从传递的映射中获取
         if (_cardValuesMap.TryGetValue(cardKey, out var values))
         {
             int cost = card.IsUpgraded ? values.Cost + values.CostUpgraded : values.Cost;
             return cost.ToString();
+        }
+        
+        // 2. 如果传递的映射中没有，尝试使用 FindCardValues 方法查找
+        CardValueStore.CardValues foundValues = FindCardValues(card.Id.Entry);
+        if (foundValues != null)
+        {
+            int cost = card.IsUpgraded ? foundValues.Cost + foundValues.CostUpgraded : foundValues.Cost;
+            return cost.ToString();
+        }
+        
+        // 3. 尝试从卡牌本身获取费用
+        if (card.EnergyCost != null)
+        {
+            try
+            {
+                var resolvedCost = card.EnergyCost.GetResolved();
+                return ((int)resolvedCost).ToString();
+            }
+            catch
+            {
+                try
+                {
+                    var canonicalCost = card.EnergyCost.Canonical;
+                    return ((int)canonicalCost).ToString();
+                }
+                catch
+                {
+                    // 继续尝试其他方式
+                }
+            }
         }
         
         return "0";
@@ -284,6 +317,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     
     private string GetDollarValueText(CardModel card)
     {
+        // 首先尝试从传递的映射中获取
         string cardKey = card.Id.Entry.ToUpper();
         if (_cardValuesMap.TryGetValue(cardKey, out var values))
         {
@@ -291,7 +325,16 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             return value.ToString();
         }
         
-        return "0";
+        // 如果传递的映射中没有，尝试使用 FindCardValues 方法查找
+        CardValueStore.CardValues foundValues = FindCardValues(card.Id.Entry);
+        if (foundValues != null)
+        {
+            decimal value = card.IsUpgraded ? foundValues.DollarValue + foundValues.DollarValueUpgraded : foundValues.DollarValue;
+            return value.ToString();
+        }
+        
+        // 最后尝试从 AlliesCardValues 获取
+        return AlliesCardValues.GetDollarValue(card.Id.Entry).ToString();
     }
 
     private string GetCardTitle(CardModel card)
@@ -342,6 +385,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             text = text.Replace("{Cost}", values.GetCost(isUpgraded).ToString());
             text = text.Replace("{MagicNumber}", values.GetMagicNumber(isUpgraded).ToString());
             text = text.Replace("{DollarValue}", values.GetDollarValue(isUpgraded).ToString());
+            text = text.Replace("{DollarNumber}", values.GetDollarValue(isUpgraded).ToString());
         }
         
         return text;

@@ -3,7 +3,7 @@
 	"name": "红警2mod",
 	"author": "小格子铺",
 	"description": "内测版本，尽情期待",
-	"version": "v0.5.5.2",
+	"version": "v0.6.0.1",
 	"has_pck": true,
 	"has_dll": true,
 	"dependencies": [

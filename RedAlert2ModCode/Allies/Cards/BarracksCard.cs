@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -17,13 +18,43 @@ namespace RedAlert2ModCode.Allies.Cards;
 
 public sealed class BarracksCard : CardModel
 	{
-		public BarracksCard() : base((int)AlliesCardValues.Barracks.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
+		private static readonly CardValueStore.CardValues Values = AlliesCardValues.Barracks;
+		
+		public BarracksCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
 		public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/brrkicon.png";
+		
+		protected override List<DynamicVar> CanonicalVars => new()
+		{
+			new IntVar("DollarNumber", Values.DollarValue)
+		};
+
+		protected override bool IsPlayable
+		{
+			get
+			{
+				if (!base.IsPlayable)
+					return false;
+
+				var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+				if (dollarPower == null || dollarPower.DollarValue < AlliesCardValues.Barracks.DollarValue)
+					return false;
+
+				return true;
+			}
+		}
 
 		protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		GD.Print($"[BarracksCard] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
+
+		// 扣除资金
+		var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+		if (dollarPower != null)
+		{
+			dollarPower.AddDollar(-(int)AlliesCardValues.Barracks.DollarValue);
+			GD.Print($"[BarracksCard] 扣除资金 {AlliesCardValues.Barracks.DollarValue}");
+		}
 
 		// 检查是否有空指部能力或牌库中有空军单位
 		bool hasAirForceCommand = HasAirForceCommand();
@@ -55,12 +86,16 @@ public sealed class BarracksCard : CardModel
 		{
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			
+			// 获取单位价格
+			int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
+			
 			// 使用统一的训练队列能力应用方法
 			await TrainingQueuePower.ApplyTrainingQueue(
 				owner: Owner.Creature,
 				cardId: selectedCard.Id.Entry,
 				unitName: selectedCard.Title.ToString(),
 				iconPath: selectedCard.PortraitPath,
+				unitPrice: unitPrice,
 				isUpgraded: base.IsUpgraded,
 				sourceCard: this
 			);

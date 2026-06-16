@@ -27,14 +27,38 @@ public sealed class PillboxCard : CardModel
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/pillicon.png";
 
+	protected override bool IsPlayable
+	{
+		get
+		{
+			if (!base.IsPlayable)
+				return false;
+
+			var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+			if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
+				return false;
+
+			return true;
+		}
+	}
+
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
 		new DamageVar(Values.Damage, ValueProp.Unpowered),
-		new BlockVar(Values.Block, ValueProp.Unpowered)
+		new BlockVar(Values.Block, ValueProp.Unpowered),
+		new IntVar("DollarNumber", Values.DollarValue)
 	};
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
+		// 扣除资金
+		var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+		if (dollarPower != null)
+		{
+			dollarPower.AddDollar(-(int)Values.DollarValue);
+			GD.Print($"[PillboxCard] 扣除资金 {Values.DollarValue}");
+		}
+
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 		
 		GD.Print($"[PillboxCard] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");

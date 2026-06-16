@@ -10,55 +10,67 @@ public static class AlliesCardValues
 {
 	// ==================== 士兵单位 ====================
 	
-	/// <summary>美国大兵 - 1费3伤害两次，升级后4伤害两次</summary>
+	/// <summary>美国大兵 - 1费3伤害两次，升级后4伤害两次，价格200</summary>
 	public static CardValueStore.CardValues AmericanSoldier => new()
 	{
 		Cost = 1,
 		Damage = 3,
 		DamageUpgraded = 1,
-		Repeat = 2
+		Repeat = 2,
+		DollarValue = 200
 	};
 	
-	/// <summary>军犬 - 0费3伤害1层虚弱，升级后4伤害2层虚弱</summary>
+	/// <summary>军犬 - 0费3伤害1层虚弱，升级后4伤害2层虚弱，价格200</summary>
 	public static CardValueStore.CardValues DogSoldier => new()
 	{
 		Cost = 0,
 		Damage = 3,
 		DamageUpgraded = 1,
 		Repeat = 1,
-		RepeatUpgraded = 1
+		RepeatUpgraded = 1,
+		DollarValue = 200
 	};
 	
-	/// <summary>火箭飞行兵 - 0费1伤害2次，获得2点敏捷</summary>
+	/// <summary>火箭飞行兵 - 0费1伤害2次，获得2点敏捷，价格600</summary>
 	public static CardValueStore.CardValues RocketSoldier => new()
 	{
 		Cost = 0,
 		Damage = 1,
 		Repeat = 2,
-		MagicNumber = 2  // 敏捷值
+		MagicNumber = 2,  // 敏捷值
+		DollarValue = 600
 	};
 	
-	/// <summary>工程师 - 0费5护盾，升级后8护盾</summary>
+	/// <summary>工程师 - 0费5护盾，升级后8护盾，价格500</summary>
 	public static CardValueStore.CardValues Engineer => new()
 	{
 		Cost = 0,
 		Block = 5,
-		BlockUpgraded = 3
+		BlockUpgraded = 3,
+		DollarValue = 500
 	};
 	
 	// ==================== 装甲单位 ====================
-	
-	/// <summary>灰熊坦克 - 1费5攻击5防御，升级后8攻击8防御</summary>
+	/// <summary>盟军基地车 - 0费，价格3000</summary>
+	public static CardValueStore.CardValues AlliedMCV => new()
+	{
+		Cost = 0,
+		DollarValue = 3000
+		// 基地车主要是功能牌
+	};
+
+	/// <summary>灰熊坦克 - 1费5攻击5防御，升级后8攻击8防御，价格700</summary>
 	public static CardValueStore.CardValues GrizzlyTank => new()
 	{
 		Cost = 1,
 		Damage = 5,
 		DamageUpgraded = 3,
 		Block = 5,
-		BlockUpgraded = 3
+		BlockUpgraded = 3,
+		DollarValue = 700
 	};
 	
-	/// <summary>IFV步兵战车 - 1费，获得1点敏捷，2伤害2次，2护盾，升级后2伤害4次</summary>
+	/// <summary>IFV步兵战车 - 1费，获得1点敏捷，2伤害2次，2护盾，升级后2伤害4次，价格600</summary>
 	public static CardValueStore.CardValues Ifv => new()
 	{
 		Cost = 1,
@@ -66,103 +78,105 @@ public static class AlliesCardValues
 		Repeat = 2,
 		RepeatUpgraded = 2,
 		Block = 2,
-		MagicNumber = 1  // 敏捷值
+		MagicNumber = 1,  // 敏捷值
+		DollarValue = 600
 	};
 	
 	// ==================== 空军单位 ====================
 	
-	/// <summary>入侵者战机 - 2费10伤害2层易伤，升级后13伤害3层易伤</summary>
+	/// <summary>入侵者战机 - 2费10伤害2层易伤，升级后13伤害3层易伤，价格1200</summary>
 	public static CardValueStore.CardValues Intruder => new()
 	{
 		Cost = 2,
 		Damage = 10,
 		DamageUpgraded = 3,
 		Repeat = 2,
-		RepeatUpgraded = 1
+		RepeatUpgraded = 1,
+		DollarValue = 1200
 	};
 	
 	// ==================== 建筑卡牌 ====================
 	
-	/// <summary>兵营 - 1费</summary>
+	/// <summary>兵营 - 1费，价格500</summary>
 	public static CardValueStore.CardValues Barracks => new()
 	{
 		Cost = 1,
+		DollarValue = 500
 		// 兵营主要是功能牌，数值由具体生成的单位决定
 	};
 	
-	/// <summary>盟军重工 - 1费</summary>
+	/// <summary>盟军重工 - 1费，价格2000</summary>
 	public static CardValueStore.CardValues AlliedWarFactory => new()
 	{
 		Cost = 1,
+		DollarValue = 2000
 		// 重工主要是功能牌，数值由具体生成的单位决定
 	};
 	
-	/// <summary>空指部 - 1费</summary>
+	/// <summary>空指部 - 1费，价格1000</summary>
 	public static CardValueStore.CardValues AirForceCommand => new()
 	{
 		Cost = 1,
+		DollarValue = 1000
 		// 空指部主要是功能牌，数值由具体生成的单位决定
 	};
 	
-	/// <summary>发电厂 - 1费，每抽10张牌获得1能量，升级后7张</summary>
+	/// <summary>发电厂 - 1费，每抽10张牌获得1能量，升级后7张，价格800</summary>
 	public static CardValueStore.CardValues PowerPlant => new()
 	{
 		Cost = 1,
 		MagicNumber = 10,  // 抽牌阈值
-		MagicNumberUpgraded = -3  // 升级后 7 = 10 + (-3)
+		MagicNumberUpgraded = -3,  // 升级后 7 = 10 + (-3)
+		DollarValue = 800
 	};
 	
-	/// <summary>矿场 - 1费</summary>
+	/// <summary>矿场 - 1费，价格2000</summary>
 	public static CardValueStore.CardValues AlliedRefinery => new()
 	{
 		Cost = 1,
+		DollarValue = 2000
 		// 矿场主要是功能牌
-	};
-	
-	/// <summary>盟军基地车 - 0费</summary>
-	public static CardValueStore.CardValues AlliedMCV => new()
-	{
-		Cost = 0,
-		// 基地车主要是功能牌
 	};
 	
 	// ==================== 防御建筑 ====================
 	
-	/// <summary>盟军围墙 - 0费1护盾，花费100资金，升级后3护盾</summary>
+	/// <summary>盟军围墙 - 0费1护盾，花费100资金，升级后3护盾，价格100</summary>
 	public static CardValueStore.CardValues AlliedWall => new()
 	{
 		Cost = 0,
 		Block = 1,
-		BlockUpgraded = 1,
+		BlockUpgraded = 2,
 		DollarValue = 100
 	};
 	
-	/// <summary>光棱塔 - 2费，回合开始时对随机敌人造成5伤害1次</summary>
+	/// <summary>光棱塔 - 2费，回合开始时对随机敌人造成5伤害1次，价格1500</summary>
 	public static CardValueStore.CardValues PrismTower => new()
 	{
 		Cost = 2,
 		Damage = 5,
-		Repeat = 1
+		Repeat = 1,
+		DollarValue = 1500
 	};
 	
-	/// <summary>机枪碉堡 - 1费，每回合对随机敌人造成2伤害，自己获得5防御</summary>
+	/// <summary>机枪碉堡 - 1费，每回合对随机敌人造成2伤害，自己获得5防御，价格500</summary>
 	public static CardValueStore.CardValues Pillbox => new()
 	{
 		Cost = 1,
 		Damage = 2,
 		DamageUpgraded = 1,
 		Block = 5,
-		BlockUpgraded = 3
+		BlockUpgraded = 3,
+		DollarValue = 500
 	};
 	
 	// ==================== 经济单位 ====================
 	
-	/// <summary>超时空矿车 - 0费获得500资金，升级后800资金</summary>
+	/// <summary>超时空矿车 - 0费获得1000资金，升级后1500资金</summary>
 	public static CardValueStore.CardValues ChronoMiner => new()
 	{
 		Cost = 0,
-		DollarValue = 500,
-		DollarValueUpgraded = 300
+		DollarValue = 1000,
+		DollarValueUpgraded = 500
 	};
 	
 	// ==================== 数值映射创建方法 ====================
@@ -184,6 +198,7 @@ public static class AlliesCardValues
 		{
 			{ "GRIZZLYTANK", GrizzlyTank },
 			{ "IFV", Ifv },
+			{ "ALLIEDMCV", AlliedMCV },
 			{ "CHRONOMINER", ChronoMiner }
 		};
 	}
@@ -205,7 +220,6 @@ public static class AlliesCardValues
 			{ "AIRFORCECOMMAND", AirForceCommand },
 			{ "POWERPLANTCARD", PowerPlant },
 			{ "ALLIEDREFINERY", AlliedRefinery },
-			{ "ALLIEDMCV", AlliedMCV },
 			{ "PRISMTOWERCARD", PrismTower },
 			{ "ALLIEDWALLCARD", AlliedWall },
 			{ "PILLBOXCARD", Pillbox }
@@ -229,5 +243,26 @@ public static class AlliesCardValues
 			map[kvp.Key] = kvp.Value;
 		
 		return map;
+	}
+	
+	/// <summary>
+	/// 根据卡牌ID获取单位价格
+	/// </summary>
+	/// <param name="cardId">卡牌ID</param>
+	/// <returns>单位价格，未找到则返回0</returns>
+	public static int GetDollarValue(string cardId)
+	{
+		if (string.IsNullOrEmpty(cardId))
+			return 0;
+		
+		string key = cardId.ToUpper().Replace("_", "");
+		var allValues = CreateAllValuesMap();
+		
+		if (allValues.TryGetValue(key, out var values))
+		{
+			return (int)values.DollarValue;
+		}
+		
+		return 0;
 	}
 }

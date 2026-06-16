@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Utils;
@@ -15,12 +17,42 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class AlliedRefinery : CardModel
 {
-	public AlliedRefinery() : base((int)AlliesCardValues.AlliedRefinery.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
+	private static readonly CardValueStore.CardValues Values = AlliesCardValues.AlliedRefinery;
+	
+	public AlliedRefinery() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/reficon.png";
+	
+	protected override List<DynamicVar> CanonicalVars => new()
+	{
+		new IntVar("DollarNumber", Values.DollarValue)
+	};
+
+	protected override bool IsPlayable
+	{
+		get
+		{
+			if (!base.IsPlayable)
+				return false;
+
+			var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+			if (dollarPower == null || dollarPower.DollarValue < AlliesCardValues.AlliedRefinery.DollarValue)
+				return false;
+
+			return true;
+		}
+	}
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
+		// 扣除资金
+		var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+		if (dollarPower != null)
+		{
+			dollarPower.AddDollar(-(int)AlliesCardValues.AlliedRefinery.DollarValue);
+			GD.Print($"[AlliedRefinery] 扣除资金 {AlliesCardValues.AlliedRefinery.DollarValue}");
+		}
+
 		// 检查 Owner 和相关对象
 		if (Owner == null)
 		{

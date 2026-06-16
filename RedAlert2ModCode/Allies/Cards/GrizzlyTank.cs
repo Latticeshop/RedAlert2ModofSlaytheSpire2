@@ -20,7 +20,7 @@ public sealed class GrizzlyTank : CardModel
 	// 数值引用
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.GrizzlyTank;
 	
-	public GrizzlyTank() : base((int)Values.Cost, CardType.Skill, CardRarity.Token, TargetType.AnyEnemy) { }
+	public GrizzlyTank() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/grizzly_tank.png";
 

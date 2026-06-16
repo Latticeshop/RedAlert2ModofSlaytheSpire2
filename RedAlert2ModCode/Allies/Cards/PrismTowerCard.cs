@@ -28,14 +28,38 @@ public sealed class PrismTowerCard : CardModel
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/prisicon.png";
 
+	protected override bool IsPlayable
+	{
+		get
+		{
+			if (!base.IsPlayable)
+				return false;
+
+			var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+			if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
+				return false;
+
+			return true;
+		}
+	}
+
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
 		new DamageVar(Values.Damage, ValueProp.Move),
-		new RepeatVar(Values.Repeat)
+		new RepeatVar(Values.Repeat),
+		new IntVar("DollarNumber", Values.DollarValue)
 	};
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
+		// 扣除资金
+		var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+		if (dollarPower != null)
+		{
+			dollarPower.AddDollar(-(int)Values.DollarValue);
+			GD.Print($"[PrismTowerCard] 扣除资金 {Values.DollarValue}");
+		}
+
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
 		GD.Print($"[PrismTowerCard] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");

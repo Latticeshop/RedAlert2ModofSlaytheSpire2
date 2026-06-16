@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Allies.Powers;
@@ -19,13 +20,43 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class AlliedWarFactory : CardModel
 {
-	public AlliedWarFactory() : base((int)AlliesCardValues.AlliedWarFactory.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
+	private static readonly CardValueStore.CardValues Values = AlliesCardValues.AlliedWarFactory;
+	
+	public AlliedWarFactory() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/gwepicon.png";
+	
+	protected override List<DynamicVar> CanonicalVars => new()
+	{
+		new IntVar("DollarNumber", Values.DollarValue)
+	};
+
+	protected override bool IsPlayable
+	{
+		get
+		{
+			if (!base.IsPlayable)
+				return false;
+
+			var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+			if (dollarPower == null || dollarPower.DollarValue < AlliesCardValues.AlliedWarFactory.DollarValue)
+				return false;
+
+			return true;
+		}
+	}
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		GD.Print($"[AlliedWarFactory] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
+
+		// 扣除资金
+		var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+		if (dollarPower != null)
+		{
+			dollarPower.AddDollar(-(int)AlliesCardValues.AlliedWarFactory.DollarValue);
+			GD.Print($"[AlliedWarFactory] 扣除资金 {AlliesCardValues.AlliedWarFactory.DollarValue}");
+		}
 
 		// 使用盟军卡牌注册管理器获取所有装甲单位卡
 		List<CardModel> availableCards = AlliedCardRegistry.CreateVehicles(Owner);
@@ -52,26 +83,30 @@ public sealed class AlliedWarFactory : CardModel
 		{
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			
-			// 如果选择的是超时空矿车，直接加入摸牌堆
+			// 如果选择的是超时空矿车，直接加入手牌
 			if (selectedCard is ChronoMiner)
 			{
-				GD.Print($"[AlliedWarFactory] 选择超时空矿车，直接加入摸牌堆");
-				// 克隆卡牌并加入摸牌堆
+				GD.Print($"[AlliedWarFactory] 选择超时空矿车，直接加入手牌");
+				// 克隆卡牌并加入手牌
 				var minerCard = selectedCard.CreateClone();
 				if (base.IsUpgraded)
 				{
 					CardCmd.Upgrade(minerCard);
 				}
-				await CardPileCmd.AddGeneratedCardToCombat(minerCard, PileType.Draw, addedByPlayer: true);
+				await CardPileCmd.AddGeneratedCardToCombat(minerCard, PileType.Hand, addedByPlayer: true);
 			}
 			else
 			{
+				// 获取单位价格
+				int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
+				
 				// 其他单位：使用统一的训练队列能力应用方法
 				await TrainingQueuePower.ApplyTrainingQueue(
 					owner: Owner.Creature,
 					cardId: selectedCard.Id.Entry,
 					unitName: selectedCard.Title.ToString(),
 					iconPath: selectedCard.PortraitPath,
+					unitPrice: unitPrice,
 					isUpgraded: base.IsUpgraded,
 					sourceCard: this
 				);

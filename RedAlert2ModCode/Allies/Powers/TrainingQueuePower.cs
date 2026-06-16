@@ -43,6 +43,11 @@ public sealed class TrainingQueuePower : PowerModel
     public string TrainedUnitIconPath { get; set; } = string.Empty;
 
     /// <summary>
+    /// 训练单位的价格（用于生产时的资金检查）
+    /// </summary>
+    public int UnitPrice { get; set; } = 0;
+
+    /// <summary>
     /// 追踪实例ID
     /// </summary>
     public int InstanceId => _instanceId;
@@ -56,14 +61,15 @@ public sealed class TrainingQueuePower : PowerModel
     /// <summary>
     /// 设置训练单位的属性（从卡牌信息）
     /// </summary>
-    public void SetTrainedUnit(string cardId, string unitName, string iconPath, bool isUpgraded = false)
+    public void SetTrainedUnit(string cardId, string unitName, string iconPath, int unitPrice = 0, bool isUpgraded = false)
     {
         TrainedCardId = cardId;
         UnitName = unitName;
         IsUpgraded = isUpgraded;
         TrainedUnitIconPath = iconPath;
+        UnitPrice = unitPrice;
         
-        GD.Print($"[TrainingQueuePower] SetTrainedUnit 设置完成 - TrainedCardId={cardId}, TrainedUnitIconPath={iconPath}, InstanceId={_instanceId}");
+        GD.Print($"[TrainingQueuePower] SetTrainedUnit 设置完成 - TrainedCardId={cardId}, TrainedUnitIconPath={iconPath}, UnitPrice={unitPrice}, InstanceId={_instanceId}");
         
         // 同时保存到 PowerIconManager
         PowerIconManager.SetIcon(this, iconPath);
@@ -77,12 +83,13 @@ public sealed class TrainingQueuePower : PowerModel
     /// <param name="cardId">训练的卡牌ID</param>
     /// <param name="unitName">单位名称</param>
     /// <param name="iconPath">图标路径</param>
+    /// <param name="unitPrice">单位价格</param>
     /// <param name="isUpgraded">是否升级</param>
     /// <param name="sourceCard">来源卡牌（用于能力关联）</param>
     /// <returns>创建或叠加的能力实例</returns>
-    public static async Task<TrainingQueuePower?> ApplyTrainingQueue(Creature owner, string cardId, string unitName, string iconPath, bool isUpgraded = false, CardModel? sourceCard = null)
+    public static async Task<TrainingQueuePower?> ApplyTrainingQueue(Creature owner, string cardId, string unitName, string iconPath, int unitPrice = 0, bool isUpgraded = false, CardModel? sourceCard = null)
     {
-        GD.Print($"[TrainingQueuePower] ApplyTrainingQueue 被调用 - CardId={cardId}, UnitName={unitName}, IsUpgraded={isUpgraded}");
+        GD.Print($"[TrainingQueuePower] ApplyTrainingQueue 被调用 - CardId={cardId}, UnitName={unitName}, UnitPrice={unitPrice}, IsUpgraded={isUpgraded}");
 
         // 检查是否已有相同兵种且升级状态相同的训练队列能力
         TrainingQueuePower? existingPower = null;
@@ -112,16 +119,17 @@ public sealed class TrainingQueuePower : PowerModel
 
         if (trainingPower != null)
         {
-            GD.Print($"[TrainingQueuePower] 设置属性 - TrainedCardId={cardId}, IconPath={iconPath}");
+            GD.Print($"[TrainingQueuePower] 设置属性 - TrainedCardId={cardId}, IconPath={iconPath}, UnitPrice={unitPrice}");
             trainingPower.TrainedCardId = cardId;
             trainingPower.UnitName = unitName;
             trainingPower.IsUpgraded = isUpgraded;
             trainingPower.TrainedUnitIconPath = iconPath;
+            trainingPower.UnitPrice = unitPrice;
 
             // 使用图标管理器设置能力图标
             PowerIconManager.SetIcon(trainingPower, iconPath);
 
-            GD.Print($"[TrainingQueuePower] 属性设置完成 - TrainedCardId={trainingPower.TrainedCardId}, TrainedUnitIconPath={trainingPower.TrainedUnitIconPath}");
+            GD.Print($"[TrainingQueuePower] 属性设置完成 - TrainedCardId={trainingPower.TrainedCardId}, TrainedUnitIconPath={trainingPower.TrainedUnitIconPath}, UnitPrice={trainingPower.UnitPrice}");
         }
 
         return trainingPower;
@@ -162,15 +170,16 @@ public sealed class TrainingQueuePower : PowerModel
         {
             var original = originalField.GetValue(this) as TrainingQueuePower;
             if (original != null)
-            {
-                GD.Print($"[TrainingQueuePower] 原始对象 - TrainedCardId={original.TrainedCardId}, TrainedUnitIconPath={original.TrainedUnitIconPath}");
-                // 手动复制所有自定义字段
-                TrainedCardId = original.TrainedCardId;
-                UnitName = original.UnitName;
-                IsUpgraded = original.IsUpgraded;
-                TrainedUnitIconPath = original.TrainedUnitIconPath;
-                GD.Print($"[TrainingQueuePower] 克隆后 - TrainedCardId={TrainedCardId}, TrainedUnitIconPath={TrainedUnitIconPath}");
-            }
+                {
+                    GD.Print($"[TrainingQueuePower] 原始对象 - TrainedCardId={original.TrainedCardId}, TrainedUnitIconPath={original.TrainedUnitIconPath}, UnitPrice={original.UnitPrice}");
+                    // 手动复制所有自定义字段
+                    TrainedCardId = original.TrainedCardId;
+                    UnitName = original.UnitName;
+                    IsUpgraded = original.IsUpgraded;
+                    TrainedUnitIconPath = original.TrainedUnitIconPath;
+                    UnitPrice = original.UnitPrice;
+                    GD.Print($"[TrainingQueuePower] 克隆后 - TrainedCardId={TrainedCardId}, TrainedUnitIconPath={TrainedUnitIconPath}, UnitPrice={UnitPrice}");
+                }
             else
             {
                 GD.PrintErr($"[TrainingQueuePower] 警告: 无法获取原始对象引用");
@@ -225,7 +234,8 @@ public sealed class TrainingQueuePower : PowerModel
             var locString = new LocString("powers", base.Id.Entry + ".description");
             // 如果是升级过的单位，在名称后面加上+
             string displayName = IsUpgraded ? UnitName + "+" : UnitName;
-            locString.Add("UnitName", displayName);
+            locString.Add("UnitName", displayName); // 单位名称
+            locString.Add("UnitPrice", UnitPrice.ToString()); // 单位价格
             return locString;
         }
     }
@@ -244,10 +254,31 @@ public sealed class TrainingQueuePower : PowerModel
 
         // 获取当前层数，按层数循环触发
         int stacks = (int)base.Amount;
-        GD.Print($"[TrainingQueuePower] 回合开始触发 - 层数={stacks}, TrainedCardId={TrainedCardId}");
+        GD.Print($"[TrainingQueuePower] 回合开始触发 - 层数={stacks}, TrainedCardId={TrainedCardId}, UnitPrice={UnitPrice}");
 
+        // 获取刀乐能力
+        var dollarPower = Owner.Powers.OfType<DollarPower>().FirstOrDefault();
+        if (dollarPower == null)
+        {
+            GD.Print($"[TrainingQueuePower] 没有刀乐能力，无法生产单位");
+            return;
+        }
+
+        // 按层数循环扣钱生产，没钱则不扣也不生产
         for (int i = 0; i < stacks; i++)
         {
+            // 检查资金是否足够
+            if (dollarPower.DollarValue < UnitPrice)
+            {
+                GD.Print($"[TrainingQueuePower] 资金不足，停止生产 - 当前资金={dollarPower.DollarValue}, 所需资金={UnitPrice}");
+                break;
+            }
+
+            // 扣除资金
+            dollarPower.AddDollar(-UnitPrice);
+            GD.Print($"[TrainingQueuePower] 扣除资金 {UnitPrice}，剩余资金 {dollarPower.DollarValue}");
+
+            // 生产单位卡牌
             CardModel tempCard = combatState.CreateCard(cardModel, base.Owner.Player);
 
             if (IsUpgraded)
