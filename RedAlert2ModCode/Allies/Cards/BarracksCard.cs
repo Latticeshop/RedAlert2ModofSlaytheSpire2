@@ -55,27 +55,15 @@ public sealed class BarracksCard : CardModel
 		{
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			
-			// 首先设置当前活跃的图标路径（这样克隆对象也能获取）
-			PowerIconManager.SetCurrentIconPath(selectedCard.PortraitPath);
-			
-			var trainingPower = await PowerCmd.Apply<TrainingQueuePower>(Owner.Creature, 1m, Owner.Creature, this);
-			
-			GD.Print($"[BarracksCard] 创建的Power: {(trainingPower != null ? trainingPower.GetType().Name : "null")}");
-			
-			if (trainingPower != null)
-			{
-				GD.Print($"[BarracksCard] 设置属性 - TrainedCardId={selectedCard.Id.Entry}, PortraitPath={selectedCard.PortraitPath}");
-				trainingPower.TrainedCardId = selectedCard.Id.Entry;
-				trainingPower.UnitName = selectedCard.Title.ToString();
-				trainingPower.IsUpgraded = base.IsUpgraded;
-				// 直接存储图标路径，确保克隆后仍然有效
-				trainingPower.TrainedUnitIconPath = selectedCard.PortraitPath;
-				
-				// 使用图标管理器设置能力图标（原始对象可用）
-				PowerIconManager.SetIcon(trainingPower, selectedCard.PortraitPath);
-				
-				GD.Print($"[BarracksCard] 属性设置完成 - TrainedCardId={trainingPower.TrainedCardId}, TrainedUnitIconPath={trainingPower.TrainedUnitIconPath}");
-			}
+			// 使用统一的训练队列能力应用方法
+			await TrainingQueuePower.ApplyTrainingQueue(
+				owner: Owner.Creature,
+				cardId: selectedCard.Id.Entry,
+				unitName: selectedCard.Title.ToString(),
+				iconPath: selectedCard.PortraitPath,
+				isUpgraded: base.IsUpgraded,
+				sourceCard: this
+			);
 		}
 		else
 		{

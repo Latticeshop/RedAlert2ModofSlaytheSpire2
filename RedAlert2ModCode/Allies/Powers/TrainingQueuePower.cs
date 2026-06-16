@@ -6,6 +6,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
@@ -23,6 +24,11 @@ public sealed class TrainingQueuePower : PowerModel
     
     public override PowerStackType StackType => PowerStackType.Counter;
 
+    /// <summary>
+    /// 设置为true确保每个能力都是独立实例
+    /// 相同兵种的叠加逻辑在 ApplyTrainingQueue 中手动处理
+    /// 这样可以确保不同兵种的能力不会被游戏引擎自动合并
+    /// </summary>
     public override bool IsInstanced => true;
 
     public string TrainedCardId { get; set; } = string.Empty;
@@ -61,6 +67,64 @@ public sealed class TrainingQueuePower : PowerModel
         
         // 同时保存到 PowerIconManager
         PowerIconManager.SetIcon(this, iconPath);
+    }
+
+    /// <summary>
+    /// 应用训练队列能力（统一处理叠加逻辑）
+    /// 相同兵种叠加层数，不同兵种创建新能力
+    /// </summary>
+    /// <param name="owner">拥有者</param>
+    /// <param name="cardId">训练的卡牌ID</param>
+    /// <param name="unitName">单位名称</param>
+    /// <param name="iconPath">图标路径</param>
+    /// <param name="isUpgraded">是否升级</param>
+    /// <param name="sourceCard">来源卡牌（用于能力关联）</param>
+    /// <returns>创建或叠加的能力实例</returns>
+    public static async Task<TrainingQueuePower?> ApplyTrainingQueue(Creature owner, string cardId, string unitName, string iconPath, bool isUpgraded = false, CardModel? sourceCard = null)
+    {
+        GD.Print($"[TrainingQueuePower] ApplyTrainingQueue 被调用 - CardId={cardId}, UnitName={unitName}, IsUpgraded={isUpgraded}");
+
+        // 检查是否已有相同兵种且升级状态相同的训练队列能力
+        TrainingQueuePower? existingPower = null;
+        if (owner?.Powers != null)
+        {
+            existingPower = owner.Powers
+                .OfType<TrainingQueuePower>()
+                .FirstOrDefault(p => p.TrainedCardId == cardId && p.IsUpgraded == isUpgraded);
+        }
+
+        if (existingPower != null)
+        {
+            // 已有相同兵种的能力，增加层数
+            GD.Print($"[TrainingQueuePower] 发现相同兵种的能力，增加层数 - 当前层数: {existingPower.Amount}");
+            await PowerCmd.ModifyAmount(existingPower, 1m, owner, sourceCard);
+            GD.Print($"[TrainingQueuePower] 增加后层数: {existingPower.Amount}");
+            return existingPower;
+        }
+
+        // 没有相同兵种的能力，创建新能力
+        GD.Print($"[TrainingQueuePower] 创建新的训练队列能力");
+
+        // 设置当前活跃的图标路径（确保克隆对象也能获取）
+        PowerIconManager.SetCurrentIconPath(iconPath);
+
+        var trainingPower = await PowerCmd.Apply<TrainingQueuePower>(owner, 1m, owner, sourceCard);
+
+        if (trainingPower != null)
+        {
+            GD.Print($"[TrainingQueuePower] 设置属性 - TrainedCardId={cardId}, IconPath={iconPath}");
+            trainingPower.TrainedCardId = cardId;
+            trainingPower.UnitName = unitName;
+            trainingPower.IsUpgraded = isUpgraded;
+            trainingPower.TrainedUnitIconPath = iconPath;
+
+            // 使用图标管理器设置能力图标
+            PowerIconManager.SetIcon(trainingPower, iconPath);
+
+            GD.Print($"[TrainingQueuePower] 属性设置完成 - TrainedCardId={trainingPower.TrainedCardId}, TrainedUnitIconPath={trainingPower.TrainedUnitIconPath}");
+        }
+
+        return trainingPower;
     }
 
     protected override void DeepCloneFields()
@@ -178,18 +242,25 @@ public sealed class TrainingQueuePower : PowerModel
         if (cardModel == null)
             return;
 
-        CardModel tempCard = combatState.CreateCard(cardModel, base.Owner.Player);
-        
-        if (IsUpgraded)
-        {
-            CardCmd.Upgrade(tempCard);
-        }
-        
-        tempCard.EnergyCost.SetCustomBaseCost(0);
-        
-        tempCard.AddKeyword(CardKeyword.Exhaust);
+        // 获取当前层数，按层数循环触发
+        int stacks = (int)base.Amount;
+        GD.Print($"[TrainingQueuePower] 回合开始触发 - 层数={stacks}, TrainedCardId={TrainedCardId}");
 
-        await CardPileCmd.AddGeneratedCardToCombat(tempCard, PileType.Draw, addedByPlayer: true, CardPilePosition.Top);
+        for (int i = 0; i < stacks; i++)
+        {
+            CardModel tempCard = combatState.CreateCard(cardModel, base.Owner.Player);
+
+            if (IsUpgraded)
+            {
+                CardCmd.Upgrade(tempCard);
+            }
+
+            tempCard.EnergyCost.SetCustomBaseCost(0);
+
+            tempCard.AddKeyword(CardKeyword.Exhaust);
+
+            await CardPileCmd.AddGeneratedCardToCombat(tempCard, PileType.Discard, addedByPlayer: true, CardPilePosition.Top);
+        }
     }
 
     private CardModel? GetCardModel(string cardId)

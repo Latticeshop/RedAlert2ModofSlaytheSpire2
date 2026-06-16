@@ -66,25 +66,15 @@ public sealed class AlliedWarFactory : CardModel
 			}
 			else
 			{
-				// 其他单位：创建生产序列能力
-				// 首先设置当前活跃的图标路径（这样克隆对象也能获取）
-				PowerIconManager.SetCurrentIconPath(selectedCard.PortraitPath);
-				
-				var trainingPower = await PowerCmd.Apply<TrainingQueuePower>(Owner.Creature, 1m, Owner.Creature, this);
-				
-				GD.Print($"[AlliedWarFactory] 创建的Power: {(trainingPower != null ? trainingPower.GetType().Name : "null")}");
-				
-				if (trainingPower != null)
-				{
-					GD.Print($"[AlliedWarFactory] 设置属性 - TrainedCardId={selectedCard.Id.Entry}, PortraitPath={selectedCard.PortraitPath}");
-					// 使用新的 SetTrainedUnit 方法设置属性
-					trainingPower.SetTrainedUnit(
-						selectedCard.Id.Entry,
-						selectedCard.Title.ToString(),
-						selectedCard.PortraitPath,
-						base.IsUpgraded
-					);
-				}
+				// 其他单位：使用统一的训练队列能力应用方法
+				await TrainingQueuePower.ApplyTrainingQueue(
+					owner: Owner.Creature,
+					cardId: selectedCard.Id.Entry,
+					unitName: selectedCard.Title.ToString(),
+					iconPath: selectedCard.PortraitPath,
+					isUpgraded: base.IsUpgraded,
+					sourceCard: this
+				);
 			}
 		}
 		else
