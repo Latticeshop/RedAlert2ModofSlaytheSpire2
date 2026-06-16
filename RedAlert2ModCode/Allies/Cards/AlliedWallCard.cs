@@ -14,29 +14,70 @@ namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
 /// 盟军围墙 - 盟军建筑卡
-/// 1费技能卡
-/// 效果：获得5点护盾（升级后8点）
+/// 0费技能卡
+/// 效果：花费资金，获得护盾，将此牌返回手牌
 /// </summary>
 public sealed class AlliedWallCard : CardModel
 {
 	// 数值引用
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.AlliedWall;
 	
-	public AlliedWallCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+	public AlliedWallCard() : base(0, CardType.Skill, CardRarity.Common, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/wallicon.png";
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new BlockVar(Values.Block, ValueProp.Unpowered)
+		new BlockVar(Values.Block, ValueProp.Unpowered),
+		new IntVar("DollarNumber", Values.DollarValue)
 	};
+
+	/// <summary>
+	/// 检查是否可以打出（资金是否足够）
+	/// </summary>
+	protected override bool IsPlayable
+	{
+		get
+		{
+			if (!base.IsPlayable)
+				return false;
+
+			// 检查资金是否足够
+			var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+			if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
+				return false;
+
+			return true;
+		}
+	}
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 		
+		// 扣除资金
+		var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+		if (dollarPower != null)
+		{
+			dollarPower.AddDollar(-(int)Values.DollarValue);
+			GD.Print($"[AlliedWallCard] 扣除资金 {Values.DollarValue}");
+		}
+		
 		// 获得护盾
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
+	}
+
+	/// <summary>
+	/// 设置卡牌使用后的去向（返回手牌）
+	/// </summary>
+	protected override PileType GetResultPileType()
+	{
+		PileType resultPileType = base.GetResultPileType();
+		if (resultPileType != PileType.Discard)
+		{
+			return resultPileType;
+		}
+		return PileType.Hand;
 	}
 
 	protected override void OnUpgrade()

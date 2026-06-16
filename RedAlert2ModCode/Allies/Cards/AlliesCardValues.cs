@@ -128,12 +128,13 @@ public static class AlliesCardValues
 	
 	// ==================== 防御建筑 ====================
 	
-	/// <summary>盟军围墙 - 1费5护盾，升级后8护盾</summary>
+	/// <summary>盟军围墙 - 0费1护盾，花费100资金，升级后3护盾</summary>
 	public static CardValueStore.CardValues AlliedWall => new()
 	{
-		Cost = 1,
-		Block = 5,
-		BlockUpgraded = 3
+		Cost = 0,
+		Block = 1,
+		BlockUpgraded = 1,
+		DollarValue = 100
 	};
 	
 	/// <summary>光棱塔 - 2费，回合开始时对随机敌人造成5伤害1次</summary>

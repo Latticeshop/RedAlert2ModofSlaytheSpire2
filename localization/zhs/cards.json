@@ -22,7 +22,7 @@
     "POWER_PLANT_CARD.title": "发电厂",
     "POWER_PLANT_CARD.description": "每抽 {IfUpgraded:show:7|10} 张牌获得 1 点能量。",
     "ALLIED_WALL_CARD.title": "盟军围墙",
-    "ALLIED_WALL_CARD.description": "获得 {Block} 点护盾。",
+    "ALLIED_WALL_CARD.description": "价格：{DollarNumber}。获得 {Block} 点护盾。将此牌返回你的手牌。",
     "PILLBOX_CARD.title": "机枪碉堡",
     "PILLBOX_CARD.description": "回合开始时对敌人造成 {Damage} 点伤害，获得 {Block} 点防御。",
     "CHRONO_MINER.title": "超时空矿车",
