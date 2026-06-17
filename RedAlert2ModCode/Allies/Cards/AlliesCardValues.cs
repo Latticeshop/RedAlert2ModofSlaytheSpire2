@@ -41,12 +41,12 @@ public static class AlliesCardValues
 		DollarValue = 600
 	};
 	
-	/// <summary>工程师 - 0费5护盾，升级后8护盾，价格500</summary>
+	/// <summary>工程师 - 0费2覆甲，升级后3覆甲，价格500</summary>
 	public static CardValueStore.CardValues Engineer => new()
 	{
 		Cost = 0,
-		Block = 5,
-		BlockUpgraded = 3,
+		Block = 2,
+		BlockUpgraded = 1,
 		DollarValue = 500
 	};
 	
