@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
+using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Utils;
 
@@ -27,11 +28,20 @@ public sealed class PillboxCard : CardModel
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/pillicon.png";
 
+	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+	[
+		ModCardKeywords.DefenseTower.CreateHoverTip()
+	];
+
 	protected override bool IsPlayable
 	{
 		get
 		{
 			if (!base.IsPlayable)
+				return false;
+
+			// 检查是否拥有MCV能力（建造厂）
+			if (!CardUtils.HasMcvPower(Owner.Creature))
 				return false;
 
 			var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();

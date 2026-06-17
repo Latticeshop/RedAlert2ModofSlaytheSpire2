@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.HoverTips;
 using System.Collections.Generic;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Utils;
@@ -33,6 +34,11 @@ public sealed class Ifv : CardModel
 		new RepeatVar(Values.Repeat),
 		new BlockVar(Values.Block, ValueProp.Unpowered)
 	};
+
+	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+	[
+		ModCardKeywords.Vehicle.CreateHoverTip()
+	];
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{

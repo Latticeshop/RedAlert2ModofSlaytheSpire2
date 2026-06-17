@@ -321,6 +321,98 @@ dotnet build RedAlert2Mod.csproj -c Release -o build
 
 ---
 
+## 🏷️ 自定义词条（Custom Keywords）
+
+### 设计理念
+
+Mod可以添加自定义词条来增强卡牌的视觉效果和交互体验。词条会在卡牌描述下方显示金色文本，鼠标悬停时显示详细描述。
+
+### 实现方式
+
+#### 1. 创建词条定义类
+
+```csharp
+// CustomKeyword.cs - 自定义词条框架
+public class CustomKeyword
+{
+    public string Id { get; }
+    public LocString Title { get; }
+    public LocString Description { get; }
+
+    public CustomKeyword(string id, LocString title, LocString description)
+    {
+        Id = id;
+        Title = title;
+        Description = description;
+    }
+
+    /// <summary>
+    /// 创建悬停提示
+    /// </summary>
+    public IHoverTip CreateHoverTip()
+    {
+        return new HoverTip(Title, Description);
+    }
+}
+
+/// <summary>
+/// 预定义的自定义词条
+/// </summary>
+public static class ModCardKeywords
+{
+    /// <summary>
+    /// MCV词条 - 拥有建造厂才能打出建筑卡牌
+    /// </summary>
+    public static readonly CustomKeyword Mcv = new(
+        "MCV",
+        new LocString("card_keywords", "mcv.title"),
+        new LocString("card_keywords", "mcv.description")
+    );
+}
+```
+
+#### 2. 在卡牌中使用 ExtraHoverTips
+
+```csharp
+// AlliedMCV.cs - 基地车卡牌
+public sealed class AlliedMCV : CardModel
+{
+    public AlliedMCV() : base(0, CardType.Power, CardRarity.Rare, TargetType.Self) { }
+
+    /// <summary>
+    /// 额外的悬停提示（包含自定义MCV词条）
+    /// </summary>
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        ModCardKeywords.Mcv.CreateHoverTip()
+    ];
+}
+```
+
+#### 3. 本地化文件
+
+**card_keywords.json** - 词条本地化：
+```json
+{
+    "mcv.title": "MCV",
+    "mcv.description": "拥有建造厂才能打出建筑卡牌。"
+}
+```
+
+**cards.json** - 卡牌描述中添加词条文本：
+```json
+{
+    "ALLIED_MC_V.description": "[gold]MCV. [/gold]\n展开：从当前建筑中选择一张加入手牌。"
+}
+```
+
+### 效果说明
+
+- **卡牌显示**：在描述下方显示金色的"建造厂."文本
+- **悬停提示**：鼠标悬停在词条上时显示详细描述
+
+---
+
 ## 💎 遗物（RelicModel）
 
 ### 基本结构

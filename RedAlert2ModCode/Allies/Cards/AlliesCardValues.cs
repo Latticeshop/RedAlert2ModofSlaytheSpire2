@@ -97,43 +97,43 @@ public static class AlliesCardValues
 	
 	// ==================== 建筑卡牌 ====================
 	
-	/// <summary>兵营 - 1费，价格500</summary>
+	/// <summary>兵营 - 0费，价格500</summary>
 	public static CardValueStore.CardValues Barracks => new()
 	{
-		Cost = 1,
+		Cost = 0,
 		DollarValue = 500
 		// 兵营主要是功能牌，数值由具体生成的单位决定
 	};
 	
-	/// <summary>盟军重工 - 1费，价格2000</summary>
+	/// <summary>盟军重工 - 0费，价格2000</summary>
 	public static CardValueStore.CardValues AlliedWarFactory => new()
 	{
-		Cost = 1,
+		Cost = 0,
 		DollarValue = 2000
 		// 重工主要是功能牌，数值由具体生成的单位决定
 	};
 	
-	/// <summary>空指部 - 1费，价格1000</summary>
+	/// <summary>空指部 - 0费，价格1000</summary>
 	public static CardValueStore.CardValues AirForceCommand => new()
 	{
-		Cost = 1,
+		Cost = 0,
 		DollarValue = 1000
 		// 空指部主要是功能牌，数值由具体生成的单位决定
 	};
 	
-	/// <summary>发电厂 - 1费，每抽10张牌获得1能量，升级后7张，价格800</summary>
+	/// <summary>发电厂 - 0费，每抽10张牌获得1能量，升级后7张，价格800</summary>
 	public static CardValueStore.CardValues PowerPlant => new()
 	{
-		Cost = 1,
+		Cost = 0,
 		MagicNumber = 10,  // 抽牌阈值
 		MagicNumberUpgraded = -3,  // 升级后 7 = 10 + (-3)
 		DollarValue = 800
 	};
 	
-	/// <summary>矿场 - 1费，价格2000</summary>
+	/// <summary>矿场 - 0费，价格2000</summary>
 	public static CardValueStore.CardValues AlliedRefinery => new()
 	{
-		Cost = 1,
+		Cost = 0,
 		DollarValue = 2000
 		// 矿场主要是功能牌
 	};

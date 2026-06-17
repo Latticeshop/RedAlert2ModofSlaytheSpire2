@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.HoverTips;
 using System.Collections.Generic;
 using RedAlert2ModCode.Utils;
 
@@ -29,6 +30,11 @@ public sealed class Engineer : CardModel
 	{
 		new BlockVar(Values.Block, ValueProp.Unpowered)
 	};
+
+	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+	[
+		ModCardKeywords.Soldier.CreateHoverTip()
+	];
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{

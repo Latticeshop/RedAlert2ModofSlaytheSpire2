@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Utils;
@@ -29,11 +30,20 @@ public sealed class BarracksCard : CardModel
 			new IntVar("DollarNumber", Values.DollarValue)
 		};
 
+		protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+		[
+			ModCardKeywords.Building.CreateHoverTip()
+		];
+
 		protected override bool IsPlayable
 		{
 			get
 			{
 				if (!base.IsPlayable)
+					return false;
+
+				// 检查是否拥有MCV能力（建造厂）
+				if (!CardUtils.HasMcvPower(Owner.Creature))
 					return false;
 
 				var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
@@ -99,6 +109,9 @@ public sealed class BarracksCard : CardModel
 				isUpgraded: base.IsUpgraded,
 				sourceCard: this
 			);
+
+			// 打出后抽一张牌
+			await CardPileCmd.Draw(ctx, 1, Owner);
 		}
 		else
 		{

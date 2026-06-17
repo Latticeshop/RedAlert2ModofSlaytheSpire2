@@ -1,1 +1,16 @@
-{}
+{
+    "mcv.title": "MCV",
+    "mcv.description": "拥有建造厂才能打出建筑卡牌。",
+    "soldier.title": "士兵",
+    "soldier.description": "指由个体武装的单位。",
+    "vehicle.title": "战车",
+    "vehicle.description": "指陆地装甲的单位。",
+    "aircraft.title": "空军",
+    "aircraft.description": "指空中的单位。",
+    "navy.title": "海军",
+    "navy.description": "指水里的单位。",
+    "building.title": "建筑",
+    "building.description": "指需要建造厂建造的建筑。\n一般为0费且打出后抽一张牌。",
+    "defense_tower.title": "防御塔",
+    "defense_tower.description": "需要建造厂建造，自动执行的建筑。"
+}

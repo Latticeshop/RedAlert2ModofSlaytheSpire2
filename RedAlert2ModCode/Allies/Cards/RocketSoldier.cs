@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.HoverTips;
 using System.Collections.Generic;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Utils;
@@ -33,6 +34,11 @@ public sealed class RocketSoldier : CardModel
 		new DamageVar(Values.Damage, ValueProp.Move),
 		new RepeatVar(Values.Repeat)
 	};
+
+	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+	[
+		ModCardKeywords.Soldier.CreateHoverTip()
+	];
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{

@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
+using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
@@ -32,6 +33,11 @@ public sealed class AlliedWallCard : CardModel
 		new IntVar("DollarNumber", Values.DollarValue)
 	};
 
+	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+	[
+		ModCardKeywords.Building.CreateHoverTip()
+	];
+
 	/// <summary>
 	/// 检查是否可以打出（资金是否足够）
 	/// </summary>
@@ -40,6 +46,10 @@ public sealed class AlliedWallCard : CardModel
 		get
 		{
 			if (!base.IsPlayable)
+				return false;
+
+			// 检查是否拥有MCV能力（建造厂）
+			if (!CardUtils.HasMcvPower(Owner.Creature))
 				return false;
 
 			// 检查资金是否足够
@@ -65,6 +75,8 @@ public sealed class AlliedWallCard : CardModel
 		
 		// 获得护盾
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
+
+		// 围墙打出后不抽牌
 	}
 
 	/// <summary>

@@ -4,7 +4,7 @@
     "GRIZZLY_TANK.title": "灰熊坦克",
     "GRIZZLY_TANK.description": "造成 {Damage} 点伤害，获得 {Block} 点格挡。",
     "ALLIED_MC_V.title": "盟军基地车",
-    "ALLIED_MC_V.description": "展开：从当前建筑中选择一张加入手牌。{IfUpgraded:show:建筑升级。|}",
+    "ALLIED_MC_V.description": "[gold]MCV. [/gold]\n展开：从当前建筑中选择一张加入手牌。{IfUpgraded:show:建筑升级。|}",
     "BARRACKS_CARD.title": "兵营",
     "BARRACKS_CARD.description": "价格：${DollarNumber}。选择一张士兵单位，创建对应的生产序列。{IfUpgraded:show:单位序列升级。|}",
     "DOG_SOLDIER.title": "军犬",

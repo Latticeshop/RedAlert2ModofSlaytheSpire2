@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.HoverTips;
+using System.Collections.Generic;
 using RedAlert2ModCode.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
@@ -31,6 +33,11 @@ public sealed class GrizzlyTank : CardModel
 	};
 
 	protected override HashSet<CardTag> CanonicalTags => new() { CardTag.Defend };
+
+	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+	[
+		ModCardKeywords.Vehicle.CreateHoverTip()
+	];
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{

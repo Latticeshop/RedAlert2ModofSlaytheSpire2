@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -21,7 +22,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class AlliedMCV : CardModel
 {
-	public AlliedMCV() : base((int)AlliesCardValues.AlliedMCV.Cost, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
+	public AlliedMCV() : base((int)AlliesCardValues.AlliedMCV.Cost, CardType.Power, CardRarity.Rare, TargetType.Self) { }
 
 	// 修正图片路径为实际文件名 mcvicon.png
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/mcvicon.png";
@@ -30,6 +31,15 @@ public sealed class AlliedMCV : CardModel
 	/// 固有词条 - 每场战斗开始时自动出现在手牌
 	/// </summary>
 	public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Innate };
+
+	/// <summary>
+	/// 额外的悬停提示（包含MCV词条和战车词条）
+	/// </summary>
+	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+	[
+		ModCardKeywords.Mcv.CreateHoverTip(),
+		ModCardKeywords.Vehicle.CreateHoverTip()
+	];
 
 	/// <summary>
 	/// 初始建筑类型列表（发电厂、矿场、兵营、重工）

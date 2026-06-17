@@ -291,4 +291,28 @@ public static class CardUtils
 		
 		return isMcv;
 	}
+	
+	/// <summary>
+	/// 检查角色是否拥有MCV能力（建造厂能力）
+	/// </summary>
+	/// <param name="creature">角色对象</param>
+	/// <returns>是否拥有MCV能力</returns>
+	public static bool HasMcvPower(Creature creature)
+	{
+		if (creature == null || creature.Powers == null)
+		{
+			return false;
+		}
+		
+		// 检查是否有 AlliedMCVPower 能力
+		var mcvPower = creature.Powers.OfType<RedAlert2ModCode.Allies.Powers.AlliedMCVPower>().FirstOrDefault();
+		if (mcvPower != null)
+		{
+			GD.Print("[CardUtils] 角色拥有MCV能力");
+			return true;
+		}
+		
+		GD.Print("[CardUtils] 角色没有MCV能力");
+		return false;
+	}
 }

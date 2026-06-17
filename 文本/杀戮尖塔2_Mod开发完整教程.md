@@ -542,6 +542,147 @@ res://images/packed/card_portraits/<卡池名称>/<卡牌ID小写>.png
 
 ---
 
+## 3.8 自定义词条（Custom Keywords）
+
+Mod可以添加自定义词条来增强卡牌的视觉效果和交互体验。词条会在卡牌描述下方显示金色文本，鼠标悬停时显示详细描述。
+
+### 设计理念
+
+自定义词条适用于需要特殊条件或限制的卡牌，例如：
+- 需要特定能力才能打出的卡牌（如"建造厂"词条）
+- 具有特殊使用条件的卡牌
+- 增强卡牌的视觉效果和提示
+
+### 实现步骤
+
+#### 第一步：创建词条定义类
+
+在 `Utils/` 目录下创建 `CustomKeyword.cs`：
+
+```csharp
+using System.Collections.Generic;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
+
+namespace RedAlert2ModCode.Utils;
+
+/// <summary>
+/// 自定义词条定义
+/// </summary>
+public class CustomKeyword
+{
+    public string Id { get; }
+    public LocString Title { get; }
+    public LocString Description { get; }
+
+    public CustomKeyword(string id, LocString title, LocString description)
+    {
+        Id = id;
+        Title = title;
+        Description = description;
+    }
+
+    /// <summary>
+    /// 创建悬停提示
+    /// </summary>
+    public IHoverTip CreateHoverTip()
+    {
+        return new HoverTip(Title, Description);
+    }
+}
+
+/// <summary>
+/// 预定义的自定义词条
+/// </summary>
+public static class ModCardKeywords
+{
+    /// <summary>
+    /// MCV词条 - 拥有建造厂才能打出建筑卡牌
+    /// </summary>
+    public static readonly CustomKeyword Mcv = new(
+        "MCV",
+        new LocString("card_keywords", "mcv.title"),
+        new LocString("card_keywords", "mcv.description")
+    );
+}
+```
+
+#### 第二步：在卡牌中使用 ExtraHoverTips
+
+在需要添加词条的卡牌类中重写 `ExtraHoverTips` 属性：
+
+```csharp
+public sealed class AlliedMCV : CardModel
+{
+    public AlliedMCV() : base(0, CardType.Power, CardRarity.Rare, TargetType.Self) { }
+
+    /// <summary>
+    /// 额外的悬停提示（包含自定义MCV词条）
+    /// </summary>
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        ModCardKeywords.Mcv.CreateHoverTip()
+    ];
+}
+```
+
+#### 第三步：添加本地化文本
+
+创建或更新 `localization/zhs/card_keywords.json`：
+
+```json
+{
+    "mcv.title": "建造厂",
+    "mcv.description": "拥有建造厂才能打出建筑卡牌。"
+}
+```
+
+#### 第四步：在卡牌描述中显示词条文本
+
+在 `cards.json` 的卡牌描述中添加金色格式化的词条文本：
+
+```json
+{
+    "ALLIED_MC_V.title": "盟军基地车",
+    "ALLIED_MC_V.description": "[gold]建造厂. [/gold]\n展开：从当前建筑中选择一张加入手牌。"
+}
+```
+
+### 效果说明
+
+- **卡牌显示**：在描述下方显示金色的"建造厂."文本
+- **悬停提示**：鼠标悬停在词条上时显示详细描述"拥有建造厂才能打出建筑卡牌。"
+
+### 扩展更多词条
+
+在 `ModCardKeywords` 类中添加更多词条：
+
+```csharp
+public static class ModCardKeywords
+{
+    public static readonly CustomKeyword Mcv = new(...);
+    
+    // 添加新词条
+    public static readonly CustomKeyword MyNewKeyword = new(
+        "MY_NEW_KEYWORD",
+        new LocString("card_keywords", "my_new_keyword.title"),
+        new LocString("card_keywords", "my_new_keyword.description")
+    );
+}
+```
+
+然后在需要使用该词条的卡牌中添加到 `ExtraHoverTips`：
+
+```csharp
+protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+[
+    ModCardKeywords.Mcv.CreateHoverTip(),
+    ModCardKeywords.MyNewKeyword.CreateHoverTip()
+];
+```
+
+---
+
 ## 4. 自定义药水
 
 ### 4.1 药水核心属性
