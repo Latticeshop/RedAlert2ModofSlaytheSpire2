@@ -10,6 +10,8 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Allies.Powers;
+using System.Linq;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -75,6 +77,16 @@ public sealed class AlliedWallCard : CardModel
 		
 		// 获得护盾
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
+
+		// 检查是否拥有策略：塔防能力，且有光棱塔能力
+		var strategyTowerDefensePower = Owner.Creature.Powers.OfType<StrategyTowerDefensePower>().FirstOrDefault();
+		var prismTowerPower = Owner.Creature.Powers.OfType<PrismTowerPower>().FirstOrDefault();
+		if (strategyTowerDefensePower != null && prismTowerPower != null)
+		{
+			GD.Print($"[AlliedWallCard] 拥有策略：塔防和光棱塔能力，获得1回合壁垒");
+			// 获得1回合壁垒（BlurPower），层数1表示持续1回合
+			await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.BlurPower>(Owner.Creature, 1m, Owner.Creature, this);
+		}
 
 		// 围墙打出后不抽牌
 	}

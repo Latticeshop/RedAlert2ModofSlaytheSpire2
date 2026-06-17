@@ -157,6 +157,15 @@ public static class ModCardKeywords
     );
 
     /// <summary>
+    /// 策略：塔防词条
+    /// </summary>
+    public static readonly CustomKeyword StrategyTowerDefense = new(
+        "STRATEGY_TOWER_DEFENSE",
+        new LocString("card_keywords", "strategy_tower_defense.title"),
+        new LocString("card_keywords", "strategy_tower_defense.description")
+    );
+
+    /// <summary>
     /// 初始化所有自定义词条
     /// </summary>
     public static void Initialize()
@@ -170,5 +179,6 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(DefenseTower);
         CustomKeywordManager.RegisterKeyword(ProductionQueue);
         CustomKeywordManager.RegisterKeyword(Unit);
+        CustomKeywordManager.RegisterKeyword(StrategyTowerDefense);
     }
 }

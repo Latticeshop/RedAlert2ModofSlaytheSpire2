@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bgetati8n0tus"
-path="res://.godot/imported/sellmcvicon.png-544fce7b8ddc907164a830736436e74b.ctex"
+uid="uid://bheh73g84tcvl"
+path="res://.godot/imported/strategy_tower_defense.png-17927725f3f2f08968e3d5ab001b78ee.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://RedAlert2ModResources/images/packed/card_portraits/sellmcvicon.png"
-dest_files=["res://.godot/imported/sellmcvicon.png-544fce7b8ddc907164a830736436e74b.ctex"]
+source_file="res://RedAlert2ModResources/images/packed/card_portraits/strategy_tower_defense.png"
+dest_files=["res://.godot/imported/strategy_tower_defense.png-17927725f3f2f08968e3d5ab001b78ee.ctex"]
 
 [params]
 

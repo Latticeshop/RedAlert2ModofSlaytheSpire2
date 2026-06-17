@@ -55,11 +55,12 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<PillboxCard>()
     };
 
-    // 盟军技能卡
+    // 盟军运转(技能)卡
     public static List<Func<CardModel>> PowerCards { get; } = new()
     {
         () => ModelDb.Card<SellMCV>(),
-        () => ModelDb.Card<Ra2Rally>()
+        () => ModelDb.Card<Ra2Rally>(),
+        () => ModelDb.Card<StrategyTowerDefense>()
     };
 
     // 盟军特殊卡

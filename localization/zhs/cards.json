@@ -36,5 +36,7 @@
     "SELL_MC_V.title": "卖本",
     "SELL_MC_V.description": "售卖建造厂，获得 {DollarValue} 资金。{IfUpgraded:show:获得一张工程师。|}",
     "RA2_RALLY.title": "集结",
-    "RA2_RALLY.description": "从牌堆中召集 {MagicNumber} 张[gold]单位[/gold]卡牌到手牌中。"
+    "RA2_RALLY.description": "从牌堆中召集 {MagicNumber} 张[gold]单位[/gold]卡牌到手牌中。",
+    "STRATEGY_TOWER_DEFENSE.title": "策略：塔防",
+    "STRATEGY_TOWER_DEFENSE.description": "获得[gold]策略：塔防[/gold]能力。加入一张带消耗的光棱塔卡牌。"
 }
