@@ -148,6 +148,15 @@ public static class ModCardKeywords
     );
 
     /// <summary>
+    /// 单位词条 - 指可被集结卡牌召集的战斗单位
+    /// </summary>
+    public static readonly CustomKeyword Unit = new(
+        "UNIT",
+        new LocString("card_keywords", "unit.title"),
+        new LocString("card_keywords", "unit.description")
+    );
+
+    /// <summary>
     /// 初始化所有自定义词条
     /// </summary>
     public static void Initialize()
@@ -160,5 +169,6 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(Building);
         CustomKeywordManager.RegisterKeyword(DefenseTower);
         CustomKeywordManager.RegisterKeyword(ProductionQueue);
+        CustomKeywordManager.RegisterKeyword(Unit);
     }
 }

@@ -14,5 +14,7 @@
     "defense_tower.title": "防御塔",
     "defense_tower.description": "需要建造厂建造，自动执行的建筑。",
     "production_queue.title": "生产序列",
-    "production_queue.description": "每回合自动扣钱，加入一张0费且消耗的指定单位卡牌。\n若资金不足则停止生产。"
+    "production_queue.description": "每回合自动扣钱，加入一张0费且消耗的指定单位卡牌。\n若资金不足则停止生产。",
+    "unit.title": "单位",
+    "unit.description": "指士兵、战车、空军、海军这类单位卡牌。"
 }

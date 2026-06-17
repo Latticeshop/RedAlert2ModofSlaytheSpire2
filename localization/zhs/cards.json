@@ -12,7 +12,7 @@
     "ROCKET_SOLDIER.title": "火箭飞行兵",
     "ROCKET_SOLDIER.description": "{IfUpgraded:show:对所有敌人|}造成 {Damage} 点伤害 {Repeat} 次。本回合获得 2 点敏捷。",
     "IFV.title": "IFV",
-    "IFV.description": "本回合获得 1 点敏捷。造成 {Damage} 点伤害 {Repeat} 次，获得 {Block} 点护盾。",
+    "IFV.description": "本回合获得 1 点敏捷。造成 {Damage} 点伤害 {Repeat} 次，获得 {Block} 点格挡。",
     "ALLIED_WAR_FACTORY.title": "盟军重工",
     "ALLIED_WAR_FACTORY.description": "[gold]价格：${DollarNumber}[/gold]。选择一张装甲单位，创建对应的[gold]生产序列[/gold]。{IfUpgraded:show:单位序列升级。|}",
     "ALLIED_REFINERY.title": "矿场",
@@ -22,7 +22,7 @@
     "POWER_PLANT_CARD.title": "发电厂",
     "POWER_PLANT_CARD.description": "[gold]价格：${DollarNumber}[/gold]。每抽 {IfUpgraded:show:7|10} 张牌获得 1 点能量。",
     "ALLIED_WALL_CARD.title": "盟军围墙",
-    "ALLIED_WALL_CARD.description": "[gold]价格：${DollarNumber}[/gold]。获得 {Block} 点护盾。将此牌返回你的手牌。",
+    "ALLIED_WALL_CARD.description": "[gold]价格：${DollarNumber}[/gold]。获得 {Block} 点格挡。将此牌返回你的手牌。",
     "PILLBOX_CARD.title": "机枪碉堡",
     "PILLBOX_CARD.description": "[gold]价格：${DollarNumber}[/gold]。回合开始时对敌人造成 {Damage} 点伤害，获得 {Block} 点防御。",
     "CHRONO_MINER.title": "超时空矿车",
@@ -34,5 +34,7 @@
     "PRISM_TOWER_CARD.title": "光棱塔",
     "PRISM_TOWER_CARD.description": "[gold]价格：${DollarNumber}[/gold]。回合开始时对敌人造成 {Damage} 点伤害 {Repeat} 次。叠加时伤害+{IfUpgraded:show:5|2}。",
     "SELL_MC_V.title": "卖本",
-    "SELL_MC_V.description": "售卖建造厂，获得 {DollarValue} 资金。{IfUpgraded:show:获得一张工程师。|}"
+    "SELL_MC_V.description": "售卖建造厂，获得 {DollarValue} 资金。{IfUpgraded:show:获得一张工程师。|}",
+    "RA2_RALLY.title": "集结",
+    "RA2_RALLY.description": "从牌堆中召集 {MagicNumber} 张[gold]单位[/gold]卡牌到手牌中。"
 }

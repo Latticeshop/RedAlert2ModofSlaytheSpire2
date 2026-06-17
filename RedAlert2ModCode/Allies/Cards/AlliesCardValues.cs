@@ -187,6 +187,14 @@ public static class AlliesCardValues
 		Cost = 1,
 		DollarValue = 2400
 	};
+
+	/// <summary>集结 - 1费，从牌堆中召集2张单位卡到手牌中，升级后3张</summary>
+	public static CardValueStore.CardValues Ra2Rally => new()
+	{
+		Cost = 1,
+		MagicNumber = 2,           // 召集单位卡数量
+		MagicNumberUpgraded = 1    // 升级后增加1张
+	};
 	
 	// ==================== 数值映射创建方法 ====================
 	

@@ -58,7 +58,8 @@ public static class AlliedCardRegistry
     // 盟军技能卡
     public static List<Func<CardModel>> PowerCards { get; } = new()
     {
-        () => ModelDb.Card<SellMCV>()
+        () => ModelDb.Card<SellMCV>(),
+        () => ModelDb.Card<Ra2Rally>()
     };
 
     // 盟军特殊卡
