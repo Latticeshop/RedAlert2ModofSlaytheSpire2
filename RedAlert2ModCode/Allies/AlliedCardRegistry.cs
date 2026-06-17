@@ -45,17 +45,20 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<PowerPlantCard>(),
         () => ModelDb.Card<AirForceCommand>(),
         () => ModelDb.Card<AlliedRefinery>(),
+        () => ModelDb.Card<AlliedWallCard>()
+    };
+
+    // 盟军防御塔
+    public static List<Func<CardModel>> DefenseTowers { get; } = new()
+    {
         () => ModelDb.Card<PrismTowerCard>(),
-        () => ModelDb.Card<AlliedWallCard>(),
         () => ModelDb.Card<PillboxCard>()
     };
 
     // 盟军技能卡
     public static List<Func<CardModel>> PowerCards { get; } = new()
     {
-        () => ModelDb.Card<PrismTowerCard>(),
-        () => ModelDb.Card<AlliedWallCard>(),
-        () => ModelDb.Card<PillboxCard>()
+        () => ModelDb.Card<SellMCV>()
     };
 
     // 盟军特殊卡
@@ -118,6 +121,14 @@ public static class AlliedCardRegistry
     }
 
     /// <summary>
+    /// 获取所有防御塔卡
+    /// </summary>
+    public static List<CardModel> GetAllDefenseTowers()
+    {
+        return DefenseTowers.Select(s => s()).ToList();
+    }
+
+    /// <summary>
     /// 获取所有技能卡
     /// </summary>
     public static List<CardModel> GetAllPowerCards()
@@ -141,6 +152,7 @@ public static class AlliedCardRegistry
         List<CardModel> cards = new();
         cards.AddRange(GetAllUnits());
         cards.AddRange(GetAllBuildingCards());
+        cards.AddRange(GetAllDefenseTowers());
         cards.AddRange(GetAllPowerCards());
         cards.AddRange(GetAllSpecialCards());
         return cards;
@@ -192,6 +204,11 @@ public static class AlliedCardRegistry
         return BuildingCards.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
     }
 
+    public static List<CardModel> CreateDefenseTowers(Player owner)
+    {
+        return DefenseTowers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+    }
+
     public static List<CardModel> CreatePowerCards(Player owner)
     {
         return PowerCards.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
@@ -207,6 +224,7 @@ public static class AlliedCardRegistry
         List<CardModel> cards = new();
         cards.AddRange(CreateAllUnits(owner));
         cards.AddRange(CreateBuildingCards(owner));
+        cards.AddRange(CreateDefenseTowers(owner));
         cards.AddRange(CreatePowerCards(owner));
         cards.AddRange(CreateSpecialCards(owner));
         return cards;

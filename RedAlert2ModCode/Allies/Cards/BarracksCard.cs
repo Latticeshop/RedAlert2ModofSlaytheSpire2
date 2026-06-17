@@ -32,7 +32,8 @@ public sealed class BarracksCard : CardModel
 
 		protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 		[
-			ModCardKeywords.Building.CreateHoverTip()
+			ModCardKeywords.Building.CreateHoverTip(),
+			ModCardKeywords.ProductionQueue.CreateHoverTip()
 		];
 
 		protected override bool IsPlayable

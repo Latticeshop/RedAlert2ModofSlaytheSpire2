@@ -3,7 +3,7 @@
     "DOLLAR_POWER.description": "当前资金${dollar_value}。",
     "ALLIED_MC_V_POWER.title": "盟军基地车",
     "ALLIED_MC_V_POWER.description": "已部署基地车。",
-    "TRAINING_QUEUE_POWER.title": "训练序列",
+    "TRAINING_QUEUE_POWER.title": "生产序列",
     "TRAINING_QUEUE_POWER.description": "每回合花费${UnitPrice}，加入一张0费且消耗的{UnitName}卡牌。",
     "POWER_PLANT_POWER.title": "发电厂",
     "POWER_PLANT_POWER.description": "每抽 {BaseCards} 张牌获得 1 点能量。",

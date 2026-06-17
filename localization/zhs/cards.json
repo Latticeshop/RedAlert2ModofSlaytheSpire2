@@ -6,7 +6,7 @@
     "ALLIED_MC_V.title": "盟军基地车",
     "ALLIED_MC_V.description": "[gold]MCV. [/gold]\n展开：从当前建筑中选择一张加入手牌。{IfUpgraded:show:建筑升级。|}",
     "BARRACKS_CARD.title": "兵营",
-    "BARRACKS_CARD.description": "价格：${DollarNumber}。选择一张士兵单位，创建对应的生产序列。{IfUpgraded:show:单位序列升级。|}",
+    "BARRACKS_CARD.description": "价格：${DollarNumber}。选择一张士兵单位，创建对应的[gold]生产序列[/gold]。{IfUpgraded:show:单位序列升级。|}",
     "DOG_SOLDIER.title": "军犬",
     "DOG_SOLDIER.description": "造成 {Damage} 点伤害，赋予 {Repeat} 层虚弱。",
     "ROCKET_SOLDIER.title": "火箭飞行兵",
@@ -14,7 +14,7 @@
     "IFV.title": "IFV",
     "IFV.description": "本回合获得 1 点敏捷。造成 {Damage} 点伤害 {Repeat} 次，获得 {Block} 点护盾。",
     "ALLIED_WAR_FACTORY.title": "盟军重工",
-    "ALLIED_WAR_FACTORY.description": "价格：${DollarNumber}。选择一张装甲单位，创建对应的生产序列。{IfUpgraded:show:单位序列升级。|}",
+    "ALLIED_WAR_FACTORY.description": "价格：${DollarNumber}。选择一张装甲单位，创建对应的[gold]生产序列[/gold]。{IfUpgraded:show:单位序列升级。|}",
     "ALLIED_REFINERY.title": "矿场",
     "ALLIED_REFINERY.description": "价格：${DollarNumber}。将一张超时空矿车加入手牌。{IfUpgraded:show:矿车升级。|}",
     "ENGINEER.title": "工程师",
@@ -30,7 +30,9 @@
     "INTRUDER.title": "入侵者战机",
     "INTRUDER.description": "造成 {Damage} 点伤害，赋予敌人 {Repeat} 层易伤。",
     "AIR_FORCE_COMMAND.title": "空指部",
-    "AIR_FORCE_COMMAND.description": "价格：${DollarNumber}。选择一张空军单位，创建对应的生产序列。{IfUpgraded:show:单位序列升级。|}",
+    "AIR_FORCE_COMMAND.description": "价格：${DollarNumber}。选择一张空军单位，创建对应的[gold]生产序列[/gold]。{IfUpgraded:show:单位序列升级。|}",
     "PRISM_TOWER_CARD.title": "光棱塔",
-    "PRISM_TOWER_CARD.description": "价格：${DollarNumber}。回合开始时对敌人造成 {Damage} 点伤害 {Repeat} 次。叠加时伤害+{IfUpgraded:show:5|2}。"
+    "PRISM_TOWER_CARD.description": "价格：${DollarNumber}。回合开始时对敌人造成 {Damage} 点伤害 {Repeat} 次。叠加时伤害+{IfUpgraded:show:5|2}。",
+    "SELL_MC_V.title": "卖本",
+    "SELL_MC_V.description": "售卖建造厂，获得 {DollarValue} 资金。[consume]消耗[/consume]。{IfUpgraded:show:获得一张工程师。|}"
 }

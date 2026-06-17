@@ -178,6 +178,15 @@ public static class AlliesCardValues
 		DollarValue = 1000,
 		DollarValueUpgraded = 500
 	};
+
+	// ==================== 运转卡牌 ====================
+	
+	/// <summary>卖本 - 1费获得2400资金，消耗</summary>
+	public static CardValueStore.CardValues SellMCV => new()
+	{
+		Cost = 1,
+		DollarValue = 2400
+	};
 	
 	// ==================== 数值映射创建方法 ====================
 	

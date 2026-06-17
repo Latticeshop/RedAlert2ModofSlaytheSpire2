@@ -139,6 +139,15 @@ public static class ModCardKeywords
     );
 
     /// <summary>
+    /// 生产序列词条 - 每回合自动扣费生产单位
+    /// </summary>
+    public static readonly CustomKeyword ProductionQueue = new(
+        "PRODUCTION_QUEUE",
+        new LocString("card_keywords", "production_queue.title"),
+        new LocString("card_keywords", "production_queue.description")
+    );
+
+    /// <summary>
     /// 初始化所有自定义词条
     /// </summary>
     public static void Initialize()
@@ -150,5 +159,6 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(Navy);
         CustomKeywordManager.RegisterKeyword(Building);
         CustomKeywordManager.RegisterKeyword(DefenseTower);
+        CustomKeywordManager.RegisterKeyword(ProductionQueue);
     }
 }
