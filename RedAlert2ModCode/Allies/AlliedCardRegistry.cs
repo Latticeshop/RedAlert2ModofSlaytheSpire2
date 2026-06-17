@@ -33,7 +33,7 @@ public static class AlliedCardRegistry
 
     public static List<Func<CardModel>> Ships { get; } = new()
     {
-        // 待添加
+        () => ModelDb.Card<Dolphin>()
     };
 
     // 盟军建筑卡
@@ -45,7 +45,8 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<PowerPlantCard>(),
         () => ModelDb.Card<AirForceCommand>(),
         () => ModelDb.Card<AlliedRefinery>(),
-        () => ModelDb.Card<AlliedWallCard>()
+        () => ModelDb.Card<AlliedWallCard>(),
+        () => ModelDb.Card<ShipyardCard>()
     };
 
     // 盟军防御塔

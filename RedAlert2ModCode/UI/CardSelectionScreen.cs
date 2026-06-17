@@ -364,6 +364,9 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         // 如果还有未替换的变量，尝试从动态变量获取
         desc = ReplaceDynamicVars(card, desc);
 
+        // 去除 [gold] 和 [/gold] 标签
+        desc = desc.Replace("[gold]", "").Replace("[/gold]", "");
+
         return desc;
     }
 
@@ -386,6 +389,8 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             text = text.Replace("{MagicNumber}", values.GetMagicNumber(isUpgraded).ToString());
             text = text.Replace("{DollarValue}", values.GetDollarValue(isUpgraded).ToString());
             text = text.Replace("{DollarNumber}", values.GetDollarValue(isUpgraded).ToString());
+            // 工程师使用的覆甲变量名
+            text = text.Replace("{PlatingAmount}", values.GetBlock(isUpgraded).ToString());
         }
         
         return text;

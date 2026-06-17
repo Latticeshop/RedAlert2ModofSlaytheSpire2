@@ -202,6 +202,28 @@ public static class AlliesCardValues
 		Cost = 2,
 		CostUpgraded = -1          // 升级后费用降低1
 	};
+
+	// ==================== 海军单位 ====================
+
+	/// <summary>海豚 - 1费，对所有敌人造成2伤害1层易伤，升级后2层易伤，价格500</summary>
+	public static CardValueStore.CardValues Dolphin => new()
+	{
+		Cost = 1,
+		Damage = 2,
+		Repeat = 1,
+		RepeatUpgraded = 1,        // 升级后易伤层数+1
+		DollarValue = 500
+	};
+
+	// ==================== 建筑卡牌（新增） ====================
+
+	/// <summary>船厂 - 0费，价格1000</summary>
+	public static CardValueStore.CardValues Shipyard => new()
+	{
+		Cost = 0,
+		DollarValue = 1000
+		// 船厂主要是功能牌，数值由具体生成的单位决定
+	};
 	
 	// ==================== 数值映射创建方法 ====================
 	
@@ -235,6 +257,14 @@ public static class AlliesCardValues
 		};
 	}
 	
+	public static System.Collections.Generic.Dictionary<string, CardValueStore.CardValues> CreateShipValuesMap()
+	{
+		return new System.Collections.Generic.Dictionary<string, CardValueStore.CardValues>
+		{
+			{ "DOLPHIN", Dolphin }
+		};
+	}
+	
 	public static System.Collections.Generic.Dictionary<string, CardValueStore.CardValues> CreateBuildingValuesMap()
 	{
 		return new System.Collections.Generic.Dictionary<string, CardValueStore.CardValues>
@@ -261,6 +291,9 @@ public static class AlliesCardValues
 			map[kvp.Key] = kvp.Value;
 		
 		foreach (var kvp in CreateAircraftValuesMap())
+			map[kvp.Key] = kvp.Value;
+		
+		foreach (var kvp in CreateShipValuesMap())
 			map[kvp.Key] = kvp.Value;
 		
 		foreach (var kvp in CreateBuildingValuesMap())
