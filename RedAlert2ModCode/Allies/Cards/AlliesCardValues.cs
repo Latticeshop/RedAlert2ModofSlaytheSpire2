@@ -224,6 +224,27 @@ public static class AlliesCardValues
 		DollarValue = 900
 	};
 
+	/// <summary>驱逐舰 - 1费攻击卡，造成8伤害（升级12）。若敌人意图防御，改为给予1层易伤，造成2伤害（升级3）5次，价格800</summary>
+	public static CardValueStore.CardValues Destroyer => new()
+	{
+		Cost = 1,
+		Damage = 8,                // 基础伤害
+		DamageUpgraded = 4,        // 升级后12 = 8 + 4
+		MagicNumber = 2,           // 防御意图时的单次伤害
+		MagicNumberUpgraded = 1,   // 升级后3 = 2 + 1
+		Repeat = 5,                // 防御意图时的重复次数
+		DollarValue = 800
+	};
+
+	/// <summary>神盾巡洋舰 - 1费技能卡，获得8格挡（升级12）。若敌人意图攻击，多获得1轮，价格900</summary>
+	public static CardValueStore.CardValues Agisicon => new()
+	{
+		Cost = 1,
+		Block = 8,                 // 基础格挡
+		BlockUpgraded = 4,         // 升级后12 = 8 + 4
+		DollarValue = 900
+	};
+
 	// ==================== 建筑卡牌（新增） ====================
 
 	/// <summary>船厂 - 0费，价格1000</summary>
@@ -271,7 +292,8 @@ public static class AlliesCardValues
 		return new System.Collections.Generic.Dictionary<string, CardValueStore.CardValues>
 		{
 			{ "DOLPHIN", Dolphin },
-			{ "TRANSPORTSHIP", TransportShip }
+			{ "TRANSPORTSHIP", TransportShip },
+			{ "DESTROYER", Destroyer }
 		};
 	}
 	

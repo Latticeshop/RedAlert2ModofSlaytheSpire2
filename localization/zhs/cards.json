@@ -45,5 +45,9 @@
     "DOLPHIN.description": "对全部敌人造成 {Damage} 点伤害，赋予 {Repeat} 层易伤。",
     "TRANSPORT_SHIP.title": "运输船",
     "TRANSPORT_SHIP.description": "选择手牌中任意 {StoreCount} 张卡牌存储起来。若已存储卡牌，则释放全部到手牌。",
-    "TRANSPORT_SHIP.select_description": "选择要存储的卡牌"
+    "TRANSPORT_SHIP.select_description": "选择要存储的卡牌",
+    "DESTROYER.title": "驱逐舰",
+    "DESTROYER.description": "造成 {Damage} 点伤害。若目标意图防御，改为赋予 1 层易伤，造成 {DefendDamage} 点伤害 {RepeatCount} 次。",
+    "AGISICON.title": "神盾巡洋舰",
+    "AGISICON.description": "获得 {Block} 点格挡。若敌人意图攻击，再获得一遍格挡。"
 }
