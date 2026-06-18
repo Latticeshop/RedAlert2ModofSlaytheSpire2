@@ -87,19 +87,45 @@ public sealed class ShipyardCard : CardModel
 		{
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			
-			// 获取单位价格
-			int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
-			
-			// 使用统一的训练队列能力应用方法
-			await TrainingQueuePower.ApplyTrainingQueue(
-				owner: Owner.Creature,
-				cardId: selectedCard.Id.Entry,
-				unitName: selectedCard.Title.ToString(),
-				iconPath: selectedCard.PortraitPath,
-				unitPrice: unitPrice,
-				isUpgraded: base.IsUpgraded,
-				sourceCard: this
-			);
+			// 如果选择的是运输船，直接扣除资金并加入手牌
+			if (selectedCard is TransportShip)
+			{
+				GD.Print($"[ShipyardCard] 选择运输船，直接扣除资金并加入手牌");
+				
+				// 获取运输船价格
+				int transportPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
+				
+				// 扣除运输船费用
+				if (dollarPower != null)
+				{
+					dollarPower.AddDollar(-transportPrice);
+					GD.Print($"[ShipyardCard] 扣除运输船费用 {transportPrice}");
+				}
+				
+				// 克隆卡牌并加入手牌
+				var transportCard = selectedCard.CreateClone();
+				if (base.IsUpgraded)
+				{
+					CardCmd.Upgrade(transportCard);
+				}
+				await CardPileCmd.AddGeneratedCardToCombat(transportCard, PileType.Hand, addedByPlayer: true);
+			}
+			else
+			{
+				// 获取单位价格
+				int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
+				
+				// 使用统一的训练队列能力应用方法
+				await TrainingQueuePower.ApplyTrainingQueue(
+					owner: Owner.Creature,
+					cardId: selectedCard.Id.Entry,
+					unitName: selectedCard.Title.ToString(),
+					iconPath: selectedCard.PortraitPath,
+					unitPrice: unitPrice,
+					isUpgraded: base.IsUpgraded,
+					sourceCard: this
+				);
+			}
 
 			// 打出后抽一张牌
 			await CardPileCmd.Draw(ctx, 1, Owner);

@@ -215,6 +215,15 @@ public static class AlliesCardValues
 		DollarValue = 500
 	};
 
+	/// <summary>运输船 - 1费技能卡，存储最多3张手牌（升级后5张），价格900</summary>
+	public static CardValueStore.CardValues TransportShip => new()
+	{
+		Cost = 1,
+		MagicNumber = 3,           // 存储数量
+		MagicNumberUpgraded = 2,   // 升级后增加2张，总共5张
+		DollarValue = 900
+	};
+
 	// ==================== 建筑卡牌（新增） ====================
 
 	/// <summary>船厂 - 0费，价格1000</summary>
@@ -261,7 +270,8 @@ public static class AlliesCardValues
 	{
 		return new System.Collections.Generic.Dictionary<string, CardValueStore.CardValues>
 		{
-			{ "DOLPHIN", Dolphin }
+			{ "DOLPHIN", Dolphin },
+			{ "TRANSPORTSHIP", TransportShip }
 		};
 	}
 	
@@ -272,6 +282,7 @@ public static class AlliesCardValues
 			{ "BARRACKSCARD", Barracks },
 			{ "ALLIEDWARFACTORY", AlliedWarFactory },
 			{ "AIRFORCECOMMAND", AirForceCommand },
+			{ "SHIPYARDCARD", Shipyard },
 			{ "POWERPLANTCARD", PowerPlant },
 			{ "ALLIEDREFINERY", AlliedRefinery },
 			{ "PRISMTOWERCARD", PrismTower },

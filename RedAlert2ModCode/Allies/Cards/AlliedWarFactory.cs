@@ -94,10 +94,21 @@ public sealed class AlliedWarFactory : CardModel
 		{
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			
-			// 如果选择的是超时空矿车，直接加入手牌
+			// 如果选择的是超时空矿车，直接扣除资金并加入手牌
 			if (selectedCard is ChronoMiner)
 			{
-				GD.Print($"[AlliedWarFactory] 选择超时空矿车，直接加入手牌");
+				GD.Print($"[AlliedWarFactory] 选择超时空矿车，直接扣除资金并加入手牌");
+				
+				// 获取矿车价格
+				int minerPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
+				
+				// 扣除矿车费用
+				if (dollarPower != null)
+				{
+					dollarPower.AddDollar(-minerPrice);
+					GD.Print($"[AlliedWarFactory] 扣除矿车费用 {minerPrice}");
+				}
+				
 				// 克隆卡牌并加入手牌
 				var minerCard = selectedCard.CreateClone();
 				if (base.IsUpgraded)

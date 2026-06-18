@@ -42,5 +42,8 @@
     "SHIPYARD_CARD.title": "船厂",
     "SHIPYARD_CARD.description": "[gold]价格：${DollarNumber}[/gold]。选择一张海军单位，创建对应的[gold]生产序列[/gold]。{IfUpgraded:show:单位序列升级。|}",
     "DOLPHIN.title": "海豚",
-    "DOLPHIN.description": "对全部敌人造成 {Damage} 点伤害，赋予 {Repeat} 层易伤。"
+    "DOLPHIN.description": "对全部敌人造成 {Damage} 点伤害，赋予 {Repeat} 层易伤。",
+    "TRANSPORT_SHIP.title": "运输船",
+    "TRANSPORT_SHIP.description": "选择手牌中任意 {StoreCount} 张卡牌存储起来。若已存储卡牌，则释放全部到手牌。",
+    "TRANSPORT_SHIP.select_description": "选择要存储的卡牌"
 }

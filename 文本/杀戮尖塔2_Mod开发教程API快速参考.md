@@ -574,6 +574,47 @@ public class MyBuff : PowerModel
 }
 ```
 
+### 能力图标配置
+
+由于 `PowerModel.Icon` 属性不是 `virtual` 的，无法通过重写来设置自定义图标。需要使用 `PowerIconPatch` 来拦截图标获取：
+
+```csharp
+// PowerIconPatch.cs - Harmony补丁配置
+[HarmonyPatch]
+public static class PowerIconPatch
+{
+    private static readonly Dictionary<Type, string> _customIconPaths = new()
+    {
+        { typeof(MyBuff), "res://path/to/icon.png" },
+        { typeof(TransportShipPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/landicon.png" },
+        // 添加更多能力类型和图标路径
+    };
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(PowerModel), nameof(PowerModel.Icon), MethodType.Getter)]
+    public static bool IconPrefix(PowerModel __instance, ref Texture2D __result)
+    {
+        Type type = __instance.GetType();
+        if (_customIconPaths.TryGetValue(type, out string iconPath))
+        {
+            if (ResourceLoader.Exists(iconPath))
+            {
+                __result = ResourceLoader.Load<Texture2D>(iconPath);
+                return false; // 跳过原方法
+            }
+        }
+        return true; // 执行原方法
+    }
+    
+    // 同样需要Patch PackedIconPath 和 BigIcon 属性
+}
+```
+
+**重要提示**：新增能力类型后，必须将其添加到 `_customIconPaths` 字典中，否则图标将无法正常显示。例如添加 `TransportShipPower` 后：
+```csharp
+{ typeof(TransportShipPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/landicon.png" },
+```
+
 ### 施加能力
 ```csharp
 await PowerCmd.Apply<MyBuff>(target, amount, source, sourceCard);

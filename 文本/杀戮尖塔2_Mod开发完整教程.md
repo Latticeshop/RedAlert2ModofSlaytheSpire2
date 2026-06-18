@@ -910,14 +910,90 @@ await PowerCmd.Apply<MyBlockOnPlayBuff>(target, amount, source, sourceCard);
 await PowerCmd.Remove(powerInstance);
 ```
 
-### 6.5 资源路径
+### 6.5 能力图标配置
+
+由于 `PowerModel.Icon` 属性不是 `virtual` 的，无法通过重写来设置自定义图标。需要使用 `PowerIconPatch` 来拦截图标获取：
+
+#### 实现步骤
+
+1. **创建 Harmony 补丁类**：
+
+```csharp
+[HarmonyPatch]
+public static class PowerIconPatch
+{
+    // 能力类型到图标路径的映射字典
+    private static readonly Dictionary<Type, string> _customIconPaths = new()
+    {
+        { typeof(MyBlockOnPlayBuff), "res://images/powers/my_block_on_play_buff.png" },
+        { typeof(TransportShipPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/landicon.png" },
+        // 添加更多能力类型和图标路径
+    };
+
+    // 拦截 Icon 属性
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(PowerModel), nameof(PowerModel.Icon), MethodType.Getter)]
+    public static bool IconPrefix(PowerModel __instance, ref Texture2D __result)
+    {
+        Type type = __instance.GetType();
+        if (_customIconPaths.TryGetValue(type, out string iconPath))
+        {
+            if (ResourceLoader.Exists(iconPath))
+            {
+                __result = ResourceLoader.Load<Texture2D>(iconPath);
+                return false; // 跳过原方法
+            }
+        }
+        return true; // 执行原方法
+    }
+
+    // 拦截 PackedIconPath 属性
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(PowerModel), nameof(PowerModel.PackedIconPath), MethodType.Getter)]
+    public static bool PackedIconPathPrefix(PowerModel __instance, ref string __result)
+    {
+        Type type = __instance.GetType();
+        if (_customIconPaths.TryGetValue(type, out string iconPath))
+        {
+            __result = iconPath;
+            return false;
+        }
+        return true;
+    }
+
+    // 拦截 BigIcon 属性（悬停提示时显示的大图标）
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(PowerModel), nameof(PowerModel.BigIcon), MethodType.Getter)]
+    public static bool BigIconPrefix(PowerModel __instance, ref Texture2D __result)
+    {
+        Type type = __instance.GetType();
+        if (_customIconPaths.TryGetValue(type, out string iconPath))
+        {
+            if (ResourceLoader.Exists(iconPath))
+            {
+                __result = ResourceLoader.Load<Texture2D>(iconPath);
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
+
+**重要提示**：新增能力类型后，必须将其添加到 `_customIconPaths` 字典中，否则图标将无法正常显示。例如添加 `TransportShipPower` 后：
+
+```csharp
+{ typeof(TransportShipPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/landicon.png" },
+```
+
+### 6.6 资源路径
 
 ```
 res://images/powers/<能力ID小写>.png
 res://images/atlases/power_atlas.sprites/<能力ID小写>.tres
 ```
 
-### 6.6 本地化文本
+### 6.7 本地化文本
 
 `res://<ModID>/localization/zhs/powers.json`:
 ```json
