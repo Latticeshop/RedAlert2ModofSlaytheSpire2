@@ -15,5 +15,5 @@
     "STRATEGY_TOWER_DEFENSE_POWER.title": "策略：塔防",
     "STRATEGY_TOWER_DEFENSE_POWER.description": "当你打出[gold]围墙[/gold]时，如果拥有[gold]光棱塔[/gold]能力，获得 1 回合[gold]残影[/gold]。",
     "TRANSPORT_SHIP_POWER.title": "运输船",
-    "TRANSPORT_SHIP_POWER.description": "当前存储卡牌：\n{UnitName0}\n{UnitName1}\n{UnitName2}\n{UnitName3}\n{UnitName4}"
+    "TRANSPORT_SHIP_POWER.description": "当前存储卡牌：\n{StoredCard0}\n{StoredCard1}\n{StoredCard2}\n{StoredCard3}\n{StoredCard4}\n{StoredCard5}\n{StoredCard6}\n{StoredCard7}\n{StoredCard8}\n{StoredCard9}"
 }
