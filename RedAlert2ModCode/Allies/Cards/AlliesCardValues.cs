@@ -205,6 +205,15 @@ public static class AlliesCardValues
 
 	// ==================== 海军单位 ====================
 
+	/// <summary>运输船 - 1费技能卡，存储最多3张手牌（升级后5张），价格900</summary>
+	public static CardValueStore.CardValues TransportShip => new()
+	{
+		Cost = 1,
+		MagicNumber = 3,           // 存储数量
+		MagicNumberUpgraded = 2,   // 升级后增加2张，总共5张
+		DollarValue = 900
+	};
+
 	/// <summary>海豚 - 1费，对所有敌人造成2伤害1层易伤，升级后2层易伤，价格500</summary>
 	public static CardValueStore.CardValues Dolphin => new()
 	{
@@ -213,15 +222,6 @@ public static class AlliesCardValues
 		Repeat = 1,
 		RepeatUpgraded = 1,        // 升级后易伤层数+1
 		DollarValue = 500
-	};
-
-	/// <summary>运输船 - 1费技能卡，存储最多3张手牌（升级后5张），价格900</summary>
-	public static CardValueStore.CardValues TransportShip => new()
-	{
-		Cost = 1,
-		MagicNumber = 3,           // 存储数量
-		MagicNumberUpgraded = 2,   // 升级后增加2张，总共5张
-		DollarValue = 900
 	};
 
 	/// <summary>驱逐舰 - 1费攻击卡，造成8伤害（升级12）。若敌人意图防御，改为给予1层易伤，造成2伤害（升级3）5次，价格800</summary>
@@ -291,9 +291,10 @@ public static class AlliesCardValues
 	{
 		return new System.Collections.Generic.Dictionary<string, CardValueStore.CardValues>
 		{
-			{ "DOLPHIN", Dolphin },
 			{ "TRANSPORTSHIP", TransportShip },
-			{ "DESTROYER", Destroyer }
+			{ "DOLPHIN", Dolphin },
+			{ "DESTROYER", Destroyer },
+			{ "AGISICON", Agisicon }
 		};
 	}
 	

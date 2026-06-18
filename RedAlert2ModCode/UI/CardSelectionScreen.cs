@@ -334,7 +334,34 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         }
         
         // 最后尝试从 AlliesCardValues 获取
-        return AlliesCardValues.GetDollarValue(card.Id.Entry).ToString();
+        decimal result = AlliesCardValues.GetDollarValue(card.Id.Entry);
+        if (result > 0)
+        {
+            return result.ToString();
+        }
+        
+        // 额外尝试：直接访问卡牌的动态变量
+        if (card.DynamicVars != null)
+        {
+            foreach (var varItem in card.DynamicVars)
+            {
+                string varName = varItem.GetType().Name;
+                if (varName.Contains("Dollar"))
+                {
+                    var valueProp = varItem.GetType().GetProperty("Value") ?? varItem.GetType().GetProperty("IntValue");
+                    if (valueProp != null)
+                    {
+                        object? value = valueProp.GetValue(varItem);
+                        if (value != null)
+                        {
+                            return value.ToString() ?? string.Empty;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return "0";
     }
 
     private string GetCardTitle(CardModel card)
@@ -367,6 +394,12 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         // 去除 [gold] 和 [/gold] 标签
         desc = desc.Replace("[gold]", "").Replace("[/gold]", "");
 
+        // 特殊处理：运输船卡牌不显示存储信息（UI选择界面不需要显示）
+        if (card.Id.Entry.Equals("TRANSPORT_SHIP", System.StringComparison.OrdinalIgnoreCase))
+        {
+            desc = desc.Replace("\n当前存储：{StoredCards}", "");
+        }
+
         return desc;
     }
 
@@ -391,6 +424,15 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             text = text.Replace("{DollarNumber}", values.GetDollarValue(isUpgraded).ToString());
             // 工程师使用的覆甲变量名
             text = text.Replace("{PlatingAmount}", values.GetBlock(isUpgraded).ToString());
+            
+            // 驱逐舰使用的变量
+            int defendDamage = isUpgraded ? values.MagicNumber + values.MagicNumberUpgraded : values.MagicNumber;
+            text = text.Replace("{DefendDamage}", defendDamage.ToString());
+            text = text.Replace("{RepeatCount}", values.Repeat.ToString());
+            
+            // 运输船使用的变量
+            int storeCount = isUpgraded ? values.MagicNumber + values.MagicNumberUpgraded : values.MagicNumber;
+            text = text.Replace("{StoreCount}", storeCount.ToString());
         }
         
         return text;
