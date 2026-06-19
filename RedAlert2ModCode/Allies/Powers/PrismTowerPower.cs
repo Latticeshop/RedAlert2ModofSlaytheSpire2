@@ -77,6 +77,10 @@ public class PrismTowerPower : PowerModel
 			existingPower.CurrentDamage = (int)Values.Damage + existingPower.DamageIncrement;
 			existingPower.CurrentHits = existingPower.PrismTowerLevel;
 			GD.Print($"[PrismTowerPower] 叠加效果 - NewLevel={existingPower.PrismTowerLevel}, DamageIncrement={existingPower.DamageIncrement}, Damage={existingPower.CurrentDamage}, Hits={existingPower.CurrentHits}, AddedIncrement={addIncrement}");
+			
+			// 触发叠加动画反馈
+			await CreatureCmd.TriggerAnim(owner, "Cast", 0.3f);
+			GD.Print($"[PrismTowerPower] 触发叠加动画");
 		}
 		else
 		{

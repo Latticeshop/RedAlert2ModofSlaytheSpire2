@@ -32,6 +32,7 @@ public static class PowerIconPatch
         { typeof(PatriotMissilePower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/samicon.png" },
         { typeof(HornetPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/hornet.png" },
         { typeof(TargetLockedPower), "res://RedAlert2ModResources/images/packed/powers/target_locked.png" },
+        { typeof(RepairDepotPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/fixicon.png" },
     };
 
     /// <summary>

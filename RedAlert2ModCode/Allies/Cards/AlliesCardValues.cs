@@ -1,4 +1,6 @@
 using RedAlert2ModCode.Utils;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -272,6 +274,14 @@ public static class AlliesCardValues
 		DollarValue = 2000
 	};
 
+	/// <summary>修理厂 - 2费能力卡（升级后1费），回合开始时花费$500从消耗牌堆选择一张牌加入弃牌堆，价格800</summary>
+	public static CardValueStore.CardValues RepairDepot => new()
+	{
+		Cost = 2,           // 未升级：2费
+		CostUpgraded = 1,   // 升级后：1费
+		DollarValue = 800
+	};
+
 	// ==================== 高科技(T2)单位 - 需要作战实验室解锁 ====================
 
 	/// <summary>幻影坦克 - 1费攻击卡，价格1000，需要作战实验室</summary>
@@ -372,6 +382,22 @@ public static class AlliesCardValues
 			{ "AIRCRAFTCARRIER", AircraftCarrier }
 		};
 	}
+
+	/// <summary>建筑类型到模型的映射（避免反射错误）</summary>
+	public static readonly System.Collections.Generic.Dictionary<System.Type, System.Func<CardModel>> BuildingModelMap = new()
+	{
+		{ typeof(PowerPlantCard), () => ModelDb.Card<PowerPlantCard>() },
+		{ typeof(AlliedRefinery), () => ModelDb.Card<AlliedRefinery>() },
+		{ typeof(BarracksCard), () => ModelDb.Card<BarracksCard>() },
+		{ typeof(AlliedWarFactory), () => ModelDb.Card<AlliedWarFactory>() },
+		{ typeof(AirForceCommand), () => ModelDb.Card<AirForceCommand>() },
+		{ typeof(ShipyardCard), () => ModelDb.Card<ShipyardCard>() },
+		{ typeof(PrismTowerCard), () => ModelDb.Card<PrismTowerCard>() },
+		{ typeof(AlliedWallCard), () => ModelDb.Card<AlliedWallCard>() },
+		{ typeof(PillboxCard), () => ModelDb.Card<PillboxCard>() },
+		{ typeof(PatriotMissile), () => ModelDb.Card<PatriotMissile>() },
+		{ typeof(BattleLab), () => ModelDb.Card<BattleLab>() }
+	};
 	
 	public static System.Collections.Generic.Dictionary<string, CardValueStore.CardValues> CreateAllValuesMap()
 	{

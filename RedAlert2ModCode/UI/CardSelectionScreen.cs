@@ -16,11 +16,16 @@ namespace RedAlert2ModCode.UI;
 public sealed partial class CardSelectionScreen : Control, IOverlayScreen
 {
     private readonly TaskCompletionSource<CardModel?> _completionSource = new();
+    private readonly TaskCompletionSource<List<CardModel>?> _multiCompletionSource = new();
     private readonly List<CardModel> _cards;
     private readonly Dictionary<string, CardValueStore.CardValues> _cardValuesMap;
     private ScrollContainer _scrollContainer;
     private HBoxContainer _cardsRow;
     private bool _choiceLocked;
+    private bool _isMultiSelect = false;
+    private int _maxSelection = 1;
+    private int _minSelection = 1;
+    private List<CardModel> _selectedCards = new();
 
     public NetScreenType ScreenType => NetScreenType.Rewards;
     public bool UseSharedBackstop => true;
@@ -30,6 +35,20 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     {
         _cards = cards;
         _cardValuesMap = cardValuesMap ?? new Dictionary<string, CardValueStore.CardValues>();
+        Name = nameof(CardSelectionScreen);
+        SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+        MouseFilter = MouseFilterEnum.Stop;
+        FocusMode = FocusModeEnum.All;
+        BuildUi();
+    }
+
+    private CardSelectionScreen(List<CardModel> cards, int maxSelect, int minSelect, Dictionary<string, CardValueStore.CardValues> cardValuesMap = null)
+    {
+        _cards = cards;
+        _cardValuesMap = cardValuesMap ?? new Dictionary<string, CardValueStore.CardValues>();
+        _isMultiSelect = true;
+        _maxSelection = maxSelect;
+        _minSelection = minSelect;
         Name = nameof(CardSelectionScreen);
         SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
         MouseFilter = MouseFilterEnum.Stop;
@@ -49,6 +68,20 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         var screen = new CardSelectionScreen(cards, cardValuesMap);
         NOverlayStack.Instance?.Push(screen);
         return await screen._completionSource.Task;
+    }
+
+    public static async Task<List<CardModel>?> ShowMultiSelection(List<CardModel> cards, int maxSelect, int minSelect)
+    {
+        var screen = new CardSelectionScreen(cards, maxSelect, minSelect);
+        NOverlayStack.Instance?.Push(screen);
+        return await screen._multiCompletionSource.Task;
+    }
+
+    public static async Task<List<CardModel>?> ShowMultiSelection(List<CardModel> cards, int maxSelect, int minSelect, Dictionary<string, CardValueStore.CardValues> cardValuesMap)
+    {
+        var screen = new CardSelectionScreen(cards, maxSelect, minSelect, cardValuesMap);
+        NOverlayStack.Instance?.Push(screen);
+        return await screen._multiCompletionSource.Task;
     }
 
     private void BuildUi()
@@ -88,7 +121,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         // 使用普通 Label 替代 MegaLabel，避免 Godot 字体覆盖 bug
         Label title = new()
         {
-            Text = "请选择单位",
+            Text = _isMultiSelect ? $"请选择 1-{_maxSelection} 张牌" : "请选择单位",
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
@@ -118,34 +151,81 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         _cardsRow.AddThemeConstantOverride("separation", 15);
         _scrollContainer.AddChild(_cardsRow);
 
-        foreach (var card in _cards)
+        foreach (var card in _cards.Select((c, i) => (Card: c, Index: i)))
         {
-            _cardsRow.AddChild(CreateCardButton(card));
+            _cardsRow.AddChild(CreateCardButton(card.Card, card.Index));
         }
 
-        // 取消按钮
-        Button cancelButton = new()
+        // 多选模式下添加按钮容器（并排展示）
+        if (_isMultiSelect)
         {
-            Text = "X 取消",
-            CustomMinimumSize = new Vector2(160f, 50f),
-            SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
-            FocusMode = FocusModeEnum.All,
-            MouseDefaultCursorShape = CursorShape.PointingHand
-        };
-        cancelButton.AddThemeStyleboxOverride("normal", CreateCancelStyle());
-        cancelButton.AddThemeStyleboxOverride("hover", CreateCancelStyle(new Color(0.6f, 0.15f, 0.15f, 0.9f)));
-        cancelButton.AddThemeStyleboxOverride("pressed", CreateCancelStyle(new Color(0.35f, 0.08f, 0.08f, 0.95f)));
-        cancelButton.AddThemeColorOverride("font_color", new Color(1f, 0.85f, 0.85f));
-        cancelButton.AddThemeFontSizeOverride("font_size", 20);
-        cancelButton.Pressed += OnCancelClicked;
-        root.AddChild(cancelButton);
+            HBoxContainer buttonContainer = new()
+            {
+                Alignment = BoxContainer.AlignmentMode.Center,
+                SizeFlagsHorizontal = SizeFlags.ShrinkCenter
+            };
+            buttonContainer.AddThemeConstantOverride("separation", 20);
+            
+            Button cancelButton = new()
+            {
+                Text = "X 取消",
+                CustomMinimumSize = new Vector2(160f, 50f),
+                SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
+                FocusMode = FocusModeEnum.All,
+                MouseDefaultCursorShape = CursorShape.PointingHand
+            };
+            cancelButton.AddThemeStyleboxOverride("normal", CreateCancelStyle());
+            cancelButton.AddThemeStyleboxOverride("hover", CreateCancelStyle(new Color(0.6f, 0.15f, 0.15f, 0.9f)));
+            cancelButton.AddThemeStyleboxOverride("pressed", CreateCancelStyle(new Color(0.35f, 0.08f, 0.08f, 0.95f)));
+            cancelButton.AddThemeColorOverride("font_color", new Color(1f, 0.85f, 0.85f));
+            cancelButton.AddThemeFontSizeOverride("font_size", 20);
+            cancelButton.Pressed += OnCancelClicked;
+            buttonContainer.AddChild(cancelButton);
+
+            Button confirmButton = new()
+            {
+                Text = "确认选择",
+                CustomMinimumSize = new Vector2(160f, 50f),
+                SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
+                FocusMode = FocusModeEnum.All,
+                MouseDefaultCursorShape = CursorShape.PointingHand
+            };
+            confirmButton.AddThemeStyleboxOverride("normal", CreateCardStyle(new Color(0.1f, 0.3f, 0.15f)));
+            confirmButton.AddThemeStyleboxOverride("hover", CreateCardStyle(new Color(0.15f, 0.4f, 0.2f)));
+            confirmButton.AddThemeStyleboxOverride("pressed", CreateCardStyle(new Color(0.08f, 0.25f, 0.12f)));
+            confirmButton.AddThemeColorOverride("font_color", new Color(0.9f, 1f, 0.9f));
+            confirmButton.AddThemeFontSizeOverride("font_size", 20);
+            confirmButton.Pressed += OnConfirmClicked;
+            buttonContainer.AddChild(confirmButton);
+            
+            root.AddChild(buttonContainer);
+        }
+        else
+        {
+            // 单选模式：只有取消按钮
+            Button cancelButton = new()
+            {
+                Text = "X 取消",
+                CustomMinimumSize = new Vector2(160f, 50f),
+                SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
+                FocusMode = FocusModeEnum.All,
+                MouseDefaultCursorShape = CursorShape.PointingHand
+            };
+            cancelButton.AddThemeStyleboxOverride("normal", CreateCancelStyle());
+            cancelButton.AddThemeStyleboxOverride("hover", CreateCancelStyle(new Color(0.6f, 0.15f, 0.15f, 0.9f)));
+            cancelButton.AddThemeStyleboxOverride("pressed", CreateCancelStyle(new Color(0.35f, 0.08f, 0.08f, 0.95f)));
+            cancelButton.AddThemeColorOverride("font_color", new Color(1f, 0.85f, 0.85f));
+            cancelButton.AddThemeFontSizeOverride("font_size", 20);
+            cancelButton.Pressed += OnCancelClicked;
+            root.AddChild(cancelButton);
+        }
     }
 
-    private Button CreateCardButton(CardModel card)
+    private Button CreateCardButton(CardModel card, int index)
     {
         Button button = new()
         {
-            Name = $"{card.Id.Entry}_Button",
+            Name = $"CardButton_{card.Id.Entry}_{index}",
             CustomMinimumSize = new Vector2(260f, 280f),
             FocusMode = FocusModeEnum.All,
             MouseDefaultCursorShape = CursorShape.PointingHand
@@ -232,6 +312,8 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         content.AddChild(descLabel);
 
         button.Pressed += () => OnCardSelected(card);
+        
+        // 不需要存储卡牌元数据，通过按钮名称匹配
 
         return button;
     }
@@ -402,6 +484,9 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         // 去除 [gold] 和 [/gold] 标签
         desc = desc.Replace("[gold]", "").Replace("[/gold]", "");
 
+        // 移除未替换的变量标记（避免显示 {xxx}）
+        desc = System.Text.RegularExpressions.Regex.Replace(desc, @"\{[^{}]+\}", "");
+
         // 特殊处理：运输船卡牌不显示存储信息（UI选择界面不需要显示）
         if (card.Id.Entry.Equals("TRANSPORT_SHIP", System.StringComparison.OrdinalIgnoreCase))
         {
@@ -571,17 +656,83 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     private void OnCardSelected(CardModel card)
     {
         if (_choiceLocked) return;
-        _choiceLocked = true;
-        _completionSource.TrySetResult(card);
-        NOverlayStack.Instance?.Remove(this);
+        
+        if (_isMultiSelect)
+        {
+            // 多选模式：切换选中状态
+            if (_selectedCards.Contains(card))
+            {
+                _selectedCards.Remove(card);
+                // 更新按钮样式表示取消选中
+                UpdateCardButtonStyle(card, false);
+            }
+            else if (_selectedCards.Count < _maxSelection)
+            {
+                _selectedCards.Add(card);
+                // 更新按钮样式表示选中
+                UpdateCardButtonStyle(card, true);
+            }
+        }
+        else
+        {
+            // 单选模式
+            _choiceLocked = true;
+            _completionSource.TrySetResult(card);
+            NOverlayStack.Instance?.Remove(this);
+        }
+    }
+
+    private void UpdateCardButtonStyle(CardModel card, bool isSelected)
+    {
+        // 通过按钮名称找到对应卡牌的按钮（使用卡牌在列表中的索引）
+        int index = _cards.IndexOf(card);
+        string buttonName = $"CardButton_{card.Id.Entry}_{index}";
+        foreach (var child in _cardsRow.GetChildren())
+        {
+            if (child is Button button && button.Name == buttonName)
+            {
+                if (isSelected)
+                {
+                    button.AddThemeStyleboxOverride("normal", CreateCardStyle(new Color(0.15f, 0.35f, 0.15f)));
+                    button.AddThemeStyleboxOverride("hover", CreateCardStyle(new Color(0.2f, 0.45f, 0.2f)));
+                }
+                else
+                {
+                    button.AddThemeStyleboxOverride("normal", CreateCardStyle(new Color(0.1f, 0.15f, 0.2f, 0.8f)));
+                    button.AddThemeStyleboxOverride("hover", CreateCardStyle(new Color(0.15f, 0.2f, 0.28f, 0.9f)));
+                }
+                break;
+            }
+        }
     }
 
     private void OnCancelClicked()
     {
         if (_choiceLocked) return;
         _choiceLocked = true;
-        _completionSource.TrySetResult(null);
+        
+        if (_isMultiSelect)
+        {
+            _multiCompletionSource.TrySetResult(null);
+        }
+        else
+        {
+            _completionSource.TrySetResult(null);
+        }
+        
         NOverlayStack.Instance?.Remove(this);
+    }
+
+    private void OnConfirmClicked()
+    {
+        if (_choiceLocked) return;
+        
+        if (_selectedCards.Count >= _minSelection)
+        {
+            _choiceLocked = true;
+            _multiCompletionSource.TrySetResult(new List<CardModel>(_selectedCards));
+            NOverlayStack.Instance?.Remove(this);
+        }
     }
 
     public void AfterOverlayOpened() { Visible = true; }

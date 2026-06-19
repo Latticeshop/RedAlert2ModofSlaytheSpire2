@@ -163,12 +163,19 @@ public sealed class AlliedMCV : CardModel
 	}
 
 	/// <summary>
-	/// 根据卡牌类型获取 CardModel（通过反射调用 ModelDb.Card<T>()）
+	/// 根据卡牌类型获取 CardModel（使用存储类中的预定义映射避免反射错误）
 	/// </summary>
 	private static CardModel? GetCardModel(System.Type cardType)
 	{
 		try
 		{
+			// 首先尝试从存储类的预定义映射中获取
+			if (AlliesCardValues.BuildingModelMap.TryGetValue(cardType, out var modelFunc))
+			{
+				return modelFunc();
+			}
+
+			// 对于不在映射中的类型，尝试反射（用于卡组中可能存在的其他建筑）
 			var method = typeof(ModelDb).GetMethod("Card", System.Type.EmptyTypes);
 			if (method == null)
 			{

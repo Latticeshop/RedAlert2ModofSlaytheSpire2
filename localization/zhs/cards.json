@@ -59,5 +59,7 @@
     "PATRIOT_MISSILE.title": "爱国者导弹",
     "PATRIOT_MISSILE.description": "[gold]价格：${DollarNumber}[/gold]。回合开始时，每有一个攻击意图的敌人，获得 {Block} 点格挡。",
     "AIRCRAFT_CARRIER.title": "航空母舰",
-    "AIRCRAFT_CARRIER.description": "选择一名敌人获得[gold]目标锁定[/gold]，获得 3 架[gold]黄蜂舰载机[/gold]。{IfUpgraded:show:舰载机升级。|}"
+    "AIRCRAFT_CARRIER.description": "选择一名敌人获得[gold]目标锁定[/gold]，获得 3 架[gold]黄蜂舰载机[/gold]。{IfUpgraded:show:舰载机升级。|}",
+    "REPAIR_DEPOT.title": "修理厂",
+    "REPAIR_DEPOT.description": "[gold]价格：${DollarNumber}[/gold]。回合开始时，花费[gold]${DollarCost}[/gold]从消耗牌堆选择 1 张牌加入弃牌堆。"
 }

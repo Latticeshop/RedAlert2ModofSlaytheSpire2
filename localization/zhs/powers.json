@@ -23,5 +23,7 @@
     "TARGET_LOCKED_POWER.title": "目标锁定",
     "TARGET_LOCKED_POWER.description": "受攻击的目标。",
     "HORNET_POWER.title": "黄蜂舰载机",
-    "HORNET_POWER.description": "每回合对[gold]目标锁定[/gold]的敌人造成 {Damage} 点伤害。"
+    "HORNET_POWER.description": "每回合对[gold]目标锁定[/gold]的敌人造成 {Damage} 点伤害。",
+    "REPAIR_DEPOT_POWER.title": "修理厂",
+    "REPAIR_DEPOT_POWER.description": "回合开始时，花费[gold]${DollarCost}[/gold]资金从消耗牌堆选择 {CardCount} 张牌加入弃牌堆。"
 }
