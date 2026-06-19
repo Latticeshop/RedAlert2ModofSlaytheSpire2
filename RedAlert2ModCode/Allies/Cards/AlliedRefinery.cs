@@ -99,7 +99,7 @@ public sealed class AlliedRefinery : CardModel
 		}
 		
 		// 将矿车加入手牌
-		await CardPileCmd.AddGeneratedCardToCombat(minerCard, PileType.Hand, addedByPlayer: true);
+		await CardPileCmd.AddGeneratedCardToCombat(minerCard, PileType.Hand, Owner);
 
 		// 打出后抽一张牌
 		await CardPileCmd.Draw(ctx, 1, Owner);

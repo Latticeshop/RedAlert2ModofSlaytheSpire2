@@ -62,7 +62,7 @@ public sealed class RocketSoldier : CardModel
 		}
 		
 		// 本回合获得敏捷（临时，回合结束时自动扣除）
-		await PowerCmd.Apply<RocketSoldierTemporaryDexterityPower>(Owner.Creature, Values.MagicNumber, Owner.Creature, this);
+		await PowerCmd.Apply<RocketSoldierTemporaryDexterityPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, Values.MagicNumber, Owner.Creature, this);
 	}
 
 	protected override void OnUpgrade()

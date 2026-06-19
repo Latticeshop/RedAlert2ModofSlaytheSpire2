@@ -115,7 +115,7 @@ public sealed class AlliedWarFactory : CardModel
 				{
 					CardCmd.Upgrade(minerCard);
 				}
-				await CardPileCmd.AddGeneratedCardToCombat(minerCard, PileType.Hand, addedByPlayer: true);
+				await CardPileCmd.AddGeneratedCardToCombat(minerCard, PileType.Hand, Owner);
 			}
 			else
 			{

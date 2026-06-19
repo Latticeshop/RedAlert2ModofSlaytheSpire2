@@ -65,7 +65,7 @@ public sealed class Destroyer : CardModel
 			GD.Print($"[Destroyer] 执行防御意图效果：给予易伤，多次伤害");
 
 			// 给予1层易伤
-			await PowerCmd.Apply<VulnerablePower>(play.Target, 1m, Owner.Creature, this);
+			await PowerCmd.Apply<VulnerablePower>(new ThrowingPlayerChoiceContext(), play.Target, 1m, Owner.Creature, this);
 
 			// 造成多次伤害
 			int defendDamage = (int)DynamicVars["DefendDamage"].BaseValue;

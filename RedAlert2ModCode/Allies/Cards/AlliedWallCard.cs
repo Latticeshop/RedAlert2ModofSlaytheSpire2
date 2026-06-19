@@ -85,7 +85,7 @@ public sealed class AlliedWallCard : CardModel
 		{
 			GD.Print($"[AlliedWallCard] 拥有策略：塔防和光棱塔能力，获得1回合壁垒");
 			// 获得1回合壁垒（BlurPower），层数1表示持续1回合
-			await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.BlurPower>(Owner.Creature, 1m, Owner.Creature, this);
+			await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.BlurPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, 1m, Owner.Creature, this);
 		}
 
 		// 围墙打出后不抽牌
@@ -94,9 +94,9 @@ public sealed class AlliedWallCard : CardModel
 	/// <summary>
 	/// 设置卡牌使用后的去向（返回手牌）
 	/// </summary>
-	protected override PileType GetResultPileType()
+	protected override PileType GetResultPileTypeForCardPlay()
 	{
-		PileType resultPileType = base.GetResultPileType();
+		PileType resultPileType = base.GetResultPileTypeForCardPlay();
 		if (resultPileType != PileType.Discard)
 		{
 			return resultPileType;

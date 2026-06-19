@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Entities.Relics;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Relics;
 using System.Collections.Generic;
@@ -48,7 +49,7 @@ public class DollarRelic : RelicModel
 		else
 		{
 			// 首次应用，创建新能力
-			var newPower = await PowerCmd.Apply<Powers.DollarPower>(player.Creature, 1m, player.Creature, null);
+			var newPower = await PowerCmd.Apply<Powers.DollarPower>(new ThrowingPlayerChoiceContext(), player.Creature, 1m, player.Creature, null);
 			if (newPower != null)
 			{
 				newPower.SetDollar(Values.DollarValue);

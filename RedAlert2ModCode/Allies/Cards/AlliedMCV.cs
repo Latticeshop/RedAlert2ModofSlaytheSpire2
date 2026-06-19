@@ -81,10 +81,10 @@ public sealed class AlliedMCV : CardModel
 		{
 			// 应用基地车能力（用于显示图标）
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
-			await PowerCmd.Apply<AlliedMCVPower>(Owner.Creature, 1m, Owner.Creature, this);
+			await PowerCmd.Apply<AlliedMCVPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, 1m, Owner.Creature, this);
 
 			// 将选择的卡牌加入手牌
-			await CardPileCmd.AddGeneratedCardToCombat(selectedCard, PileType.Hand, addedByPlayer: true);
+			await CardPileCmd.AddGeneratedCardToCombat(selectedCard, PileType.Hand, Owner);
 		}
 		else
 		{

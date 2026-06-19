@@ -37,7 +37,7 @@ public class StrategyTowerDefensePower : PowerModel
 	/// <summary>
 	/// 回合开始时检查并应用效果
 	/// </summary>
-	public override async Task AfterSideTurnStart(CombatSide side, CombatState combatState)
+	public override async Task AfterSideTurnStart(CombatSide side, System.Collections.Generic.IReadOnlyList<Creature> participants, MegaCrit.Sts2.Core.Combat.ICombatState combatState)
 	{
 		if (side != CombatSide.Player)
 			return;
@@ -53,6 +53,6 @@ public class StrategyTowerDefensePower : PowerModel
 			GD.Print("[StrategyTowerDefensePower] 成功获得残影");
 		}
 		
-		await base.AfterSideTurnStart(side, combatState);
+		await base.AfterSideTurnStart(side, participants, combatState);
 	}
 }

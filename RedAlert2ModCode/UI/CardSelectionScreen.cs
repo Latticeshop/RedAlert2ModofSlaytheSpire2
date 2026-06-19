@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
-using MegaCrit.Sts2.addons.mega_text;
+// 移除 MegaLabel 引用，使用普通 Label 避免 Godot 字体覆盖 bug
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using RedAlert2ModCode.Allies.Cards;
@@ -85,14 +85,15 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         root.AddThemeConstantOverride("separation", 15);
         margin.AddChild(root);
 
-        MegaLabel title = new()
+        // 使用普通 Label 替代 MegaLabel，避免 Godot 字体覆盖 bug
+        Label title = new()
         {
             Text = "请选择单位",
             HorizontalAlignment = HorizontalAlignment.Center,
-            SizeFlagsHorizontal = SizeFlags.ExpandFill,
-            MaxFontSize = 32,
-            MinFontSize = 20
+            SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
+        title.AddThemeFontSizeOverride("font_size", 28);
+        title.AddThemeColorOverride("font_color", new Color(1f, 0.9f, 0.7f));
         root.AddChild(title);
 
         _scrollContainer = new ScrollContainer()
@@ -187,27 +188,27 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         // 获取能量费用和价格
         string costText = $"费用：{GetEnergyCostText(card)}  |  价格：${GetDollarValueText(card)}";
 
-        MegaLabel cost = new()
+        // 使用普通 Label 替代 MegaLabel
+        Label cost = new()
         {
             Text = costText,
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
-            MaxFontSize = 18,
-            MinFontSize = 14,
             Modulate = new Color(1f, 0.9f, 0.2f)
         };
+        cost.AddThemeFontSizeOverride("font_size", 16);
         content.AddChild(cost);
 
         // 正确获取卡牌名称
         string titleText = GetCardTitle(card);
-        MegaLabel name = new()
+        Label name = new()
         {
             Text = titleText,
             HorizontalAlignment = HorizontalAlignment.Center,
-            SizeFlagsHorizontal = SizeFlags.ExpandFill,
-            MaxFontSize = 20,
-            MinFontSize = 14
+            SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
+        name.AddThemeFontSizeOverride("font_size", 18);
+        name.AddThemeColorOverride("font_color", new Color(0.9f, 0.95f, 1f));
         content.AddChild(name);
 
         // 正确获取卡牌描述（包含动态变量转义和IfUpgraded处理）
@@ -218,16 +219,16 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             descText = descText.Substring(0, 65) + "...";
         }
 
-        MegaLabel descLabel = new()
+        Label descLabel = new()
         {
             Text = descText,
             HorizontalAlignment = HorizontalAlignment.Left,
-            MaxFontSize = 18,
-            MinFontSize = 16,
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
             SizeFlagsVertical = SizeFlags.ShrinkCenter
         };
+        descLabel.AddThemeFontSizeOverride("font_size", 14);
+        descLabel.AddThemeColorOverride("font_color", new Color(0.85f, 0.85f, 0.9f));
         content.AddChild(descLabel);
 
         button.Pressed += () => OnCardSelected(card);
@@ -239,18 +240,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     {
         if (locStringObj == null) return string.Empty;
 
-        // 尝试调用 GetFormattedText() 方法获取格式化后的本地化文本
-        System.Reflection.MethodInfo? formatMethod = locStringObj.GetType().GetMethod("GetFormattedText");
-        if (formatMethod != null)
-        {
-            object? result = formatMethod.Invoke(locStringObj, null);
-            if (result is string formattedText && !string.IsNullOrEmpty(formattedText))
-            {
-                return formattedText;
-            }
-        }
-
-        // 回退到 GetRawText() 方法
+        // 优先使用 GetRawText() 获取原始文本，避免 SmartFormat 无法处理 ${DollarNumber} 格式
         System.Reflection.MethodInfo? rawMethod = locStringObj.GetType().GetMethod("GetRawText");
         if (rawMethod != null)
         {
@@ -258,6 +248,24 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             if (result is string rawText && !string.IsNullOrEmpty(rawText))
             {
                 return rawText;
+            }
+        }
+
+        // 回退到 GetFormattedText() 方法
+        System.Reflection.MethodInfo? formatMethod = locStringObj.GetType().GetMethod("GetFormattedText");
+        if (formatMethod != null)
+        {
+            try
+            {
+                object? result = formatMethod.Invoke(locStringObj, null);
+                if (result is string formattedText && !string.IsNullOrEmpty(formattedText))
+                {
+                    return formattedText;
+                }
+            }
+            catch
+            {
+                // SmartFormat 解析失败，继续尝试其他方式
             }
         }
 

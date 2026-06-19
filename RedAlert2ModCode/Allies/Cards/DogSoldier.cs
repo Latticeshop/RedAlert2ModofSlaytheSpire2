@@ -46,7 +46,7 @@ public sealed class DogSoldier : CardModel
 			.Targeting(play.Target)
 			.Execute(ctx);
 		
-		await PowerCmd.Apply<WeakPower>(play.Target, DynamicVars.Repeat.IntValue, Owner.Creature, this);
+		await PowerCmd.Apply<WeakPower>(new ThrowingPlayerChoiceContext(), play.Target, DynamicVars.Repeat.IntValue, Owner.Creature, this);
 	}
 
 	protected override void OnUpgrade()

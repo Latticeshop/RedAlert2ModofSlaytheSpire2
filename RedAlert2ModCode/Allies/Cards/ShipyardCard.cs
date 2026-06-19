@@ -108,7 +108,7 @@ public sealed class ShipyardCard : CardModel
 				{
 					CardCmd.Upgrade(transportCard);
 				}
-				await CardPileCmd.AddGeneratedCardToCombat(transportCard, PileType.Hand, addedByPlayer: true);
+				await CardPileCmd.AddGeneratedCardToCombat(transportCard, PileType.Hand, Owner);
 			}
 			else
 			{

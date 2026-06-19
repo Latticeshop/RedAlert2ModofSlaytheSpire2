@@ -36,7 +36,7 @@ public sealed class PowerPlantPower : PowerModel
 	/// </summary>
 	public override int DisplayAmount => GetInternalData<Data>().cardsLeft;
 
-	public override bool IsInstanced => true;
+	public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
 
 	/// <summary>
 	/// 当前阈值（未升级10，升级7）

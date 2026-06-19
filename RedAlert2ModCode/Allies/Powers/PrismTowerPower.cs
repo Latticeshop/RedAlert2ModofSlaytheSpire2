@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using System.Collections.Generic;
@@ -80,7 +81,7 @@ public class PrismTowerPower : PowerModel
 		else
 		{
 			// 首次应用，创建新能力
-			var newPower = await PowerCmd.Apply<PrismTowerPower>(owner, 1m, owner, null);
+			var newPower = await PowerCmd.Apply<PrismTowerPower>(new ThrowingPlayerChoiceContext(), owner, 1m, owner, null);
 			if (newPower != null)
 			{
 				newPower.PrismTowerLevel = 1;
@@ -95,7 +96,7 @@ public class PrismTowerPower : PowerModel
 	/// <summary>
 	/// 回合开始时触发伤害
 	/// </summary>
-	public override async Task AfterSideTurnStart(CombatSide side, CombatState combatState)
+	public override async Task AfterSideTurnStart(CombatSide side, System.Collections.Generic.IReadOnlyList<Creature> participants, MegaCrit.Sts2.Core.Combat.ICombatState combatState)
 	{
 		if (side != CombatSide.Player)
 			return;

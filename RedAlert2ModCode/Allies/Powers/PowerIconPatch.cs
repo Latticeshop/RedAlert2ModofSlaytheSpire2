@@ -28,6 +28,7 @@ public static class PowerIconPatch
         { typeof(DollarPower), "res://RedAlert2ModResources/images/packed/powers/dollar_power.png" },
         { typeof(PillboxPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/pillicon.png" },
         { typeof(StrategyTowerDefensePower), "res://RedAlert2ModResources/images/packed/card_portraits/strategy_tower_defense.png" },
+        { typeof(BattleLabPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/techicon.png" },
     };
 
     /// <summary>
@@ -175,7 +176,7 @@ public static class PowerIconPatch
             }
             else
             {
-                GD.PrintErr($"[TrainingQueuePower] 警告: TrainedUnitIconPath={trainingPower.TrainedUnitIconPath} 路径不存在");
+                GD.Print($"[TrainingQueuePower] 警告: TrainedUnitIconPath={trainingPower.TrainedUnitIconPath} 路径不存在");
             }
         }
         else
@@ -196,12 +197,12 @@ public static class PowerIconPatch
                 }
                 else
                 {
-                    GD.PrintErr($"[TrainingQueuePower] 警告: TrainedCardId={trainingPower.TrainedCardId} 的卡牌模型PortraitPath为空");
+                    GD.Print($"[TrainingQueuePower] 警告: TrainedCardId={trainingPower.TrainedCardId} 的卡牌模型PortraitPath为空");
                 }
             }
             else
             {
-                GD.PrintErr($"[TrainingQueuePower] 错误: 无法通过TrainedCardId={trainingPower.TrainedCardId}获取卡牌模型");
+                GD.Print($"[TrainingQueuePower] 错误: 无法通过TrainedCardId={trainingPower.TrainedCardId}获取卡牌模型");
             }
         }
         else
@@ -221,8 +222,8 @@ public static class PowerIconPatch
             GD.Print($"[TrainingQueuePower] PowerIconManager中找不到图标");
         }
 
-        // 4. 默认回退到兵营图标
-        GD.PrintErr($"[TrainingQueuePower] 回退到默认兵营图标");
+        // 4. 默认回退到兵营图标（能力刚创建时未设置训练单位是正常的）
+        GD.Print($"[TrainingQueuePower] 回退到默认兵营图标（能力刚创建）");
         return "res://RedAlert2ModResources/images/packed/card_portraits/allies/brrkicon.png";
     }
 

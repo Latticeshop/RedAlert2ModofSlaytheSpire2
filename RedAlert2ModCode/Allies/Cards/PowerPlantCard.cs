@@ -71,7 +71,7 @@ public sealed class PowerPlantCard : CardModel
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 		
 		// 应用发电厂能力
-		var power = await PowerCmd.Apply<PowerPlantPower>(Owner.Creature, 1m, Owner.Creature, this);
+		var power = await PowerCmd.Apply<PowerPlantPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, 1m, Owner.Creature, this);
 		
 		if (power != null)
 		{

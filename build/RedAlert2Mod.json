@@ -3,11 +3,15 @@
 	"name": "红警2mod",
 	"author": "小格子铺",
 	"description": "内测版本，尽情期待",
-	"version": "v0.6.3.5",
+	"version": "0.6.8.5",
+	"min_game_version": "0.107.0",
 	"has_pck": true,
 	"has_dll": true,
 	"dependencies": [
-		"BaseLib"
+		{
+			"id": "BaseLib",
+			"min_version": "3.3.0"
+		}
 	],
-	"affect_gameplay": false
+	"affects_gameplay": true
 }

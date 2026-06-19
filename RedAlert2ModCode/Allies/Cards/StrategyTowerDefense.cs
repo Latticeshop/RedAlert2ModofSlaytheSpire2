@@ -46,7 +46,7 @@ public sealed class StrategyTowerDefense : CardModel
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
 		// 应用策略：塔防能力
-		await PowerCmd.Apply<StrategyTowerDefensePower>(Owner.Creature, 1m, Owner.Creature, this);
+		await PowerCmd.Apply<StrategyTowerDefensePower>(new ThrowingPlayerChoiceContext(), Owner.Creature, 1m, Owner.Creature, this);
 		
 		GD.Print("[StrategyTowerDefense] 应用策略：塔防能力");
 
@@ -60,7 +60,7 @@ public sealed class StrategyTowerDefense : CardModel
 			GD.Print("[StrategyTowerDefense] 成功为光棱塔添加消耗词条");
 			
 			// 将卡牌加入手牌
-			await CardPileCmd.AddGeneratedCardToCombat(prismTowerCard, PileType.Hand, addedByPlayer: true);
+			await CardPileCmd.AddGeneratedCardToCombat(prismTowerCard, PileType.Hand, Owner);
 			GD.Print("[StrategyTowerDefense] 成功添加消耗光棱塔到手牌");
 		}
 	}

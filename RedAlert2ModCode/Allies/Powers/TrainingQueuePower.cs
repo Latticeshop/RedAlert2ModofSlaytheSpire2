@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -25,11 +26,11 @@ public sealed class TrainingQueuePower : PowerModel
     public override PowerStackType StackType => PowerStackType.Counter;
 
     /// <summary>
-    /// 设置为true确保每个能力都是独立实例
+    /// 设置为Instanced确保每个能力都是独立实例
     /// 相同兵种的叠加逻辑在 ApplyTrainingQueue 中手动处理
     /// 这样可以确保不同兵种的能力不会被游戏引擎自动合并
     /// </summary>
-    public override bool IsInstanced => true;
+    public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
 
     public string TrainedCardId { get; set; } = string.Empty;
 
@@ -104,7 +105,7 @@ public sealed class TrainingQueuePower : PowerModel
         {
             // 已有相同兵种的能力，增加层数
             GD.Print($"[TrainingQueuePower] 发现相同兵种的能力，增加层数 - 当前层数: {existingPower.Amount}");
-            await PowerCmd.ModifyAmount(existingPower, 1m, owner, sourceCard);
+            await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), existingPower, 1m, owner, sourceCard);
             GD.Print($"[TrainingQueuePower] 增加后层数: {existingPower.Amount}");
             return existingPower;
         }
@@ -115,7 +116,7 @@ public sealed class TrainingQueuePower : PowerModel
         // 设置当前活跃的图标路径（确保克隆对象也能获取）
         PowerIconManager.SetCurrentIconPath(iconPath);
 
-        var trainingPower = await PowerCmd.Apply<TrainingQueuePower>(owner, 1m, owner, sourceCard);
+        var trainingPower = await PowerCmd.Apply<TrainingQueuePower>(new ThrowingPlayerChoiceContext(), owner, 1m, owner, sourceCard);
 
         if (trainingPower != null)
         {
@@ -240,7 +241,7 @@ public sealed class TrainingQueuePower : PowerModel
         }
     }
 
-    public override async Task AfterSideTurnStart(CombatSide side, CombatState combatState)
+    public override async Task AfterSideTurnStart(CombatSide side, System.Collections.Generic.IReadOnlyList<Creature> participants, MegaCrit.Sts2.Core.Combat.ICombatState combatState)
     {
         if (side != CombatSide.Player)
             return;
@@ -290,7 +291,7 @@ public sealed class TrainingQueuePower : PowerModel
 
             tempCard.AddKeyword(CardKeyword.Exhaust);
 
-            await CardPileCmd.AddGeneratedCardToCombat(tempCard, PileType.Discard, addedByPlayer: true, CardPilePosition.Top);
+            await CardPileCmd.AddGeneratedCardToCombat(tempCard, PileType.Discard, Owner.Player, CardPilePosition.Top);
         }
     }
 

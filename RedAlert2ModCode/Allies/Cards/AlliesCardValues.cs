@@ -254,6 +254,13 @@ public static class AlliesCardValues
 		DollarValue = 1000
 		// 船厂主要是功能牌，数值由具体生成的单位决定
 	};
+
+	/// <summary>作战实验室 - 0费能力卡，解锁高级兵种，价格2000</summary>
+	public static CardValueStore.CardValues BattleLab => new()
+	{
+		Cost = 0,
+		DollarValue = 2000
+	};
 	
 	// ==================== 数值映射创建方法 ====================
 	
@@ -310,7 +317,8 @@ public static class AlliesCardValues
 			{ "ALLIEDREFINERY", AlliedRefinery },
 			{ "PRISMTOWERCARD", PrismTower },
 			{ "ALLIEDWALLCARD", AlliedWall },
-			{ "PILLBOXCARD", Pillbox }
+			{ "PILLBOXCARD", Pillbox },
+			{ "BATTLELAB", BattleLab }
 		};
 	}
 	

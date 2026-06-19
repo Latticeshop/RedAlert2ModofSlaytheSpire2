@@ -49,7 +49,8 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<AirForceCommand>(),
         () => ModelDb.Card<AlliedRefinery>(),
         () => ModelDb.Card<AlliedWallCard>(),
-        () => ModelDb.Card<ShipyardCard>()
+        () => ModelDb.Card<ShipyardCard>(),
+        () => ModelDb.Card<BattleLab>()
     };
 
     // 盟军防御塔

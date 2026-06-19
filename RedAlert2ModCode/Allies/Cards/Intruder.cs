@@ -47,7 +47,7 @@ public sealed class Intruder : CardModel
 			.Execute(ctx);
 		
 		// 赋予敌人易伤效果
-		await PowerCmd.Apply<VulnerablePower>(play.Target, DynamicVars.Repeat.IntValue, Owner.Creature, this);
+		await PowerCmd.Apply<VulnerablePower>(new ThrowingPlayerChoiceContext(), play.Target, DynamicVars.Repeat.IntValue, Owner.Creature, this);
 	}
 
 	protected override void OnUpgrade()

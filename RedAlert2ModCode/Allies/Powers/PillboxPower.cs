@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using System.Collections.Generic;
@@ -51,7 +52,7 @@ public class PillboxPower : PowerModel
 	{
 		GD.Print($"[PillboxPower] ApplyPillbox 被调用 - IsUpgraded={isUpgraded}");
 		
-		var newPower = await PowerCmd.Apply<PillboxPower>(owner, 1m, owner, null);
+		var newPower = await PowerCmd.Apply<PillboxPower>(new ThrowingPlayerChoiceContext(), owner, 1m, owner, null);
 		if (newPower != null)
 		{
 			newPower.CurrentDamage = (int)Values.Damage + (isUpgraded ? (int)Values.DamageUpgraded : 0);
@@ -60,7 +61,7 @@ public class PillboxPower : PowerModel
 		}
 	}
 
-	public override async Task AfterSideTurnStart(CombatSide side, CombatState combatState)
+	public override async Task AfterSideTurnStart(CombatSide side, System.Collections.Generic.IReadOnlyList<Creature> participants, MegaCrit.Sts2.Core.Combat.ICombatState combatState)
 	{
 		if (side != CombatSide.Player)
 			return;

@@ -9,7 +9,7 @@
 ### 当前项目路径
 ```
 项目根目录: D:\RedAlert2Project\red-alert-2-mod
-游戏解包目录: D:\RedAlert2Project\SlayTheSpire2Mod
+游戏解包目录: D:\RedAlert2Project\SlayTheSpire2Export
 Godot引擎: Godot_v4.5.1-stable_mono_win64
 红警2图标: D:\RedAlert2Project\icons\红警2图标PNG\
 ```
@@ -92,7 +92,7 @@ red-alert-2-mod/
 
 ### 游戏解包资源结构（参考）
 ```
-D:\RedAlert2Project\SlayTheSpire2Mod\
+D:\RedAlert2Project\SlayTheSpire2Export\
 ├── resources/
 │   ├── scenes/
 │   │   ├── creature_visuals/      # 角色/怪物待机动画

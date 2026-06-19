@@ -9,8 +9,8 @@
     <DebugSymbols>true</DebugSymbols>
     
     <!-- BaseLib路径配置 -->
-    <BaseLibDir>$(MSBuildProjectDirectory)\BaseLib</BaseLibDir>
-    <BaseLibDllPath>$(BaseLibDir)\BaseLib.dll</BaseLibDllPath>
+    <BaseLibDir>$(MSBuildProjectDirectory)/BaseLib</BaseLibDir>
+    <BaseLibDllPath>$(BaseLibDir)/BaseLib.dll</BaseLibDllPath>
   </PropertyGroup>
   
   <!-- 引用游戏程序集（使用项目根目录的DLL） -->
@@ -29,8 +29,12 @@
   <ItemGroup Condition="Exists('$(BaseLibDllPath)')">
     <Reference Include="BaseLib">
       <HintPath>$(BaseLibDllPath)</HintPath>
-      <Private>false</Private>
+      <Private>true</Private>
     </Reference>
+    <!-- 确保BaseLib.dll被复制到输出目录 -->
+    <None Include="$(BaseLibDllPath)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   
   <!-- 发布时自动生成Godot .pck文件 -->

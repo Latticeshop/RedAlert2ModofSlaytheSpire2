@@ -43,7 +43,7 @@ public sealed class Ifv : CardModel
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		// 本回合获得敏捷（临时，回合结束时自动扣除）
-		await PowerCmd.Apply<IfvTemporaryDexterityPower>(Owner.Creature, Values.MagicNumber, Owner.Creature, this);
+		await PowerCmd.Apply<IfvTemporaryDexterityPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, Values.MagicNumber, Owner.Creature, this);
 		
 		// 造成伤害
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)

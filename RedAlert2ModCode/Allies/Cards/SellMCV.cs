@@ -67,7 +67,7 @@ public sealed class SellMCV : CardModel
 		if (mcvPower != null)
 		{
 			// 层数为0时，游戏会自动移除。
-            await PowerCmd.ModifyAmount(mcvPower, -1, Owner.Creature, this);
+            await PowerCmd.ModifyAmount(new MegaCrit.Sts2.Core.GameActions.Multiplayer.ThrowingPlayerChoiceContext(), mcvPower, -1, Owner.Creature, this);
 			GD.Print("[SellMCV] 基地车能力减少1层，剩余: " + (mcvPower.Amount - 1));
 		}
 
@@ -83,7 +83,7 @@ public sealed class SellMCV : CardModel
 		if (IsUpgraded)
 		{
 			var engineerCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<Engineer>(), Owner);
-			await CardPileCmd.AddGeneratedCardToCombat(engineerCard, PileType.Hand, addedByPlayer: true);
+			await CardPileCmd.AddGeneratedCardToCombat(engineerCard, PileType.Hand, Owner);
 			GD.Print("[SellMCV] 升级效果：将工程师加入手牌");
 		}
 	}

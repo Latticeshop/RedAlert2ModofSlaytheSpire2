@@ -54,7 +54,7 @@ public sealed class Dolphin : CardModel
 				.Execute(ctx);
 			
 			// 添加易伤
-			await PowerCmd.Apply<VulnerablePower>(enemy, DynamicVars.Repeat.IntValue, Owner.Creature, this);
+			await PowerCmd.Apply<VulnerablePower>(new ThrowingPlayerChoiceContext(), enemy, DynamicVars.Repeat.IntValue, Owner.Creature, this);
 		}
 	}
 
