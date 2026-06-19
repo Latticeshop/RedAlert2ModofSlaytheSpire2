@@ -275,6 +275,15 @@ public static class AlliesCardValues
 		DollarValue = 1000
 	};
 
+	/// <summary>光棱坦克 - 1费攻击卡，价格1200，需要作战实验室</summary>
+	public static CardValueStore.CardValues PrismTank => new()
+	{
+		Cost = 1,
+		Damage = 15,
+		DamageUpgraded = 5,  // 升级后20 = 15 + 5
+		DollarValue = 1200
+	};
+
 	// ==================== 数值映射创建方法 ====================
 	
 	public static System.Collections.Generic.Dictionary<string, CardValueStore.CardValues> CreateSoldierValuesMap()
@@ -340,7 +349,8 @@ public static class AlliesCardValues
 	{
 		return new System.Collections.Generic.Dictionary<string, CardValueStore.CardValues>
 		{
-			{ "MIRAGETANK", MirageTank }
+			{ "MIRAGETANK", MirageTank },
+			{ "PRISMTANK", PrismTank }
 		};
 	}
 	

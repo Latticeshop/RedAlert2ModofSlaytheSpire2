@@ -21,7 +21,7 @@ public sealed class TrainingQueuePower : PowerModel
     private static int _instanceCounter = 0;
     private readonly int _instanceId;
     
-    public override PowerType Type => PowerType.Buff;
+    public override PowerType Type => PowerType.Debuff;
     
     public override PowerStackType StackType => PowerStackType.Counter;
 

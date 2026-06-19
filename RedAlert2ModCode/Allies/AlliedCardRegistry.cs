@@ -30,7 +30,8 @@ public static class AlliedCardRegistry
     /// <summary>高科技(T2)装甲单位 - 需要作战实验室解锁</summary>
     public static List<Func<CardModel>> HighTechVehicles { get; } = new()
     {
-        () => ModelDb.Card<MirageTank>()
+        () => ModelDb.Card<MirageTank>(),
+        () => ModelDb.Card<PrismTank>()
     };
 
     public static List<Func<CardModel>> Aircraft { get; } = new()

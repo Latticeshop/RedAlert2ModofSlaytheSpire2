@@ -175,6 +175,15 @@ public static class ModCardKeywords
     );
 
     /// <summary>
+    /// 溅射词条 - 对其他敌人造成75%伤害
+    /// </summary>
+    public static readonly CustomKeyword Splash = new(
+        "SPLASH",
+        new LocString("card_keywords", "Ra2_splash.title"),
+        new LocString("card_keywords", "Ra2_splash.description")
+    );
+
+    /// <summary>
     /// 初始化所有自定义词条
     /// </summary>
     public static void Initialize()
@@ -190,5 +199,6 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(Unit);
         CustomKeywordManager.RegisterKeyword(StrategyTowerDefense);
         CustomKeywordManager.RegisterKeyword(BattleLab);
+        CustomKeywordManager.RegisterKeyword(Splash);
     }
 }

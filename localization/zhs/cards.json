@@ -53,5 +53,7 @@
     "BATTLE_LAB.title": "作战实验室",
     "BATTLE_LAB.description": "[gold]价格：${DollarNumber}[/gold]。解锁高级兵种。获得能力[gold]作战实验室[/gold]。",
     "MIRAGE_TANK.title": "幻影坦克",
-    "MIRAGE_TANK.description": "若敌人意图攻击，自身无[gold]无实体[/gold]时获得一层[gold]无实体[/gold]。否则造成 {Damage} 点伤害。获得 {Block} 点格挡。"
+    "MIRAGE_TANK.description": "若敌人意图攻击，自身无[gold]无实体[/gold]时获得一层[gold]无实体[/gold]。否则造成 {Damage} 点伤害。获得 {Block} 点格挡。",
+    "PRISM_TANK.title": "光棱坦克",
+    "PRISM_TANK.description": "造成 {Damage} 点伤害。[gold]溅射[/gold]。"
 }

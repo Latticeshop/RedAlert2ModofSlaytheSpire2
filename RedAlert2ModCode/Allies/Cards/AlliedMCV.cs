@@ -30,7 +30,7 @@ public sealed class AlliedMCV : CardModel
 	/// <summary>
 	/// 固有词条 - 每场战斗开始时自动出现在手牌
 	/// </summary>
-	public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Innate };
+	public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[] { CardKeyword.Innate };
 
 	/// <summary>
 	/// 额外的悬停提示（包含MCV词条和战车词条）

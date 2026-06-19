@@ -18,7 +18,7 @@ public class AlliesRelicPool : RelicPoolModel
     /// </summary>
     protected override RelicModel[] GenerateAllRelics()
     {
-        return new[]
+        return new RelicModel[]
         {
             ModelDb.Relic<Relics.DollarRelic>()
         };

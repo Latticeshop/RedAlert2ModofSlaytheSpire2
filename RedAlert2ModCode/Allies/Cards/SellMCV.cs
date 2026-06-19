@@ -29,7 +29,7 @@ public sealed class SellMCV : CardModel
 	/// <summary>
 	/// 消耗词条
 	/// </summary>
-	public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Exhaust };
+	public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[] { CardKeyword.Exhaust };
 
 	/// <summary>
 	/// 本地化变量

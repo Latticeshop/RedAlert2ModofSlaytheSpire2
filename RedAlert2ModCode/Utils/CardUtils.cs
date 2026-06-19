@@ -213,7 +213,7 @@ public static class CardUtils
 	}
 	
 	/// <summary>
-	/// 返还卡牌的资金消耗
+	/// 返还卡牌的资金消耗（不触发动画，用于UI取消选择时）
 	/// </summary>
 	/// <param name="cardModel">卡牌模型</param>
 	/// <param name="owner">卡牌拥有者（Player 类型）</param>
@@ -236,8 +236,10 @@ public static class CardUtils
 		var dollarPower = owner.Creature.Powers.OfType<RedAlert2ModCode.Allies.Powers.DollarPower>().FirstOrDefault();
 		if (dollarPower != null)
 		{
-			dollarPower.AddDollar(dollarCost);
-			GD.Print($"[CardUtils] 已返还 {dollarCost} 资金给玩家");
+			// 直接修改资金值，不触发动画（UI取消选择时不应该看到资金动画）
+			dollarPower.DollarValue += dollarCost;
+			DollarVfxHelper.PlayVfx(owner.Creature, dollarCost, DollarVfxType.None);
+			GD.Print($"[CardUtils] 已返还 {dollarCost} 资金给玩家（无动画）");
 		}
 		else
 		{

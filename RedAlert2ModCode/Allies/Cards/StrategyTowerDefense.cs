@@ -35,7 +35,7 @@ public sealed class StrategyTowerDefense : CardModel
 	/// <summary>
 	/// 卡牌上显示策略：塔防和残影两个tip
 	/// </summary>
-	protected override IEnumerable<IHoverTip> ExtraHoverTips => new[]
+	protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
 	{
 		ModCardKeywords.StrategyTowerDefense.CreateHoverTip(),
 		HoverTipFactory.Static(StaticHoverTip.Block)

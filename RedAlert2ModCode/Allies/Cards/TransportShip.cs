@@ -39,7 +39,7 @@ public sealed class TransportShip : CardModel
     /// <summary>
     /// 使用原版"保留"词条
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Retain };
+    public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[] { CardKeyword.Retain };
 
     protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
     {

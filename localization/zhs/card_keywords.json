@@ -19,8 +19,8 @@
     "unit.description": "指士兵、战车、空军、海军这类单位卡牌。",
     "strategy_tower_defense.title": "策略：塔防",
     "strategy_tower_defense.description": "当你打出[gold]围墙[/gold]时，如果拥有[gold]光棱塔[/gold]能力，获得 1 回合[gold]残影[/gold]。",
-    "retain.title": "保留",
-    "retain.description": "卡牌使用后保留在手牌中。",
     "battle_lab.title": "作战实验室",
-    "battle_lab.description": "红警中提升科技等级，可以解锁更多兵种选择。"
+    "battle_lab.description": "红警中提升科技等级，可以解锁更多兵种选择。",
+    "Ra2_splash.title": "溅射",
+    "Ra2_splash.description": "对其他敌人造成75%伤害。"
 }

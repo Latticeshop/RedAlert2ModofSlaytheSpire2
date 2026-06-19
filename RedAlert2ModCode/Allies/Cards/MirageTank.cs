@@ -43,6 +43,7 @@ public sealed class MirageTank : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
+        ModCardKeywords.Vehicle.CreateHoverTip(),
         HoverTipFactory.FromPower<IntangiblePower>()
     };
 
