@@ -22,9 +22,20 @@ public class PillboxPower : PowerModel
     
 	public override PowerStackType StackType => PowerStackType.Counter;
 
+    /// <summary>
+    /// 设置为Instanced确保每个能力都是独立实例
+    /// 相同升级状态的叠加逻辑在 ApplyPillbox 中手动处理
+    /// </summary>
+    public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
+
 	public int CurrentDamage { get; set; } = (int)Values.Damage;
 	
 	public int CurrentBlock { get; set; } = (int)Values.Block;
+
+    /// <summary>
+    /// 是否升级
+    /// </summary>
+    public bool IsUpgraded { get; set; } = false;
 
 	public PillboxPower()
 	{
@@ -51,13 +62,28 @@ public class PillboxPower : PowerModel
 	public static async Task ApplyPillbox(Creature owner, bool isUpgraded = false)
 	{
 		GD.Print($"[PillboxPower] ApplyPillbox 被调用 - IsUpgraded={isUpgraded}");
+
+        // 检查是否已有相同升级状态的机枪碉堡能力
+        var existingPower = owner.Powers
+            .OfType<PillboxPower>()
+            .FirstOrDefault(p => p.IsUpgraded == isUpgraded);
+
+        if (existingPower != null)
+        {
+            // 已有相同升级状态的能力，增加层数
+            GD.Print($"[PillboxPower] 发现相同升级状态的能力，增加层数 - 当前层数: {existingPower.Amount}");
+            await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), existingPower, 1m, owner, null);
+            GD.Print($"[PillboxPower] 增加后层数: {existingPower.Amount}");
+            return;
+        }
 		
 		var newPower = await PowerCmd.Apply<PillboxPower>(new ThrowingPlayerChoiceContext(), owner, 1m, owner, null);
 		if (newPower != null)
 		{
 			newPower.CurrentDamage = (int)Values.Damage + (isUpgraded ? (int)Values.DamageUpgraded : 0);
 			newPower.CurrentBlock = (int)Values.Block;  // 防御值升级不加
-			GD.Print($"[PillboxPower] 创建成功 - Damage={newPower.CurrentDamage}, Block={newPower.CurrentBlock}, Repeat={Values.Repeat}");
+            newPower.IsUpgraded = isUpgraded;
+			GD.Print($"[PillboxPower] 创建成功 - Damage={newPower.CurrentDamage}, Block={newPower.CurrentBlock}, Repeat={Values.Repeat}, IsUpgraded={newPower.IsUpgraded}");
 		}
 	}
 

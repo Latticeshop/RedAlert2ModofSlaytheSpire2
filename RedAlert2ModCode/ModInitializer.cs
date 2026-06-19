@@ -28,6 +28,7 @@ public static class ModInitializer
         ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AlliedRefinery));
         ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(MirageTank));  // 高科技(T2)单位
         ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(PrismTank));  // 高科技(T2)单位
+        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AircraftCarrier));  // 高科技(T2)海军单位
         // Rally 通过 AlliedCardRegistry.PowerCards 注册，不需要在这里重复注册
         
         Godot.Bridge.ScriptManagerBridge.LookupScriptsInAssembly(Assembly.GetExecutingAssembly());

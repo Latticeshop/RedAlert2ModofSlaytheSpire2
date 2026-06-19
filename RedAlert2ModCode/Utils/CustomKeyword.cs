@@ -184,6 +184,24 @@ public static class ModCardKeywords
     );
 
     /// <summary>
+    /// 目标锁定词条 - 被攻击的目标
+    /// </summary>
+    public static readonly CustomKeyword TargetLocked = new(
+        "TARGET_LOCKED",
+        new LocString("card_keywords", "target_locked.title"),
+        new LocString("card_keywords", "target_locked.description")
+    );
+
+    /// <summary>
+    /// 黄蜂舰载机词条 - 航空母舰发射的舰载机
+    /// </summary>
+    public static readonly CustomKeyword Hornet = new(
+        "HORNET",
+        new LocString("card_keywords", "hornet.title"),
+        new LocString("card_keywords", "hornet.description")
+    );
+
+    /// <summary>
     /// 初始化所有自定义词条
     /// </summary>
     public static void Initialize()
@@ -200,5 +218,7 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(StrategyTowerDefense);
         CustomKeywordManager.RegisterKeyword(BattleLab);
         CustomKeywordManager.RegisterKeyword(Splash);
+        CustomKeywordManager.RegisterKeyword(TargetLocked);
+        CustomKeywordManager.RegisterKeyword(Hornet);
     }
 }

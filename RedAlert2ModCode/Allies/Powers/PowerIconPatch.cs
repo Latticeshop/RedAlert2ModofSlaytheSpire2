@@ -30,6 +30,8 @@ public static class PowerIconPatch
         { typeof(StrategyTowerDefensePower), "res://RedAlert2ModResources/images/packed/card_portraits/strategy_tower_defense.png" },
         { typeof(BattleLabPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/techicon.png" },
         { typeof(PatriotMissilePower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/samicon.png" },
+        { typeof(HornetPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/hornet.png" },
+        { typeof(TargetLockedPower), "res://RedAlert2ModResources/images/packed/powers/target_locked.png" },
     };
 
     /// <summary>

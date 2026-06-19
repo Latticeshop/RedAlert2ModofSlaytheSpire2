@@ -19,5 +19,9 @@
     "BATTLE_LAB_POWER.title": "作战实验室",
     "BATTLE_LAB_POWER.description": "已解锁高级科技。",
     "PATRIOT_MISSILE_POWER.title": "爱国者导弹",
-    "PATRIOT_MISSILE_POWER.description": "回合开始时，每有一个攻击意图的敌人，获得 {Block} 点格挡。"
+    "PATRIOT_MISSILE_POWER.description": "回合开始时，每有一个攻击意图的敌人，获得 {Block} 点格挡。",
+    "TARGET_LOCKED_POWER.title": "目标锁定",
+    "TARGET_LOCKED_POWER.description": "受攻击的目标。",
+    "HORNET_POWER.title": "黄蜂舰载机",
+    "HORNET_POWER.description": "每回合对[gold]目标锁定[/gold]的敌人造成 {Damage} 点伤害。"
 }

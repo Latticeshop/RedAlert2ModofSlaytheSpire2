@@ -47,6 +47,12 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<Agisicon>()
     };
 
+    /// <summary>高科技(T2)海军单位 - 需要作战实验室解锁</summary>
+    public static List<Func<CardModel>> HighTechShips { get; } = new()
+    {
+        () => ModelDb.Card<AircraftCarrier>()
+    };
+
     // 盟军建筑卡
     public static List<Func<CardModel>> BuildingCards { get; } = new()
     {
@@ -234,7 +240,23 @@ public static class AlliedCardRegistry
 
     public static List<CardModel> CreateShips(Player owner)
     {
-        return Ships.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+        List<CardModel> ships = Ships.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+        
+        // 检查是否有作战实验室能力，如果有则添加高科技海军单位
+        if (HasBattleLabPower(owner.Creature))
+        {
+            ships.AddRange(CreateHighTechShips(owner));
+        }
+        
+        return ships;
+    }
+
+    /// <summary>
+    /// 创建高科技(T2)海军单位卡牌列表
+    /// </summary>
+    public static List<CardModel> CreateHighTechShips(Player owner)
+    {
+        return HighTechShips.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
     }
 
     public static List<CardModel> CreateAllUnits(Player owner)

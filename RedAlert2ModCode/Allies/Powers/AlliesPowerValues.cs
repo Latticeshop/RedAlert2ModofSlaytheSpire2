@@ -40,7 +40,14 @@ public static class AlliesPowerValues
 		Block = 6,             // 基础格挡
 		BlockUpgraded = 3      // 升级后9 = 6 + 3
 	};
-	
+
+	/// <summary>黄蜂舰载机能力 - 每回合对目标锁定敌人造成伤害</summary>
+	public static CardValueStore.CardValues HornetPower => new()
+	{
+		Damage = 3,            // 基础伤害
+		DamageUpgraded = 1     // 升级后4 = 3 + 1
+	};
+
 	/// <summary>基地车能力</summary>
 	public static CardValueStore.CardValues AlliedMCVPower => new()
 	{

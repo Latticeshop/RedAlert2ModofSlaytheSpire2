@@ -18,7 +18,7 @@ namespace RedAlert2ModCode.Allies.Powers;
 
 /// <summary>
 /// 爱国者导弹能力 - 盟军防御建筑能力
-/// 效果：回合开始时，每有一个攻击意图的敌人，获得9点格挡（升级后12点）
+/// 效果：回合开始时，每有一个攻击意图的敌人，获得6点格挡（升级后9点）
 /// </summary>
 public class PatriotMissilePower : PowerModel
 {
@@ -28,10 +28,21 @@ public class PatriotMissilePower : PowerModel
 
 	public override PowerStackType StackType => PowerStackType.Counter;
 
+    /// <summary>
+    /// 设置为Instanced确保每个能力都是独立实例
+    /// 相同升级状态的叠加逻辑在 ApplyPatriotMissile 中手动处理
+    /// </summary>
+    public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
+
 	/// <summary>
 	/// 当前格挡值（每有一个攻击意图敌人获得的格挡）
 	/// </summary>
 	public int CurrentBlock { get; set; } = (int)Values.Block;
+
+    /// <summary>
+    /// 是否升级
+    /// </summary>
+    public bool IsUpgraded { get; set; } = false;
 
 	public PatriotMissilePower()
 	{
@@ -60,11 +71,26 @@ public class PatriotMissilePower : PowerModel
 	{
 		GD.Print($"[PatriotMissilePower] ApplyPatriotMissile 被调用 - IsUpgraded={isUpgraded}");
 
+        // 检查是否已有相同升级状态的爱国者导弹能力
+        var existingPower = owner.Powers
+            .OfType<PatriotMissilePower>()
+            .FirstOrDefault(p => p.IsUpgraded == isUpgraded);
+
+        if (existingPower != null)
+        {
+            // 已有相同升级状态的能力，增加层数
+            GD.Print($"[PatriotMissilePower] 发现相同升级状态的能力，增加层数 - 当前层数: {existingPower.Amount}");
+            await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), existingPower, 1m, owner, null);
+            GD.Print($"[PatriotMissilePower] 增加后层数: {existingPower.Amount}");
+            return;
+        }
+
 		var newPower = await PowerCmd.Apply<PatriotMissilePower>(new ThrowingPlayerChoiceContext(), owner, 1m, owner, null);
 		if (newPower != null)
 		{
 			newPower.CurrentBlock = (int)Values.Block + (isUpgraded ? (int)Values.BlockUpgraded : 0);
-			GD.Print($"[PatriotMissilePower] 创建成功 - Block={newPower.CurrentBlock}");
+            newPower.IsUpgraded = isUpgraded;
+			GD.Print($"[PatriotMissilePower] 创建成功 - Block={newPower.CurrentBlock}, IsUpgraded={newPower.IsUpgraded}");
 		}
 	}
 

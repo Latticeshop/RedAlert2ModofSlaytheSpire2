@@ -294,6 +294,13 @@ public static class AlliesCardValues
 		DollarValue = 1200
 	};
 
+	/// <summary>航空母舰 - 2费攻击卡，高科技海军单位，需要作战实验室，价格2000</summary>
+	public static CardValueStore.CardValues AircraftCarrier => new()
+	{
+		Cost = 2,
+		DollarValue = 2000
+	};
+
 	// ==================== 数值映射创建方法 ====================
 	
 	public static System.Collections.Generic.Dictionary<string, CardValueStore.CardValues> CreateSoldierValuesMap()
@@ -361,7 +368,8 @@ public static class AlliesCardValues
 		return new System.Collections.Generic.Dictionary<string, CardValueStore.CardValues>
 		{
 			{ "MIRAGETANK", MirageTank },
-			{ "PRISMTANK", PrismTank }
+			{ "PRISMTANK", PrismTank },
+			{ "AIRCRAFTCARRIER", AircraftCarrier }
 		};
 	}
 	

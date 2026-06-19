@@ -22,5 +22,9 @@
     "battle_lab.title": "作战实验室",
     "battle_lab.description": "红警中提升科技等级，可以解锁更多兵种选择。",
     "Ra2_splash.title": "溅射",
-    "Ra2_splash.description": "对其他敌人造成75%伤害。"
+    "Ra2_splash.description": "对其他敌人造成75%伤害。",
+    "target_locked.title": "目标锁定",
+    "target_locked.description": "受攻击的目标。",
+    "hornet.title": "黄蜂舰载机",
+    "hornet.description": "每回合对[gold]目标锁定[/gold]的敌人造成伤害。"
 }
