@@ -61,5 +61,7 @@
     "AIRCRAFT_CARRIER.title": "航空母舰",
     "AIRCRAFT_CARRIER.description": "选择一名敌人获得[gold]目标锁定[/gold]，获得 3 架[gold]黄蜂舰载机[/gold]。{IfUpgraded:show:舰载机升级。|}",
     "REPAIR_DEPOT.title": "修理厂",
-    "REPAIR_DEPOT.description": "[gold]价格：${DollarNumber}[/gold]。回合开始时，花费[gold]${DollarCost}[/gold]从消耗牌堆选择 1 张牌加入弃牌堆。"
+    "REPAIR_DEPOT.description": "[gold]价格：${DollarNumber}[/gold]。回合开始时，花费[gold]${DollarCost}[/gold]从消耗牌堆选择 1 张牌加入弃牌堆。",
+    "OIL_DERRICK_CARD.title": "油井",
+    "OIL_DERRICK_CARD.description": "立即获得 [gold]${DollarNumber}[/gold] 资金。回合开始时，获得 [gold]${DollarPerTurn}[/gold] 资金。"
 }

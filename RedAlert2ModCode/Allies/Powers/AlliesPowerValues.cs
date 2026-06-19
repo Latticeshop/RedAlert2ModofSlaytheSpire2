@@ -79,4 +79,11 @@ public static class AlliesPowerValues
 	{
 		Stars = 1  // 敏捷值
 	};
+	
+	/// <summary>油井能力 - 回合开始时获得资金</summary>
+	public static CardValueStore.CardValues OilDerrickPower => new()
+	{
+		DollarValue = 500,        // 基础每回合资金
+		DollarValueUpgraded = 300  // 升级后每回合 800 = 500 + 300
+	};
 }

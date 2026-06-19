@@ -282,6 +282,15 @@ public static class AlliesCardValues
 		DollarValue = 800
 	};
 
+	/// <summary>油井 - 1费能力卡，立即获得$1000，回合开始时获得$500（升级后$800）资金，中立建筑不受建造厂限制</summary>
+	public static CardValueStore.CardValues OilDerrick => new()
+	{
+		Cost = 1,                   // 1费
+		DollarValue = 1000,         // 立即获得的资金
+		Damage = 500,               // 每回合获得的资金（基础）
+		DamageUpgraded = 300        // 升级后额外增加的资金（总800 = 500 + 300）
+	};
+
 	// ==================== 高科技(T2)单位 - 需要作战实验室解锁 ====================
 
 	/// <summary>幻影坦克 - 1费攻击卡，价格1000，需要作战实验室</summary>

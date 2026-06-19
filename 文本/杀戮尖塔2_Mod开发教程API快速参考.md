@@ -620,6 +620,40 @@ public static class PowerIconPatch
 await PowerCmd.Apply<MyBuff>(target, amount, source, sourceCard);
 ```
 
+### 数值可变能力的叠加逻辑
+
+对于数值会变化的能力（如油井、黄蜂舰载机），需要实现特殊的叠加逻辑：**检查数值相同的能力是否存在，存在便叠加上去，否则创建独立能力**。
+
+**示例场景**：
+- 打出两张基础油井（每回合$500）→ 叠加为1个能力，显示"油井 2"
+- 打出一张基础油井（$500）+ 一张升级油井（$800）→ 创建2个独立能力
+
+**实现模式**（参考黄蜂舰载机）：
+```csharp
+public static async Task ApplyOilDerricks(Creature owner, int count, bool isUpgraded = false)
+{
+    // 计算目标数值
+    int targetDollarPerTurn = (int)Values.DollarValue + (isUpgraded ? (int)Values.DollarValueUpgraded : 0);
+    
+    // 查找相同数值的能力
+    var existingPower = owner.Powers
+        .OfType<OilDerrickPower>()
+        .FirstOrDefault(p => p.CurrentDollarPerTurn == targetDollarPerTurn);
+    
+    if (existingPower != null)
+    {
+        // 叠加层数
+        await PowerCmd.ModifyAmount(ctx, existingPower, count, owner, null);
+    }
+    else
+    {
+        // 创建新能力
+        var newPower = await PowerCmd.Apply<OilDerrickPower>(ctx, owner, count, owner, null);
+        newPower.CurrentDollarPerTurn = targetDollarPerTurn;
+    }
+}
+```
+
 ---
 
 ## 👤 角色（CharacterModel）
