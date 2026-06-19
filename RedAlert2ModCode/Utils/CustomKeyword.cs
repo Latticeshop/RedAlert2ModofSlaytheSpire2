@@ -166,6 +166,15 @@ public static class ModCardKeywords
     );
 
     /// <summary>
+    /// 作战实验室词条 - 红警中提升科技等级，可以解锁更多兵种选择
+    /// </summary>
+    public static readonly CustomKeyword BattleLab = new(
+        "BATTLE_LAB",
+        new LocString("card_keywords", "battle_lab.title"),
+        new LocString("card_keywords", "battle_lab.description")
+    );
+
+    /// <summary>
     /// 初始化所有自定义词条
     /// </summary>
     public static void Initialize()
@@ -180,5 +189,6 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(ProductionQueue);
         CustomKeywordManager.RegisterKeyword(Unit);
         CustomKeywordManager.RegisterKeyword(StrategyTowerDefense);
+        CustomKeywordManager.RegisterKeyword(BattleLab);
     }
 }

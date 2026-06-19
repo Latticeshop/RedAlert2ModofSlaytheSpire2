@@ -51,5 +51,5 @@
     "AGISICON.title": "神盾巡洋舰",
     "AGISICON.description": "获得 {Block} 点格挡。若敌人意图攻击，再获得一遍格挡。",
     "BATTLE_LAB.title": "作战实验室",
-    "BATTLE_LAB.description": "解锁高级兵种。获得能力[gold]作战实验室[/gold]。"
+    "BATTLE_LAB.description": "[gold]价格：${DollarNumber}[/gold]。解锁高级兵种。获得能力[gold]作战实验室[/gold]。"
 }
