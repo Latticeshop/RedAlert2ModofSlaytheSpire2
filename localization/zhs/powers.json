@@ -11,11 +11,13 @@
     "PRISM_TOWER_POWER.title": "光棱塔",
     "PRISM_TOWER_POWER.description": "回合开始时对随机敌人造成 {Damage} 点伤害 {Repeat} 次。",
     "PILLBOX_POWER.title": "机枪碉堡",
-    "PILLBOX_POWER.description": "每回合开始时对随机敌人造成 {Damage} 点伤害，获得 {Block} 点防御。",
+    "PILLBOX_POWER.description": "回合开始时对敌人造成 {Damage} 点伤害 2 次，获得 {Block} 点防御。",
     "STRATEGY_TOWER_DEFENSE_POWER.title": "策略：塔防",
     "STRATEGY_TOWER_DEFENSE_POWER.description": "当你打出[gold]围墙[/gold]时，如果拥有[gold]光棱塔[/gold]能力，获得 1 回合[gold]残影[/gold]。",
     "TRANSPORT_SHIP_POWER.title": "运输船",
     "TRANSPORT_SHIP_POWER.description": "当前存储卡牌：\n{StoredCard0}\n{StoredCard1}\n{StoredCard2}\n{StoredCard3}\n{StoredCard4}\n{StoredCard5}\n{StoredCard6}\n{StoredCard7}\n{StoredCard8}\n{StoredCard9}",
     "BATTLE_LAB_POWER.title": "作战实验室",
-    "BATTLE_LAB_POWER.description": "已解锁高级科技。"
+    "BATTLE_LAB_POWER.description": "已解锁高级科技。",
+    "PATRIOT_MISSILE_POWER.title": "爱国者导弹",
+    "PATRIOT_MISSILE_POWER.description": "回合开始时，每有一个攻击意图的敌人，获得 {Block} 点格挡。"
 }

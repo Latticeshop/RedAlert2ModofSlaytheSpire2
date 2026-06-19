@@ -24,7 +24,7 @@
     "ALLIED_WALL_CARD.title": "盟军围墙",
     "ALLIED_WALL_CARD.description": "[gold]价格：${DollarNumber}[/gold]。获得 {Block} 点格挡。将此牌返回你的手牌。",
     "PILLBOX_CARD.title": "机枪碉堡",
-    "PILLBOX_CARD.description": "[gold]价格：${DollarNumber}[/gold]。回合开始时对敌人造成 {Damage} 点伤害，获得 {Block} 点防御。",
+    "PILLBOX_CARD.description": "[gold]价格：${DollarNumber}[/gold]。回合开始时对敌人造成 {Damage} 点伤害 2 次，获得 {Block} 点防御(升级不加)。",
     "CHRONO_MINER.title": "超时空矿车",
     "CHRONO_MINER.description": "获得 {DollarValue} 资金。超时空：使用后将此牌加入摸牌堆。",
     "INTRUDER.title": "入侵者战机",
@@ -55,5 +55,7 @@
     "MIRAGE_TANK.title": "幻影坦克",
     "MIRAGE_TANK.description": "若敌人意图攻击，自身无[gold]无实体[/gold]时获得一层[gold]无实体[/gold]。否则造成 {Damage} 点伤害。获得 {Block} 点格挡。",
     "PRISM_TANK.title": "光棱坦克",
-    "PRISM_TANK.description": "造成 {Damage} 点伤害。[gold]溅射[/gold]。"
+    "PRISM_TANK.description": "造成 {Damage} 点伤害。[gold]溅射[/gold]。",
+    "PATRIOT_MISSILE.title": "爱国者导弹",
+    "PATRIOT_MISSILE.description": "[gold]价格：${DollarNumber}[/gold]。回合开始时，每有一个攻击意图的敌人，获得 {Block} 点格挡。"
 }

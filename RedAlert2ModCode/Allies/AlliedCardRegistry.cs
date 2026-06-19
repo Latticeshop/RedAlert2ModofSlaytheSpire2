@@ -65,7 +65,8 @@ public static class AlliedCardRegistry
     public static List<Func<CardModel>> DefenseTowers { get; } = new()
     {
         () => ModelDb.Card<PrismTowerCard>(),
-        () => ModelDb.Card<PillboxCard>()
+        () => ModelDb.Card<PillboxCard>(),
+        () => ModelDb.Card<PatriotMissile>()
     };
 
     // 盟军运转(技能)卡

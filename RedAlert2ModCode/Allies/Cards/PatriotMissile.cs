@@ -16,17 +16,17 @@ using RedAlert2ModCode.Utils;
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
-/// 机枪碉堡 - 盟军防御建筑
-/// 1费技能卡（普通白卡）
-/// 效果：获得能力：每回合开始时对随机敌人造成2点伤害，自己获得5点防御
+/// 爱国者导弹 - 盟军防御建筑
+/// 1费技能卡（蓝卡uncommon）
+/// 效果：获得能力：回合开始时，每有一个攻击意图的敌人，获得9点格挡（升级后12点）
 /// </summary>
-public sealed class PillboxCard : CardModel
+public sealed class PatriotMissile : CardModel
 {
-	private static readonly CardValueStore.CardValues Values = AlliesCardValues.Pillbox;
-	
-	public PillboxCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+	private static readonly CardValueStore.CardValues Values = AlliesCardValues.PatriotMissile;
 
-	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/pillicon.png";
+	public PatriotMissile() : base((int)Values.Cost, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+
+	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/samicon.png";
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
@@ -54,7 +54,6 @@ public sealed class PillboxCard : CardModel
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new DamageVar(Values.Damage, ValueProp.Unpowered),
 		new BlockVar(Values.Block, ValueProp.Unpowered),
 		new IntVar("DollarNumber", Values.DollarValue)
 	};
@@ -66,20 +65,19 @@ public sealed class PillboxCard : CardModel
 		if (dollarPower != null)
 		{
 			dollarPower.AddDollar(-(int)Values.DollarValue);
-			GD.Print($"[PillboxCard] 扣除资金 {Values.DollarValue}");
+			GD.Print($"[PatriotMissile] 扣除资金 {Values.DollarValue}");
 		}
 
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
-		
-		GD.Print($"[PillboxCard] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
 
-		// 应用机枪碉堡能力
-		await PillboxPower.ApplyPillbox(Owner.Creature, base.IsUpgraded);
+		GD.Print($"[PatriotMissile] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
+
+		// 应用爱国者导弹能力
+		await PatriotMissilePower.ApplyPatriotMissile(Owner.Creature, base.IsUpgraded);
 	}
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(Values.DamageUpgraded);
-		// 防御值升级不加
+		DynamicVars.Block.UpgradeValueBy(Values.BlockUpgraded);
 	}
 }

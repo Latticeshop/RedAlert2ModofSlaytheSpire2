@@ -33,6 +33,13 @@ public static class AlliesPowerValues
 		Stars = 2,             // 未升级时每次叠加增加的伤害
 		StarsUpgraded = 3      // 升级后每次叠加增加的伤害 (5 = 2 + 3)
 	};
+
+	/// <summary>爱国者导弹能力 - 回合开始时每有一个攻击意图的敌人获得格挡</summary>
+	public static CardValueStore.CardValues PatriotMissilePower => new()
+	{
+		Block = 6,             // 基础格挡
+		BlockUpgraded = 3      // 升级后9 = 6 + 3
+	};
 	
 	/// <summary>基地车能力</summary>
 	public static CardValueStore.CardValues AlliedMCVPower => new()

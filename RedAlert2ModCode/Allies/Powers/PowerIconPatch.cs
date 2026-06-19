@@ -29,6 +29,7 @@ public static class PowerIconPatch
         { typeof(PillboxPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/pillicon.png" },
         { typeof(StrategyTowerDefensePower), "res://RedAlert2ModResources/images/packed/card_portraits/strategy_tower_defense.png" },
         { typeof(BattleLabPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/techicon.png" },
+        { typeof(PatriotMissilePower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/samicon.png" },
     };
 
     /// <summary>

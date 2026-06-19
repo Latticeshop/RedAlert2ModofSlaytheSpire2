@@ -158,15 +158,25 @@ public static class AlliesCardValues
 		DollarValue = 1500
 	};
 	
-	/// <summary>机枪碉堡 - 1费，每回合对随机敌人造成2伤害，自己获得5防御，价格500</summary>
+	/// <summary>机枪碉堡 - 1费，回合开始时对敌人造成1伤害2次（升级后2伤害），获得3防御（升级不加），价格500</summary>
 	public static CardValueStore.CardValues Pillbox => new()
 	{
 		Cost = 1,
-		Damage = 2,
-		DamageUpgraded = 1,
-		Block = 5,
-		BlockUpgraded = 3,
+		Damage = 1,
+		DamageUpgraded = 1,  // 升级后2 = 1 + 1
+		Repeat = 2,          // 攻击次数
+		Block = 3,
+		BlockUpgraded = 0,   // 升级不加
 		DollarValue = 500
+	};
+
+	/// <summary>爱国者导弹 - 1费能力卡，回合开始时每有一个攻击意图的敌人获得6格挡（升级9），价格1000</summary>
+	public static CardValueStore.CardValues PatriotMissile => new()
+	{
+		Cost = 1,
+		Block = 6,
+		BlockUpgraded = 3,  // 升级后9 = 6 + 3
+		DollarValue = 1000
 	};
 	
 	// ==================== 经济单位 ====================
@@ -340,6 +350,7 @@ public static class AlliesCardValues
 			{ "PRISMTOWERCARD", PrismTower },
 			{ "ALLIEDWALLCARD", AlliedWall },
 			{ "PILLBOXCARD", Pillbox },
+			{ "PATRIOTMISSILE", PatriotMissile },
 			{ "BATTLELAB", BattleLab }
 		};
 	}

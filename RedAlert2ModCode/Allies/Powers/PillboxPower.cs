@@ -56,8 +56,8 @@ public class PillboxPower : PowerModel
 		if (newPower != null)
 		{
 			newPower.CurrentDamage = (int)Values.Damage + (isUpgraded ? (int)Values.DamageUpgraded : 0);
-			newPower.CurrentBlock = (int)Values.Block + (isUpgraded ? (int)Values.BlockUpgraded : 0);
-			GD.Print($"[PillboxPower] 创建成功 - Damage={newPower.CurrentDamage}, Block={newPower.CurrentBlock}");
+			newPower.CurrentBlock = (int)Values.Block;  // 防御值升级不加
+			GD.Print($"[PillboxPower] 创建成功 - Damage={newPower.CurrentDamage}, Block={newPower.CurrentBlock}, Repeat={Values.Repeat}");
 		}
 	}
 
@@ -68,23 +68,27 @@ public class PillboxPower : PowerModel
 
 		// 获取当前层数，按层数循环触发
 		int stacks = (int)base.Amount;
-		GD.Print($"[PillboxPower] 回合开始触发 - 层数={stacks}, Damage={CurrentDamage}, Block={CurrentBlock}");
+		GD.Print($"[PillboxPower] 回合开始触发 - 层数={stacks}, Damage={CurrentDamage}, Block={CurrentBlock}, Repeat={Values.Repeat}");
 
 		var enemies = combatState.Enemies.Where(static enemy => enemy.Side == CombatSide.Enemy && enemy.IsAlive).ToList();
 		
 		for (int i = 0; i < stacks; i++)
 		{
-			if (enemies.Count > 0)
+			// 按 Repeat 次数对敌人造成伤害
+			for (int j = 0; j < Values.Repeat; j++)
 			{
-				var randomEnemy = enemies[GD.RandRange(0, enemies.Count - 1)];
-				GD.Print($"[PillboxPower] 第{i+1}次触发 - 对敌人 {randomEnemy.Name} 造成 {CurrentDamage} 点伤害");
-				
-				await CreatureCmd.Damage(new MegaCrit.Sts2.Core.GameActions.Multiplayer.ThrowingPlayerChoiceContext(), 
-					new List<Creature> { randomEnemy }, 
-					(decimal)CurrentDamage, 
-					MegaCrit.Sts2.Core.ValueProps.ValueProp.Unpowered, 
-					base.Owner, 
-					null);
+				if (enemies.Count > 0)
+				{
+					var randomEnemy = enemies[GD.RandRange(0, enemies.Count - 1)];
+					GD.Print($"[PillboxPower] 第{i+1}层第{j+1}次攻击 - 对敌人 {randomEnemy.Name} 造成 {CurrentDamage} 点伤害");
+					
+					await CreatureCmd.Damage(new MegaCrit.Sts2.Core.GameActions.Multiplayer.ThrowingPlayerChoiceContext(), 
+						new List<Creature> { randomEnemy }, 
+						(decimal)CurrentDamage, 
+						MegaCrit.Sts2.Core.ValueProps.ValueProp.Unpowered, 
+						base.Owner, 
+						null);
+				}
 			}
 
 			if (base.Owner != null)
