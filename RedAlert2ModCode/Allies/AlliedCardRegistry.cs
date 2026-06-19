@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Allies.Cards;
+using RedAlert2ModCode.Allies.Powers;
 
 namespace RedAlert2ModCode.Allies;
 
@@ -24,6 +25,12 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<GrizzlyTank>(),
         () => ModelDb.Card<Ifv>(),
         () => ModelDb.Card<ChronoMiner>()
+    };
+
+    /// <summary>高科技(T2)装甲单位 - 需要作战实验室解锁</summary>
+    public static List<Func<CardModel>> HighTechVehicles { get; } = new()
+    {
+        () => ModelDb.Card<MirageTank>()
     };
 
     public static List<Func<CardModel>> Aircraft { get; } = new()
@@ -88,6 +95,14 @@ public static class AlliedCardRegistry
     public static List<CardModel> GetAllVehicles()
     {
         return Vehicles.Select(s => s()).ToList();
+    }
+
+    /// <summary>
+    /// 获取所有高科技(T2)装甲单位 - 需要作战实验室解锁
+    /// </summary>
+    public static List<CardModel> GetAllHighTechVehicles()
+    {
+        return HighTechVehicles.Select(s => s()).ToList();
     }
 
     /// <summary>
@@ -175,7 +190,31 @@ public static class AlliedCardRegistry
 
     public static List<CardModel> CreateVehicles(Player owner)
     {
-        return Vehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+        List<CardModel> vehicles = Vehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+        
+        // 检查是否有作战实验室能力，如果有则添加高科技单位
+        if (HasBattleLabPower(owner.Creature))
+        {
+            vehicles.AddRange(CreateHighTechVehicles(owner));
+        }
+        
+        return vehicles;
+    }
+
+    /// <summary>
+    /// 创建高科技(T2)装甲单位卡牌列表
+    /// </summary>
+    public static List<CardModel> CreateHighTechVehicles(Player owner)
+    {
+        return HighTechVehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+    }
+
+    /// <summary>
+    /// 检查是否有作战实验室能力
+    /// </summary>
+    public static bool HasBattleLabPower(Creature creature)
+    {
+        return creature.Powers.Any(p => p is BattleLabPower);
     }
 
     public static List<CardModel> CreateAircraft(Player owner)
@@ -200,7 +239,7 @@ public static class AlliedCardRegistry
     {
         List<CardModel> units = new();
         units.AddRange(CreateSoldiers(owner));
-        units.AddRange(CreateVehicles(owner));
+        units.AddRange(CreateVehicles(owner));  // CreateVehicles已包含高科技单位筛选逻辑
         units.AddRange(CreateAircraft(owner));
         units.AddRange(CreateShips(owner));
         return units;

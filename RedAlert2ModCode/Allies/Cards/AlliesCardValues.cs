@@ -261,7 +261,20 @@ public static class AlliesCardValues
 		Cost = 0,
 		DollarValue = 2000
 	};
-	
+
+	// ==================== 高科技(T2)单位 - 需要作战实验室解锁 ====================
+
+	/// <summary>幻影坦克 - 1费攻击卡，价格1000，需要作战实验室</summary>
+	public static CardValueStore.CardValues MirageTank => new()
+	{
+		Cost = 1,
+		Damage = 10,
+		DamageUpgraded = 5,  // 升级后15 = 10 + 5
+		Block = 5,
+		BlockUpgraded = 5,  // 升级后10 = 5 + 5
+		DollarValue = 1000
+	};
+
 	// ==================== 数值映射创建方法 ====================
 	
 	public static System.Collections.Generic.Dictionary<string, CardValueStore.CardValues> CreateSoldierValuesMap()
@@ -321,6 +334,15 @@ public static class AlliesCardValues
 			{ "BATTLELAB", BattleLab }
 		};
 	}
+
+	/// <summary>高科技(T2)单位数值映射 - 需要作战实验室解锁</summary>
+	public static System.Collections.Generic.Dictionary<string, CardValueStore.CardValues> CreateHighTechValuesMap()
+	{
+		return new System.Collections.Generic.Dictionary<string, CardValueStore.CardValues>
+		{
+			{ "MIRAGETANK", MirageTank }
+		};
+	}
 	
 	public static System.Collections.Generic.Dictionary<string, CardValueStore.CardValues> CreateAllValuesMap()
 	{
@@ -339,6 +361,9 @@ public static class AlliesCardValues
 			map[kvp.Key] = kvp.Value;
 		
 		foreach (var kvp in CreateBuildingValuesMap())
+			map[kvp.Key] = kvp.Value;
+		
+		foreach (var kvp in CreateHighTechValuesMap())
 			map[kvp.Key] = kvp.Value;
 		
 		return map;

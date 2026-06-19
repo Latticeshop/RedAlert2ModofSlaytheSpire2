@@ -23,7 +23,7 @@ public sealed class Agisicon : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.Agisicon;
 
-	public Agisicon() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.Self) { }
+	public Agisicon() : base((int)Values.Cost, CardType.Skill, CardRarity.Token, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/agisicon.png";
 

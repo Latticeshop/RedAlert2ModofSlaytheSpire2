@@ -84,7 +84,13 @@ public sealed class AlliedWarFactory : CardModel
 
 		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
 		// 传递数值映射，让UI面板能够正确显示费用
+		// 合并普通装甲单位和高科技单位的数值映射
 		var cardValuesMap = AlliesCardValues.CreateVehicleValuesMap();
+		var highTechValuesMap = AlliesCardValues.CreateHighTechValuesMap();
+		foreach (var kvp in highTechValuesMap)
+		{
+			cardValuesMap[kvp.Key] = kvp.Value;
+		}
 		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap);
 
 		GD.Print($"[AlliedWarFactory] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");

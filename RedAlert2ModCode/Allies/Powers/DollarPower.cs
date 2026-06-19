@@ -2,6 +2,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using RedAlert2ModCode.Utils;
 
 namespace RedAlert2ModCode.Allies.Powers;
 
@@ -37,16 +38,37 @@ public class DollarPower : PowerModel
     }
     
     /// <summary>
-    /// 添加资金
+    /// 公开的能力闪烁方法（用于触发刀乐图标闪烁动画）
+    /// </summary>
+    public void FlashPower()
+    {
+        Flash();  // 调用基类的protected Flash方法
+        GD.Print("[DollarPower] 刀乐能力图标闪烁");
+    }
+    
+    /// <summary>
+    /// 添加资金（自动触发动画）
     /// </summary>
     public void AddDollar(int amount)
     {
         DollarValue += amount;
         GD.Print($"[DollarPower] 添加资金 {amount}，当前资金 {DollarValue}");
+        
+        // 触发资金动画
+        if (amount > 0)
+        {
+            // 资金增加：播放增益动画
+            DollarVfxHelper.PlayGainVfx(Owner, amount);
+        }
+        else if (amount < 0)
+        {
+            // 资金扣除：播放减益动画
+            DollarVfxHelper.PlaySpendVfx(Owner, -amount);
+        }
     }
     
     /// <summary>
-    /// 设置资金
+    /// 设置资金（不触发动画）
     /// </summary>
     public void SetDollar(int value)
     {
