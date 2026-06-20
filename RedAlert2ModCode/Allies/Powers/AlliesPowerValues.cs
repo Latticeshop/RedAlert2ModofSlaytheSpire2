@@ -60,10 +60,10 @@ public static class AlliesPowerValues
 		// 训练队列主要是功能能力
 	};
 
-	/// <summary>修理厂能力 - 回合开始时花费$500从消耗牌堆选择一张牌加入弃牌堆</summary>
+	/// <summary>修理厂能力 - 回合开始时花费$1000从消耗牌堆选择一张牌加入弃牌堆</summary>
 	public static CardValueStore.CardValues RepairDepotPower => new()
 	{
-		DollarValue = 500  // 每回合花费的资金
+		DollarValue = 1000  // 每回合花费的资金
 	};
 	
 	// ==================== 临时增益能力 ====================

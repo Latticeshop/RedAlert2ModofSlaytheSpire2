@@ -107,11 +107,11 @@ public static class AlliesCardValues
 		// 兵营主要是功能牌，数值由具体生成的单位决定
 	};
 	
-	/// <summary>盟军重工 - 0费，价格2000</summary>
+	/// <summary>盟军重工 - 0费，价格1000</summary>
 	public static CardValueStore.CardValues AlliedWarFactory => new()
 	{
 		Cost = 0,
-		DollarValue = 2000
+		DollarValue = 1000
 		// 重工主要是功能牌，数值由具体生成的单位决定
 	};
 	
@@ -274,7 +274,7 @@ public static class AlliesCardValues
 		DollarValue = 2000
 	};
 
-	/// <summary>修理厂 - 2费能力卡（升级后1费），回合开始时花费$500从消耗牌堆选择一张牌加入弃牌堆，价格800</summary>
+	/// <summary>修理厂 - 2费能力卡（升级后1费），回合开始时花费$1000从消耗牌堆选择一张牌加入弃牌堆，价格800</summary>
 	public static CardValueStore.CardValues RepairDepot => new()
 	{
 		Cost = 2,           // 未升级：2费

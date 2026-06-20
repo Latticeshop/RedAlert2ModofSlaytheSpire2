@@ -18,7 +18,7 @@ namespace RedAlert2ModCode.Allies.Powers;
 
 /// <summary>
 /// 修理厂能力 - 盟军建筑能力
-/// 效果：回合开始时，花费$500资金从消耗牌堆选择一张牌加入弃牌堆
+/// 效果：回合开始时，花费$1000资金从消耗牌堆选择一张牌加入弃牌堆
 /// </summary>
 public class RepairDepotPower : PowerModel
 {
@@ -81,7 +81,7 @@ public class RepairDepotPower : PowerModel
 			// 已有能力，增加资金花费和可选牌数，保持一层
 			GD.Print($"[RepairDepotPower] 发现已有能力，增加资金和牌数 - 当前资金: {existingPower.CurrentDollarCost}, 当前牌数: {existingPower.CurrentCardCount}");
 			
-			// 增加资金花费（每层+500）
+			// 增加资金花费（每层+1000）
 			existingPower.CurrentDollarCost += (int)Values.DollarValue;
 			// 增加可选牌数（每层+1）
 			existingPower.CurrentCardCount += 1;
@@ -97,7 +97,7 @@ public class RepairDepotPower : PowerModel
 		var newPower = await PowerCmd.Apply<RepairDepotPower>(new ThrowingPlayerChoiceContext(), owner, 1m, owner, null);
 		if (newPower != null)
 		{
-			newPower.CurrentDollarCost = (int)Values.DollarValue;  // 固定花费500，不随升级变化
+			newPower.CurrentDollarCost = (int)Values.DollarValue;  // 固定花费1000，不随升级变化
 			newPower.CurrentCardCount = 1;
 			newPower.IsUpgraded = isUpgraded;
 			GD.Print($"[RepairDepotPower] 创建成功 - DollarCost={newPower.CurrentDollarCost}, CardCount={newPower.CurrentCardCount}, IsUpgraded={newPower.IsUpgraded}");
