@@ -81,7 +81,8 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<SellMCV>(),
         () => ModelDb.Card<Ra2Rally>(),
         () => ModelDb.Card<StrategyTowerDefense>(),
-        () => ModelDb.Card<OilDerrickCard>()
+        () => ModelDb.Card<OilDerrickCard>(),
+        () => ModelDb.Card<StopProductionCard>()
     };
 
     // 盟军特殊卡

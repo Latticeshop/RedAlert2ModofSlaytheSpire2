@@ -654,6 +654,33 @@ public static async Task ApplyOilDerricks(Creature owner, int count, bool isUpgr
 }
 ```
 
+### 动态切换能力类型（Buff/Debuff）
+
+能力类型可以根据状态动态切换，实现视觉上的状态区分。例如生产序列能力在"生产中"时显示为Buff（绿色数字），"停产"时显示为Debuff（红色数字）。
+
+**实现方式**：
+```csharp
+public class TrainingQueuePower : PowerModel
+{
+    public bool IsStopped { get; set; } = false;
+    
+    /// <summary>
+    /// 根据停产状态动态返回能力类型
+    /// 生产中 -> Buff（绿色数字）
+    /// 停产 -> Debuff（红色数字）
+    /// </summary>
+    public override PowerType Type => IsStopped ? PowerType.Debuff : PowerType.Buff;
+    
+    public override PowerStackType StackType => PowerStackType.Counter;
+}
+```
+
+**效果说明**：
+- 当 `IsStopped = false`（生产中）：能力图标显示为绿色边框，数字为绿色
+- 当 `IsStopped = true`（停产）：能力图标显示为红色边框，数字为红色
+
+这种方式可以让玩家直观地通过颜色区分能力的当前状态。
+
 ---
 
 ## 👤 角色（CharacterModel）

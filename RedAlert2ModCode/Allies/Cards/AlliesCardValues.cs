@@ -291,6 +291,13 @@ public static class AlliesCardValues
 		DamageUpgraded = 300        // 升级后额外增加的资金（总800 = 500 + 300）
 	};
 
+	/// <summary>停产 - 1费技能卡，选择1个生产序列启动/停产，升级后可选择所有生产序列</summary>
+	public static CardValueStore.CardValues StopProduction => new()
+	{
+		Cost = 1,                   // 1费
+		Repeat = 1                  // 未升级时选择数量
+	};
+
 	// ==================== 高科技(T2)单位 - 需要作战实验室解锁 ====================
 
 	/// <summary>幻影坦克 - 1费攻击卡，价格1000，需要作战实验室</summary>

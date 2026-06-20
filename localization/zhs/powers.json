@@ -4,7 +4,7 @@
     "ALLIED_MC_V_POWER.title": "盟军基地车",
     "ALLIED_MC_V_POWER.description": "已部署基地车。",
     "TRAINING_QUEUE_POWER.title": "生产序列",
-    "TRAINING_QUEUE_POWER.description": "每回合花费${UnitPrice}，加入一张0费且消耗的{UnitName}卡牌。",
+    "TRAINING_QUEUE_POWER.description": "每回合花费${UnitPrice}，加入一张0费{ExhaustText}的{UnitName}卡牌。{StoppedMarker}",
     "POWER_PLANT_POWER.title": "发电厂",
     "POWER_PLANT_POWER.description": "每抽 {BaseCards} 张牌获得 1 点能量。",
     "POWER_PLANT_POWER.smartDescription": "每抽 [blue]{BaseCards}[/blue] 张牌获得 {Amount:energyIcons()}。",
@@ -25,7 +25,7 @@
     "HORNET_POWER.title": "黄蜂舰载机",
     "HORNET_POWER.description": "每回合对[gold]目标锁定[/gold]的敌人造成 {Damage} 点伤害。",
     "REPAIR_DEPOT_POWER.title": "修理厂",
-    "REPAIR_DEPOT_POWER.description": "回合开始时，花费[gold]${DollarCost}[/gold]资金从消耗牌堆选择 {CardCount} 张牌加入弃牌堆。",
+    "REPAIR_DEPOT_POWER.description": "回合开始时，花费[gold]${DollarCost}[/gold]资金从消耗牌堆选择 {CardCount} 张牌加入弃牌堆。{StoppedMarker}",
     "OIL_DERRICK_POWER.title": "油井",
     "OIL_DERRICK_POWER.description": "回合开始时，获得 [gold]${DollarPerTurn}[/gold] 资金。"
 }

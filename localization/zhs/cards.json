@@ -26,7 +26,7 @@
     "PILLBOX_CARD.title": "机枪碉堡",
     "PILLBOX_CARD.description": "[gold]价格：${DollarNumber}[/gold]。回合开始时对敌人造成 {Damage} 点伤害 2 次，获得 {Block} 点防御(升级不加)。",
     "CHRONO_MINER.title": "超时空矿车",
-    "CHRONO_MINER.description": "获得 {DollarValue} 资金。超时空：使用后将此牌加入摸牌堆。",
+    "CHRONO_MINER.description": "获得 [gold]${DollarValue}[/gold] 。\n超时空：使用后将此牌加入摸牌堆。",
     "INTRUDER.title": "入侵者战机",
     "INTRUDER.description": "造成 {Damage} 点伤害，赋予敌人 {Repeat} 层易伤。",
     "AIR_FORCE_COMMAND.title": "空指部",
@@ -63,5 +63,7 @@
     "REPAIR_DEPOT.title": "维修厂",
     "REPAIR_DEPOT.description": "[gold]价格：${DollarNumber}[/gold]。回合开始时，花费[gold]${DollarCost}[/gold]从消耗牌堆选择 1 张牌加入弃牌堆。",
     "OIL_DERRICK_CARD.title": "油井",
-    "OIL_DERRICK_CARD.description": "立即获得 [gold]${DollarNumber}[/gold] 资金。回合开始时，获得 [gold]${DollarPerTurn}[/gold] 资金。"
+    "OIL_DERRICK_CARD.description": "立即获得 [gold]${DollarNumber}[/gold] 资金。回合开始时，获得 [gold]${DollarPerTurn}[/gold] 资金。",
+    "STOP_PRODUCTION_CARD.title": "停产",
+    "STOP_PRODUCTION_CARD.description": "选择{IfUpgraded:show:[green]任意[/green]| {SelectCount} 个}[gold]生产序列[/gold]启动/停产，使其[gold]开始[/gold]/[gold]不再[/gold]生产单位。"
 }

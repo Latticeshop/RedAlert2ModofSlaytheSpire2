@@ -21,7 +21,12 @@ public sealed class TrainingQueuePower : PowerModel
     private static int _instanceCounter = 0;
     private readonly int _instanceId;
     
-    public override PowerType Type => PowerType.Debuff;
+    /// <summary>
+    /// 根据停产状态动态返回能力类型
+    /// 生产中 -> Buff（绿色数字）
+    /// 停产 -> Debuff（红色数字）
+    /// </summary>
+    public override PowerType Type => IsStopped ? PowerType.Debuff : PowerType.Buff;
     
     public override PowerStackType StackType => PowerStackType.Counter;
 
@@ -39,6 +44,11 @@ public sealed class TrainingQueuePower : PowerModel
     public bool IsUpgraded { get; set; } = false;
 
     /// <summary>
+    /// 是否停产
+    /// </summary>
+    public bool IsStopped { get; set; } = false;
+
+    /// <summary>
     /// 训练单位的图标路径（直接存储，避免依赖PowerIconManager的对象引用）
     /// </summary>
     public string TrainedUnitIconPath { get; set; } = string.Empty;
@@ -47,6 +57,11 @@ public sealed class TrainingQueuePower : PowerModel
     /// 训练单位的价格（用于生产时的资金检查）
     /// </summary>
     public int UnitPrice { get; set; } = 0;
+
+    /// <summary>
+    /// 生产的单位打出时是否消耗（默认为true，矿车等不消耗单位设为false）
+    /// </summary>
+    public bool ExhaustWhenPlayed { get; set; } = true;
 
     /// <summary>
     /// 追踪实例ID
@@ -87,10 +102,12 @@ public sealed class TrainingQueuePower : PowerModel
     /// <param name="unitPrice">单位价格</param>
     /// <param name="isUpgraded">是否升级</param>
     /// <param name="sourceCard">来源卡牌（用于能力关联）</param>
+    /// <param name="exhaustWhenPlayed">生产出的单位打出时是否消耗（默认为true）</param>
+    /// <param name="isStopped">初始停产状态（默认为false）</param>
     /// <returns>创建或叠加的能力实例</returns>
-    public static async Task<TrainingQueuePower?> ApplyTrainingQueue(Creature owner, string cardId, string unitName, string iconPath, int unitPrice = 0, bool isUpgraded = false, CardModel? sourceCard = null)
+    public static async Task<TrainingQueuePower?> ApplyTrainingQueue(Creature owner, string cardId, string unitName, string iconPath, int unitPrice = 0, bool isUpgraded = false, CardModel? sourceCard = null, bool exhaustWhenPlayed = true, bool isStopped = false)
     {
-        GD.Print($"[TrainingQueuePower] ApplyTrainingQueue 被调用 - CardId={cardId}, UnitName={unitName}, UnitPrice={unitPrice}, IsUpgraded={isUpgraded}");
+        GD.Print($"[TrainingQueuePower] ApplyTrainingQueue 被调用 - CardId={cardId}, UnitName={unitName}, UnitPrice={unitPrice}, IsUpgraded={isUpgraded}, IsStopped={isStopped}");
 
         // 检查是否已有相同兵种且升级状态相同的训练队列能力
         TrainingQueuePower? existingPower = null;
@@ -120,17 +137,19 @@ public sealed class TrainingQueuePower : PowerModel
 
         if (trainingPower != null)
         {
-            GD.Print($"[TrainingQueuePower] 设置属性 - TrainedCardId={cardId}, IconPath={iconPath}, UnitPrice={unitPrice}");
+            GD.Print($"[TrainingQueuePower] 设置属性 - TrainedCardId={cardId}, IconPath={iconPath}, UnitPrice={unitPrice}, ExhaustWhenPlayed={exhaustWhenPlayed}, IsStopped={isStopped}");
             trainingPower.TrainedCardId = cardId;
             trainingPower.UnitName = unitName;
             trainingPower.IsUpgraded = isUpgraded;
             trainingPower.TrainedUnitIconPath = iconPath;
             trainingPower.UnitPrice = unitPrice;
+            trainingPower.ExhaustWhenPlayed = exhaustWhenPlayed;
+            trainingPower.IsStopped = isStopped;
 
             // 使用图标管理器设置能力图标
             PowerIconManager.SetIcon(trainingPower, iconPath);
 
-            GD.Print($"[TrainingQueuePower] 属性设置完成 - TrainedCardId={trainingPower.TrainedCardId}, TrainedUnitIconPath={trainingPower.TrainedUnitIconPath}, UnitPrice={trainingPower.UnitPrice}");
+            GD.Print($"[TrainingQueuePower] 属性设置完成 - TrainedCardId={trainingPower.TrainedCardId}, TrainedUnitIconPath={trainingPower.TrainedUnitIconPath}, UnitPrice={trainingPower.UnitPrice}, ExhaustWhenPlayed={trainingPower.ExhaustWhenPlayed}, IsStopped={trainingPower.IsStopped}");
         }
 
         return trainingPower;
@@ -233,10 +252,23 @@ public sealed class TrainingQueuePower : PowerModel
         get
         {
             var locString = new LocString("powers", base.Id.Entry + ".description");
-            // 如果是升级过的单位，在名称后面加上+
             string displayName = IsUpgraded ? UnitName + "+" : UnitName;
-            locString.Add("UnitName", displayName); // 单位名称
-            locString.Add("UnitPrice", UnitPrice.ToString()); // 单位价格
+            locString.Add("UnitName", displayName);
+            locString.Add("UnitPrice", UnitPrice.ToString());
+            
+            // 根据是否消耗决定是否显示"且消耗"
+            locString.Add("ExhaustText", ExhaustWhenPlayed ? "且消耗" : "");
+            
+            // 如果停产，添加已停产标记
+            if (IsStopped)
+            {
+                locString.Add("StoppedMarker", "[gold]已停产[/gold]。");
+            }
+            else
+            {
+                locString.Add("StoppedMarker", "");
+            }
+            
             return locString;
         }
     }
@@ -245,6 +277,13 @@ public sealed class TrainingQueuePower : PowerModel
     {
         if (side != CombatSide.Player)
             return;
+
+        // 如果已停产，不执行生产
+        if (IsStopped)
+        {
+            GD.Print($"[TrainingQueuePower] 已停产，跳过生产 - UnitName={UnitName}");
+            return;
+        }
 
         if (string.IsNullOrEmpty(TrainedCardId))
             return;
@@ -289,7 +328,16 @@ public sealed class TrainingQueuePower : PowerModel
 
             tempCard.EnergyCost.SetCustomBaseCost(0);
 
-            tempCard.AddKeyword(CardKeyword.Exhaust);
+            // 根据 ExhaustWhenPlayed 属性决定是否添加消耗词条
+            if (ExhaustWhenPlayed)
+            {
+                tempCard.AddKeyword(CardKeyword.Exhaust);
+                GD.Print($"[TrainingQueuePower] 单位消耗: 是 - UnitName={UnitName}");
+            }
+            else
+            {
+                GD.Print($"[TrainingQueuePower] 单位消耗: 否 - UnitName={UnitName}");
+            }
 
             await CardPileCmd.AddGeneratedCardToCombat(tempCard, PileType.Discard, Owner.Player, CardPilePosition.Top);
         }

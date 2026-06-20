@@ -24,19 +24,29 @@ public class RepairDepotPower : PowerModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesPowerValues.RepairDepotPower;
 
-	public override PowerType Type => PowerType.Buff;
+	/// <summary>
+	/// 根据停产状态动态返回能力类型
+	/// 生产中 -> Buff（绿色数字）
+	/// 停产 -> Debuff（红色数字）
+	/// </summary>
+	public override PowerType Type => IsStopped ? PowerType.Debuff : PowerType.Buff;
 
 	public override PowerStackType StackType => PowerStackType.Counter;
 
 	/// <summary>
-	/// 当前资金花费（每回合花费的资金）
-	/// </summary>
-	public int CurrentDollarCost { get; set; } = (int)Values.DollarValue;
+    /// 当前资金花费（每回合花费的资金）
+    /// </summary>
+    public int CurrentDollarCost { get; set; } = (int)Values.DollarValue;
 
-	/// <summary>
-	/// 是否升级（升级后资金花费降低）
-	/// </summary>
-	public bool IsUpgraded { get; set; } = false;
+    /// <summary>
+    /// 是否停产
+    /// </summary>
+    public bool IsStopped { get; set; } = false;
+
+    /// <summary>
+    /// 是否升级（升级后资金花费降低）
+    /// </summary>
+    public bool IsUpgraded { get; set; } = false;
 
 	/// <summary>
 	/// 当前可选牌数
@@ -60,6 +70,17 @@ public class RepairDepotPower : PowerModel
 			var locString = new LocString("powers", base.Id.Entry + ".description");
 			locString.Add("DollarCost", CurrentDollarCost);
 			locString.Add("CardCount", CurrentCardCount);
+			
+			// 如果停产，添加已停产标记
+			if (IsStopped)
+			{
+				locString.Add("StoppedMarker", "[gold]已停产[/gold]。");
+			}
+			else
+			{
+				locString.Add("StoppedMarker", "");
+			}
+			
 			return locString;
 		}
 	}
@@ -67,9 +88,9 @@ public class RepairDepotPower : PowerModel
 	/// <summary>
 	/// 应用修理厂能力
 	/// </summary>
-	public static async Task ApplyRepairDepot(Creature owner, bool isUpgraded = false)
+	public static async Task ApplyRepairDepot(Creature owner, bool isUpgraded = false, bool isStopped = false)
 	{
-		GD.Print($"[RepairDepotPower] ApplyRepairDepot 被调用 - IsUpgraded={isUpgraded}");
+		GD.Print($"[RepairDepotPower] ApplyRepairDepot 被调用 - IsUpgraded={isUpgraded}, IsStopped={isStopped}");
 
 		// 检查是否已有修理厂能力
 		var existingPower = owner.Powers
@@ -100,7 +121,8 @@ public class RepairDepotPower : PowerModel
 			newPower.CurrentDollarCost = (int)Values.DollarValue;  // 固定花费1000，不随升级变化
 			newPower.CurrentCardCount = 1;
 			newPower.IsUpgraded = isUpgraded;
-			GD.Print($"[RepairDepotPower] 创建成功 - DollarCost={newPower.CurrentDollarCost}, CardCount={newPower.CurrentCardCount}, IsUpgraded={newPower.IsUpgraded}");
+			newPower.IsStopped = isStopped;
+			GD.Print($"[RepairDepotPower] 创建成功 - DollarCost={newPower.CurrentDollarCost}, CardCount={newPower.CurrentCardCount}, IsUpgraded={newPower.IsUpgraded}, IsStopped={newPower.IsStopped}");
 		}
 	}
 
@@ -108,6 +130,13 @@ public class RepairDepotPower : PowerModel
 	{
 		if (side != CombatSide.Player)
 			return;
+
+		// 如果已停产，不执行修理
+		if (IsStopped)
+		{
+			GD.Print($"[RepairDepotPower] 已停产，跳过修理");
+			return;
+		}
 
 		GD.Print($"[RepairDepotPower] 回合开始触发 - DollarCost={CurrentDollarCost}, CardCount={CurrentCardCount}");
 

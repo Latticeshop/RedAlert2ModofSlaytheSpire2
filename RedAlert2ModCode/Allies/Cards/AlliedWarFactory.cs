@@ -100,45 +100,25 @@ public sealed class AlliedWarFactory : CardModel
 		{
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			
-			// 如果选择的是超时空矿车，直接扣除资金并加入手牌
-			if (selectedCard is ChronoMiner)
-			{
-				GD.Print($"[AlliedWarFactory] 选择超时空矿车，直接扣除资金并加入手牌");
-				
-				// 获取矿车价格
-				int minerPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
-				
-				// 扣除矿车费用
-				if (dollarPower != null)
-				{
-					dollarPower.AddDollar(-minerPrice);
-					GD.Print($"[AlliedWarFactory] 扣除矿车费用 {minerPrice}");
-				}
-				
-				// 克隆卡牌并加入手牌
-				var minerCard = selectedCard.CreateClone();
-				if (base.IsUpgraded)
-				{
-					CardCmd.Upgrade(minerCard);
-				}
-				await CardPileCmd.AddGeneratedCardToCombat(minerCard, PileType.Hand, Owner);
-			}
-			else
-			{
-				// 获取单位价格
-				int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
-				
-				// 其他单位：使用统一的训练队列能力应用方法
-				await TrainingQueuePower.ApplyTrainingQueue(
-					owner: Owner.Creature,
-					cardId: selectedCard.Id.Entry,
-					unitName: selectedCard.Title.ToString(),
-					iconPath: selectedCard.PortraitPath,
-					unitPrice: unitPrice,
-					isUpgraded: base.IsUpgraded,
-					sourceCard: this
-				);
-			}
+			// 获取单位价格
+			int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
+			
+			// 使用统一的训练队列能力应用方法
+			// 超时空矿车不消耗（exhaustWhenPlayed: false）
+			bool exhaustWhenPlayed = selectedCard is not ChronoMiner;
+			
+			await TrainingQueuePower.ApplyTrainingQueue(
+				owner: Owner.Creature,
+				cardId: selectedCard.Id.Entry,
+				unitName: selectedCard.Title.ToString(),
+				iconPath: selectedCard.PortraitPath,
+				unitPrice: unitPrice,
+				isUpgraded: base.IsUpgraded,
+				sourceCard: this,
+				exhaustWhenPlayed: exhaustWhenPlayed
+			);
+			
+			GD.Print($"[AlliedWarFactory] 应用训练队列 - CardId={selectedCard.Id.Entry}, ExhaustWhenPlayed={exhaustWhenPlayed}");
 
 			// 打出后抽一张牌
 			await CardPileCmd.Draw(ctx, 1, Owner);
