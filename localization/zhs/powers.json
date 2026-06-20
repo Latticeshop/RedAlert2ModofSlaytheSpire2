@@ -29,5 +29,9 @@
     "OIL_DERRICK_POWER.title": "油井",
     "OIL_DERRICK_POWER.description": "回合开始时，获得 [gold]${DollarPerTurn}[/gold] 资金。",
     "EAGLE500KG_POWER.title": "飞鹰500kg",
-    "EAGLE500KG_POWER.description": "对[gold]目标锁定[/gold]的敌人造成 {Damage} 点伤害。[gold]溅射[/gold]。"
+    "EAGLE500KG_POWER.description": "对[gold]目标锁定[/gold]的敌人造成 {Damage} 点伤害。[gold]溅射[/gold]。",
+    "EAGLE_MACHINE_GUN_POWER.title": "飞鹰机枪扫射",
+    "EAGLE_MACHINE_GUN_POWER.description": "对[gold]目标锁定[/gold]的敌人造成 {Damage} 点伤害 {Repeat} 次。",
+    "EAGLE_AIR_STRIKE_POWER.title": "飞鹰空袭",
+    "EAGLE_AIR_STRIKE_POWER.description": "对全部敌人造成 {Damage} 点伤害。"
 }

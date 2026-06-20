@@ -23,7 +23,9 @@ public static class DesperateMeasures
     /// </summary>
     private static readonly List<Type> DesperateMeasurePowerTypes = new()
     {
-        typeof(Eagle500kgPower)
+        typeof(Eagle500kgPower),
+        typeof(EagleMachineGunPower),
+        typeof(EagleAirStrikePower)
     };
 
     /// <summary>

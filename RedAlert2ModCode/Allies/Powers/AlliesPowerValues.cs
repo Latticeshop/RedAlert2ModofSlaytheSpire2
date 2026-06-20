@@ -95,4 +95,19 @@ public static class AlliesPowerValues
 		Damage = 50,            // 基础伤害
 		DamageUpgraded = 10     // 升级后60 = 50 + 10
 	};
+
+	/// <summary>飞鹰机枪扫射能力 - 对目标锁定敌人造成3点伤害3次</summary>
+	public static CardValueStore.CardValues EagleMachineGunPower => new()
+	{
+		Damage = 3,             // 基础伤害
+		DamageUpgraded = 1,     // 升级后4 = 3 + 1
+		Repeat = 3              // 攻击次数
+	};
+
+	/// <summary>飞鹰空袭能力 - 对全部敌人造成8点伤害</summary>
+	public static CardValueStore.CardValues EagleAirStrikePower => new()
+	{
+		Damage = 8,             // 基础伤害
+		DamageUpgraded = 4      // 升级后12 = 8 + 4
+	};
 }

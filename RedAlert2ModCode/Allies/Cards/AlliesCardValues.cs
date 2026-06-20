@@ -308,6 +308,25 @@ public static class AlliesCardValues
 		DollarValue = 0             // 绝地战备卡牌无价格
 	};
 
+	/// <summary>飞鹰机枪扫射 - 1费攻击卡，绝地战备，对目标锁定敌人造成3点伤害3次，升级后4点</summary>
+	public static CardValueStore.CardValues EagleMachineGun => new()
+	{
+		Cost = 1,                   // 1费
+		Damage = 3,                 // 基础伤害
+		DamageUpgraded = 1,         // 升级后4 = 3 + 1
+		Repeat = 3,                 // 攻击次数
+		DollarValue = 0             // 绝地战备卡牌无价格
+	};
+
+	/// <summary>飞鹰空袭 - 1费攻击卡，绝地战备，对全部敌人造成8点伤害，升级后12点</summary>
+	public static CardValueStore.CardValues EagleAirStrike => new()
+	{
+		Cost = 1,                   // 1费
+		Damage = 8,                 // 基础伤害
+		DamageUpgraded = 4,         // 升级后12 = 8 + 4
+		DollarValue = 0             // 绝地战备卡牌无价格
+	};
+
 	// ==================== 高科技(T2)单位 - 需要作战实验室解锁 ====================
 
 	/// <summary>幻影坦克 - 1费攻击卡，价格1000，需要作战实验室</summary>

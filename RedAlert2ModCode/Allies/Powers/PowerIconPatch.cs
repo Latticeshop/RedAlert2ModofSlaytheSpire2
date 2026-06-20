@@ -35,6 +35,8 @@ public static class PowerIconPatch
         { typeof(RepairDepotPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/fixicon.png" },
         { typeof(OilDerrickPower), "res://RedAlert2ModResources/images/packed/card_portraits/oil_derrick_power.png" },
         { typeof(Eagle500kgPower), "res://RedAlert2ModResources/images/packed/powers/Eagle500kgPower.png" },
+        { typeof(EagleMachineGunPower), "res://RedAlert2ModResources/images/packed/powers/EagleMachineGunPower.png" },
+        { typeof(EagleAirStrikePower), "res://RedAlert2ModResources/images/packed/powers/EagleAirStrikePower.png" },
     };
 
     /// <summary>

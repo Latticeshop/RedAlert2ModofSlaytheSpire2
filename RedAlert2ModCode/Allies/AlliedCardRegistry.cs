@@ -82,7 +82,9 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<Ra2Rally>(),
         () => ModelDb.Card<StrategyTowerDefense>(),
         () => ModelDb.Card<OilDerrickCard>(),
-        () => ModelDb.Card<StopProductionCard>()
+        () => ModelDb.Card<StopProductionCard>(),
+        () => ModelDb.Card<EagleMachineGun>(),
+        () => ModelDb.Card<EagleAirStrike>()
     };
 
     // 盟军特殊卡
