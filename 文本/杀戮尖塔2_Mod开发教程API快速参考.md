@@ -984,6 +984,77 @@ await RelicCmd.Obtain(relic.ToMutable(), owner);
 
 ---
 
+## ✨ 攻击特效（VFX）
+
+### 特效类型速查
+
+| 特效名称 | 路径 | 说明 |
+|---------|------|------|
+| 斩击 | `vfx/vfx_attack_slash` | 普通斩击特效 |
+| 钝击 | `vfx/vfx_attack_blunt` | 钝器攻击特效 |
+| 突刺 | `vfx/vfx_attack_stab` | 刺击特效 |
+| 闪电 | `vfx/vfx_attack_lightning` | 闪电攻击特效 |
+| 火焰 | `vfx/vfx_attack_fire` | 火焰攻击特效 |
+| 冰霜 | `vfx/vfx_attack_frost` | 冰霜攻击特效 |
+| 毒素 | `vfx/vfx_attack_poison` | 毒素攻击特效 |
+| 烟雾 | `vfx/vfx_smoke_puff` | 烟雾特效 |
+
+### 在伤害命令中使用特效
+
+```csharp
+await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+    .FromCard(this)
+    .Targeting(cardPlay.Target)
+    .WithHitFx("vfx/vfx_attack_slash")  // 添加攻击特效
+    .Execute(choiceContext);
+```
+
+### 常用VFX节点类
+
+```csharp
+// 刺击特效
+var stabVfx = NStabVfx.Create(target, goingRight: true);
+NCombatRoom.Instance?.CombatVfxContainer.AddChild(stabVfx);
+
+// 斩击特效
+var slashVfx = NSlashVfx.Create(target, goingRight: true);
+NCombatRoom.Instance?.CombatVfxContainer.AddChild(slashVfx);
+
+// 火焰燃烧特效
+var fireVfx = NFireBurningVfx.Create(target, duration: 1.5f, goingRight: true);
+NCombatRoom.Instance?.CombatVfxContainer.AddChild(fireVfx);
+
+// 毒药冲击特效
+var poisonVfx = NPoisonImpactVfx.Create(target, goingRight: true);
+NCombatRoom.Instance?.CombatVfxContainer.AddChild(poisonVfx);
+```
+
+### 创建自定义特效场景
+
+```gdscript
+# vfx_my_custom_attack.tscn
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://images/vfx/my_custom_attack.png" id="1"]
+
+[node name="MyCustomVfx" type="Node2D"]
+script = ExtResource("2")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("1")
+centered = false
+```
+
+### 特效资源路径
+
+```
+res://scenes/vfx/vfx_<特效名称>.tscn
+res://images/vfx/<特效名称>_00-03.png
+res://images/atlases/vfx_atlas.sprites/<特效名称>.tres
+```
+
+---
+
 ## ⚠️ 常见问题
 
 ### 📋 游戏日志路径

@@ -1,4 +1,5 @@
 using Godot;
+using MegaCrit.Sts2.Core.Audio.Debug;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -7,6 +8,8 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Characters;
+using MegaCrit.Sts2.Core.Nodes.Rooms;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +21,7 @@ namespace RedAlert2ModCode.Allies.Powers;
 /// <summary>
 /// 飞鹰500kg能力 - 绝地战备
 /// 效果：对目标锁定的敌人造成50点伤害并溅射
-/// 使用原版"猛砸"的攻击动画
+/// 使用夸张的轰击+燃烧动画效果
 /// </summary>
 public class Eagle500kgPower : PowerModel, IDesperateMeasurePower
 {
@@ -27,10 +30,6 @@ public class Eagle500kgPower : PowerModel, IDesperateMeasurePower
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
-
-    /// <summary>
-    /// 使用默认的 InstanceType（None），配合 Counter StackType 实现自动堆叠
-    /// </summary>
 
     /// <summary>
     /// 当前伤害值
@@ -79,6 +78,59 @@ public class Eagle500kgPower : PowerModel, IDesperateMeasurePower
     }
 
     /// <summary>
+    /// 播放轰击+燃烧特效
+    /// </summary>
+    private void PlayBombardmentAndFireEffect(Creature target)
+    {
+        try
+        {
+            // 1. 播放重击特效（vfx_heavy_blunt）
+            VfxCmd.PlayOnCreatureCenter(target, "vfx/vfx_heavy_blunt");
+            
+            // 2. 播放血腥冲击特效增强视觉效果
+            VfxCmd.PlayOnCreatureCenter(target, "vfx/vfx_bloody_impact");
+            
+            // 3. 播放火焰燃烧特效（NFireBurningVfx）
+            var fireVfx = NFireBurningVfx.Create(target, 1.5f, goingRight: true);
+            if (fireVfx != null)
+            {
+                NCombatRoom.Instance?.CombatVfxContainer.AddChild(fireVfx);
+            }
+            
+            GD.Print("[Eagle500kgPower] 轰击+燃烧特效播放完成");
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[Eagle500kgPower] 播放特效失败: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// 播放溅射特效
+    /// </summary>
+    private void PlaySplashEffect(Creature target)
+    {
+        try
+        {
+            // 播放溅射目标上的火焰特效
+            var fireVfx = NFireBurningVfx.Create(target, 1f, goingRight: true);
+            if (fireVfx != null)
+            {
+                NCombatRoom.Instance?.CombatVfxContainer.AddChild(fireVfx);
+            }
+            
+            // 播放小型爆炸特效
+            VfxCmd.PlayOnCreatureCenter(target, "vfx/vfx_coin_explosion_small");
+            
+            GD.Print($"[Eagle500kgPower] 溅射特效播放完成 - 目标: {target.Name}");
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[Eagle500kgPower] 播放溅射特效失败: {ex.Message}");
+        }
+    }
+
+    /// <summary>
     /// 执行绝地战备攻击效果
     /// 替换入侵者战机的普通攻击
     /// </summary>
@@ -111,7 +163,12 @@ public class Eagle500kgPower : PowerModel, IDesperateMeasurePower
 
             GD.Print($"[Eagle500kgPower] 开始执行绝地战备攻击 - 目标: {target.Name}, 伤害: {CurrentDamage}");
 
-            // 使用 CreatureCmd.Damage 代替 DamageCmd.Attack，因为我们没有卡牌
+            // 播放轰击+燃烧特效
+            PlayBombardmentAndFireEffect(target);
+
+            // 等待特效播放
+            await Cmd.Wait(0.3f);
+
             // 造成50点伤害
             await CreatureCmd.Damage(ctx ?? new ThrowingPlayerChoiceContext(),
                 new List<Creature> { target },
@@ -134,6 +191,11 @@ public class Eagle500kgPower : PowerModel, IDesperateMeasurePower
 
                 foreach (Creature otherEnemy in otherEnemies)
                 {
+                    // 播放溅射特效
+                    PlaySplashEffect(otherEnemy);
+                    
+                    await Cmd.Wait(0.15f);
+                    
                     await CreatureCmd.Damage(ctx ?? new ThrowingPlayerChoiceContext(),
                         new List<Creature> { otherEnemy },
                         splashDamage,

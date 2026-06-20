@@ -1365,6 +1365,279 @@ public sealed class MyCustomMonster : MonsterModel
     {
         await DamageCmd.Attack(8)
             .FromMonster(this)
+            .WithHitFx("vfx/vfx_attack_blunt")  // 添加攻击特效
+            .Execute(null);
+    }
+}
+```
+
+### 9.2 怪物意图
+```csharp
+// 单体攻击意图
+new SingleAttackIntent(damage)
+
+// 群体攻击意图
+new AoeAttackIntent(damage)
+
+// 防御意图
+new DefendIntent(block)
+
+// 增益意图
+new BuffIntent(buffAmount)
+```
+
+### 9.3 怪物遭遇
+```csharp
+public sealed class MyCustomEncounter : EncounterModel
+{
+    public override RoomType RoomType => RoomType.Monster;
+    public override bool IsWeak => true;
+    
+    public override List<MonsterModel> AllPossibleMonsters => new()
+    {
+        ModelDb.Monster<MyCustomMonster>()
+    };
+    
+    protected override List<(MonsterModel, string?)> GenerateMonsters()
+    {
+        return new() { (ModelDb.Monster<MyCustomMonster>().ToMutable(), null) };
+    }
+}
+```
+
+### 9.4 注册遭遇
+```csharp
+[HarmonyPatch(typeof(Overgrowth), nameof(Overgrowth.GenerateAllEncounters))]
+public static class EncountersPatch
+{
+    static void Postfix(ref IEnumerable<EncounterModel> __result)
+    {
+        __result = __result.Concat(new[] { ModelDb.Encounter<MyCustomEncounter>() }).Distinct();
+    }
+}
+```
+
+### 9.5 资源路径
+```
+res://images/monsters/<怪物ID>/<怪物ID>_000.png
+res://images/monsters/<怪物ID>/<怪物ID>_attack_000.png
+```
+
+---
+
+## 10. 攻击特效（VFX）
+
+### 10.1 特效概述
+
+攻击特效是增强战斗视觉体验的重要组成部分。游戏提供了多种内置特效，同时也支持自定义特效。
+
+### 10.2 内置特效类型
+
+游戏解包资源中包含丰富的攻击特效：
+
+| 特效名称 | 路径 | 适用场景 |
+|---------|------|---------|
+| `vfx_attack_slash` | `res://scenes/vfx/vfx_attack_slash.tscn` | 斩击类攻击 |
+| `vfx_attack_blunt` | `res://scenes/vfx/vfx_attack_blunt.tscn` | 钝器类攻击 |
+| `vfx_attack_stab` | `res://scenes/vfx/vfx_attack_stab.tscn` | 突刺类攻击 |
+| `vfx_attack_lightning` | `res://scenes/vfx/vfx_attack_lightning.tscn` | 闪电类攻击 |
+| `vfx_attack_fire` | `res://scenes/vfx/vfx_attack_fire.tscn` | 火焰类攻击 |
+| `vfx_attack_frost` | `res://scenes/vfx/vfx_attack_frost.tscn` | 冰霜类攻击 |
+| `vfx_attack_poison` | `res://scenes/vfx/vfx_attack_poison.tscn` | 毒素类攻击 |
+| `vfx_smoke_puff` | `res://scenes/vfx/vfx_smoke_puff.tscn` | 烟雾效果 |
+
+### 10.3 在伤害命令中使用特效
+
+最常见的使用方式是在 `DamageCmd` 中通过 `WithHitFx()` 方法添加特效：
+
+```csharp
+protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+{
+    await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+        .FromCard(this)
+        .Targeting(cardPlay.Target)
+        .WithHitFx("vfx/vfx_attack_slash")  // 指定特效路径
+        .Execute(choiceContext);
+}
+```
+
+### 10.4 使用VFX节点类创建特效
+
+除了通过 `DamageCmd`，还可以直接使用VFX节点类手动创建特效：
+
+```csharp
+// 创建刺击特效
+var stabVfx = NStabVfx.Create(target, goingRight: true);
+NCombatRoom.Instance?.CombatVfxContainer.AddChild(stabVfx);
+
+// 创建斩击特效
+var slashVfx = NSlashVfx.Create(target, goingRight: true);
+NCombatRoom.Instance?.CombatVfxContainer.AddChild(slashVfx);
+
+// 创建火焰燃烧特效（带持续时间）
+var fireVfx = NFireBurningVfx.Create(target, duration: 1.5f, goingRight: true);
+NCombatRoom.Instance?.CombatVfxContainer.AddChild(fireVfx);
+
+// 创建毒药冲击特效
+var poisonVfx = NPoisonImpactVfx.Create(target, goingRight: true);
+NCombatRoom.Instance?.CombatVfxContainer.AddChild(poisonVfx);
+```
+
+### 10.5 常用VFX节点类速查
+
+| 节点类 | 说明 | 参数 |
+|-------|------|------|
+| `NStabVfx` | 刺击特效 | target, goingRight |
+| `NSlashVfx` | 斩击特效 | target, goingRight |
+| `NFireBurningVfx` | 火焰燃烧特效 | target, duration, goingRight |
+| `NPoisonImpactVfx` | 毒药冲击特效 | target, goingRight |
+| `NSmokePuffVfx` | 烟雾特效 | position |
+
+### 10.6 创建自定义特效场景
+
+#### 步骤1：准备特效图片
+
+创建帧序列图片，命名格式为 `vfx_my_effect_00-03.png`（00到03为帧索引）。
+
+#### 步骤2：创建场景文件
+
+```gdscript
+# res://scenes/vfx/vfx_my_custom_attack.tscn
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Texture2D" path="res://images/vfx/vfx_my_custom_attack_00-03.png" id="1"]
+[ext_resource type="Script" path="res://scripts/vfx/my_custom_vfx.cs" id="2"]
+
+[node name="MyCustomVfx" type="Node2D"]
+script = ExtResource("2")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("1")
+centered = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+```
+
+#### 步骤3：创建C#脚本
+
+```csharp
+public class MyCustomVfx : Node2D
+{
+    [Export] public Sprite2D Sprite;
+    [Export] public AnimationPlayer AnimationPlayer;
+    
+    public static MyCustomVfx Create(Creature target, bool goingRight = true)
+    {
+        var scene = GD.Load<PackedScene>("res://scenes/vfx/vfx_my_custom_attack.tscn");
+        var instance = scene.Instantiate<MyCustomVfx>();
+        
+        // 设置位置
+        instance.Position = target.Position;
+        instance.Scale = new Vector2(goingRight ? 1 : -1, 1);
+        
+        return instance;
+    }
+    
+    public override void _Ready()
+    {
+        // 播放动画后自动销毁
+        AnimationPlayer.Play("attack");
+        AnimationPlayer.AnimationFinished += (animName) => QueueFree();
+    }
+}
+```
+
+### 10.7 特效资源路径规范
+
+```
+res://scenes/vfx/vfx_<特效名称>.tscn        # 场景文件
+res://images/vfx/vfx_<特效名称>_00-03.png   # 帧序列图片
+res://images/atlases/vfx_atlas.sprites/<特效名称>.tres  # 裁切纹理
+res://scripts/vfx/<特效名称>.cs             # C#脚本（可选）
+```
+
+### 10.8 实战示例：组合特效
+
+在 `Eagle500kgPower` 中使用组合特效：
+
+```csharp
+// 播放轰击特效
+var hitVfx = NStabVfx.Create(target, goingRight: true);
+if (hitVfx != null)
+{
+    NCombatRoom.Instance?.CombatVfxContainer.AddChild(hitVfx);
+}
+
+// 播放火焰燃烧特效
+var fireVfx = NFireBurningVfx.Create(target, 1.5f, goingRight: true);
+if (fireVfx != null)
+{
+    NCombatRoom.Instance?.CombatVfxContainer.AddChild(fireVfx);
+}
+```
+
+### 10.9 特效性能优化
+
+| 优化策略 | 说明 |
+|---------|------|
+| 复用场景 | 使用 `PackedScene` 复用而不是每次创建新场景 |
+| 限制数量 | 避免同时播放过多特效 |
+| 及时销毁 | 使用 `QueueFree()` 在动画结束后销毁节点 |
+| 使用对象池 | 对于频繁使用的特效，考虑使用对象池模式 |
+
+---
+
+## 附录：游戏解包资源结构
+
+游戏解包目录 `D:\RedAlert2Project\SlayTheSpire2Export\` 包含以下与特效相关的资源：
+
+```
+SlayTheSpire2Export/
+├── resources/
+│   ├── scenes/
+│   │   └── vfx/                    # 特效场景
+│   │       ├── vfx_attack_slash.tscn
+│   │       ├── vfx_attack_blunt.tscn
+│   │       └── ...
+│   └── images/
+│       └── vfx/                    # 特效图片
+│           ├── vfx_attack_slash_00-03.png
+│           └── ...
+└── src/
+    └── Core/
+        └── Nodes/
+            └── Vfx/                # VFX节点类
+                ├── NStabVfx.cs
+                ├── NSlashVfx.cs
+                ├── NFireBurningVfx.cs
+                └── ...
+```
+
+---
+
+## 自定义敌怪（续）
+
+### 9.1 怪物基类（完整示例）
+
+```csharp
+public sealed class MyCustomMonster : MonsterModel
+{
+    public override int MinInitialHp => 30;
+    public override int MaxInitialHp => 34;
+    
+    protected override MonsterMoveStateMachine GenerateMoveStateMachine()
+    {
+        MoveState attack = new MoveState(
+            "ATTACK_STATE",
+            AttackMove,
+            new SingleAttackIntent(8)
+        );
+        attack.FollowUpState = attack;  // 循环攻击
+        
+        return new MonsterMoveStateMachine(new List<MonsterState> { attack }, attack);
+    }
+    
+    private async Task AttackMove(IReadOnlyList<Creature> targets)
             .WithAttackerAnim("Attack", 0.2f)
             .WithHitFx("vfx/vfx_attack_slash")
             .Execute(null);
