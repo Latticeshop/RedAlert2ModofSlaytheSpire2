@@ -22,16 +22,20 @@ public sealed class Allies : PlaceholderCharacterModel
     
     // 自定义资源路径
     public override string CustomIconPath => "res://RedAlert2ModResources/scenes/ui/character_icons/allies_icon.tscn";
+    public override string CustomIconTexturePath => "res://RedAlert2ModResources/images/packed/character_select/char_select_allies.png";
     public override string CustomCharacterSelectIconPath => "res://RedAlert2ModResources/images/packed/character_select/char_select_allies.png";
     public override string CustomVisualPath => "res://RedAlert2ModResources/scenes/creature_visuals/allies.tscn";
     public override string CustomCharacterSelectBg => "res://RedAlert2ModResources/scenes/allies_bg.tscn";
+    
+    // 篝火休息场景
+    public override string CustomRestSiteAnimPath => "res://RedAlert2ModResources/scenes/rest_site/characters/allies_rest_site.tscn";
     
     // 角色颜色配置
     public static readonly Color Color = new("2060a0"); // 盟军蓝色
     
     // 必需属性
     public override Color NameColor => Color;
-    public override CharacterGender Gender => CharacterGender.Masculine;
+    public override CharacterGender Gender => CharacterGender.Feminine; // 谭雅是女性角色
     public override int StartingHp => 80;
     
     // 起始卡组（7张美国大兵 + 5张灰熊坦克 + 1张盟军基地车 + 1张盟军围墙）
