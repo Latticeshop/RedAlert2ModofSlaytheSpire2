@@ -34,6 +34,7 @@ public static class PowerIconPatch
         { typeof(TargetLockedPower), "res://RedAlert2ModResources/images/packed/powers/target_locked.png" },
         { typeof(RepairDepotPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/fixicon.png" },
         { typeof(OilDerrickPower), "res://RedAlert2ModResources/images/packed/card_portraits/oil_derrick_power.png" },
+        { typeof(Eagle500kgPower), "res://RedAlert2ModResources/images/packed/powers/Eagle500kgPower.png" },
     };
 
     /// <summary>

@@ -298,6 +298,16 @@ public static class AlliesCardValues
 		Repeat = 1                  // 未升级时选择数量
 	};
 
+	// ==================== 绝地战备卡牌 ====================
+
+	/// <summary>飞鹰500kg - 3费攻击卡，绝地战备，获得能力并赋予目标锁定，升级后2费</summary>
+	public static CardValueStore.CardValues Eagle500kg => new()
+	{
+		Cost = 3,                   // 3费
+		CostUpgraded = -1,          // 升级后费用降低1，变为2费
+		DollarValue = 0             // 绝地战备卡牌无价格
+	};
+
 	// ==================== 高科技(T2)单位 - 需要作战实验室解锁 ====================
 
 	/// <summary>幻影坦克 - 1费攻击卡，价格1000，需要作战实验室</summary>

@@ -10,7 +10,11 @@ using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.HoverTips;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Allies.Powers;
+using Godot;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -18,6 +22,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 入侵者战机 - 攻击牌
 /// 2费，造成13点伤害，赋予敌人1层易伤
 /// 升级后：16点伤害，2层易伤，费用不变
+/// 如果有绝地战备能力，替换攻击效果
 /// </summary>
 public sealed class Intruder : CardModel
 {
@@ -41,6 +46,17 @@ public sealed class Intruder : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
+		GD.Print("[Intruder] 卡牌打出开始");
+
+		// 尝试执行绝地战备攻击（消耗一层）
+		bool desperateSuccess = await DesperateMeasures.TryExecuteDesperateMeasureAttack(Owner.Creature, play.Target, ctx);
+		if (desperateSuccess)
+		{
+			GD.Print("[Intruder] 绝地战备攻击成功，跳过普通攻击");
+			return;  // 绝地战备已执行，跳过普通攻击
+		}
+
+		// 普通攻击流程
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this)
 			.Targeting(play.Target)
@@ -48,6 +64,8 @@ public sealed class Intruder : CardModel
 		
 		// 赋予敌人易伤效果
 		await PowerCmd.Apply<VulnerablePower>(new ThrowingPlayerChoiceContext(), play.Target, DynamicVars.Repeat.IntValue, Owner.Creature, this);
+		
+		GD.Print("[Intruder] 卡牌打出完成");
 	}
 
 	protected override void OnUpgrade()

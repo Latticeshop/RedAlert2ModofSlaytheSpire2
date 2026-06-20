@@ -86,4 +86,13 @@ public static class AlliesPowerValues
 		DollarValue = 500,        // 基础每回合资金
 		DollarValueUpgraded = 300  // 升级后每回合 800 = 500 + 300
 	};
+
+	// ==================== 绝地战备能力 ====================
+
+	/// <summary>飞鹰500kg能力 - 对目标锁定敌人造成伤害并溅射</summary>
+	public static CardValueStore.CardValues Eagle500kgPower => new()
+	{
+		Damage = 50,            // 基础伤害
+		DamageUpgraded = 10     // 升级后60 = 50 + 10
+	};
 }

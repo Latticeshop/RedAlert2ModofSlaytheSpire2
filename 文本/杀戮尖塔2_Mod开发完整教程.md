@@ -927,10 +927,11 @@ public static class PowerIconPatch
     {
         { typeof(MyBlockOnPlayBuff), "res://images/powers/my_block_on_play_buff.png" },
         { typeof(TransportShipPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/landicon.png" },
+        { typeof(Eagle500kgPower), "res://RedAlert2ModResources/images/packed/powers/Eagle500kgPower.png" },
         // 添加更多能力类型和图标路径
     };
 
-    // 拦截 Icon 属性
+    // 拦截 Icon 属性（战斗界面底部状态栏显示的小图标）
     [HarmonyPrefix]
     [HarmonyPatch(typeof(PowerModel), nameof(PowerModel.Icon), MethodType.Getter)]
     public static bool IconPrefix(PowerModel __instance, ref Texture2D __result)
@@ -980,10 +981,32 @@ public static class PowerIconPatch
 }
 ```
 
-**重要提示**：新增能力类型后，必须将其添加到 `_customIconPaths` 字典中，否则图标将无法正常显示。例如添加 `TransportShipPower` 后：
+**重要提示**：
 
+1. **新增能力类型后，必须将其添加到 `_customIconPaths` 字典中**，否则图标将无法正常显示。例如添加 `Eagle500kgPower` 后：
 ```csharp
-{ typeof(TransportShipPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/landicon.png" },
+{ typeof(Eagle500kgPower), "res://RedAlert2ModResources/images/packed/powers/Eagle500kgPower.png" },
+```
+
+2. **图标文件存放位置**：建议将能力图标放在 `RedAlert2ModResources/images/packed/powers/` 目录下。
+
+3. **图标路径格式**：`res://RedAlert2ModResources/images/packed/powers/<能力名称>Power.png`
+
+**常见问题排查**：
+
+如果图标不显示，按以下顺序检查：
+
+| 检查项 | 说明 |
+|--------|------|
+| `_customIconPaths` 注册 | 确认能力类型已添加到字典中 |
+| 图标文件路径 | 确认路径拼写正确，区分大小写 |
+| 文件存在性 | 确认图标文件确实存在于指定位置 |
+| 图标格式 | 确保是有效的 PNG 格式图片 |
+| 缓存问题 | 尝试清理游戏缓存后重新测试 |
+
+**调试技巧**：可以在 `IconPrefix` 方法中添加日志输出来验证是否正确拦截了图标获取：
+```csharp
+GD.Print($"[PowerIconPatch] 拦截能力图标: {type.FullName}, 路径: {iconPath}");
 ```
 
 ### 6.6 资源路径

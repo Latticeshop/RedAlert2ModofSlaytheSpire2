@@ -202,6 +202,15 @@ public static class ModCardKeywords
     );
 
     /// <summary>
+    /// 绝地战备词条 - 替换入侵者战机下一次的攻击
+    /// </summary>
+    public static readonly CustomKeyword DesperateMeasure = new(
+        "DESPERATE_MEASURE",
+        new LocString("card_keywords", "desperate_measure.title"),
+        new LocString("card_keywords", "desperate_measure.description")
+    );
+
+    /// <summary>
     /// 初始化所有自定义词条
     /// </summary>
     public static void Initialize()
@@ -220,5 +229,6 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(Splash);
         CustomKeywordManager.RegisterKeyword(TargetLocked);
         CustomKeywordManager.RegisterKeyword(Hornet);
+        CustomKeywordManager.RegisterKeyword(DesperateMeasure);
     }
 }

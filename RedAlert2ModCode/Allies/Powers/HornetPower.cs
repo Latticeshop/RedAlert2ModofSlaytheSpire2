@@ -182,6 +182,15 @@ public class HornetPower : PowerModel
                 continue;
             }
 
+            // 尝试执行绝地战备攻击（消耗一层）
+            // 使用 base.Owner 确保获取正确的玩家对象
+            bool desperateSuccess = await DesperateMeasures.TryExecuteDesperateMeasureAttack(base.Owner, target, new ThrowingPlayerChoiceContext());
+            if (desperateSuccess)
+            {
+                GD.Print($"[HornetPower] 第{i+1}次攻击 - 绝地战备攻击成功，跳过普通攻击");
+                continue;  // 绝地战备已执行，跳过普通攻击
+            }
+
             // 播放下砸动画
             await PlaySmashAnimation(target);
 

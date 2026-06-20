@@ -111,6 +111,7 @@ public sealed class Ra2Rally : CardModel
 
 	protected override void OnUpgrade()
 	{
-		// 升级效果由 MagicNumberUpgraded 处理
+		// 升级后增加召集数量
+		base.DynamicVars["MagicNumber"].UpgradeValueBy(Values.MagicNumberUpgraded);
 	}
 }

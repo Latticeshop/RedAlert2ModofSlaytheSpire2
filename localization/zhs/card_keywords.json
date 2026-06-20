@@ -26,5 +26,7 @@
     "target_locked.title": "目标锁定",
     "target_locked.description": "受攻击的目标。",
     "hornet.title": "黄蜂舰载机",
-    "hornet.description": "每回合对[gold]目标锁定[/gold]的敌人造成伤害。"
+    "hornet.description": "每回合对[gold]目标锁定[/gold]的敌人造成伤害。",
+    "desperate_measure.title": "绝地战备",
+    "desperate_measure.description": "替换[gold]战机[/gold]下一次的攻击。"
 }

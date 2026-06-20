@@ -65,5 +65,7 @@
     "OIL_DERRICK_CARD.title": "油井",
     "OIL_DERRICK_CARD.description": "立即获得 [gold]${DollarNumber}[/gold] 资金。回合开始时，获得 [gold]${DollarPerTurn}[/gold] 资金。",
     "STOP_PRODUCTION_CARD.title": "停产",
-    "STOP_PRODUCTION_CARD.description": "选择{IfUpgraded:show:[green]任意[/green]| {SelectCount} 个}[gold]生产序列[/gold]启动/停产，使其[gold]开始[/gold]/[gold]不再[/gold]生产单位。"
+    "STOP_PRODUCTION_CARD.description": "选择{IfUpgraded:show:[green]任意[/green]| {SelectCount} 个}[gold]生产序列[/gold]启动/停产，使其[gold]开始[/gold]/[gold]不再[/gold]生产单位。",
+    "EAGLE500KG.title": "飞鹰500KG",
+    "EAGLE500KG.description": "[gold]绝地战备[/gold]。\n[gold]目标锁定[/gold]。\n[red]↑ → ↓ ↓ ↓[/red]\n[gold]溅射[/gold]。"
 }

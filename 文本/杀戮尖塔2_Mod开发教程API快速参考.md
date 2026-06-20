@@ -587,6 +587,7 @@ public static class PowerIconPatch
     {
         { typeof(MyBuff), "res://path/to/icon.png" },
         { typeof(TransportShipPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/landicon.png" },
+        { typeof(Eagle500kgPower), "res://RedAlert2ModResources/images/packed/powers/Eagle500kgPower.png" },
         // 添加更多能力类型和图标路径
     };
 
@@ -607,13 +608,53 @@ public static class PowerIconPatch
     }
     
     // 同样需要Patch PackedIconPath 和 BigIcon 属性
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(PowerModel), nameof(PowerModel.PackedIconPath), MethodType.Getter)]
+    public static bool PackedIconPathPrefix(PowerModel __instance, ref string __result)
+    {
+        Type type = __instance.GetType();
+        if (_customIconPaths.TryGetValue(type, out string iconPath))
+        {
+            __result = iconPath;
+            return false;
+        }
+        return true;
+    }
+    
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(PowerModel), nameof(PowerModel.BigIcon), MethodType.Getter)]
+    public static bool BigIconPrefix(PowerModel __instance, ref Texture2D __result)
+    {
+        Type type = __instance.GetType();
+        if (_customIconPaths.TryGetValue(type, out string iconPath))
+        {
+            if (ResourceLoader.Exists(iconPath))
+            {
+                __result = ResourceLoader.Load<Texture2D>(iconPath);
+                return false;
+            }
+        }
+        return true;
+    }
 }
 ```
 
-**重要提示**：新增能力类型后，必须将其添加到 `_customIconPaths` 字典中，否则图标将无法正常显示。例如添加 `TransportShipPower` 后：
+**重要提示**：
+1. **新增能力类型后，必须将其添加到 `_customIconPaths` 字典中**，否则图标将无法正常显示。
+2. **图标文件必须存在于指定路径**，建议放在 `RedAlert2ModResources/images/packed/powers/` 目录下。
+3. **图标路径格式**：`res://RedAlert2ModResources/images/packed/powers/<能力名称>Power.png`
+
+**示例**：添加 `Eagle500kgPower` 能力图标：
 ```csharp
-{ typeof(TransportShipPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/landicon.png" },
+{ typeof(Eagle500kgPower), "res://RedAlert2ModResources/images/packed/powers/Eagle500kgPower.png" },
 ```
+
+**常见问题排查**：
+- 如果图标不显示，检查：
+  1. `_customIconPaths` 字典中是否注册了该能力类型
+  2. 图标文件路径是否正确
+  3. 图标文件是否存在于指定位置
+  4. 文件名大小写是否匹配（区分大小写）
 
 ### 施加能力
 ```csharp
