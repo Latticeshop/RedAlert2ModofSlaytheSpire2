@@ -37,6 +37,7 @@ public static class PowerIconPatch
         { typeof(Eagle500kgPower), "res://RedAlert2ModResources/images/packed/powers/Eagle500kgPower.png" },
         { typeof(EagleMachineGunPower), "res://RedAlert2ModResources/images/packed/powers/EagleMachineGunPower.png" },
         { typeof(EagleAirStrikePower), "res://RedAlert2ModResources/images/packed/powers/EagleAirStrikePower.png" },
+        { typeof(MassProductionPower), "res://RedAlert2ModResources/images/packed/powers/MassProductionPower.png" },
     };
 
     /// <summary>

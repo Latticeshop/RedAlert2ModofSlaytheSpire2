@@ -71,5 +71,7 @@
     "EAGLE_MACHINE_GUN.title": "飞鹰机枪扫射",
     "EAGLE_MACHINE_GUN.description": "[gold]绝地战备[/gold]。\n对[gold]目标锁定[/gold]的敌人造成 {Damage} 点伤害 {Repeat} 次。",
     "EAGLE_AIR_STRIKE.title": "飞鹰空袭",
-    "EAGLE_AIR_STRIKE.description": "[gold]绝地战备[/gold]。\n对全部敌人造成 {Damage} 点伤害。"
+    "EAGLE_AIR_STRIKE.description": "[gold]绝地战备[/gold]。\n对全部敌人造成 {Damage} 点伤害。",
+    "MASS_PRODUCTION.title": "大生产",
+    "MASS_PRODUCTION.description": "{IfUpgraded:show:每有一层[gold]生产序列[/gold]，其|}单位价格减少[gold]${Reduction}[/gold]。"
 }

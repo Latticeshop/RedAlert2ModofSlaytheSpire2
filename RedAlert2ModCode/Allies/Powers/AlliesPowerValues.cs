@@ -110,4 +110,10 @@ public static class AlliesPowerValues
 		Damage = 8,             // 基础伤害
 		DamageUpgraded = 4      // 升级后12 = 8 + 4
 	};
+
+	/// <summary>大生产能力 - 每有一层生产序列，其单位价格减少100</summary>
+	public static CardValueStore.CardValues MassProductionPower => new()
+	{
+		Stars = 100             // 每层生产序列减少的价格
+	};
 }

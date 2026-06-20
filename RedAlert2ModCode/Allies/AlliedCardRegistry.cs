@@ -84,7 +84,8 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<OilDerrickCard>(),
         () => ModelDb.Card<StopProductionCard>(),
         () => ModelDb.Card<EagleMachineGun>(),
-        () => ModelDb.Card<EagleAirStrike>()
+        () => ModelDb.Card<EagleAirStrike>(),
+        () => ModelDb.Card<MassProduction>()
     };
 
     // 盟军特殊卡

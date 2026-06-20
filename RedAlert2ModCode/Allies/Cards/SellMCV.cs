@@ -11,7 +11,7 @@ using RedAlert2ModCode.Utils;
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
-/// 卖本 - 运转卡（技能卡）
+/// 卖本 - 运转卡（攻击卡）
 /// 1费，获得2400资金，消耗
 /// 只有拥有基地车能力时才能打出
 /// </summary>
@@ -19,7 +19,7 @@ public sealed class SellMCV : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.SellMCV;
 
-	public SellMCV() : base((int)Values.Cost, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+	public SellMCV() : base((int)Values.Cost, CardType.Attack, CardRarity.Uncommon, TargetType.Self) { }
 
 	/// <summary>
 	/// 卡牌图片路径（放在上层目录便于多阵营复用）

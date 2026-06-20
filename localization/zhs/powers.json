@@ -4,7 +4,7 @@
     "ALLIED_MC_V_POWER.title": "盟军基地车",
     "ALLIED_MC_V_POWER.description": "已部署基地车。",
     "TRAINING_QUEUE_POWER.title": "生产序列",
-    "TRAINING_QUEUE_POWER.description": "每回合花费${UnitPrice}，加入一张0费{ExhaustText}的{UnitName}卡牌。{StoppedMarker}",
+    "TRAINING_QUEUE_POWER.description": "每回合花费[gold]${UnitPrice}[/gold]，加入一张0费{ExhaustText}的{UnitName}卡牌。{StoppedMarker}",
     "POWER_PLANT_POWER.title": "发电厂",
     "POWER_PLANT_POWER.description": "每抽 {BaseCards} 张牌获得 1 点能量。",
     "POWER_PLANT_POWER.smartDescription": "每抽 [blue]{BaseCards}[/blue] 张牌获得 {Amount:energyIcons()}。",
@@ -33,5 +33,8 @@
     "EAGLE_MACHINE_GUN_POWER.title": "飞鹰机枪扫射",
     "EAGLE_MACHINE_GUN_POWER.description": "对[gold]目标锁定[/gold]的敌人造成 {Damage} 点伤害 {Repeat} 次。",
     "EAGLE_AIR_STRIKE_POWER.title": "飞鹰空袭",
-    "EAGLE_AIR_STRIKE_POWER.description": "对全部敌人造成 {Damage} 点伤害。"
+    "EAGLE_AIR_STRIKE_POWER.description": "对全部敌人造成 {Damage} 点伤害。",
+    "MASS_PRODUCTION_POWER.title": "大生产",
+    "MASS_PRODUCTION_POWER.description": "单位价格减少[gold]${Reduction}[/gold]。",
+    "MASS_PRODUCTION_POWER.description_upgraded": "每有一层[gold]生产序列[/gold]，其单位价格减少[gold]${Reduction}[/gold]。"
 }

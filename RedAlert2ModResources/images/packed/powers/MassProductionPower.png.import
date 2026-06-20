@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5i72hdk60hbg"
-path="res://.godot/imported/Eagle500kg.png-5a3f2295656031703d1d2a83d40b4e54.ctex"
+uid="uid://cxtsvan503bik"
+path="res://.godot/imported/MassProductionPower.png-bbe978ba2f62c93742a63f31342af58d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://RedAlert2ModCode/Allies/Cards/Eagle500kg.png"
-dest_files=["res://.godot/imported/Eagle500kg.png-5a3f2295656031703d1d2a83d40b4e54.ctex"]
+source_file="res://RedAlert2ModResources/images/packed/powers/MassProductionPower.png"
+dest_files=["res://.godot/imported/MassProductionPower.png-bbe978ba2f62c93742a63f31342af58d.ctex"]
 
 [params]
 

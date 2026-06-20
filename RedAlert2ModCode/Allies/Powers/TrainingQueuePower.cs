@@ -59,6 +59,11 @@ public sealed class TrainingQueuePower : PowerModel
     public int UnitPrice { get; set; } = 0;
 
     /// <summary>
+    /// 原始单位价格（不考虑大生产效果，用于正确计算价格减少）
+    /// </summary>
+    public int OriginalUnitPrice { get; set; } = 0;
+
+    /// <summary>
     /// 生产的单位打出时是否消耗（默认为true，矿车等不消耗单位设为false）
     /// </summary>
     public bool ExhaustWhenPlayed { get; set; } = true;
@@ -83,9 +88,10 @@ public sealed class TrainingQueuePower : PowerModel
         UnitName = unitName;
         IsUpgraded = isUpgraded;
         TrainedUnitIconPath = iconPath;
-        UnitPrice = unitPrice;
+        OriginalUnitPrice = unitPrice;  // 存储原始价格
+        UnitPrice = unitPrice;          // 设置当前价格
         
-        GD.Print($"[TrainingQueuePower] SetTrainedUnit 设置完成 - TrainedCardId={cardId}, TrainedUnitIconPath={iconPath}, UnitPrice={unitPrice}, InstanceId={_instanceId}");
+        GD.Print($"[TrainingQueuePower] SetTrainedUnit 设置完成 - TrainedCardId={cardId}, TrainedUnitIconPath={iconPath}, UnitPrice={unitPrice}, OriginalUnitPrice={unitPrice}, InstanceId={_instanceId}");
         
         // 同时保存到 PowerIconManager
         PowerIconManager.SetIcon(this, iconPath);
@@ -124,6 +130,13 @@ public sealed class TrainingQueuePower : PowerModel
             GD.Print($"[TrainingQueuePower] 发现相同兵种的能力，增加层数 - 当前层数: {existingPower.Amount}");
             await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), existingPower, 1m, owner, sourceCard);
             GD.Print($"[TrainingQueuePower] 增加后层数: {existingPower.Amount}");
+            
+            // 叠加后也需要重新计算价格（因为大生产可能影响）
+            // 效果：每有一层大生产能力，每有一层生产序列，其单位价格减少 $100
+            int finalPrice = MassProductionPower.CalculateUnitPrice(owner, existingPower.OriginalUnitPrice, (int)existingPower.Amount);
+            existingPower.UnitPrice = finalPrice;
+            GD.Print($"[TrainingQueuePower] 叠加后重新计算价格: 原始={existingPower.OriginalUnitPrice}, 大生产影响后={finalPrice}");
+            
             return existingPower;
         }
 
@@ -142,14 +155,21 @@ public sealed class TrainingQueuePower : PowerModel
             trainingPower.UnitName = unitName;
             trainingPower.IsUpgraded = isUpgraded;
             trainingPower.TrainedUnitIconPath = iconPath;
-            trainingPower.UnitPrice = unitPrice;
             trainingPower.ExhaustWhenPlayed = exhaustWhenPlayed;
             trainingPower.IsStopped = isStopped;
+            trainingPower.OriginalUnitPrice = unitPrice;  // 存储原始价格
+            
+            // 在设置价格前，先检查大生产能力并计算实际价格
+            // 效果：每有一层大生产能力，每有一层生产序列，其单位价格减少 $100
+            int finalPrice = MassProductionPower.CalculateUnitPrice(owner, unitPrice, 1);
+            trainingPower.UnitPrice = finalPrice;
+            
+            GD.Print($"[TrainingQueuePower] 应用大生产效果后价格: 原始={unitPrice}, 最终={finalPrice}");
 
             // 使用图标管理器设置能力图标
             PowerIconManager.SetIcon(trainingPower, iconPath);
 
-            GD.Print($"[TrainingQueuePower] 属性设置完成 - TrainedCardId={trainingPower.TrainedCardId}, TrainedUnitIconPath={trainingPower.TrainedUnitIconPath}, UnitPrice={trainingPower.UnitPrice}, ExhaustWhenPlayed={trainingPower.ExhaustWhenPlayed}, IsStopped={trainingPower.IsStopped}");
+            GD.Print($"[TrainingQueuePower] 属性设置完成 - TrainedCardId={trainingPower.TrainedCardId}, TrainedUnitIconPath={trainingPower.TrainedUnitIconPath}, UnitPrice={trainingPower.UnitPrice}, OriginalUnitPrice={trainingPower.OriginalUnitPrice}, ExhaustWhenPlayed={trainingPower.ExhaustWhenPlayed}, IsStopped={trainingPower.IsStopped}");
         }
 
         return trainingPower;
@@ -191,14 +211,15 @@ public sealed class TrainingQueuePower : PowerModel
             var original = originalField.GetValue(this) as TrainingQueuePower;
             if (original != null)
                 {
-                    GD.Print($"[TrainingQueuePower] 原始对象 - TrainedCardId={original.TrainedCardId}, TrainedUnitIconPath={original.TrainedUnitIconPath}, UnitPrice={original.UnitPrice}");
+                    GD.Print($"[TrainingQueuePower] 原始对象 - TrainedCardId={original.TrainedCardId}, TrainedUnitIconPath={original.TrainedUnitIconPath}, UnitPrice={original.UnitPrice}, OriginalUnitPrice={original.OriginalUnitPrice}");
                     // 手动复制所有自定义字段
                     TrainedCardId = original.TrainedCardId;
                     UnitName = original.UnitName;
                     IsUpgraded = original.IsUpgraded;
                     TrainedUnitIconPath = original.TrainedUnitIconPath;
                     UnitPrice = original.UnitPrice;
-                    GD.Print($"[TrainingQueuePower] 克隆后 - TrainedCardId={TrainedCardId}, TrainedUnitIconPath={TrainedUnitIconPath}, UnitPrice={UnitPrice}");
+                    OriginalUnitPrice = original.OriginalUnitPrice;
+                    GD.Print($"[TrainingQueuePower] 克隆后 - TrainedCardId={TrainedCardId}, TrainedUnitIconPath={TrainedUnitIconPath}, UnitPrice={UnitPrice}, OriginalUnitPrice={OriginalUnitPrice}");
                 }
             else
             {

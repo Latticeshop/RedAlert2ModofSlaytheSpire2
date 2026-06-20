@@ -236,7 +236,7 @@ public static class AlliesCardValues
 		DollarValue = 500
 	};
 
-	/// <summary>驱逐舰 - 1费攻击卡，造成8伤害（升级12）。若敌人意图防御，改为给予1层易伤，造成2伤害（升级3）5次，价格800</summary>
+	/// <summary>驱逐舰 - 1费攻击卡，造成8伤害（升级12）。若敌人意图防御，改为给予1层易伤，造成2伤害（升级3）5次，价格1000</summary>
 	public static CardValueStore.CardValues Destroyer => new()
 	{
 		Cost = 1,
@@ -245,16 +245,16 @@ public static class AlliesCardValues
 		MagicNumber = 2,           // 防御意图时的单次伤害
 		MagicNumberUpgraded = 1,   // 升级后3 = 2 + 1
 		Repeat = 5,                // 防御意图时的重复次数
-		DollarValue = 800
+		DollarValue = 1000
 	};
 
-	/// <summary>神盾巡洋舰 - 1费技能卡，获得8格挡（升级12）。若敌人意图攻击，多获得1轮，价格900</summary>
+	/// <summary>神盾巡洋舰 - 1费技能卡，获得8格挡（升级12）。若敌人意图攻击，多获得1轮，价格1200</summary>
 	public static CardValueStore.CardValues Agisicon => new()
 	{
 		Cost = 1,
 		Block = 8,                 // 基础格挡
 		BlockUpgraded = 4,         // 升级后12 = 8 + 4
-		DollarValue = 900
+		DollarValue = 1200
 	};
 
 	// ==================== 建筑卡牌（新增） ====================
@@ -325,6 +325,15 @@ public static class AlliesCardValues
 		Damage = 8,                 // 基础伤害
 		DamageUpgraded = 4,         // 升级后12 = 8 + 4
 		DollarValue = 0             // 绝地战备卡牌无价格
+	};
+
+	/// <summary>大生产 - 3费能力卡，稀有金卡，每有一层大生产能力，每有一层生产序列，其单位价格减少100</summary>
+	public static CardValueStore.CardValues MassProduction => new()
+	{
+		Cost = 3,                   // 3费，升级后费用不变
+		CostUpgraded = 0,           // 升级后费用不变，仍为3费
+		DollarValue = 0,            // 能力卡无价格
+		Stars = 100                 // 每层生产序列减少的价格
 	};
 
 	// ==================== 高科技(T2)单位 - 需要作战实验室解锁 ====================
