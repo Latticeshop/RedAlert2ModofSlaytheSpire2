@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://me7x8ekhj2bg"
-path="res://.godot/imported/stop_production.png-ca13659834a34170cbf17d5139d1d638.ctex"
+uid="uid://cq51yy1ncvppa"
+path="res://.godot/imported/gem_mine.png-55f326b8c5a1497d2387530d8aeae6cc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://RedAlert2ModResources/images/packed/card_portraits/stop_production.png"
-dest_files=["res://.godot/imported/stop_production.png-ca13659834a34170cbf17d5139d1d638.ctex"]
+source_file="res://RedAlert2ModResources/images/packed/card_portraits/gem_mine.png"
+dest_files=["res://.godot/imported/gem_mine.png-55f326b8c5a1497d2387530d8aeae6cc.ctex"]
 
 [params]
 

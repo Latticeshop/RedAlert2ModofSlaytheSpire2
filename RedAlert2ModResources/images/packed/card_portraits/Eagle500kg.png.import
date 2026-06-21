@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://me7x8ekhj2bg"
-path="res://.godot/imported/stop_production.png-ca13659834a34170cbf17d5139d1d638.ctex"
+uid="uid://b2ukhbr8g64gq"
+path="res://.godot/imported/Eagle500kg.png-1e75ff17ebd720767455fa2b7cf2cb90.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://RedAlert2ModResources/images/packed/card_portraits/stop_production.png"
-dest_files=["res://.godot/imported/stop_production.png-ca13659834a34170cbf17d5139d1d638.ctex"]
+source_file="res://RedAlert2ModResources/images/packed/card_portraits/Eagle500kg.png"
+dest_files=["res://.godot/imported/Eagle500kg.png-1e75ff17ebd720767455fa2b7cf2cb90.ctex"]
 
 [params]
 

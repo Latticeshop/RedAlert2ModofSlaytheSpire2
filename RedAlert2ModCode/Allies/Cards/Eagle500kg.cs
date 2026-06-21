@@ -29,7 +29,7 @@ public sealed class Eagle500kg : CardModel
 
     public Eagle500kg() : base((int)Values.Cost, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy) { }
 
-    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/Eagle500kg.png";
+    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/Eagle500kg.png";
 
     protected override List<DynamicVar> CanonicalVars => new()
     {

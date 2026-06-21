@@ -38,6 +38,9 @@ public static class PowerIconPatch
         { typeof(EagleMachineGunPower), "res://RedAlert2ModResources/images/packed/powers/EagleMachineGunPower.png" },
         { typeof(EagleAirStrikePower), "res://RedAlert2ModResources/images/packed/powers/EagleAirStrikePower.png" },
         { typeof(MassProductionPower), "res://RedAlert2ModResources/images/packed/powers/MassProductionPower.png" },
+        { typeof(GoldMinePower), "res://RedAlert2ModResources/images/packed/powers/gold_mine_power.png" },
+        { typeof(GemMinePower), "res://RedAlert2ModResources/images/packed/powers/gem_mine_power.png" },
+        { typeof(GoldMineColumnPower), "res://RedAlert2ModResources/images/packed/powers/gold_mine_column_power.png" },
     };
 
     /// <summary>

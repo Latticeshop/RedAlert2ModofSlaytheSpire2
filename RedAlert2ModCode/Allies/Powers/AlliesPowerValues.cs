@@ -116,4 +116,26 @@ public static class AlliesPowerValues
 	{
 		Stars = 100             // 每层生产序列减少的价格
 	};
+
+	/// <summary>黄金矿能力 - 存储黄金矿储备</summary>
+	public static CardValueStore.CardValues GoldMinePower => new()
+	{
+		DollarValue = 1000,        // 基础储备
+		DollarValueUpgraded = 1000  // 升级后储备增加量
+	};
+
+	/// <summary>宝石矿能力 - 存储宝石矿储备</summary>
+	public static CardValueStore.CardValues GemMinePower => new()
+	{
+		DollarValue = 5000,        // 基础储备
+		DollarValueUpgraded = 5000  // 升级后储备增加量
+	};
+
+	/// <summary>黄金矿柱能力 - 存储金矿储备并每回合增加</summary>
+	public static CardValueStore.CardValues GoldMineColumnPower => new()
+	{
+		DollarValue = 5000,        // 基础储备
+		DollarValueUpgraded = 5000, // 升级后储备增加量
+		Stars = 200                // 每回合增加的金矿储备
+	};
 }

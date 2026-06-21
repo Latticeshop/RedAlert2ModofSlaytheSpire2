@@ -24,7 +24,7 @@ public sealed class MassProduction : CardModel
 
     public MassProduction() : base(3, CardType.Power, CardRarity.Rare, TargetType.Self) { }
 
-    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/MassProduction.png";
+    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/MassProduction.png";
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [

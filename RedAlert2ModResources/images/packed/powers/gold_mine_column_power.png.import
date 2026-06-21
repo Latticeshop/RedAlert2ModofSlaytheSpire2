@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://me7x8ekhj2bg"
-path="res://.godot/imported/stop_production.png-ca13659834a34170cbf17d5139d1d638.ctex"
+uid="uid://dor0huhd7fv1q"
+path="res://.godot/imported/gold_mine_column_power.png-56a591d85dabbbca9cd8e326701d4892.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://RedAlert2ModResources/images/packed/card_portraits/stop_production.png"
-dest_files=["res://.godot/imported/stop_production.png-ca13659834a34170cbf17d5139d1d638.ctex"]
+source_file="res://RedAlert2ModResources/images/packed/powers/gold_mine_column_power.png"
+dest_files=["res://.godot/imported/gold_mine_column_power.png-56a591d85dabbbca9cd8e326701d4892.ctex"]
 
 [params]
 

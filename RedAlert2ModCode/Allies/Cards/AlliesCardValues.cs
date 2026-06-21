@@ -192,7 +192,7 @@ public static class AlliesCardValues
 	};
 
 	// ==================== 运转卡牌 ====================
-	
+
 	/// <summary>卖本 - 1费获得2400资金，消耗</summary>
 	public static CardValueStore.CardValues SellMCV => new()
 	{
@@ -213,6 +213,31 @@ public static class AlliesCardValues
 	{
 		Cost = 2,
 		CostUpgraded = -1          // 升级后费用降低1
+	};
+
+	/// <summary>黄金矿 - 1费能力卡，获得黄金矿储备</summary>
+	public static CardValueStore.CardValues GoldMine => new()
+	{
+		Cost = 1,
+		DollarValue = 10000,        // 基础储备
+		DollarValueUpgraded = 10000 // 升级后储备 20000 = 10000 + 10000
+	};
+
+	/// <summary>宝石矿 - 1费能力卡，获得宝石矿储备</summary>
+	public static CardValueStore.CardValues GemMine => new()
+	{
+		Cost = 1,
+		DollarValue = 5000,        // 基础储备
+		DollarValueUpgraded = 5000 // 升级后储备 10000 = 5000 + 5000
+	};
+
+	/// <summary>黄金矿柱 - 1费能力卡，获得黄金矿储备和黄金矿柱能力</summary>
+	public static CardValueStore.CardValues GoldMineColumn => new()
+	{
+		Cost = 1,
+		DollarValue = 5000,        // 基础储备
+		DollarValueUpgraded = 10000, // 升级后储备 15000 = 5000 + 10000
+		Stars = 200                // 每回合增加的金矿储备
 	};
 
 	// ==================== 海军单位 ====================

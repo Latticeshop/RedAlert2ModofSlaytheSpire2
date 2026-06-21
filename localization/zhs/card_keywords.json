@@ -28,5 +28,11 @@
     "hornet.title": "黄蜂舰载机",
     "hornet.description": "每回合对[gold]目标锁定[/gold]的敌人造成伤害。",
     "desperate_measure.title": "绝地战备",
-    "desperate_measure.description": "替换[gold]战机[/gold]下一次的攻击。"
+    "desperate_measure.description": "替换[gold]战机[/gold]下一次的攻击。",
+    "gold_mine.title": "黄金矿",
+    "gold_mine.description": "当你打出[gold]矿车[/gold]时，额外增加[gold]$1000[/gold]。",
+    "gem_mine.title": "宝石矿",
+    "gem_mine.description": "当你打出[gold]矿车[/gold]时，额外增加[gold]$2000[/gold]。",
+    "gold_mine_column.title": "黄金矿柱",
+    "gold_mine_column.description": "每回合增加[gold]200[/gold]金矿储备。"
 }

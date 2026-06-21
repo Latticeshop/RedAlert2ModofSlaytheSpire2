@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dm5ctpgie0ypq"
-path="res://.godot/imported/Eagle500kg.png-04864c79c35f6f726ea1e192705d7e74.ctex"
+uid="uid://0ayuann8oy5g"
+path="res://.godot/imported/EagleMachineGun.png-658fa51cfb723ba38ad9b52ec71f740c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://RedAlert2ModResources/images/packed/card_portraits/allies/Eagle500kg.png"
-dest_files=["res://.godot/imported/Eagle500kg.png-04864c79c35f6f726ea1e192705d7e74.ctex"]
+source_file="res://RedAlert2ModResources/images/packed/card_portraits/EagleMachineGun.png"
+dest_files=["res://.godot/imported/EagleMachineGun.png-658fa51cfb723ba38ad9b52ec71f740c.ctex"]
 
 [params]
 

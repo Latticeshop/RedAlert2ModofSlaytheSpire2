@@ -34,6 +34,7 @@ offset_bottom = 332.0
 
 [node name="ThoughtBubbleRight" type="Control" parent="ControlRoot"]
 unique_name_in_owner = true
+visible = false
 anchors_preset = 0
 offset_left = 209.209
 offset_top = -317.103

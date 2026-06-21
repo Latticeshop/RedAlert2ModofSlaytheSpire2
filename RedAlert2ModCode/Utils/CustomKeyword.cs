@@ -211,6 +211,33 @@ public static class ModCardKeywords
     );
 
     /// <summary>
+    /// 黄金矿词条 - 增加矿车收益
+    /// </summary>
+    public static readonly CustomKeyword GoldMine = new(
+        "GOLD_MINE",
+        new LocString("card_keywords", "gold_mine.title"),
+        new LocString("card_keywords", "gold_mine.description")
+    );
+
+    /// <summary>
+    /// 宝石矿词条 - 增加矿车收益（比黄金矿更多）
+    /// </summary>
+    public static readonly CustomKeyword GemMine = new(
+        "GEM_MINE",
+        new LocString("card_keywords", "gem_mine.title"),
+        new LocString("card_keywords", "gem_mine.description")
+    );
+
+    /// <summary>
+    /// 黄金矿柱词条 - 每回合增加金矿储备
+    /// </summary>
+    public static readonly CustomKeyword GoldMineColumn = new(
+        "GOLD_MINE_COLUMN",
+        new LocString("card_keywords", "gold_mine_column.title"),
+        new LocString("card_keywords", "gold_mine_column.description")
+    );
+
+    /// <summary>
     /// 初始化所有自定义词条
     /// </summary>
     public static void Initialize()
@@ -230,5 +257,8 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(TargetLocked);
         CustomKeywordManager.RegisterKeyword(Hornet);
         CustomKeywordManager.RegisterKeyword(DesperateMeasure);
+        CustomKeywordManager.RegisterKeyword(GoldMine);
+        CustomKeywordManager.RegisterKeyword(GemMine);
+        CustomKeywordManager.RegisterKeyword(GoldMineColumn);
     }
 }

@@ -22,7 +22,7 @@ public sealed class OilDerrickCard : CardModel
 {
     private static readonly CardValueStore.CardValues Values = AlliesCardValues.OilDerrick;
 
-    public OilDerrickCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
+    public OilDerrickCard() : base((int)Values.Cost, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
 
     public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/oil_derrick.png";
 

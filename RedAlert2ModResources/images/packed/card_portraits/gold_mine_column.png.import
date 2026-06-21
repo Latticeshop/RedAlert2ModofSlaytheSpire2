@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://4om6kvheox2i"
-path="res://.godot/imported/EagleAirStrike.png-e551a6b8ce51127875cf44dc5868479f.ctex"
+uid="uid://guoqhhgqficb"
+path="res://.godot/imported/gold_mine_column.png-b70ab2ee3bf77d7bfc48edc2589bec4a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://RedAlert2ModResources/images/packed/card_portraits/allies/EagleAirStrike.png"
-dest_files=["res://.godot/imported/EagleAirStrike.png-e551a6b8ce51127875cf44dc5868479f.ctex"]
+source_file="res://RedAlert2ModResources/images/packed/card_portraits/gold_mine_column.png"
+dest_files=["res://.godot/imported/gold_mine_column.png-b70ab2ee3bf77d7bfc48edc2589bec4a.ctex"]
 
 [params]
 

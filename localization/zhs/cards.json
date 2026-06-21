@@ -73,5 +73,11 @@
     "EAGLE_AIR_STRIKE.title": "飞鹰空袭",
     "EAGLE_AIR_STRIKE.description": "[gold]绝地战备[/gold]。\n对全部敌人造成 {Damage} 点伤害。",
     "MASS_PRODUCTION.title": "大生产",
-    "MASS_PRODUCTION.description": "{IfUpgraded:show:每有一层[gold]生产序列[/gold]，其|}单位价格减少[gold]${Reduction}[/gold]。"
+    "MASS_PRODUCTION.description": "{IfUpgraded:show:每有一层[gold]生产序列[/gold]，其|}单位价格减少[gold]${Reduction}[/gold]。",
+    "GOLD_MINE_CARD.title": "黄金矿",
+    "GOLD_MINE_CARD.description": "获得 {Reserve} [gold]黄金矿[/gold]储备。",
+    "GEM_MINE_CARD.title": "宝石矿",
+    "GEM_MINE_CARD.description": "获得 {Reserve} [gold]宝石矿[/gold]储备。",
+    "GOLD_MINE_COLUMN_CARD.title": "黄金矿柱",
+    "GOLD_MINE_COLUMN_CARD.description": "获得 {Reserve} [gold]黄金矿[/gold]储备。\n获得[gold]黄金矿柱[/gold]。"
 }

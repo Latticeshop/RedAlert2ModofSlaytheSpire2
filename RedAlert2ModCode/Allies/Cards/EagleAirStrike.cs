@@ -29,7 +29,7 @@ public sealed class EagleAirStrike : CardModel
 
     public EagleAirStrike() : base((int)Values.Cost, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies) { }
 
-    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/EagleAirStrike.png";
+    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/EagleAirStrike.png";
 
     protected override List<DynamicVar> CanonicalVars => new()
     {

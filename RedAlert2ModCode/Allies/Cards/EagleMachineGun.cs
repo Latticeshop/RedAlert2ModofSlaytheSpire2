@@ -29,7 +29,7 @@ public sealed class EagleMachineGun : CardModel
 
     public EagleMachineGun() : base((int)Values.Cost, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
 
-    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/EagleMachineGun.png";
+    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/EagleMachineGun.png";
 
     protected override List<DynamicVar> CanonicalVars => new()
     {
