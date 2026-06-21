@@ -5,11 +5,8 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.MonsterMoves.Intents;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Utils;
@@ -18,7 +15,7 @@ namespace RedAlert2ModCode.Allies.Powers;
 
 /// <summary>
 /// 爱国者导弹能力 - 盟军防御建筑能力
-/// 效果：回合开始时，每有一个攻击意图的敌人，获得6点格挡（升级后9点）
+/// 效果：回合开始时，获得9点格挡（升级后12点）
 /// </summary>
 public class PatriotMissilePower : PowerModel
 {
@@ -103,38 +100,13 @@ public class PatriotMissilePower : PowerModel
 		int stacks = (int)base.Amount;
 		GD.Print($"[PatriotMissilePower] 回合开始触发 - 层数={stacks}, Block={CurrentBlock}");
 
-		// 统计攻击意图的敌人数量
-		int attackIntentCount = 0;
-		var enemies = combatState.Enemies.Where(enemy => enemy.Side == CombatSide.Enemy && enemy.IsAlive).ToList();
-
-		foreach (var enemy in enemies)
-		{
-			if (enemy.Monster?.NextMove?.Intents != null)
-			{
-				foreach (var intent in enemy.Monster.NextMove.Intents)
-				{
-					if (intent is AttackIntent)
-					{
-						attackIntentCount++;
-						GD.Print($"[PatriotMissilePower] 发现敌人 {enemy.Name} 有攻击意图");
-						break;  // 每个敌人只计算一次
-					}
-				}
-			}
-		}
-
-		GD.Print($"[PatriotMissilePower] 攻击意图敌人数量: {attackIntentCount}");
-
-		// 每有一个攻击意图的敌人，获得格挡（按层数循环）
+		// 每一层获得固定格挡，不再根据攻击意图数量翻倍
 		for (int i = 0; i < stacks; i++)
 		{
-			for (int j = 0; j < attackIntentCount; j++)
+			if (base.Owner != null)
 			{
-				if (base.Owner != null)
-				{
-					GD.Print($"[PatriotMissilePower] 第{i+1}层第{j+1}个攻击敌人 - 获得 {CurrentBlock} 点格挡");
-					await CreatureCmd.GainBlock(base.Owner, (decimal)CurrentBlock, ValueProp.Unpowered, null);
-				}
+				GD.Print($"[PatriotMissilePower] 第{i+1}层 - 获得 {CurrentBlock} 点格挡");
+				await CreatureCmd.GainBlock(base.Owner, (decimal)CurrentBlock, ValueProp.Unpowered, null);
 			}
 		}
 	}

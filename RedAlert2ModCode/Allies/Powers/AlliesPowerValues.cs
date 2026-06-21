@@ -34,11 +34,11 @@ public static class AlliesPowerValues
 		StarsUpgraded = 3      // 升级后每次叠加增加的伤害 (5 = 2 + 3)
 	};
 
-	/// <summary>爱国者导弹能力 - 回合开始时每有一个攻击意图的敌人获得格挡</summary>
+	/// <summary>爱国者导弹能力 - 回合开始时获得固定格挡</summary>
 	public static CardValueStore.CardValues PatriotMissilePower => new()
 	{
-		Block = 6,             // 基础格挡
-		BlockUpgraded = 3      // 升级后9 = 6 + 3
+		Block = 9,             // 基础格挡
+		BlockUpgraded = 3      // 升级后12 = 9 + 3
 	};
 
 	/// <summary>黄蜂舰载机能力 - 每回合对目标锁定敌人造成伤害</summary>
@@ -96,19 +96,19 @@ public static class AlliesPowerValues
 		DamageUpgraded = 10     // 升级后60 = 50 + 10
 	};
 
-	/// <summary>飞鹰机枪扫射能力 - 对目标锁定敌人造成3点伤害3次</summary>
+	/// <summary>飞鹰机枪扫射能力 - 对目标锁定敌人造成3点伤害4次</summary>
 	public static CardValueStore.CardValues EagleMachineGunPower => new()
 	{
 		Damage = 3,             // 基础伤害
 		DamageUpgraded = 1,     // 升级后4 = 3 + 1
-		Repeat = 3              // 攻击次数
+		Repeat = 4              // 攻击次数
 	};
 
-	/// <summary>飞鹰空袭能力 - 对全部敌人造成8点伤害</summary>
+	/// <summary>飞鹰空袭能力 - 对全部敌人造成9点伤害</summary>
 	public static CardValueStore.CardValues EagleAirStrikePower => new()
 	{
-		Damage = 8,             // 基础伤害
-		DamageUpgraded = 4      // 升级后12 = 8 + 4
+		Damage = 9,             // 基础伤害
+		DamageUpgraded = 4      // 升级后13 = 9 + 4
 	};
 
 	/// <summary>大生产能力 - 每有一层生产序列，其单位价格减少100</summary>

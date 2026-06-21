@@ -172,12 +172,12 @@ public static class AlliesCardValues
 		DollarValue = 500
 	};
 
-	/// <summary>爱国者导弹 - 1费能力卡，回合开始时每有一个攻击意图的敌人获得6格挡（升级9），价格1000</summary>
+	/// <summary>爱国者导弹 - 1费能力卡，回合开始时获得9格挡（升级12），价格1000</summary>
 	public static CardValueStore.CardValues PatriotMissile => new()
 	{
 		Cost = 1,
-		Block = 6,
-		BlockUpgraded = 3,  // 升级后9 = 6 + 3
+		Block = 9,
+		BlockUpgraded = 3,  // 升级后12 = 9 + 3
 		DollarValue = 1000
 	};
 	
@@ -333,22 +333,22 @@ public static class AlliesCardValues
 		DollarValue = 0             // 绝地战备卡牌无价格
 	};
 
-	/// <summary>飞鹰机枪扫射 - 1费攻击卡，绝地战备，对目标锁定敌人造成3点伤害3次，升级后4点</summary>
+	/// <summary>飞鹰机枪扫射 - 1费攻击卡，绝地战备，对目标锁定敌人造成3点伤害4次，升级后4点</summary>
 	public static CardValueStore.CardValues EagleMachineGun => new()
 	{
 		Cost = 1,                   // 1费
 		Damage = 3,                 // 基础伤害
 		DamageUpgraded = 1,         // 升级后4 = 3 + 1
-		Repeat = 3,                 // 攻击次数
+		Repeat = 4,                 // 攻击次数
 		DollarValue = 0             // 绝地战备卡牌无价格
 	};
 
-	/// <summary>飞鹰空袭 - 1费攻击卡，绝地战备，对全部敌人造成8点伤害，升级后12点</summary>
+	/// <summary>飞鹰空袭 - 1费攻击卡，绝地战备，对全部敌人造成9点伤害，升级后13点</summary>
 	public static CardValueStore.CardValues EagleAirStrike => new()
 	{
 		Cost = 1,                   // 1费
-		Damage = 8,                 // 基础伤害
-		DamageUpgraded = 4,         // 升级后12 = 8 + 4
+		Damage = 9,                 // 基础伤害
+		DamageUpgraded = 4,         // 升级后13 = 9 + 4
 		DollarValue = 0             // 绝地战备卡牌无价格
 	};
 
