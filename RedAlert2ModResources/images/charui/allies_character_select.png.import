@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cu2tshxfjq41l"
-path="res://.godot/imported/char_select_allies.png-ff7a8361dd5d428c51829a057f893c12.ctex"
+uid="uid://db02xaahh2nhq"
+path="res://.godot/imported/allies_character_select.png-c6eca04802b2e603454f4e7ba8d54311.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://RedAlert2ModResources/images/packed/character_select/char_select_allies.png"
-dest_files=["res://.godot/imported/char_select_allies.png-ff7a8361dd5d428c51829a057f893c12.ctex"]
+source_file="res://RedAlert2ModResources/images/charui/allies_character_select.png"
+dest_files=["res://.godot/imported/allies_character_select.png-c6eca04802b2e603454f4e7ba8d54311.ctex"]
 
 [params]
 

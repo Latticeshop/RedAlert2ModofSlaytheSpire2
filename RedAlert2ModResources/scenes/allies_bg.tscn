@@ -1,12 +1,22 @@
 [gd_scene load_steps=2 format=3 uid="uid://lliesbg001"]
 
-[ext_resource type="Texture2D" uid="uid://bcltaq7ug7t4o" path="res://scenes/allies_bg.png" id="1_ooqwn"]
+[ext_resource type="Texture2D" uid="uid://ct4j6tb2wk8ug" path="res://RedAlert2ModResources/scenes/allies_bg.png" id="1_ooqwn"]
 
 [node name="AlliesBg" type="Control"]
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="Bg" type="Sprite2D" parent="."]
-position = Vector2(1477.7916, 637.00006)
-scale = Vector2(0.7565103, 0.75651044)
+[node name="Bg" type="TextureRect" parent="."]
+texture_filter = 3
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("1_ooqwn")
+stretch_mode = 5

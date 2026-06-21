@@ -22,8 +22,8 @@ public sealed class Allies : PlaceholderCharacterModel
     
     // 自定义资源路径
     public override string CustomIconPath => "res://RedAlert2ModResources/scenes/ui/character_icons/allies_icon.tscn";
-    public override string CustomIconTexturePath => "res://RedAlert2ModResources/images/packed/character_select/char_select_allies.png";
-    public override string CustomCharacterSelectIconPath => "res://RedAlert2ModResources/images/packed/character_select/char_select_allies.png";
+    public override string CustomIconTexturePath => "res://RedAlert2ModResources/images/charui/tanyicon.png";
+    public override string CustomCharacterSelectIconPath => "res://RedAlert2ModResources/images/packed/character_select/allies_character_select.png";
     public override string CustomVisualPath => "res://RedAlert2ModResources/scenes/creature_visuals/allies.tscn";
     public override string CustomCharacterSelectBg => "res://RedAlert2ModResources/scenes/allies_bg.tscn";
     

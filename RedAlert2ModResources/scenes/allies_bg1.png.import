@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ct4j6tb2wk8ug"
-path="res://.godot/imported/allies_bg.png-b7bf09450ab3515406bfb925818c676c.ctex"
+uid="uid://cllxqyw88meec"
+path="res://.godot/imported/allies_bg1.png-58597ca8c2ce89048d20e14ee7e4f3ff.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://RedAlert2ModResources/scenes/allies_bg.png"
-dest_files=["res://.godot/imported/allies_bg.png-b7bf09450ab3515406bfb925818c676c.ctex"]
+source_file="res://RedAlert2ModResources/scenes/allies_bg1.png"
+dest_files=["res://.godot/imported/allies_bg1.png-58597ca8c2ce89048d20e14ee7e4f3ff.ctex"]
 
 [params]
 

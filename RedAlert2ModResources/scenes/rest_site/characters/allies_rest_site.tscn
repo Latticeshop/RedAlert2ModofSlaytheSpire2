@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bqx0k0v0q1b7r"]
 
-[ext_resource type="Texture2D" uid="uid://cqhadgrwlcyin" path="res://RedAlert2ModResources/images/character/allies_character.png" id="1_lugwd"]
+[ext_resource type="Texture2D" uid="uid://betqp4l0jjt2w" path="res://RedAlert2ModResources/images/character/allies_rest_site.png" id="1_8kag2"]
 
 [node name="AlliesRestSite" type="Node2D"]
 position = Vector2(-2, 42)
@@ -9,8 +9,8 @@ scale = Vector2(0.76, 0.76)
 [node name="Visuals" type="Sprite2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(118, -34)
-scale = Vector2(0.5, 0.5)
-texture = ExtResource("1_lugwd")
+scale = Vector2(0.9, 0.9)
+texture = ExtResource("1_8kag2")
 
 [node name="ControlRoot" type="Control" parent="."]
 layout_mode = 3
