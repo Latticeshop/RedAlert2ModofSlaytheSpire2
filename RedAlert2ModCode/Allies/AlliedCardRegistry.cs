@@ -94,7 +94,7 @@ public static class AlliedCardRegistry
     // 盟军特殊卡
     public static List<Func<CardModel>> SpecialCards { get; } = new()
     {
-        // 待添加
+        () => ModelDb.Card<Paratrooper>()
     };
 
     /// <summary>

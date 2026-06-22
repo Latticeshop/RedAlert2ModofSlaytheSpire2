@@ -17,8 +17,8 @@ public sealed class Allies : PlaceholderCharacterModel
 {
     public const string CharacterId = "Allies";
     
-    // 借用铁卫的基础场景，然后用自定义资源覆盖
-    public override string PlaceholderID => "ironclad";
+    // 借用故障机器人的基础场景（使用蓝色能量指示器），然后用自定义资源覆盖
+    public override string PlaceholderID => "defect";
     
     // 自定义资源路径
     public override string CustomIconPath => "res://RedAlert2ModResources/scenes/ui/character_icons/allies_icon.tscn";

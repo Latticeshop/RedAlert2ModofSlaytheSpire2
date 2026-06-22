@@ -16,13 +16,13 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// <summary>
 /// 油井 - 中立建筑卡（不受建造厂限制）
 /// 能力卡，1费
-/// 效果：立即获得$1000，回合开始时获得$500（升级后$800）资金
+/// 效果：立即获得$1000，回合开始时获得$200（升级后$500）资金
 /// </summary>
 public sealed class OilDerrickCard : CardModel
 {
     private static readonly CardValueStore.CardValues Values = AlliesCardValues.OilDerrick;
 
-    public OilDerrickCard() : base((int)Values.Cost, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
+    public OilDerrickCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
     public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/oil_derrick.png";
 
@@ -34,7 +34,7 @@ public sealed class OilDerrickCard : CardModel
 
     protected override void OnUpgrade()
     {
-        // 升级后每回合资金从500增加到800
+        // 升级后每回合资金从200增加到500
         DynamicVars["DollarPerTurn"].UpgradeValueBy(Values.DamageUpgraded);
     }
 

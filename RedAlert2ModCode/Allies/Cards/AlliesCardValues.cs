@@ -43,13 +43,22 @@ public static class AlliesCardValues
 		DollarValue = 600
 	};
 	
-	/// <summary>工程师 - 0费2覆甲，升级后3覆甲，价格500</summary>
+	/// <summary>工程师 - 1费技能卡，从选项中选择指令，价格500</summary>
 	public static CardValueStore.CardValues Engineer => new()
 	{
-		Cost = 0,
-		Block = 2,
-		BlockUpgraded = 1,
+		Cost = 1,
+		Repeat = 2,          // 基础选项数量
+		RepeatUpgraded = 1,  // 升级后额外增加1个选项（共3个）
 		DollarValue = 500
+	};
+	
+	/// <summary>伞兵 - 1费攻击卡，升级后0费，将6张美国大兵加入手牌，消耗</summary>
+	public static CardValueStore.CardValues Paratrooper => new()
+	{
+		Cost = 1,
+		CostUpgraded = -1,   // 升级后费用变为 1 + (-1) = 0
+		Repeat = 6,          // 添加的美国大兵数量
+		DollarValue = 300
 	};
 	
 	// ==================== 装甲单位 ====================
@@ -307,13 +316,13 @@ public static class AlliesCardValues
 		DollarValue = 800
 	};
 
-	/// <summary>油井 - 1费能力卡，立即获得$1000，回合开始时获得$500（升级后$800）资金，中立建筑不受建造厂限制</summary>
+	/// <summary>油井 - 1费能力卡，立即获得$1000，回合开始时获得$200（升级后$500）资金，中立建筑不受建造厂限制</summary>
 	public static CardValueStore.CardValues OilDerrick => new()
 	{
 		Cost = 1,                   // 1费
 		DollarValue = 1000,         // 立即获得的资金
-		Damage = 500,               // 每回合获得的资金（基础）
-		DamageUpgraded = 300        // 升级后额外增加的资金（总800 = 500 + 300）
+		Damage = 200,               // 每回合获得的资金（基础）
+		DamageUpgraded = 300        // 升级后额外增加的资金（总500 = 200 + 300）
 	};
 
 	/// <summary>停产 - 1费技能卡，选择1个生产序列启动/停产，升级后可选择所有生产序列</summary>
