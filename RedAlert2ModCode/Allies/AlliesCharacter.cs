@@ -30,6 +30,9 @@ public sealed class Allies : PlaceholderCharacterModel
     // 篝火休息场景
     public override string CustomRestSiteAnimPath => "res://RedAlert2ModResources/scenes/rest_site/characters/allies_rest_site.tscn";
     
+    // 商店场景（复用战斗立绘）
+    public override string CustomMerchantAnimPath => "res://RedAlert2ModResources/scenes/creature_visuals/allies_shop_simple.tscn";
+    
     // 角色颜色配置
     public static readonly Color Color = new("2060a0"); // 盟军蓝色
     

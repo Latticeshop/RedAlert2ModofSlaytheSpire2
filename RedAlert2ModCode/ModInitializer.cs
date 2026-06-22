@@ -1,6 +1,7 @@
 using System.Reflection;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Modding;
+using MegaCrit.Sts2.Core.Models;
 using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Allies.Cards;
 
@@ -18,6 +19,9 @@ public static class ModInitializer
     {
         var harmony = new Harmony(ModId);
         harmony.PatchAll();
+        
+        // 注册角色立绘补丁
+        AssetHooks.Install(harmony);
         
         // 注册所有盟军卡牌到盟军卡池
         ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AmericanSoldier));
