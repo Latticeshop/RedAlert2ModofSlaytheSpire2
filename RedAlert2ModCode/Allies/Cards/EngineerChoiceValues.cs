@@ -44,7 +44,7 @@ public static class EngineerChoiceValues
         Type = EngineerChoiceScreen.ChoiceType.CaptureAirfield,
         Title = "占领机场",
         Description = "加入一张卡牌「伞兵」",
-        Weight = 5
+        Weight = 4
     };
 
     /// <summary>
@@ -56,7 +56,7 @@ public static class EngineerChoiceValues
         Type = EngineerChoiceScreen.ChoiceType.CaptureHospital,
         Title = "占领市民医院",
         Description = "获得1点敏捷",
-        Weight = 3
+        Weight = 1
     };
 
     /// <summary>
@@ -68,7 +68,7 @@ public static class EngineerChoiceValues
         Type = EngineerChoiceScreen.ChoiceType.CaptureWorkshop,
         Title = "占领机械商店",
         Description = "获得1点力量",
-        Weight = 3
+        Weight = 1
     };
 
     /// <summary>

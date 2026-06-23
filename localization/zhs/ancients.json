@@ -1,1 +1,26 @@
-{}
+{
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.0-0.ancient": "哼，又是一个妄图挑战塔的凡人指挥官。你的军队在我眼中不过是蝼蚁。",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.0-0.next": "回应",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.0-1.char": "蝼蚁？让你见识一下盟军的实力！我们的科技和战术远超过你的想象。",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.0-1.next": "继续",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.0-2.ancient": "狂妄。但既然你如此自信，就来试试看吧。",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.0-attack": "Both",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.1-0.ancient": "你居然还活着？看来你的军队比我想象的要顽强一些。",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.1-0.next": "回应",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.1-1.char": "顽强？这只是盟军强大实力的冰山一角！我们的基地车可以在任何地方建立防线！",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.1-1.next": "继续",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.1-2.ancient": "基地车...有趣的技术。但在绝对的力量面前，一切都将化为灰烬。",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.1-attack": "Both",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.2-0.ancient": "第三次了...你的战术确实值得称赞。很少有人能在我的防御下坚持这么久。",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.2-0.next": "回应",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.2-1.char": "战术？不，这是盟军的战略！我们的间谍卫星早已看透了你的弱点！",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.2-1.next": "继续",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.2-2.ancient": "卫星...侦察...你的情报网确实令人印象深刻。但情报无法改变实力的差距。",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.2-attack": "Both",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.3-0.ancient": "第四次...你已经证明了自己的价值。但塔的顶端只属于最强者。",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.3-0.next": "回应",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.3-1.char": "最强者？盟军永远追求胜利！无论是科技、战术还是勇气，我们都是最强的！",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.3-1.next": "继续",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.3-2.ancient": "很好...让我看看，你的信念能否战胜我的力量。",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.3-attack": "Both"
+}

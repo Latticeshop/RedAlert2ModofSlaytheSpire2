@@ -44,5 +44,9 @@
     "GOLD_MINE_COLUMN_POWER.title": "黄金矿柱",
     "GOLD_MINE_COLUMN_POWER.description": "每回合增加[gold]{PerTurn}[/gold]金矿储备。",
     "EARLY_MINING_POWER.title": "提前倒矿",
-    "EARLY_MINING_POWER.description": "本回合矿车收益为 {MiningMultiplierPercent}%。"
+    "EARLY_MINING_POWER.description": "本回合矿车收益为 {MiningMultiplierPercent}%。",
+    "CHRONO_SPHERE_POWER.title": "超时空传送仪",
+    "CHRONO_SPHERE_POWER.description": "过 [gold]{TurnsRemaining}[/gold] 回合，将一张0费虚无的[gold]超时空传送[/gold]加入手牌。",
+    "WEATHER_CONTROLLER_POWER.title": "天气控制器",
+    "WEATHER_CONTROLLER_POWER.description": "过 [gold]{TurnsRemaining}[/gold] 回合，获得 [gold]{Block}[/gold] 个电球，将一张0费虚无且消耗的[gold]闪电风暴[/gold]加入手牌。"
 }

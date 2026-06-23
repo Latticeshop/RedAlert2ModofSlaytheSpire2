@@ -406,6 +406,42 @@ public static class AlliesCardValues
 		DollarValue = 2000
 	};
 
+	/// <summary>超时空传送仪 - 0费能力卡，金卡，高科技建筑，需要作战实验室，价格3000</summary>
+	public static CardValueStore.CardValues ChronoSphere => new()
+	{
+		Cost = 0,
+		DollarValue = 3000,
+		Repeat = 3,                    // 基础间隔回合
+		RepeatUpgraded = 2             // 升级后间隔回合
+	};
+
+	/// <summary>超时空传送 - 1费技能卡（升级后0费），金卡，消耗，高科技运转卡，需要作战实验室</summary>
+	public static CardValueStore.CardValues ChronoWarp => new()
+	{
+		Cost = 1,                      // 基础费用
+		CostUpgraded = -1,             // 升级后费用变为 1 + (-1) = 0
+		DollarValue = 0                // 运转卡无价格
+	};
+
+	/// <summary>天气控制器 - 0费能力卡，金卡，高科技建筑，需要作战实验室，价格5000</summary>
+	public static CardValueStore.CardValues WeatherController => new()
+	{
+		Cost = 0,
+		DollarValue = 5000,
+		Repeat = 3,                    // 基础间隔回合
+		RepeatUpgraded = 2,            // 升级后间隔回合
+		Block = 3                      // 触发时获得的电球数量
+	};
+
+	/// <summary>闪电风暴 - 4费技能卡（升级后3费），金卡，高科技运转卡，需要作战实验室</summary>
+	public static CardValueStore.CardValues LightningStorm => new()
+	{
+		Cost = 4,                      // 基础费用
+		CostUpgraded = -1,             // 升级后费用变为 4 + (-1) = 3
+		DollarValue = 0,               // 运转卡无价格
+		Block = 1                      // 电球数量
+	};
+
 	// ==================== 数值映射创建方法 ====================
 	
 	public static System.Collections.Generic.Dictionary<string, CardValueStore.CardValues> CreateSoldierValuesMap()
@@ -474,7 +510,9 @@ public static class AlliesCardValues
 		{
 			{ "MIRAGETANK", MirageTank },
 			{ "PRISMTANK", PrismTank },
-			{ "AIRCRAFTCARRIER", AircraftCarrier }
+			{ "AIRCRAFTCARRIER", AircraftCarrier },
+			{ "CHRONOSPHERE", ChronoSphere },
+			{ "WEATHERCONTROLLER", WeatherController }
 		};
 	}
 
@@ -491,7 +529,9 @@ public static class AlliesCardValues
 		{ typeof(AlliedWallCard), () => ModelDb.Card<AlliedWallCard>() },
 		{ typeof(PillboxCard), () => ModelDb.Card<PillboxCard>() },
 		{ typeof(PatriotMissile), () => ModelDb.Card<PatriotMissile>() },
-		{ typeof(BattleLab), () => ModelDb.Card<BattleLab>() }
+		{ typeof(BattleLab), () => ModelDb.Card<BattleLab>() },
+		{ typeof(ChronoSphere), () => ModelDb.Card<ChronoSphere>() },
+		{ typeof(WeatherController), () => ModelDb.Card<WeatherController>() }
 	};
 	
 	public static System.Collections.Generic.Dictionary<string, CardValueStore.CardValues> CreateAllValuesMap()

@@ -53,7 +53,7 @@
     "AGISICON.title": "神盾巡洋舰",
     "AGISICON.description": "获得 {Block} 点格挡。若敌人意图攻击，再获得一遍格挡。",
     "BATTLE_LAB.title": "作战实验室",
-    "BATTLE_LAB.description": "[gold]价格：${DollarNumber}[/gold]。解锁高级兵种。\n获得能力[gold]作战实验室[/gold]。",
+    "BATTLE_LAB.description": "[gold]价格：${DollarNumber}[/gold]。解锁高级建筑和兵种。\n获得能力[gold]作战实验室[/gold]。",
     "MIRAGE_TANK.title": "幻影坦克",
     "MIRAGE_TANK.description": "若敌人意图攻击，自身无[gold]无实体[/gold]时获得一层[gold]无实体[/gold]。否则造成 {Damage} 点伤害。获得 {Block} 点格挡。",
     "PRISM_TANK.title": "光棱坦克",
@@ -83,5 +83,15 @@
     "GOLD_MINE_COLUMN_CARD.title": "黄金矿柱",
     "GOLD_MINE_COLUMN_CARD.description": "获得 {Reserve} [gold]黄金矿[/gold]储备。\n获得[gold]黄金矿柱[/gold]。",
     "EARLY_MINING.title": "提前倒矿",
-    "EARLY_MINING.description": "抽取{IfUpgraded:show:牌堆|摸牌堆}中所有的[gold]矿车[/gold]。\n本回合矿车收益为 {MiningMultiplier}% 。"
+    "EARLY_MINING.description": "抽取{IfUpgraded:show:牌堆|摸牌堆}中所有的[gold]矿车[/gold]。\n本回合矿车收益为 {MiningMultiplier}% 。",
+    "CHRONO_SPHERE.title": "超时空传送仪",
+    "CHRONO_SPHERE.description": "[gold]价格：${DollarNumber}[/gold]。\n获得[gold]超时空传送仪[/gold]。",
+    "CHRONO_WARP.title": "超时空传送",
+    "CHRONO_WARP.description": "[gold]超级武器[/gold]。\n从 摸牌/手牌/弃牌堆 选择任意张牌移动到 摸牌/手牌/弃牌堆 。",
+    "WEATHER_CONTROLLER.title": "天气控制器",
+    "WEATHER_CONTROLLER.description": "[gold]价格：${DollarNumber}[/gold]。\n获得[gold]天气控制器[/gold]。",
+    "LIGHTNING_STORM.title": "闪电风暴",
+    "LIGHTNING_STORM.description": "[gold]超级武器[/gold]。\n获得 {Block} 个电球。\n[gold]电流相生[/gold]。",
+    "FORTIFIED_WALL.title": "坚固围墙",
+    "FORTIFIED_WALL.description": "[gold]价格：${DollarNumber}[/gold]。获得 {Block} 点格挡。将此牌返回你的手牌。"
 }

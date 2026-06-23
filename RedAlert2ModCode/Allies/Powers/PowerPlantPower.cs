@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -20,11 +21,6 @@ public sealed class PowerPlantPower : PowerModel
 	// 数值引用
 	private static readonly CardValueStore.CardValues Values = AlliesPowerValues.PowerPlantPower;
 	
-	private class Data
-	{
-		public int cardsLeft = Values.MagicNumber;
-	}
-
 	private const string _baseCardsKey = "BaseCards";
 
 	public override PowerType Type => PowerType.Buff;
@@ -32,9 +28,14 @@ public sealed class PowerPlantPower : PowerModel
 	public override PowerStackType StackType => PowerStackType.Counter;
 
 	/// <summary>
+	/// 当前剩余抽牌数
+	/// </summary>
+	private int _cardsLeft;
+
+	/// <summary>
 	/// 显示剩余抽牌数
 	/// </summary>
-	public override int DisplayAmount => GetInternalData<Data>().cardsLeft;
+	public override int DisplayAmount => _cardsLeft;
 
 	public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
 
@@ -49,13 +50,6 @@ public sealed class PowerPlantPower : PowerModel
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 		new DynamicVar[] { new DynamicVar(_baseCardsKey, Values.MagicNumber) };
 
-	protected override object InitInternalData()
-	{
-		var data = new Data();
-		data.cardsLeft = CurrentThreshold;
-		return data;
-	}
-
 	/// <summary>
 	/// 设置阈值并重置计数
 	/// </summary>
@@ -64,9 +58,17 @@ public sealed class PowerPlantPower : PowerModel
 		CurrentThreshold = threshold;
 		// 更新动态变量，使 smartDescription 显示正确的数值
 		DynamicVars[_baseCardsKey].BaseValue = threshold;
-		var data = GetInternalData<Data>();
-		data.cardsLeft = threshold;
+		_cardsLeft = threshold;
 		InvokeDisplayAmountChanged();
+	}
+
+	/// <summary>
+	/// 能力应用时初始化
+	/// </summary>
+	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
+	{
+		_cardsLeft = CurrentThreshold;
+		return Task.CompletedTask;
 	}
 
 	/// <summary>
@@ -76,15 +78,14 @@ public sealed class PowerPlantPower : PowerModel
 	{
 		if (card.Owner == base.Owner.Player && Amount > 0)
 		{
-			Data data = GetInternalData<Data>();
-			data.cardsLeft--;
+			_cardsLeft--;
 			InvokeDisplayAmountChanged();
 			
-			if (data.cardsLeft <= 0)
+			if (_cardsLeft <= 0)
 			{
 				Flash();
 				await PlayerCmd.GainEnergy(1, base.Owner.Player);
-				data.cardsLeft = CurrentThreshold;
+				_cardsLeft = CurrentThreshold;
 				InvokeDisplayAmountChanged();
 			}
 		}

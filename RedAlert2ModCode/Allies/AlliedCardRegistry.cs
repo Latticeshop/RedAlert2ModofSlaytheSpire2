@@ -63,8 +63,11 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<AirForceCommand>(),
         () => ModelDb.Card<AlliedRefinery>(),
         () => ModelDb.Card<AlliedWallCard>(),
+        () => ModelDb.Card<FortifiedWall>(),
         () => ModelDb.Card<ShipyardCard>(),
-        () => ModelDb.Card<BattleLab>()
+        () => ModelDb.Card<BattleLab>(),
+        () => ModelDb.Card<ChronoSphere>(),
+        () => ModelDb.Card<WeatherController>()
     };
 
     // 盟军防御塔
@@ -89,7 +92,9 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<GoldMineCard>(),
         () => ModelDb.Card<GemMineCard>(),
         () => ModelDb.Card<GoldMineColumnCard>(),
-        () => ModelDb.Card<EarlyMining>()
+        () => ModelDb.Card<EarlyMining>(),
+        () => ModelDb.Card<ChronoWarp>(),
+        () => ModelDb.Card<LightningStorm>()
     };
 
     // 盟军特殊卡

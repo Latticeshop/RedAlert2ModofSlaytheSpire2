@@ -238,6 +238,15 @@ public static class ModCardKeywords
     );
 
     /// <summary>
+    /// 超级武器词条 - 需要作战实验室前置科技，是科技巅峰的造物
+    /// </summary>
+    public static readonly CustomKeyword SuperWeapon = new(
+        "SUPER_WEAPON",
+        new LocString("card_keywords", "super_weapon.title"),
+        new LocString("card_keywords", "super_weapon.description")
+    );
+
+    /// <summary>
     /// 初始化所有自定义词条
     /// </summary>
     public static void Initialize()
@@ -260,5 +269,6 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(GoldMine);
         CustomKeywordManager.RegisterKeyword(GemMine);
         CustomKeywordManager.RegisterKeyword(GoldMineColumn);
+        CustomKeywordManager.RegisterKeyword(SuperWeapon);
     }
 }
