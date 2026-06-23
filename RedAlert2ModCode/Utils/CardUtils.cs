@@ -314,7 +314,6 @@ public static class CardUtils
 			return true;
 		}
 		
-		GD.Print("[CardUtils] 角色没有MCV能力");
 		return false;
 	}
 }

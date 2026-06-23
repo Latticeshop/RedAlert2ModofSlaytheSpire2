@@ -28,7 +28,8 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
         CaptureAirfield,        // 占领机场
         CaptureHospital,        // 占领市民医院
         CaptureWorkshop,        // 占领机械商店
-        CaptureTechOutpost      // 占领科技前哨站
+        CaptureTechOutpost,     // 占领科技前哨站
+        RepairBridge            // 维修桥梁
     }
 
     /// <summary>
@@ -224,7 +225,8 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
     {
         if (_choiceLocked) return;
         _choiceLocked = true;
-        _completionSource.SetResult(choice);
+        // 使用 TrySetResult 避免重复完成任务的异常
+        _completionSource.TrySetResult(choice);
         NOverlayStack.Instance?.Remove(this);
     }
 
@@ -273,6 +275,7 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
 
     public override void _ExitTree()
     {
+        // 使用 TrySetCanceled 避免在任务已完成时抛出异常
         _completionSource.TrySetCanceled();
         base._ExitTree();
     }

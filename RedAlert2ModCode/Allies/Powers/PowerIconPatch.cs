@@ -41,6 +41,7 @@ public static class PowerIconPatch
         { typeof(GoldMinePower), "res://RedAlert2ModResources/images/packed/powers/gold_mine_power.png" },
         { typeof(GemMinePower), "res://RedAlert2ModResources/images/packed/powers/gem_mine_power.png" },
         { typeof(GoldMineColumnPower), "res://RedAlert2ModResources/images/packed/powers/gold_mine_column_power.png" },
+        { typeof(EarlyMiningPower), "res://RedAlert2ModResources/images/packed/powers/early_mining_power.png" },
     };
 
     /// <summary>

@@ -18,6 +18,7 @@ public static class RelicIconPatch
     private static readonly Dictionary<Type, string> _customIconPaths = new()
     {
         { typeof(DollarRelic), "res://RedAlert2ModResources/images/relics/dollar_relic.png" },
+        { typeof(DollarAncientRelic), "res://RedAlert2ModResources/images/relics/doller-ancient.png" },
     };
 
     /// <summary>

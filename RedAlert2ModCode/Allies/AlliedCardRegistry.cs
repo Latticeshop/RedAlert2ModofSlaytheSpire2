@@ -88,7 +88,8 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<MassProduction>(),
         () => ModelDb.Card<GoldMineCard>(),
         () => ModelDb.Card<GemMineCard>(),
-        () => ModelDb.Card<GoldMineColumnCard>()
+        () => ModelDb.Card<GoldMineColumnCard>(),
+        () => ModelDb.Card<EarlyMining>()
     };
 
     // 盟军特殊卡

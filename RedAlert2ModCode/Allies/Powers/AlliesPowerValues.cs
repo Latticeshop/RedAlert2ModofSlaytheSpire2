@@ -83,8 +83,8 @@ public static class AlliesPowerValues
 	/// <summary>油井能力 - 回合开始时获得资金</summary>
 	public static CardValueStore.CardValues OilDerrickPower => new()
 	{
-		DollarValue = 500,        // 基础每回合资金
-		DollarValueUpgraded = 300  // 升级后每回合 800 = 500 + 300
+		DollarValue = 200,        // 基础每回合资金
+		DollarValueUpgraded = 300  // 升级后每回合 500 = 200 + 300
 	};
 
 	// ==================== 绝地战备能力 ====================
@@ -137,5 +137,11 @@ public static class AlliesPowerValues
 		DollarValue = 5000,        // 基础储备
 		DollarValueUpgraded = 5000, // 升级后储备增加量
 		Stars = 200                // 每回合增加的金矿储备
+	};
+
+	/// <summary>提前倒矿能力 - 本回合矿车收益为80%</summary>
+	public static CardValueStore.CardValues EarlyMiningPower => new()
+	{
+		MagicNumber = 80          // 矿车收益百分比：80%
 	};
 }

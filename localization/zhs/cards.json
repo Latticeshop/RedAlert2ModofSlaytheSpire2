@@ -59,7 +59,7 @@
     "PRISM_TANK.title": "光棱坦克",
     "PRISM_TANK.description": "造成 {Damage} 点伤害。[gold]溅射[/gold]。",
     "PATRIOT_MISSILE.title": "爱国者导弹",
-    "PATRIOT_MISSILE.description": "[gold]价格：${DollarNumber}[/gold]。回合开始时，每有一个攻击意图的敌人，获得 {Block} 点格挡。",
+    "PATRIOT_MISSILE.description": "[gold]价格：${DollarNumber}[/gold]。回合开始时，获得 {Block} 点格挡。",
     "AIRCRAFT_CARRIER.title": "航空母舰",
     "AIRCRAFT_CARRIER.description": "选择一名敌人获得[gold]目标锁定[/gold]，获得 3 架[gold]黄蜂舰载机[/gold]。{IfUpgraded:show:舰载机升级。|}",
     "REPAIR_DEPOT.title": "维修厂",
@@ -81,5 +81,7 @@
     "GEM_MINE_CARD.title": "宝石矿",
     "GEM_MINE_CARD.description": "获得 {Reserve} [gold]宝石矿[/gold]储备。",
     "GOLD_MINE_COLUMN_CARD.title": "黄金矿柱",
-    "GOLD_MINE_COLUMN_CARD.description": "获得 {Reserve} [gold]黄金矿[/gold]储备。\n获得[gold]黄金矿柱[/gold]。"
+    "GOLD_MINE_COLUMN_CARD.description": "获得 {Reserve} [gold]黄金矿[/gold]储备。\n获得[gold]黄金矿柱[/gold]。",
+    "EARLY_MINING.title": "提前倒矿",
+    "EARLY_MINING.description": "抽取{IfUpgraded:show:牌堆|摸牌堆}中所有的[gold]矿车[/gold]。\n本回合矿车收益为 {MiningMultiplier}% 。"
 }

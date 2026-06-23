@@ -334,6 +334,13 @@ public static class AlliesCardValues
 
 	// ==================== 绝地战备卡牌 ====================
 
+	/// <summary>提前倒矿 - 1费技能卡，抽取所有矿车，本回合矿车收益为80%</summary>
+	public static CardValueStore.CardValues EarlyMining => new()
+	{
+		Cost = 1,                   // 1费
+		MagicNumber = 80            // 矿车收益百分比：80%
+	};
+
 	/// <summary>飞鹰500kg - 3费攻击卡，绝地战备，获得能力并赋予目标锁定，升级后2费</summary>
 	public static CardValueStore.CardValues Eagle500kg => new()
 	{

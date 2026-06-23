@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Godot;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -17,7 +20,7 @@ using EngineerChoice = RedAlert2ModCode.UI.EngineerChoiceScreen.EngineerChoice;
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
-/// 工程师 - 技能卡
+/// 工程师 - 盟军士兵单位卡
 /// 1费，common蓝卡
 /// 效果：从2(升级为3)个选项中选择一个指令执行
 /// </summary>
@@ -28,7 +31,7 @@ public sealed class Engineer : CardModel
     private const int BASE_CHOICE_COUNT = 2;
     private const int UPGRADED_CHOICE_COUNT = 1;
 
-    public Engineer() : base(COST, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+    public Engineer() : base(COST, CardType.Skill, CardRarity.Token, TargetType.Self) { }
 
     public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/allies/aengicon.png";
 
@@ -49,7 +52,7 @@ public sealed class Engineer : CardModel
 
         if (selectedChoice != null)
         {
-            await ExecuteChoice(selectedChoice);
+            await ExecuteChoice(ctx, selectedChoice);
         }
     }
 
@@ -100,7 +103,7 @@ public sealed class Engineer : CardModel
     /// <summary>
     /// 执行选中的选项
     /// </summary>
-    private async Task ExecuteChoice(EngineerChoice choice)
+    private async Task ExecuteChoice(PlayerChoiceContext ctx, EngineerChoice choice)
     {
         switch (choice.Type)
         {
@@ -112,7 +115,7 @@ public sealed class Engineer : CardModel
 
             case EngineerChoiceScreen.ChoiceType.RepairBuilding:
                 // 获得3点覆甲
-                await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.PlatingPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, 3, Owner.Creature, this);
+                await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.PlatingPower>(ctx, Owner.Creature, 3, Owner.Creature, this);
                 break;
 
             case EngineerChoiceScreen.ChoiceType.CaptureAirfield:
@@ -123,18 +126,39 @@ public sealed class Engineer : CardModel
 
             case EngineerChoiceScreen.ChoiceType.CaptureHospital:
                 // 获得1点敏捷
-                await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.DexterityPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, 1, Owner.Creature, this);
+                await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.DexterityPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
                 break;
 
             case EngineerChoiceScreen.ChoiceType.CaptureWorkshop:
                 // 获得1点力量
-                await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, 1, Owner.Creature, this);
+                await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
                 break;
 
             case EngineerChoiceScreen.ChoiceType.CaptureTechOutpost:
                 // 获得爱国者飞弹和维修厂能力
-                await PowerCmd.Apply<PatriotMissilePower>(new ThrowingPlayerChoiceContext(), Owner.Creature, 1, Owner.Creature, this);
+                await PowerCmd.Apply<PatriotMissilePower>(ctx, Owner.Creature, 1, Owner.Creature, this);
                 await RepairDepotPower.ApplyRepairDepot(Owner.Creature);
+                break;
+
+            case EngineerChoiceScreen.ChoiceType.RepairBridge:
+                // 选择消耗一张手牌，抽两张牌（使用自定义UI避免与其他模组冲突）
+                var handPile = PileType.Hand.GetPile(Owner);
+                var handCards = handPile.Cards.ToList();
+                
+                if (handCards.Any())
+                {
+                    // 使用现有的 CardSelectionScreen 进行手牌选择
+                    var selectedCards = await CardSelectionScreen.ShowMultiSelection(handCards, 1, 1);
+                    
+                    if (selectedCards != null && selectedCards.Any())
+                    {
+                        foreach (var card in selectedCards)
+                        {
+                            await CardPileCmd.Add(card, PileType.Exhaust);
+                        }
+                        await CardPileCmd.Draw(ctx, 2, Owner);
+                    }
+                }
                 break;
         }
     }

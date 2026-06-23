@@ -84,6 +84,18 @@ public static class EngineerChoiceValues
     };
 
     /// <summary>
+    /// 维修桥梁选项
+    /// 效果：选择消耗一张手牌，抽两张牌（参考原版Burning Pact）
+    /// </summary>
+    public static EngineerChoice RepairBridge => new()
+    {
+        Type = EngineerChoiceScreen.ChoiceType.RepairBridge,
+        Title = "维修桥梁",
+        Description = "选择消耗一张手牌，抽两张牌",
+        Weight = 5
+    };
+
+    /// <summary>
     /// 获取所有选项列表
     /// </summary>
     public static List<EngineerChoice> AllChoices => new()
@@ -93,6 +105,7 @@ public static class EngineerChoiceValues
         CaptureAirfield,
         CaptureHospital,
         CaptureWorkshop,
-        CaptureTechOutpost
+        CaptureTechOutpost,
+        RepairBridge
     };
 }

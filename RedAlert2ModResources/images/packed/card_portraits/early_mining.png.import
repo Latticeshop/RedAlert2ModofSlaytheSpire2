@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b0lmwkmgpcelc"
-path="res://.godot/imported/dollar_relic.png-885fbed9a789e68c639d7fb5a81949ab.ctex"
+uid="uid://cd3svbo5rakfw"
+path="res://.godot/imported/early_mining.png-5654e0eafc081e0b4b1c3d7caaf92375.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://RedAlert2ModResources/images/relics/dollar_relic.png"
-dest_files=["res://.godot/imported/dollar_relic.png-885fbed9a789e68c639d7fb5a81949ab.ctex"]
+source_file="res://RedAlert2ModResources/images/packed/card_portraits/early_mining.png"
+dest_files=["res://.godot/imported/early_mining.png-5654e0eafc081e0b4b1c3d7caaf92375.ctex"]
 
 [params]
 

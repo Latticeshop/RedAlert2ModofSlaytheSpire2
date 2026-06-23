@@ -47,16 +47,26 @@ public sealed class ChronoMiner : CardModel
 		if (dollarPower != null)
 		{
 			int amount = base.DynamicVars["DollarValue"].IntValue;
-			dollarPower.AddDollar(amount);
-			GD.Print($"[ChronoMiner] 获得 {amount} 资金");
+			GD.Print($"[ChronoMiner] 基础资金 {amount}");
 
 			// 挖矿逻辑：优先挖宝石矿(2倍价值)，再挖黄金矿
 			int miningBonus = MineResources();
-			if (miningBonus > 0)
+			GD.Print($"[ChronoMiner] 挖矿额外获得 {miningBonus} 资金");
+
+			// 计算总资金
+			int totalAmount = amount + miningBonus;
+
+			// 检查是否有提前倒矿debuff（本回合矿车收益为80%）
+			var earlyMiningPower = Owner.Creature.Powers.OfType<EarlyMiningPower>().FirstOrDefault();
+			if (earlyMiningPower != null)
 			{
-				dollarPower.AddDollar(miningBonus);
-				GD.Print($"[ChronoMiner] 挖矿额外获得 {miningBonus} 资金");
+				float multiplier = earlyMiningPower.GetMiningMultiplier();
+				totalAmount = Mathf.FloorToInt(totalAmount * multiplier);
+				GD.Print($"[ChronoMiner] 检测到提前倒矿debuff，总资金 * {multiplier} = {totalAmount}");
 			}
+
+			dollarPower.AddDollar(totalAmount);
+			GD.Print($"[ChronoMiner] 总共获得 {totalAmount} 资金");
 		}
 
 		// 将此牌加入摸牌堆（而不是弃牌堆）
