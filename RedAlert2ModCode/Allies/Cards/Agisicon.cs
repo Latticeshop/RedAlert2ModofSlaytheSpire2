@@ -40,6 +40,7 @@ public sealed class Agisicon : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
+		UnitVoiceHelper.PlayUnitVoice(this.GetType());
 		GD.Print($"[Agisicon] OnPlay 被调用 - IsUpgraded={IsUpgraded}");
 
 		// 检查是否有敌人意图攻击

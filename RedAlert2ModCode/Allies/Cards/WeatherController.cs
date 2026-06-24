@@ -70,6 +70,7 @@ public sealed class WeatherController : CardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         GD.Print("[WeatherController] OnPlay 被调用");
+        BuildingSoundHelper.PlayBuildingPlaceSound();
 
         // 扣除资金
         var dollarPower = Owner.Creature.Powers.OfType<DollarPower>().FirstOrDefault();

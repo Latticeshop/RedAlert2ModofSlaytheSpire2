@@ -47,6 +47,7 @@ public sealed class PrismTank : CardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+        UnitVoiceHelper.PlayUnitVoice(this.GetType());
         GD.Print("[PrismTank] OnPlay 被调用");
 
         // 获取目标敌人

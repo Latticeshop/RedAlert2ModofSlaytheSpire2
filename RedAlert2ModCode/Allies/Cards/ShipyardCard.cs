@@ -62,6 +62,9 @@ public sealed class ShipyardCard : CardModel
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		GD.Print($"[ShipyardCard] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
+		
+		// 播放建筑释放音效
+		BuildingSoundHelper.PlayBuildingPlaceSound();
 
 		// 扣除资金
 		var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();

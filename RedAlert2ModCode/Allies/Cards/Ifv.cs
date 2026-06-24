@@ -42,6 +42,7 @@ public sealed class Ifv : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
+		UnitVoiceHelper.PlayUnitVoice(this.GetType());
 		// 本回合获得敏捷（临时，回合结束时自动扣除）
 		await PowerCmd.Apply<IfvTemporaryDexterityPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, Values.MagicNumber, Owner.Creature, this);
 		

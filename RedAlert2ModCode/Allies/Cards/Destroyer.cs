@@ -42,6 +42,7 @@ public sealed class Destroyer : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
+		UnitVoiceHelper.PlayUnitVoice(this.GetType());
 		GD.Print($"[Destroyer] OnPlay 被调用 - IsUpgraded={IsUpgraded}");
 
 		// 检查目标敌人是否有防御意图

@@ -49,6 +49,7 @@ public sealed class MirageTank : CardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+        UnitVoiceHelper.PlayUnitVoice(this.GetType());
         GD.Print("[MirageTank] OnPlay 被调用");
 
         // 获取目标敌人

@@ -41,6 +41,7 @@ public sealed class DogSoldier : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
+		UnitVoiceHelper.PlayUnitVoice(this.GetType());
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this)
 			.Targeting(play.Target)

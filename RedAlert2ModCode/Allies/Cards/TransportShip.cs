@@ -64,6 +64,7 @@ public sealed class TransportShip : CardModel
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        UnitVoiceHelper.PlayUnitVoice(this.GetType());
         GD.Print($"[TransportShip] OnPlay 被调用 - IsUpgraded={IsUpgraded}, _hasStored={_hasStored}");
 
         if (!_hasStored)

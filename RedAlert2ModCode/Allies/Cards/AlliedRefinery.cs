@@ -55,6 +55,9 @@ public sealed class AlliedRefinery : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
+		// 播放建筑释放音效
+		BuildingSoundHelper.PlayBuildingPlaceSound();
+		
 		// 扣除资金
 		var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
 		if (dollarPower != null)

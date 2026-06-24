@@ -54,6 +54,9 @@ public sealed class AlliedMCV : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
+		// 播放建筑释放音效
+		BuildingSoundHelper.PlayBuildingPlaceSound();
+		
 		// 使用 CombatState.CreateCard 创建正确初始化的卡牌副本
 		List<CardModel> availableCards = new();
 

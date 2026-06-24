@@ -62,6 +62,8 @@ public sealed class RepairDepot : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
+		BuildingSoundHelper.PlayBuildingPlaceSound();
+
 		// 扣除资金
 		var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
 		if (dollarPower != null)

@@ -1333,25 +1333,282 @@ ProjectRoot/
 根据 `CombatManager.cs` 的源码逻辑：
 - 所有玩家轮流出牌的过程都发生在同一个"玩家方回合"内
 - 只有当所有玩家都结束回合后，才会切换到 `CombatSide.Enemy`
-- 因此 `AfterSideTurnStart(CombatSide side, CombatState combatState)` 在整个玩家方回合**只会触发一次**
-- 不会因为联机人数而重复触发
 
-**阵营判断**：
-- `side == CombatSide.Player` —— 玩家方回合开始（所有玩家共用一个回合）
-- `side == CombatSide.Enemy` —— 敌方回合开始
+---
 
-**示例**：
+## 🔊 音效播放系统
+
+### 建筑音效播放
+
+`BuildingSoundHelper` 用于播放建筑卡牌打出时的音效：
+
 ```csharp
-public override async Task AfterSideTurnStart(CombatSide side, CombatState combatState)
-{
-    if (side != CombatSide.Player)
-        return; // 跳过敌方回合
+// 在建筑卡牌的 OnPlay 方法中调用
+BuildingSoundHelper.PlayBuildingPlaceSound();
+```
 
-    // 在玩家方回合开始时执行一次
-    await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Unpowered, null);
+**使用示例**（建筑卡牌）：
+```csharp
+protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+{
+    // 播放建筑释放音效
+    BuildingSoundHelper.PlayBuildingPlaceSound();
+    
+    // 其他卡牌逻辑...
 }
 ```
+
+### 单位语音播放
+
+`UnitVoiceHelper` 提供集中处理单位语音播放的接口，使用预定义的语音文件列表进行随机播放，完全绕过 DirAccess 目录枚举，确保在 PCK 打包环境下也能正常工作。
+
+#### 配置方式
+
+单位语音配置集中在 `UnitVoiceConfig.cs` 文件中，按阵营管理：
+
+```csharp
+// UnitVoiceConfig.cs - 语音配置类
+public static class UnitVoiceConfig
+{
+    // 盟军单位语音配置
+    public static readonly Dictionary<string, List<string>> AlliedUnits = new()
+    {
+        ["AmericanSoldier"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/Igiata.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/Igiatc.mp3",
+            // ... 更多语音文件
+        },
+        ["GrizzlyTank"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrizzlyTank/Igtata.mp3",
+            // ... 更多语音文件
+        },
+    };
+
+    // 苏军单位语音配置（预留）
+    public static readonly Dictionary<string, List<string>> SovietUnits = new();
+
+    // 尤里单位语音配置（预留）
+    public static readonly Dictionary<string, List<string>> YuriUnits = new();
+
+    // 根据阵营和单位名称获取语音列表
+    public static List<string> GetUnitVoices(string unitName, string faction = "Allied")
+    {
+        return faction switch
+        {
+            "Soviet" => SovietUnits.TryGetValue(unitName, out var voices) ? voices : new List<string>(),
+            "Yuri" => YuriUnits.TryGetValue(unitName, out var voices) ? voices : new List<string>(),
+            _ => AlliedUnits.TryGetValue(unitName, out var voices) ? voices : new List<string>(),
+        };
+    }
+}
+```
+
+#### 基础用法
+
+```csharp
+// 通过类型播放（推荐）- 自动去除Card后缀
+UnitVoiceHelper.PlayUnitVoice(typeof(AmericanSoldier));
+
+// 通过名称播放
+UnitVoiceHelper.PlayUnitVoice("AmericanSoldier");
+
+// 指定阵营播放（默认 Allied）
+UnitVoiceHelper.PlayUnitVoice("Conscript", "Soviet");  // 苏军动员兵
+UnitVoiceHelper.PlayUnitVoice("YuriTrooper", "Yuri");   // 尤里新兵
+```
+
+#### 添加新单位语音
+
+1. **准备语音文件**，放入对应阵营目录：
+   ```
+   RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/
+   ├── Igiata.mp3
+   ├── Igiatc.mp3
+   └── ...
+   ```
+
+2. **在 UnitVoiceConfig.cs 中注册**：
+   ```csharp
+   ["NewUnit"] = new List<string>
+   {
+       "res://RedAlert2ModResources/audio/AlliedUnits/NewUnit/voice1.mp3",
+       "res://RedAlert2ModResources/audio/AlliedUnits/NewUnit/voice2.mp3",
+   },
+   ```
+
+#### 在单位卡牌中使用
+
+```csharp
+public sealed class AmericanSoldier : CardModel
+{
+    public AmericanSoldier() : base(1, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
+    
+    protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+    {
+        // 播放单位语音（自动使用类名 AmericanSoldier）
+        UnitVoiceHelper.PlayUnitVoice(this.GetType());
+        
+        // 执行攻击逻辑
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+            .FromCard(this)
+            .Targeting(play.Target)
+            .Execute(ctx);
+    }
+}
+```
+
+#### 阵营扩展
+
+添加苏军/尤里阵营时，只需在 `UnitVoiceConfig.cs` 中添加对应配置：
+
+```csharp
+// 添加苏军单位
+public static readonly Dictionary<string, List<string>> SovietUnits = new()
+{
+    ["Conscript"] = new List<string>
+    {
+        "res://RedAlert2ModResources/audio/SovietUnits/Conscript/conscript1.mp3",
+        "res://RedAlert2ModResources/audio/SovietUnits/Conscript/conscript2.mp3",
+    },
+    ["RhinoTank"] = new List<string>
+    {
+        "res://RedAlert2ModResources/audio/SovietUnits/RhinoTank/rhino1.mp3",
+    },
+};
+```
+
+#### 检查语音配置
+
+```csharp
+// 检查单位是否有语音配置
+bool hasVoice = UnitVoiceHelper.HasVoice("AmericanSoldier");
+bool hasSovietVoice = UnitVoiceHelper.HasVoice("Conscript", "Soviet");
+```
+
+#### 注意事项
+
+1. **语音文件格式**：支持 `.mp3`、`.wav`、`.ogg` 格式
+2. **PCK 兼容**：硬编码路径，不受打包影响
+3. **静默失败**：如果找不到语音配置或文件，不会抛出异常，仅输出日志
+4. **概率控制**：如需控制播放概率，可多次添加同一文件增加权重
+
+#### 语音目录结构
+
+```
+RedAlert2ModResources/audio/
+├── AlliedUnits/          # 盟军单位语音
+│   ├── AmericanSoldier/  # 美国大兵
+│   ├── GrizzlyTank/      # 灰熊坦克
+│   ├── Engineer/         # 工程师
+│   └── ...
+├── SovietUnits/          # 苏军单位语音（预留）
+│   └── ...
+├── YuriUnits/            # 尤里单位语音（预留）
+│   └── ...
+└── building_place.wav    # 建筑音效
+```
+
+#### 现有语音配置列表（盟军）
+
+| 单位名称 | 配置Key | 语音数量 |
+|---------|---------|---------|
+| AmericanSoldier | AmericanSoldier | 11 |
+| GrizzlyTank | GrizzlyTank | 11 |
+| Engineer | Engineer | 5 |
+| Intruder | Intruder | 9 |
+| MirageTank | MirageTank | 11 |
+| NightHawk | NightHawk | 7 |
+| PrismTank | PrismTank | 8 |
+| RocketSoldier | RocketSoldier | 6 |
+| Spy | Spy | 9 |
+| TransportShip | TransportShip | 7 |
+| ChronoMiner | ChronoMiner | 8 |
+| DogSoldier | DogSoldier | 5 |
+| AircraftCarrier | AircraftCarrier | 9 |
+| Destroyer | Destroyer | 11 |
+| Dolphin | Dolphin | 4 |
+| IFV | IFV | 9 |
+
+---
+
+### 建筑音效播放
+
+`BuildingSoundHelper` 提供建筑放置音效的集中播放接口。
+
+#### 基础用法
+
+```csharp
+// 在建筑卡牌的 OnPlay 方法中调用
+BuildingSoundHelper.PlayBuildingPlaceSound();
+```
+
+#### 在建筑卡牌中使用
+
+```csharp
+protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+{
+    // 播放建筑放置音效
+    BuildingSoundHelper.PlayBuildingPlaceSound();
+    
+    // 执行建筑逻辑
+    // ...
+}
+```
+
+#### 现有的播放建筑音效的建筑列表
+
+| 建筑名称 | 卡牌文件 |
+|---------|---------|
+| 基地车 | AlliedMCV.cs |
+| 兵营 | BarracksCard.cs |
+| 发电站 | PowerPlantCard.cs |
+| 矿场 | AlliedRefinery.cs |
+| 重工 | AlliedWarFactory.cs |
+| 船厂 | ShipyardCard.cs |
+| 空指部 | AirForceCommand.cs |
+| 作战实验室 | BattleLab.cs |
+| 超时空传送仪 | ChronoSphere.cs |
+| 天气控制器 | WeatherController.cs |
+| 维修厂 | RepairDepot.cs |
+| 碉堡 | PillboxCard.cs |
+| 光棱塔 | PrismTowerCard.cs |
+| 油井 | OilDerrickCard.cs |
+
+#### 不需要播放建筑音效的卡牌
+
+以下卡牌虽然带有 `Building` 关键词，但不属于建筑物，不播放建筑音效：
+
+| 卡牌名称 | 卡牌文件 | 说明 |
+|---------|---------|------|
+| 黄金矿 | GoldMineCard.cs | 资源类卡牌 |
+| 黄金矿柱 | GoldMineColumnCard.cs | 资源类卡牌 |
+| 宝石矿 | GemMineCard.cs | 资源类卡牌 |
+| 围墙 | AlliedWallCard.cs | 防御工事，无声效 |
+| 强化围墙 | FortifiedWall.cs | 防御工事，无声效 |
+
+#### 新建筑卡牌配置规范
+
+**新增建筑卡牌时，必须在 `OnPlay` 方法开头添加建筑音效调用**：
+
+```csharp
+protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+{
+    // 必须：播放建筑放置音效
+    BuildingSoundHelper.PlayBuildingPlaceSound();
+    
+    // 建筑逻辑...
+}
+```
+
+**例外情况**：如果新卡牌属于以下类别，则不需要播放建筑音效：
+1. 资源类卡牌（如金矿、宝石矿等）
+2. 围墙卡牌（如围墙，坚固围墙）
+3. 非建筑类型的卡牌
 
 ---
 
 *本手册为快速参考，详细教程请查看完整文档。*
+
+---

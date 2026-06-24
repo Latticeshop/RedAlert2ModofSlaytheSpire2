@@ -45,6 +45,7 @@ public sealed class AircraftCarrier : CardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+        UnitVoiceHelper.PlayUnitVoice(this.GetType());
         GD.Print($"[AircraftCarrier] OnPlay 被调用 - IsUpgraded={IsUpgraded}");
 
         // 获取目标敌人

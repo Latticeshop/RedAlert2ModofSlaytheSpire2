@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://allies_icon001"]
+[gd_scene load_steps=2 format=3 uid="uid://yxdlmyt8cvud"]
 
-[ext_resource type="Texture2D" path="res://RedAlert2ModResources/images/charui/tanyicon.png" id="1_icon"]
+[ext_resource type="Texture2D" uid="uid://cr2q3oanujold" path="res://RedAlert2ModResources/images/ui/allies_icon.png" id="1_rkuap"]
 
 [node name="AlliesIcon" type="Control"]
 layout_mode = 3
@@ -13,4 +13,4 @@ grow_vertical = 2
 [node name="CharacterIconCharName" type="Sprite2D" parent="."]
 position = Vector2(28.874998, 28.874998)
 scale = Vector2(0.43945315, 0.43945315)
-texture = ExtResource("1_icon")
+texture = ExtResource("1_rkuap")

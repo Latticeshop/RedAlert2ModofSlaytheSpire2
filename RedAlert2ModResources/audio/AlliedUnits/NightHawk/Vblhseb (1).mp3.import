@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bjpfju7nkydex"
+path="res://.godot/imported/Vblhseb (1).mp3-8a7443e299e6da76e0bf2debca4163bb.mp3str"
+
+[deps]
+
+source_file="res://RedAlert2ModResources/audio/AlliedUnits/NightHawk/Vblhseb (1).mp3"
+dest_files=["res://.godot/imported/Vblhseb (1).mp3-8a7443e299e6da76e0bf2debca4163bb.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

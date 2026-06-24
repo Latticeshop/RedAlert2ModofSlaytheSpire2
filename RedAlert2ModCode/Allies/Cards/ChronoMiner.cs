@@ -42,7 +42,8 @@ public sealed class ChronoMiner : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
-		// 获取资金
+		UnitVoiceHelper.PlayUnitVoice(this.GetType());
+		// 检查是否有MCV能力获取资金
 		var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
 		if (dollarPower != null)
 		{

@@ -46,6 +46,7 @@ public sealed class Intruder : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
+		UnitVoiceHelper.PlayUnitVoice(this.GetType());
 		GD.Print("[Intruder] 卡牌打出开始");
 
 		// 尝试执行绝地战备攻击（消耗一层）

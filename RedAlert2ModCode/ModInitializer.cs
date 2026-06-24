@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Models;
 using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Allies.Cards;
+using RedAlert2ModCode.Allies.Patches;
 
 namespace RedAlert2ModCode;
 
@@ -22,6 +23,9 @@ public static class ModInitializer
         
         // 注册角色立绘补丁
         AssetHooks.Install(harmony);
+        
+        // 注册角色选择语音补丁
+        CharacterSelectPatch.Install(harmony);
         
         // 注册所有盟军卡牌到盟军卡池
         ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AmericanSoldier));

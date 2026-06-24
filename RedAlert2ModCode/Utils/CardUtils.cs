@@ -310,7 +310,6 @@ public static class CardUtils
 		var mcvPower = creature.Powers.OfType<RedAlert2ModCode.Allies.Powers.AlliedMCVPower>().FirstOrDefault();
 		if (mcvPower != null)
 		{
-			GD.Print("[CardUtils] 角色拥有MCV能力");
 			return true;
 		}
 		

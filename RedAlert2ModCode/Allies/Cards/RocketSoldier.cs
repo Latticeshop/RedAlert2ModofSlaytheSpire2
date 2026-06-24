@@ -42,6 +42,7 @@ public sealed class RocketSoldier : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
+		UnitVoiceHelper.PlayUnitVoice(this.GetType());
 		if (IsUpgraded)
 		{
 			// 升级后：对所有敌人造成伤害

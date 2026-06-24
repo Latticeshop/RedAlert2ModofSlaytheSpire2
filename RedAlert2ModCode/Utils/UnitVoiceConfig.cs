@@ -1,0 +1,237 @@
+using System.Collections.Generic;
+
+namespace RedAlert2ModCode.Utils;
+
+/// <summary>
+/// 单位语音配置类
+/// 集中管理所有阵营单位的语音文件路径
+/// 便于扩展苏军、尤里等阵营
+/// </summary>
+public static class UnitVoiceConfig
+{
+    /// <summary>
+    /// 盟军单位语音配置
+    /// Key: 单位名称（类名，不含Card后缀）
+    /// Value: 语音文件路径列表
+    /// </summary>
+    public static readonly Dictionary<string, List<string>> AlliedUnits = new()
+    {
+        ["AmericanSoldier"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/Igiata.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/Igiatc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/Igiatf.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/Igimoa.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/Igimoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/Igimod.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/Igimof.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/Igisea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/Igisec.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/Igisee.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/Igisef.mp3",
+        },
+        ["GrizzlyTank"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrizzlyTank/Vgraatb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrizzlyTank/Vgraatc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrizzlyTank/Vgraate.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrizzlyTank/Vgramoa.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrizzlyTank/Vgramoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrizzlyTank/Vgramoe.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrizzlyTank/Vgramof.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrizzlyTank/Vgrasea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrizzlyTank/Vgraseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrizzlyTank/Vgrasec.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrizzlyTank/Vgrased.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrizzlyTank/Vgrasee.mp3",
+        },
+        ["Engineer"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/Engineer/Ienamoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Engineer/Ienasea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Engineer/Ienaseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Engineer/Ienasec.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Engineer/Ienased.mp3",
+        },
+        ["Intruder"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/Intruder/Vintata.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Intruder/Vintatb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Intruder/Vintatd.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Intruder/Vintmob.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Intruder/Vintmoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Intruder/Vintsea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Intruder/Vintseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Intruder/Vintsec.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Intruder/Vintsed.mp3",
+        },
+        ["MirageTank"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/MirageTank/Vmirata.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/MirageTank/Vmiratb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/MirageTank/Vmiratc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/MirageTank/Vmirate.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/MirageTank/Vmirmoa.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/MirageTank/Vmirmoe.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/MirageTank/Vmirsea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/MirageTank/Vmirseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/MirageTank/Vmirsed.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/MirageTank/Vmirsee.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/MirageTank/Vmirsef.mp3",
+        },
+        ["NightHawk"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/NightHawk/Vblhata.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/NightHawk/Vblhatb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/NightHawk/Vblhatd.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/NightHawk/Vblhmoa.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/NightHawk/Vblhmoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/NightHawk/Vblhmod.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/NightHawk/Vblhseb.mp3",
+        },
+        ["PrismTank"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/PrismTank/Vpriata.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/PrismTank/Vpriate.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/PrismTank/Vprimob.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/PrismTank/Vprimoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/PrismTank/Vprimod.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/PrismTank/Vprisea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/PrismTank/Vpriseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/PrismTank/Vprisee.mp3",
+        },
+        ["RocketSoldier"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/RocketSoldier/Irocatd.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/RocketSoldier/Irocmoa.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/RocketSoldier/Irocmoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/RocketSoldier/Irocmod.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/RocketSoldier/Irocseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/RocketSoldier/Irocsec.mp3",
+        },
+        ["Spy"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispyata.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispyatb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispymoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispymod.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispymoe.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispysea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispyseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispysec.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispysed.mp3",
+        },
+        ["TransportShip"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/TransportShip/Vhoamoa.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/TransportShip/Vhoamob.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/TransportShip/Vhoamoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/TransportShip/Vhoamoe.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/TransportShip/Vhoaseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/TransportShip/Vhoasec.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/TransportShip/Vhoased.mp3",
+        },
+        ["ChronoMiner"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoMiner/Vchrgob.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoMiner/Vchrgoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoMiner/Vchrhac.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoMiner/Vchrhad.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoMiner/Vchrmod.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoMiner/Vchrsea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoMiner/Vchrseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoMiner/Vchrsed.mp3",
+        },
+        ["DogSoldier"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/DogSoldier/Idogatca.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/DogSoldier/Idogdiea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/DogSoldier/Idogfea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/DogSoldier/Idogfec.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/DogSoldier/Idogsela.mp3",
+        },
+        ["AircraftCarrier"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/AircraftCarrier/Vairatb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AircraftCarrier/Vairmoa.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AircraftCarrier/Vairmob.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AircraftCarrier/Vairmoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AircraftCarrier/Vairmod.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AircraftCarrier/Vairmoe.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AircraftCarrier/Vairsea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AircraftCarrier/Vairsec.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/AircraftCarrier/Vairsed.mp3",
+        },
+        ["Destroyer"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/Destroyer/Vwaaata.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Destroyer/Vwaaatb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Destroyer/Vwaaatc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Destroyer/Vwaamob.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Destroyer/Vwaamoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Destroyer/Vwaamod.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Destroyer/Vwaamoe.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Destroyer/Vwaasea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Destroyer/Vwaaseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Destroyer/Vwaasec.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Destroyer/Vwaased.mp3",
+        },
+        ["Dolphin"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/Dolphin/Vdolatta.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Dolphin/Vdolmova.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Dolphin/Vdolmovb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Dolphin/Vdolselb.mp3",
+        },
+        ["IFV"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvatc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvmob.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvmoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvmoe.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvsea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvsec.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvsee.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvsef.mp3",
+        },
+    };
+
+    /// <summary>
+    /// 苏军单位语音配置（预留）
+    /// </summary>
+    public static readonly Dictionary<string, List<string>> SovietUnits = new();
+
+    /// <summary>
+    /// 尤里单位语音配置（预留）
+    /// </summary>
+    public static readonly Dictionary<string, List<string>> YuriUnits = new();
+
+    /// <summary>
+    /// 根据阵营和单位名称获取语音列表
+    /// </summary>
+    /// <param name="unitName">单位名称</param>
+    /// <param name="faction">阵营名称（Allied/Soviet/Yuri）</param>
+    /// <returns>语音文件路径列表，未找到返回空列表</returns>
+    public static List<string> GetUnitVoices(string unitName, string faction = "Allied")
+    {
+        return faction switch
+        {
+            "Soviet" => SovietUnits.TryGetValue(unitName, out var voices) ? voices : new List<string>(),
+            "Yuri" => YuriUnits.TryGetValue(unitName, out var voices) ? voices : new List<string>(),
+            _ => AlliedUnits.TryGetValue(unitName, out var voices) ? voices : new List<string>(),
+        };
+    }
+
+    /// <summary>
+    /// 检查指定单位是否有语音配置
+    /// </summary>
+    /// <param name="unitName">单位名称</param>
+    /// <param name="faction">阵营名称</param>
+    /// <returns>是否有语音配置</returns>
+    public static bool HasUnitVoices(string unitName, string faction = "Allied")
+    {
+        var voices = GetUnitVoices(unitName, faction);
+        return voices != null && voices.Count > 0;
+    }
+}

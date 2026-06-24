@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Nodes.Vfx.Utilities;
 using MegaCrit.Sts2.Core.TestSupport;
 using RedAlert2ModCode.Allies.Powers;
+using System;
 
 namespace RedAlert2ModCode.Utils;
 
@@ -30,6 +31,57 @@ public enum DollarVfxType
 /// </summary>
 public static class DollarVfxHelper
 {
+    // 音效路径常量
+    private const string DollarGainSoundPath = "res://RedAlert2ModResources/audio/dollar_gain.wav";
+    
+    // 静态AudioStreamPlayer用于播放音效
+    private static AudioStreamPlayer? _audioPlayer;
+
+    /// <summary>
+    /// 确保AudioStreamPlayer存在
+    /// </summary>
+    private static void EnsureAudioPlayer()
+    {
+        if (_audioPlayer != null && GodotObject.IsInstanceValid(_audioPlayer))
+            return;
+
+        _audioPlayer = new AudioStreamPlayer();
+        // 添加到场景树
+        var root = Engine.GetMainLoop() as SceneTree;
+        root?.Root.AddChild(_audioPlayer);
+    }
+
+    /// <summary>
+    /// 播放资金增加音效
+    /// </summary>
+    private static void PlayDollarGainSound()
+    {
+        try
+        {
+            EnsureAudioPlayer();
+            if (_audioPlayer == null)
+                return;
+
+            // 加载音效文件
+            var soundFile = GD.Load<AudioStream>(DollarGainSoundPath);
+            if (soundFile != null)
+            {
+                _audioPlayer.Stream = soundFile;
+                _audioPlayer.VolumeDb = -5; // 设置音量（dB）
+                _audioPlayer.Play();
+                GD.Print("[DollarVfxHelper] 播放资金增加音效");
+            }
+            else
+            {
+                GD.PrintErr($"[DollarVfxHelper] 无法加载音效文件: {DollarGainSoundPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[DollarVfxHelper] 播放音效失败: {ex.Message}");
+        }
+    }
+
     /// <summary>
     /// 播放资金动画（带类型控制）
     /// </summary>
@@ -68,6 +120,8 @@ public static class DollarVfxHelper
                             GD.Print("[DollarVfxHelper] 播放增益动画（绿色粒子）");
                         }
                     }
+                    // 播放资金增加音效
+                    PlayDollarGainSound();
                     break;
 
                 case DollarVfxType.Spend:

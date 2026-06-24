@@ -40,6 +40,9 @@ public sealed class OilDerrickCard : CardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+        // 播放建筑释放音效
+        BuildingSoundHelper.PlayBuildingPlaceSound();
+        
         await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
         // 立即获得$1000资金

@@ -63,6 +63,7 @@ public sealed class BattleLab : CardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         GD.Print("[BattleLab] OnPlay 被调用");
+        BuildingSoundHelper.PlayBuildingPlaceSound();
 
         // 扣除资金
         var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();

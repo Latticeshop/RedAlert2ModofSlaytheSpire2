@@ -59,6 +59,9 @@ public sealed class AlliedWarFactory : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
+		// 播放建筑释放音效
+		BuildingSoundHelper.PlayBuildingPlaceSound();
+		
 		GD.Print($"[AlliedWarFactory] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
 
 		// 扣除资金
