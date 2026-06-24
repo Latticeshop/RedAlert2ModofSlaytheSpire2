@@ -198,9 +198,61 @@ public static class UnitVoiceConfig
     };
 
     /// <summary>
-    /// 苏军单位语音配置（预留）
+    /// 苏军单位语音配置
     /// </summary>
-    public static readonly Dictionary<string, List<string>> SovietUnits = new();
+    public static readonly Dictionary<string, List<string>> SovietUnits = new()
+    {
+        ["Conscript"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconata.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconatb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconatc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconatd.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconmoa.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconmob.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconmoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconmod.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconsea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconseb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconsec.mp3",
+        },
+        ["RhinoTank"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/RhinoTank/Vgrsata.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/RhinoTank/Vgrsatc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/RhinoTank/Vgrsatd.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/RhinoTank/Vgrsmoa.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/RhinoTank/Vgrsmob.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/RhinoTank/Vgrsmoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/RhinoTank/Vgrssea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/RhinoTank/Vgrsseb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/RhinoTank/Vgrssec.mp3",
+        },
+        ["SovietEngineer"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietEngineer/Iensata.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietEngineer/Iensmoa.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietEngineer/Iensmob.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietEngineer/Iensmoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietEngineer/Ienssea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietEngineer/Iensseb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietEngineer/Ienssec.mp3",
+        },
+        ["WarMiner"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/WarMiner/Vwaratb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/WarMiner/Vwarhab.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/WarMiner/Vwarhac.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/WarMiner/Vwarmoa.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/WarMiner/Vwarmoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/WarMiner/Vwarmoe.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/WarMiner/Vwarsea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/WarMiner/Vwarseb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/WarMiner/Vwarsec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/WarMiner/Vwarsed.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/WarMiner/Vwarsee.mp3",
+        },
+    };
 
     /// <summary>
     /// 尤里单位语音配置（预留）

@@ -1,6 +1,7 @@
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect;
+using RedAlert2ModCode.Soviet;
 using RedAlert2ModCode.Utils;
 using System.Reflection;
 
@@ -42,9 +43,16 @@ internal static class CharacterSelectPatch
             // 检查是否是盟军角色
             if (__1 is Allies)
             {
-                // 播放角色选择语音
+                // 播放盟军角色选择语音（谭雅）
                 CharacterSelectAudioHelper.PlayAlliesSelectVoice();
-                ModInitializer.Logger.Info("[CharacterSelectPatch] 播放盟军角色选择语音");
+                ModInitializer.Logger.Info("[CharacterSelectPatch] 播放盟军角色选择语音（谭雅）");
+            }
+            // 检查是否是苏军角色
+            else if (__1 is Soviet.Soviet)
+            {
+                // 播放苏军角色选择语音（娜塔莎）
+                CharacterSelectAudioHelper.PlaySovietSelectVoice();
+                ModInitializer.Logger.Info("[CharacterSelectPatch] 播放苏军角色选择语音（娜塔莎）");
             }
         }
         catch (Exception ex)

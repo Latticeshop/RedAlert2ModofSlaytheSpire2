@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://c3ssa41tqgdxs"
+path="res://.godot/imported/RA3 SUNatas VoiMovh.mp3-92368702d79a6fdb31baf6019a1a3e02.mp3str"
+
+[deps]
+
+source_file="res://RedAlert2ModResources/audio/character_select/NatashaSelectVoice/RA3 SUNatas VoiMovh.mp3"
+dest_files=["res://.godot/imported/RA3 SUNatas VoiMovh.mp3-92368702d79a6fdb31baf6019a1a3e02.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -3,6 +3,7 @@ using System.Linq;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using RedAlert2ModCode.Soviet.Cards;
 
 namespace RedAlert2ModCode.Soviet;
 
@@ -11,12 +12,16 @@ public static class SovietCardRegistry
     // 苏军单位卡
     public static List<Func<CardModel>> Soldiers { get; } = new()
     {
-        // 待添加：苏联士兵、重型步兵等
+        () => ModelDb.Card<Conscript>(),
+        () => ModelDb.Card<SovietEngineer>(),
     };
 
     public static List<Func<CardModel>> Vehicles { get; } = new()
     {
-        // 待添加：犀牛坦克、动员兵载具等
+        () => ModelDb.Card<RhinoTank>(),
+        () => ModelDb.Card<WarMiner>(),
+        () => ModelDb.Card<FlakTrack>(),
+        () => ModelDb.Card<SovietMCV>(),
     };
 
     public static List<Func<CardModel>> Aircraft { get; } = new()
@@ -32,7 +37,12 @@ public static class SovietCardRegistry
     // 苏军建筑卡
     public static List<Func<CardModel>> BuildingCards { get; } = new()
     {
-        // 待添加：苏军兵营、苏军重工等
+        () => ModelDb.Card<SovietBarracksCard>(),
+        () => ModelDb.Card<SovietWarFactory>(),
+        () => ModelDb.Card<SovietShipyardCard>(),
+        () => ModelDb.Card<SovietRepairDepot>(),
+        () => ModelDb.Card<SovietPillboxCard>(),
+        () => ModelDb.Card<SovietWallCard>(),
     };
 
     // 苏军技能卡
