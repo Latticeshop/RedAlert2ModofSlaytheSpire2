@@ -1,33 +1,31 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Godot;
-using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.GameActions;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
-using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
-using System.Collections.Generic;
-using System.Linq;
 using RedAlert2ModCode.Utils;
 using RedAlert2ModCode.Allies.Powers;
 
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
-/// 武装采矿车 - 技能牌
-/// 0费，获得500资金（升级后800），使用后加入摸牌堆
+/// 武装采矿车 - 攻击牌
+/// 0费，对敌方造成2点伤害（升级后对全体敌人），获得2000资金
 /// 挖矿逻辑：优先挖宝石矿(2倍价值)，再挖黄金矿
-/// 对应盟军的超时空矿车，但武装采矿车自带机枪
 /// </summary>
 public sealed class WarMiner : CardModel
 {
 	// 数值引用
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.WarMiner;
 	
-	public WarMiner() : base((int)Values.Cost, CardType.Skill, CardRarity.Token, TargetType.Self) { }
+	public WarMiner() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/soviet/harvicon.png";
 
@@ -38,12 +36,34 @@ public sealed class WarMiner : CardModel
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
+		new DamageVar(Values.Damage, ValueProp.Unpowered),
 		new IntVar("DollarValue", Values.DollarValue)
 	};
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Soviet");
+		
+		// 攻击效果：造成2点伤害（升级后对全体敌人）
+		if (base.IsUpgraded)
+		{
+			// 升级后：对所有敌人造成伤害
+			await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+				.FromCard(this)
+				.TargetingAllOpponents(Owner.Creature.CombatState)
+				.Execute(ctx);
+			GD.Print($"[WarMiner] 升级：对所有敌人造成 {DynamicVars.Damage.BaseValue} 点伤害");
+		}
+		else
+		{
+			// 基础：对选中的敌人造成伤害
+			await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+				.FromCard(this)
+				.Targeting(play.Target)
+				.Execute(ctx);
+			GD.Print($"[WarMiner] 攻击 {play.Target} 造成 {DynamicVars.Damage.BaseValue} 点伤害");
+		}
+		
 		// 检查是否有MCV能力获取资金
 		var dollarPower = Owner.Creature.Powers.OfType<RedAlert2ModCode.Allies.Powers.DollarPower>().FirstOrDefault();
 		if (dollarPower != null)
@@ -116,6 +136,7 @@ public sealed class WarMiner : CardModel
 
 	protected override void OnUpgrade()
 	{
+		DynamicVars.Damage.UpgradeValueBy(Values.DamageUpgraded);
 		base.DynamicVars["DollarValue"].BaseValue = Values.DollarValue + Values.DollarValueUpgraded;
 	}
 }

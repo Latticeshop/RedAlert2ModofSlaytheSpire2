@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://7m1rgxk2o2em"
-path="res://.godot/imported/soviet_character_select.png-ad397e7cf66811413bf32aaa982207c1.ctex"
+uid="uid://ktb1v4kvq07s"
+path="res://.godot/imported/soviet_character.png-3a16b9abc0bdce247e679d7a12f926be.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://RedAlert2ModResources/images/packed/character_select/soviet_character_select.png"
-dest_files=["res://.godot/imported/soviet_character_select.png-ad397e7cf66811413bf32aaa982207c1.ctex"]
+source_file="res://RedAlert2ModResources/images/character/soviet_character.png"
+dest_files=["res://.godot/imported/soviet_character.png-3a16b9abc0bdce247e679d7a12f926be.ctex"]
 
 [params]
 

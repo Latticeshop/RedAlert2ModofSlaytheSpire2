@@ -12,18 +12,19 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
-using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Utils;
 
 using EngineerChoice = RedAlert2ModCode.UI.EngineerChoiceScreen.EngineerChoice;
 
-namespace RedAlert2ModCode.Allies.Cards;
+namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
-/// 工程师 - 盟军士兵单位卡
+/// 苏军工程师 - 苏军士兵单位卡
 /// 1费，common蓝卡
 /// 效果：从2(升级为3)个选项中选择一个指令执行
+/// 对应盟军的工程师
 /// </summary>
 public sealed class Engineer : CardModel
 {
@@ -34,7 +35,7 @@ public sealed class Engineer : CardModel
 
 	public Engineer() : base(COST, CardType.Skill, CardRarity.Token, TargetType.Self) { }
 
-	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/allies/aengicon.png";
+	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/soviet/engnicon.png";
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
@@ -43,7 +44,7 @@ public sealed class Engineer : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
-		UnitVoiceHelper.PlayUnitVoice(this.GetType());
+		UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Soviet");
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
 		// 生成随机选项
@@ -65,7 +66,7 @@ public sealed class Engineer : CardModel
 	{
 		// 根据权重随机选择
 		int choiceCount = IsUpgraded ? BASE_CHOICE_COUNT + UPGRADED_CHOICE_COUNT : BASE_CHOICE_COUNT;
-		var selected = WeightedRandomSelection(EngineerChoiceValues.AllChoices, choiceCount);
+		var selected = WeightedRandomSelection(RedAlert2ModCode.Allies.Cards.EngineerChoiceValues.AllChoices, choiceCount);
 
 		return selected;
 	}
@@ -121,7 +122,7 @@ public sealed class Engineer : CardModel
 				break;
 
 			case EngineerChoiceScreen.ChoiceType.CaptureAirfield:
-				// 加入一张伞兵卡牌
+				// 加入一张伞兵卡牌（使用盟军的伞兵卡）
 				var paratrooperCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<Paratrooper>(), Owner);
 				await CardPileCmd.AddGeneratedCardToCombat(paratrooperCard, PileType.Hand, Owner);
 				break;
@@ -137,9 +138,9 @@ public sealed class Engineer : CardModel
 				break;
 
 			case EngineerChoiceScreen.ChoiceType.CaptureTechOutpost:
-				// 获得爱国者飞弹和维修厂能力
-				await PowerCmd.Apply<PatriotMissilePower>(ctx, Owner.Creature, 1, Owner.Creature, this);
-				await RepairDepotPower.ApplyRepairDepot(Owner.Creature);
+				// 获得爱国者飞弹和维修厂能力（复用盟军的）
+				await PowerCmd.Apply<RedAlert2ModCode.Allies.Powers.PatriotMissilePower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+				await RedAlert2ModCode.Allies.Powers.RepairDepotPower.ApplyRepairDepot(Owner.Creature);
 				break;
 
 			case EngineerChoiceScreen.ChoiceType.RepairBridge:

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://l6h40t4d8d8f"
-path="res://.godot/imported/allies_bg.png-b7bf09450ab3515406bfb925818c676c.ctex"
+uid="uid://d12ol14ppeuix"
+path="res://.godot/imported/soviet_character_select.png-ad03b15585328049f1129fcbe44df94d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://RedAlert2ModResources/scenes/allies_bg.png"
-dest_files=["res://.godot/imported/allies_bg.png-b7bf09450ab3515406bfb925818c676c.ctex"]
+source_file="res://RedAlert2ModResources/images/charui/soviet_character_select.png"
+dest_files=["res://.godot/imported/soviet_character_select.png-ad03b15585328049f1129fcbe44df94d.ctex"]
 
 [params]
 

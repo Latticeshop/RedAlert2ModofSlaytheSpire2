@@ -1,0 +1,50 @@
+[gd_scene load_steps=2 format=3 uid="uid://c7801l3ej1iyy"]
+
+[ext_resource type="Texture2D" uid="uid://sovrest001" path="res://RedAlert2ModResources/images/character/soviet_character_rest.png" id="1_8kag2"]
+
+[node name="SovietRestSite" type="Node2D"]
+position = Vector2(-2, 42)
+scale = Vector2(0.76, 0.76)
+
+[node name="Visuals" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(118, -34)
+scale = Vector2(0.9, 0.9)
+texture = ExtResource("1_8kag2")
+
+[node name="ControlRoot" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="SelectionReticle" type="Control" parent="ControlRoot"]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = -153.0
+offset_top = -350.0
+offset_right = 267.0
+offset_bottom = 320.0
+
+[node name="Hitbox" type="Control" parent="ControlRoot"]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = -155.0
+offset_top = -351.0
+offset_right = 266.0
+offset_bottom = 332.0
+
+[node name="ThoughtBubbleRight" type="Control" parent="ControlRoot"]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 0
+offset_left = 209.209
+offset_top = -317.103
+offset_right = 209.209
+offset_bottom = -317.103
+
+[node name="ThoughtBubbleLeft" type="Control" parent="ControlRoot"]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = -73.6836
+offset_top = -324.997
+offset_right = -73.6836
+offset_bottom = -324.997

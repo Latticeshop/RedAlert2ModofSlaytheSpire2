@@ -48,7 +48,7 @@ public sealed class AlliedMCV : CardModel
 	{
 		typeof(PowerPlantCard),
 		typeof(AlliedRefinery),
-		typeof(BarracksCard),
+		typeof(AlliesBarracksCard),
 		typeof(AlliedWarFactory)
 	};
 

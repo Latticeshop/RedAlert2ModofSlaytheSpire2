@@ -45,7 +45,7 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/GrizzlyTank/Vgrased.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/GrizzlyTank/Vgrasee.mp3",
         },
-        ["Engineer"] = new List<string>
+        ["AlliesEngineer"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/Engineer/Ienamoc.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/Engineer/Ienasea.mp3",

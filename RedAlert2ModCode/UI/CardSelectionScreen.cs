@@ -484,6 +484,9 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         // 去除 [gold] 和 [/gold] 标签
         desc = desc.Replace("[gold]", "").Replace("[/gold]", "");
 
+        // 移除价格信息（卡牌选择UI页面不需要显示价格）
+        desc = System.Text.RegularExpressions.Regex.Replace(desc, @"价格：\$\{?DollarNumber\}?。?", "");
+
         // 移除未替换的变量标记（避免显示 {xxx}）
         desc = System.Text.RegularExpressions.Regex.Replace(desc, @"\{[^{}]+\}", "");
 

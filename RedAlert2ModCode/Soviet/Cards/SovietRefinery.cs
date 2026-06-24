@@ -7,29 +7,26 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
-using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
+using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Utils;
-using System.Linq;
 
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
-/// 苏军围墙 - 苏联建筑卡
-/// 0费技能卡
-/// 效果：花费资金，获得护盾，将此牌返回手牌
+/// 苏联矿场 - 能力牌
+/// 1费，将一张武装采矿车加入手牌
 /// </summary>
-public sealed class SovietWallCard : CardModel
+public sealed class SovietRefinery : CardModel
 {
-	private static readonly CardValueStore.CardValues Values = SovietCardValues.SovietWall;
+	private static readonly CardValueStore.CardValues Values = SovietCardValues.SovietRefinery;
 	
-	public SovietWallCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+	public SovietRefinery() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
-	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/soviet/nwalicon.png";
-
+	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/soviet/nreficon.png";
+	
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new BlockVar(Values.Block, ValueProp.Unpowered),
 		new IntVar("DollarNumber", Values.DollarValue)
 	};
 
@@ -38,9 +35,6 @@ public sealed class SovietWallCard : CardModel
 		ModCardKeywords.Building.CreateHoverTip()
 	];
 
-	/// <summary>
-	/// 检查是否可以打出（资金是否足够）
-	/// </summary>
 	protected override bool IsPlayable
 	{
 		get
@@ -52,7 +46,6 @@ public sealed class SovietWallCard : CardModel
 			if (!CardUtils.HasMcvPower(Owner.Creature))
 				return false;
 
-			// 检查资金是否足够
 			var dollarPower = Owner.Creature.Powers.OfType<Allies.Powers.DollarPower>().FirstOrDefault();
 			if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
 				return false;
@@ -63,35 +56,42 @@ public sealed class SovietWallCard : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
-		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+		// 播放建筑释放音效
+		BuildingSoundHelper.PlayBuildingPlaceSound();
 		
 		// 扣除资金
 		var dollarPower = Owner.Creature.Powers.OfType<Allies.Powers.DollarPower>().FirstOrDefault();
 		if (dollarPower != null)
 		{
 			dollarPower.AddDollar(-(int)Values.DollarValue);
-			GD.Print($"[SovietWallCard] 扣除资金 {Values.DollarValue}");
+			GD.Print($"[SovietRefinery] 扣除资金 {Values.DollarValue}");
+		}
+
+		// 获取 WarMiner 模型
+		var minerModel = ModelDb.Card<WarMiner>();
+		if (minerModel == null)
+		{
+			GD.Print("[SovietRefinery] Error: WarMiner model is null");
+			return;
+		}
+
+		// 创建武装采矿车卡牌
+		var minerCard = Owner.Creature.CombatState.CreateCard(minerModel, Owner);
+		// 如果矿场是升级过的，矿车也升级
+		if (base.IsUpgraded)
+		{
+			CardCmd.Upgrade(minerCard);
 		}
 		
-		// 获得护盾
-		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
-	}
+		// 将矿车加入手牌
+		await CardPileCmd.AddGeneratedCardToCombat(minerCard, PileType.Hand, Owner);
 
-	/// <summary>
-	/// 设置卡牌使用后的去向（返回手牌）
-	/// </summary>
-	protected override PileType GetResultPileTypeForCardPlay()
-	{
-		PileType resultPileType = base.GetResultPileTypeForCardPlay();
-		if (resultPileType != PileType.Discard)
-		{
-			return resultPileType;
-		}
-		return PileType.Hand;
+		// 打出后抽一张牌
+		await CardPileCmd.Draw(ctx, 1, Owner);
 	}
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Block.UpgradeValueBy(Values.BlockUpgraded);
+		// 升级后：获得的武装采矿车也会升级
 	}
 }

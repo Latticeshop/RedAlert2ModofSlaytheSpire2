@@ -22,15 +22,15 @@ public sealed class Soviet : PlaceholderCharacterModel
     // 自定义资源路径
     public override string CustomIconPath => "res://RedAlert2ModResources/scenes/ui/character_icons/soviet_icon.tscn";
     public override string CustomIconTexturePath => "res://RedAlert2ModResources/images/ui/soviet_icon.png";
-    public override string CustomCharacterSelectIconPath => "res://RedAlert2ModResources/images/packed/character_select/soviet_character_select.png";
+    public override string CustomCharacterSelectIconPath => "res://RedAlert2ModResources/images/charui/soviet_character_select.png";
     public override string CustomVisualPath => "res://RedAlert2ModResources/scenes/creature_visuals/soviet.tscn";
-    public override string CustomCharacterSelectBg => "res://RedAlert2ModResources/scenes/allies_bg.tscn"; // 复用盟军背景
+    public override string CustomCharacterSelectBg => "res://RedAlert2ModResources/scenes/soviet_bg.tscn";
     
-    // 篝火休息场景（复用盟军的）
-    public override string CustomRestSiteAnimPath => "res://RedAlert2ModResources/scenes/rest_site/characters/allies_rest_site.tscn";
+    // 篝火休息场景
+    public override string CustomRestSiteAnimPath => "res://RedAlert2ModResources/scenes/rest_site/characters/soviet_rest_site.tscn";
     
-    // 商店场景（复用战斗立绘）
-    public override string CustomMerchantAnimPath => "res://RedAlert2ModResources/scenes/creature_visuals/allies_shop_simple.tscn";
+    // 商店场景
+    public override string CustomMerchantAnimPath => "res://RedAlert2ModResources/scenes/creature_visuals/soviet_shop.tscn";
     
     // 角色颜色配置 - 苏军红色
     public static readonly Color Color = new("a02020");

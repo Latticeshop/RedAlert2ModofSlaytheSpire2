@@ -451,7 +451,7 @@ public static class AlliesCardValues
 			{ "AMERICANSOLDIER", AmericanSoldier },
 			{ "DOGSOLDIER", DogSoldier },
 			{ "ROCKETSOLDIER", RocketSoldier },
-			{ "ENGINEER", Engineer }
+			{ "ALLIESENGINEER", Engineer }
 		};
 	}
 	
@@ -489,15 +489,15 @@ public static class AlliesCardValues
 	{
 		return new System.Collections.Generic.Dictionary<string, CardValueStore.CardValues>
 		{
-			{ "BARRACKSCARD", Barracks },
+			{ "ALLIESBARRACKSCARD", Barracks },
 			{ "ALLIEDWARFACTORY", AlliedWarFactory },
 			{ "AIRFORCECOMMAND", AirForceCommand },
-			{ "SHIPYARDCARD", Shipyard },
+			{ "ALLIESSHIPYARDCARD", Shipyard },
 			{ "POWERPLANTCARD", PowerPlant },
 			{ "ALLIEDREFINERY", AlliedRefinery },
 			{ "PRISMTOWERCARD", PrismTower },
 			{ "ALLIEDWALLCARD", AlliedWall },
-			{ "PILLBOXCARD", Pillbox },
+			{ "ALLIESPILLBOXCARD", Pillbox },
 			{ "PATRIOTMISSILE", PatriotMissile },
 			{ "BATTLELAB", BattleLab }
 		};
@@ -521,13 +521,13 @@ public static class AlliesCardValues
 	{
 		{ typeof(PowerPlantCard), () => ModelDb.Card<PowerPlantCard>() },
 		{ typeof(AlliedRefinery), () => ModelDb.Card<AlliedRefinery>() },
-		{ typeof(BarracksCard), () => ModelDb.Card<BarracksCard>() },
+		{ typeof(AlliesBarracksCard), () => ModelDb.Card<AlliesBarracksCard>() },
 		{ typeof(AlliedWarFactory), () => ModelDb.Card<AlliedWarFactory>() },
 		{ typeof(AirForceCommand), () => ModelDb.Card<AirForceCommand>() },
-		{ typeof(ShipyardCard), () => ModelDb.Card<ShipyardCard>() },
+		{ typeof(AlliesShipyardCard), () => ModelDb.Card<AlliesShipyardCard>() },
 		{ typeof(PrismTowerCard), () => ModelDb.Card<PrismTowerCard>() },
 		{ typeof(AlliedWallCard), () => ModelDb.Card<AlliedWallCard>() },
-		{ typeof(PillboxCard), () => ModelDb.Card<PillboxCard>() },
+		{ typeof(AlliesPillboxCard), () => ModelDb.Card<AlliesPillboxCard>() },
 		{ typeof(PatriotMissile), () => ModelDb.Card<PatriotMissile>() },
 		{ typeof(BattleLab), () => ModelDb.Card<BattleLab>() },
 		{ typeof(ChronoSphere), () => ModelDb.Card<ChronoSphere>() },

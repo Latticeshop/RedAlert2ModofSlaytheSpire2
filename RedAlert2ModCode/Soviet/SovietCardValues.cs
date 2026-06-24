@@ -112,14 +112,14 @@ public static class SovietCardValues
 	};
 	
 	/// <summary>苏军船厂 - 0费，价格1000</summary>
-	public static CardValueStore.CardValues SovietShipyard => new()
+	public static CardValueStore.CardValues Shipyard => new()
 	{
 		Cost = 0,
 		DollarValue = 1000
 	};
 	
 	/// <summary>苏军维修厂 - 2费能力卡（升级后1费），价格800</summary>
-	public static CardValueStore.CardValues SovietRepairDepot => new()
+	public static CardValueStore.CardValues RepairDepot => new()
 	{
 		Cost = 2,
 		CostUpgraded = 1,
@@ -138,19 +138,19 @@ public static class SovietCardValues
 		DollarValue = 500
 	};
 	
-	/// <summary>核电站 - 0费，每5张牌获得1能量，升级后每4张，价格800</summary>
+	/// <summary>磁能反应堆 - 1费，每10张牌获得1能量，升级后每7张，价格800</summary>
 	public static CardValueStore.CardValues NuclearReactor => new()
 	{
-		Cost = 0,
-		MagicNumber = 5,
-		MagicNumberUpgraded = -1,
+		Cost = 1,
+		MagicNumber = 10,
+		MagicNumberUpgraded = -3,
 		DollarValue = 800
 	};
 	
-	/// <summary>矿场 - 0费，价格2000</summary>
+	/// <summary>矿场 - 1费，价格2000</summary>
 	public static CardValueStore.CardValues SovietRefinery => new()
 	{
-		Cost = 0,
+		Cost = 1,
 		DollarValue = 2000
 	};
 	
@@ -160,8 +160,8 @@ public static class SovietCardValues
 	public static CardValueStore.CardValues SovietWall => new()
 	{
 		Cost = 0,
-		Block = 5,
-		BlockUpgraded = 3,
+		Block = 1,
+		BlockUpgraded = 1,
 		DollarValue = 100
 	};
 	
@@ -177,12 +177,14 @@ public static class SovietCardValues
 	
 	// ==================== 经济单位 ====================
 	
-	/// <summary>武装采矿车 - 0费获得500资金，升级后800资金</summary>
+	/// <summary>武装采矿车 - 0费攻击造成2点伤害（升级后全体），获得2000资金</summary>
 	public static CardValueStore.CardValues WarMiner => new()
 	{
 		Cost = 0,
-		DollarValue = 500,
-		DollarValueUpgraded = 300
+		Damage = 2,
+		DamageUpgraded = 0,  // 升级后伤害不变（2点），只是变为全体攻击
+		DollarValue = 2000,
+		DollarValueUpgraded = 1000
 	};
 	
 	// ==================== 数值映射创建方法 ====================
@@ -231,8 +233,8 @@ public static class SovietCardValues
 		{
 			{ "SOVIETBARRACKSCARD", Barracks },
 			{ "SOVIETWARFACTORY", SovietWarFactory },
-			{ "SOVIETSHIPYARDCARD", SovietShipyard },
-			{ "SOVIETREPAIRDEPOT", SovietRepairDepot },
+			{ "SHIPYARDCARD", Shipyard },
+			{ "REPAIRDEPOT", RepairDepot },
 			{ "SOVIETPILLBOXCARD", SovietPillbox },
 			{ "NUCLEARREACTOR", NuclearReactor },
 			{ "SOVIETREFINERY", SovietRefinery },

@@ -1,12 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://bxrseecc80q3y"]
+[gd_scene load_steps=2 format=3 uid="uid://c7801l4hfwiyy"]
 
-[ext_resource type="Texture2D" uid="uid://ktb1v4kvq07s" path="res://RedAlert2ModResources/images/character/soviet_character.png" id="1_lugwd"]
+[ext_resource type="Texture2D" uid="uid://sovshop001" path="res://RedAlert2ModResources/images/character/soviet_character.png" id="1_lugwd"]
 
-[node name="Soviet" type="Node2D"]
+[node name="SovietShop" type="Node2D"]
 
 [node name="Visuals" type="Sprite2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(0, -145)
+position = Vector2(0, -175)
 scale = Vector2(0.33, 0.33)
 texture = ExtResource("1_lugwd")
 

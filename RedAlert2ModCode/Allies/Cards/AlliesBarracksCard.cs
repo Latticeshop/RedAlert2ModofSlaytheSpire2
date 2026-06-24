@@ -17,11 +17,11 @@ using RedAlert2ModCode.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
-public sealed class BarracksCard : CardModel
+public sealed class AlliesBarracksCard : CardModel
 	{
 		private static readonly CardValueStore.CardValues Values = AlliesCardValues.Barracks;
 		
-		public BarracksCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
+		public AlliesBarracksCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
 		public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/brrkicon.png";
 		
@@ -57,7 +57,7 @@ public sealed class BarracksCard : CardModel
 
 		protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
-		GD.Print($"[BarracksCard] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
+		GD.Print($"[AlliesBarracksCard] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
 		
 		// 播放建筑释放音效
 		BuildingSoundHelper.PlayBuildingPlaceSound();
@@ -67,14 +67,14 @@ public sealed class BarracksCard : CardModel
 		if (dollarPower != null)
 		{
 			dollarPower.AddDollar(-(int)AlliesCardValues.Barracks.DollarValue);
-			GD.Print($"[BarracksCard] 扣除资金 {AlliesCardValues.Barracks.DollarValue}");
+			GD.Print($"[AlliesBarracksCard] 扣除资金 {AlliesCardValues.Barracks.DollarValue}");
 		}
 
 		// 检查是否有空指部能力或牌库中有空军单位
 		bool hasAirForceCommand = HasAirForceCommand();
 		bool hasAirUnitInDeck = HasAirUnitInDeck();
 		
-		GD.Print($"[BarracksCard] 有空指部能力: {hasAirForceCommand}, 牌库有空军单位: {hasAirUnitInDeck}");
+		GD.Print($"[AlliesBarracksCard] 有空指部能力: {hasAirForceCommand}, 牌库有空军单位: {hasAirUnitInDeck}");
 
 		// 使用盟军卡牌注册管理器获取所有士兵单位卡
 		List<CardModel> availableCards = AlliedCardRegistry.CreateSoldiers(Owner);
@@ -83,17 +83,17 @@ public sealed class BarracksCard : CardModel
 		if (!hasAirForceCommand && !hasAirUnitInDeck)
 		{
 			availableCards = availableCards.Where(c => c.GetType() != typeof(RocketSoldier)).ToList();
-			GD.Print($"[BarracksCard] 移除火箭飞行兵选项，剩余卡牌数量: {availableCards.Count}");
+			GD.Print($"[AlliesBarracksCard] 移除火箭飞行兵选项，剩余卡牌数量: {availableCards.Count}");
 		}
 		
-		GD.Print($"[BarracksCard] 可用卡牌数量: {availableCards.Count}");
+		GD.Print($"[AlliesBarracksCard] 可用卡牌数量: {availableCards.Count}");
 
 		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
 		// 传递数值映射，让UI面板能够正确显示费用
 		var cardValuesMap = AlliesCardValues.CreateSoldierValuesMap();
 		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap);
 
-		GD.Print($"[BarracksCard] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
+		GD.Print($"[AlliesBarracksCard] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
 
 		// 如果玩家选择了卡牌，才执行能力效果
 		if (selectedCard != null)

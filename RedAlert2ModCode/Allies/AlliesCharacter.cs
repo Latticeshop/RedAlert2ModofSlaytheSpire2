@@ -23,7 +23,7 @@ public sealed class Allies : PlaceholderCharacterModel
     // 自定义资源路径
     public override string CustomIconPath => "res://RedAlert2ModResources/scenes/ui/character_icons/allies_icon.tscn";
     public override string CustomIconTexturePath => "res://RedAlert2ModResources/images/ui/allies_icon.png";
-    public override string CustomCharacterSelectIconPath => "res://RedAlert2ModResources/images/packed/character_select/allies_character_select.png";
+    public override string CustomCharacterSelectIconPath => "res://RedAlert2ModResources/images/charui/allies_character_select.png";
     public override string CustomVisualPath => "res://RedAlert2ModResources/scenes/creature_visuals/allies.tscn";
     public override string CustomCharacterSelectBg => "res://RedAlert2ModResources/scenes/allies_bg.tscn";
     
@@ -31,7 +31,7 @@ public sealed class Allies : PlaceholderCharacterModel
     public override string CustomRestSiteAnimPath => "res://RedAlert2ModResources/scenes/rest_site/characters/allies_rest_site.tscn";
     
     // 商店场景（复用战斗立绘）
-    public override string CustomMerchantAnimPath => "res://RedAlert2ModResources/scenes/creature_visuals/allies_shop_simple.tscn";
+    public override string CustomMerchantAnimPath => "res://RedAlert2ModResources/scenes/creature_visuals/allies_shop.tscn";
     
     // 角色颜色配置
     public static readonly Color Color = new("2060a0"); // 盟军蓝色

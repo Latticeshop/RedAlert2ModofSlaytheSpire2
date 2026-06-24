@@ -21,11 +21,11 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 船厂 - 盟军建筑卡
 /// 0费，选择一张海军单位，创建对应的生产序列
 /// </summary>
-public sealed class ShipyardCard : CardModel
+public sealed class AlliesShipyardCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.Shipyard;
 	
-	public ShipyardCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
+	public AlliesShipyardCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/ayaricon.png";
 	
@@ -61,7 +61,7 @@ public sealed class ShipyardCard : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
-		GD.Print($"[ShipyardCard] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
+		GD.Print($"[AlliesShipyardCard] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
 		
 		// 播放建筑释放音效
 		BuildingSoundHelper.PlayBuildingPlaceSound();
@@ -71,19 +71,19 @@ public sealed class ShipyardCard : CardModel
 		if (dollarPower != null)
 		{
 			dollarPower.AddDollar(-(int)AlliesCardValues.Shipyard.DollarValue);
-			GD.Print($"[ShipyardCard] 扣除资金 {AlliesCardValues.Shipyard.DollarValue}");
+			GD.Print($"[AlliesShipyardCard] 扣除资金 {AlliesCardValues.Shipyard.DollarValue}");
 		}
 
 		// 使用盟军卡牌注册管理器获取所有海军单位卡
 		List<CardModel> availableCards = AlliedCardRegistry.CreateShips(Owner);
 		
-		GD.Print($"[ShipyardCard] 可用卡牌数量: {availableCards.Count}");
+		GD.Print($"[AlliesShipyardCard] 可用卡牌数量: {availableCards.Count}");
 
 		// 使用自定义选择面板
 		var cardValuesMap = AlliesCardValues.CreateShipValuesMap();
 		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap);
 
-		GD.Print($"[ShipyardCard] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
+		GD.Print($"[AlliesShipyardCard] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
 
 		// 如果玩家选择了卡牌，才执行能力效果
 		if (selectedCard != null)
@@ -93,7 +93,7 @@ public sealed class ShipyardCard : CardModel
 			// 如果选择的是运输船，直接扣除资金并加入手牌
 			if (selectedCard is TransportShip)
 			{
-				GD.Print($"[ShipyardCard] 选择运输船，直接扣除资金并加入手牌");
+				GD.Print($"[AlliesShipyardCard] 选择运输船，直接扣除资金并加入手牌");
 				
 				// 获取运输船价格
 				int transportPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
@@ -102,7 +102,7 @@ public sealed class ShipyardCard : CardModel
 				if (dollarPower != null)
 				{
 					dollarPower.AddDollar(-transportPrice);
-					GD.Print($"[ShipyardCard] 扣除运输船费用 {transportPrice}");
+					GD.Print($"[AlliesShipyardCard] 扣除运输船费用 {transportPrice}");
 				}
 				
 				// 克隆卡牌并加入手牌

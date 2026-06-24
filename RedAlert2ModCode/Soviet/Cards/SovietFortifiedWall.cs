@@ -15,21 +15,22 @@ using System.Linq;
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
-/// 苏军围墙 - 苏联建筑卡
-/// 0费技能卡
-/// 效果：花费资金，获得护盾，将此牌返回手牌
+/// 苏联坚固围墙 - 古老牙齿转化后的先古版本围墙
+/// 苏联建筑，技能卡，先古卡
+/// 使用苏联围墙一样的图片
+/// 与普通围墙区别在于，需要消耗资金，但格挡数值更高（3/4格挡）
 /// </summary>
-public sealed class SovietWallCard : CardModel
+public sealed class SovietFortifiedWall : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.SovietWall;
-	
-	public SovietWallCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+
+	public SovietFortifiedWall() : base(0, CardType.Skill, CardRarity.Ancient, TargetType.Self) { }
 
 	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/soviet/nwalicon.png";
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new BlockVar(Values.Block, ValueProp.Unpowered),
+		new BlockVar(3m, ValueProp.Unpowered),
 		new IntVar("DollarNumber", Values.DollarValue)
 	};
 
@@ -70,10 +71,9 @@ public sealed class SovietWallCard : CardModel
 		if (dollarPower != null)
 		{
 			dollarPower.AddDollar(-(int)Values.DollarValue);
-			GD.Print($"[SovietWallCard] 扣除资金 {Values.DollarValue}");
 		}
 		
-		// 获得护盾
+		// 获得护盾（坚固围墙格挡更高）
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
 	}
 
@@ -92,6 +92,7 @@ public sealed class SovietWallCard : CardModel
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Block.UpgradeValueBy(Values.BlockUpgraded);
+		// 升级后护盾提升到4
+		DynamicVars.Block.UpgradeValueBy(1m);
 	}
 }

@@ -82,7 +82,7 @@ public sealed class SellMCV : CardModel
 		// 升级效果：将一张工程师卡牌加入手牌
 		if (IsUpgraded)
 		{
-			var engineerCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<Engineer>(), Owner);
+			var engineerCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<AlliesEngineer>(), Owner);
 			await CardPileCmd.AddGeneratedCardToCombat(engineerCard, PileType.Hand, Owner);
 			GD.Print("[SellMCV] 升级效果：将工程师加入手牌");
 		}

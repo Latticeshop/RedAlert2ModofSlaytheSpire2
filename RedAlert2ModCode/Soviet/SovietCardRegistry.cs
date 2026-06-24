@@ -13,7 +13,7 @@ public static class SovietCardRegistry
     public static List<Func<CardModel>> Soldiers { get; } = new()
     {
         () => ModelDb.Card<Conscript>(),
-        () => ModelDb.Card<SovietEngineer>(),
+        () => ModelDb.Card<Engineer>(),
     };
 
     public static List<Func<CardModel>> Vehicles { get; } = new()
@@ -39,10 +39,12 @@ public static class SovietCardRegistry
     {
         () => ModelDb.Card<SovietBarracksCard>(),
         () => ModelDb.Card<SovietWarFactory>(),
-        () => ModelDb.Card<SovietShipyardCard>(),
+        () => ModelDb.Card<ShipyardCard>(),
         () => ModelDb.Card<SovietRepairDepot>(),
         () => ModelDb.Card<SovietPillboxCard>(),
         () => ModelDb.Card<SovietWallCard>(),
+        () => ModelDb.Card<NuclearReactor>(),
+        () => ModelDb.Card<SovietRefinery>(),
     };
 
     // 苏军技能卡

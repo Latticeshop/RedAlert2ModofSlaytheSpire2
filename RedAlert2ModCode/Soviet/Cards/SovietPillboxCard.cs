@@ -54,7 +54,8 @@ public sealed class SovietPillboxCard : CardModel
 	{
 		new DamageVar(Values.Damage, ValueProp.Unpowered),
 		new BlockVar(Values.Block, ValueProp.Unpowered),
-		new IntVar("DollarNumber", Values.DollarValue)
+		new IntVar("DollarNumber", Values.DollarValue),
+		new IntVar("Repeat", Values.Repeat)
 	};
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://allies_shop_simple"]
+[gd_scene load_steps=2 format=3 uid="uid://allies_shop"]
 
 [ext_resource type="Texture2D" uid="uid://1deicbj55dc2" path="res://RedAlert2ModResources/images/charui/allies_character.png" id="1_lugwd"]
 

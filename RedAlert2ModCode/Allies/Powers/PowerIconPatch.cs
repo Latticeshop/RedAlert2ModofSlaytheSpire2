@@ -22,6 +22,7 @@ public static class PowerIconPatch
     {
         { typeof(PowerPlantPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/powricon.png" },
         { typeof(AlliedMCVPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/mcvicon.png" },
+        { typeof(RedAlert2ModCode.Soviet.Powers.SovietMCVPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/smcvicon.png" },
         { typeof(IfvTemporaryDexterityPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/fvicon.png" },
         { typeof(RocketSoldierTemporaryDexterityPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/jjeticon.png" },
         { typeof(PrismTowerPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/prisicon.png" },

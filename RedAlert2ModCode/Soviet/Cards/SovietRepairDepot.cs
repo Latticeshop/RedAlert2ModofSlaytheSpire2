@@ -21,7 +21,7 @@ namespace RedAlert2ModCode.Soviet.Cards;
 /// </summary>
 public sealed class SovietRepairDepot : CardModel
 {
-	private static readonly CardValueStore.CardValues Values = SovietCardValues.SovietRepairDepot;
+	private static readonly CardValueStore.CardValues Values = SovietCardValues.RepairDepot;
 	private static readonly int BASE_COST = (int)Values.Cost;
 	private static readonly int UPGRADED_COST = Values.CostUpgraded > 0 ? Values.CostUpgraded : BASE_COST;
 

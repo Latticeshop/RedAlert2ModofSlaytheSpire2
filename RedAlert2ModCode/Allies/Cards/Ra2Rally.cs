@@ -62,7 +62,7 @@ public sealed class Ra2Rally : CardModel
 			typeof(AmericanSoldier),
 			typeof(DogSoldier),
 			typeof(RocketSoldier),
-			typeof(Engineer),
+			typeof(AlliesEngineer),
 			typeof(GrizzlyTank),
 			typeof(Ifv),
 			typeof(ChronoMiner),

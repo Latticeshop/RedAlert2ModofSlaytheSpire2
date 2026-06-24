@@ -21,11 +21,11 @@ namespace RedAlert2ModCode.Soviet.Cards;
 /// 苏军船厂 - 建筑卡
 /// 0费，选择一张海军单位，创建对应的生产序列
 /// </summary>
-public sealed class SovietShipyardCard : CardModel
+public sealed class ShipyardCard : CardModel
 {
-	private static readonly CardValueStore.CardValues Values = SovietCardValues.SovietShipyard;
+	private static readonly CardValueStore.CardValues Values = SovietCardValues.Shipyard;
 	
-	public SovietShipyardCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
+	public ShipyardCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/soviet/yardicon.png";
 	
@@ -60,7 +60,7 @@ public sealed class SovietShipyardCard : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
-		GD.Print($"[SovietShipyardCard] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
+		GD.Print($"[ShipyardCard] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
 		
 		BuildingSoundHelper.PlayBuildingPlaceSound();
 
@@ -68,16 +68,16 @@ public sealed class SovietShipyardCard : CardModel
 		if (dollarPower != null)
 		{
 			dollarPower.AddDollar(-(int)Values.DollarValue);
-			GD.Print($"[SovietShipyardCard] 扣除资金 {Values.DollarValue}");
+			GD.Print($"[ShipyardCard] 扣除资金 {Values.DollarValue}");
 		}
 
 		List<CardModel> availableCards = SovietCardRegistry.CreateShips(Owner);
-		GD.Print($"[SovietShipyardCard] 可用卡牌数量: {availableCards.Count}");
+		GD.Print($"[ShipyardCard] 可用卡牌数量: {availableCards.Count}");
 
 		var cardValuesMap = SovietCardValues.CreateShipValuesMap();
 		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap);
 
-		GD.Print($"[SovietShipyardCard] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
+		GD.Print($"[ShipyardCard] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
 
 		if (selectedCard != null)
 		{

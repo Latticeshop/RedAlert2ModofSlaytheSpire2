@@ -17,7 +17,7 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<AmericanSoldier>(),
         () => ModelDb.Card<DogSoldier>(),
         () => ModelDb.Card<RocketSoldier>(),
-        () => ModelDb.Card<Engineer>()
+        () => ModelDb.Card<AlliesEngineer>()
     };
 
     public static List<Func<CardModel>> Vehicles { get; } = new()
@@ -56,7 +56,7 @@ public static class AlliedCardRegistry
     // 盟军建筑卡
     public static List<Func<CardModel>> BuildingCards { get; } = new()
     {
-        () => ModelDb.Card<BarracksCard>(),
+        () => ModelDb.Card<AlliesBarracksCard>(),
         () => ModelDb.Card<AlliedWarFactory>(),
         () => ModelDb.Card<AlliedMCV>(),
         () => ModelDb.Card<PowerPlantCard>(),
@@ -64,7 +64,7 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<AlliedRefinery>(),
         () => ModelDb.Card<AlliedWallCard>(),
         () => ModelDb.Card<FortifiedWall>(),
-        () => ModelDb.Card<ShipyardCard>(),
+        () => ModelDb.Card<AlliesShipyardCard>(),
         () => ModelDb.Card<BattleLab>(),
         () => ModelDb.Card<ChronoSphere>(),
         () => ModelDb.Card<WeatherController>()
@@ -74,7 +74,7 @@ public static class AlliedCardRegistry
     public static List<Func<CardModel>> DefenseTowers { get; } = new()
     {
         () => ModelDb.Card<PrismTowerCard>(),
-        () => ModelDb.Card<PillboxCard>(),
+        () => ModelDb.Card<AlliesPillboxCard>(),
         () => ModelDb.Card<PatriotMissile>()
     };
 

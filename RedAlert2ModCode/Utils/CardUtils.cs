@@ -306,9 +306,16 @@ public static class CardUtils
 			return false;
 		}
 		
-		// 检查是否有 AlliedMCVPower 能力
-		var mcvPower = creature.Powers.OfType<RedAlert2ModCode.Allies.Powers.AlliedMCVPower>().FirstOrDefault();
-		if (mcvPower != null)
+		// 检查是否有 AlliedMCVPower 能力（盟军）
+		var alliedMcvPower = creature.Powers.OfType<RedAlert2ModCode.Allies.Powers.AlliedMCVPower>().FirstOrDefault();
+		if (alliedMcvPower != null)
+		{
+			return true;
+		}
+		
+		// 检查是否有 SovietMCVPower 能力（苏军）
+		var sovietMcvPower = creature.Powers.OfType<RedAlert2ModCode.Soviet.Powers.SovietMCVPower>().FirstOrDefault();
+		if (sovietMcvPower != null)
 		{
 			return true;
 		}
