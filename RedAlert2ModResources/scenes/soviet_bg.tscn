@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://sovietbg001"]
 
-[ext_resource type="Texture2D" uid="uid://blun84fme3vg2" path="res://RedAlert2ModResources/scenes/soviet_bg.png" id="1_ooqwn"]
+[ext_resource type="Texture2D" uid="uid://bqqh7fp2lix6f" path="res://RedAlert2ModResources/scenes/soviet_bg.png" id="1_ooqwn"]
 
 [node name="SovietBg" type="Control"]
 layout_mode = 3
@@ -16,11 +16,9 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 1248.0
-offset_bottom = 702.0
+offset_right = 214.0
+offset_bottom = 120.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(0.9, 0.9)
 texture = ExtResource("1_ooqwn")
-stretch_mode = 5
 flip_h = true
