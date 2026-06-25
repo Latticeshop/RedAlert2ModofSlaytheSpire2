@@ -5,7 +5,6 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -43,29 +42,6 @@ public sealed class SovietPowerPlantPower : PowerModel
 	/// 当前阈值（未升级10，升级7）
 	/// </summary>
 	public int CurrentThreshold { get; set; } = Values.MagicNumber;
-
-	/// <summary>
-	/// 使用苏联磁能反应堆的图标
-	/// </summary>
-	public new string PackedIconPath => "res://RedAlert2ModResources/images/packed/card_portraits/soviet/npwricon.png";
-
-	/// <summary>
-	/// 本地化标题
-	/// </summary>
-	public override LocString Title => new LocString("powers", Id.Entry + ".title");
-
-	/// <summary>
-	/// 本地化描述
-	/// </summary>
-	public override LocString Description
-	{
-		get
-		{
-			var locString = new LocString("powers", Id.Entry + ".description");
-			locString.Add("MagicNumber", CurrentThreshold);
-			return locString;
-		}
-	}
 
 	/// <summary>
 	/// 通过 CanonicalVars 提供动态变量，供 smartDescription 使用

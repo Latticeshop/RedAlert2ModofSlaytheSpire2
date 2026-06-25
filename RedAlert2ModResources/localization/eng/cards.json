@@ -1,4 +1,4 @@
-﻿{
+{
     "ALLIES_ENGINEER.title": "Engineer",
     "ALLIES_ENGINEER.description": "Choose 1 command from {IfUpgraded:show:3|2} options.",
     "AMERICAN_SOLDIER.title": "G.I.",
@@ -26,7 +26,7 @@
     "ALLIED_WALL_CARD.title": "Allied Wall",
     "ALLIED_WALL_CARD.description": "[gold]Cost: ${DollarNumber}[/gold]. Gains {Block} Block. Return this card to your hand.",
     "ALLIES_PILLBOX_CARD.title": "Pillbox",
-    "ALLIES_PILLBOX_CARD.description": "[gold]Cost: ${DollarNumber}[/gold]. At the start of each turn, deals {Damage} damage to an enemy 2 times and gains {Block} Block (not increased by upgrade).",
+    "ALLIES_PILLBOX_CARD.description": "[gold]Cost: ${DollarNumber}[/gold]. At the start of each turn, deals {Damage} damage to an enemy 2 times and gains {Block} Block.",
     "CHRONO_MINER.title": "Chrono Miner",
     "CHRONO_MINER.description": "Gains [gold]${DollarValue}[/gold].\nChrono: When played, add this card to your draw pile.",
     "INTRUDER.title": "Harrier",
@@ -79,7 +79,7 @@
     "CONSCRIPT.title": "Conscript",
     "CONSCRIPT.description": "Deals {Damage} damage {Repeat} times.",
     "RHINO_TANK.title": "Rhino Tank",
-    "RHINO_TANK.description": "Deals {Damage} damage and gains {Block} Block.",
+    "RHINO_TANK.description": "Deals {Damage} damage and gains {Block} Block. Apply {VulnerableStacks} [red]Vulnerable[/red].",
     "WAR_MINER.title": "War Miner",
     "WAR_MINER.description": "Gains [gold]${DollarValue}[/gold].\nDeals {Damage} damage to {IfUpgraded:show:ALL enemies|1 enemy}.",
     "SOVIET_MC_V.title": "Soviet MCV",

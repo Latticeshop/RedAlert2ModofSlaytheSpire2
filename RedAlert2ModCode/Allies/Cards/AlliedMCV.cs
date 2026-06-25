@@ -22,7 +22,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// </summary>
 public sealed class AlliedMCV : CardModel
 {
-	public AlliedMCV() : base((int)AlliesCardValues.AlliedMCV.Cost, CardType.Power, CardRarity.Rare, TargetType.Self) { }
+	public AlliedMCV() : base((int)AlliesCardValues.AlliedMCV.Cost, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
 
 	// 修正图片路径为实际文件名 mcvicon.png
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/mcvicon.png";

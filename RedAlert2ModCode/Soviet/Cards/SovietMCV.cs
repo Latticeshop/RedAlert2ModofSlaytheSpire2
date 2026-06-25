@@ -20,7 +20,7 @@ namespace RedAlert2ModCode.Soviet.Cards;
 /// </summary>
 public sealed class SovietMCV : CardModel
 {
-	public SovietMCV() : base(0, CardType.Power, CardRarity.Rare, TargetType.Self) { }
+	public SovietMCV() : base(0, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
 
 	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/soviet/smcvicon.png";
 

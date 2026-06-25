@@ -119,7 +119,7 @@
     "CONSCRIPT.description": "Deals {Damage} damage {Repeat} times.",
 
     "RHINO_TANK.title": "Rhino Tank",
-    "RHINO_TANK.description": "Deals {Damage} damage and gains {Block} Block.",
+    "RHINO_TANK.description": "Deals {Damage} damage and gains {Block} Block. Apply {VulnerableStacks} [red]Vulnerable[/red].",
 
     "WAR_MINER.title": "War Miner",
     "WAR_MINER.description": "Gains [gold]${DollarValue}[/gold].\nDeals {Damage} damage to {IfUpgraded:show:ALL enemies|1 enemy}.",

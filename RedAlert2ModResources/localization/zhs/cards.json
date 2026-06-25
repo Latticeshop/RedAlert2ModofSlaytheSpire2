@@ -1,4 +1,4 @@
-﻿{
+{
     "ALLIES_ENGINEER.title": "工程师",
     "ALLIES_ENGINEER.description": "从 {IfUpgraded:show:3|2} 个选项中选择一个指令。",
     "AMERICAN_SOLDIER.title": "美国大兵",
@@ -26,7 +26,7 @@
     "ALLIED_WALL_CARD.title": "盟军围墙",
     "ALLIED_WALL_CARD.description": "[gold]价格：${DollarNumber}[/gold]。获得 {Block} 点格挡。将此牌返回你的手牌。",
     "ALLIES_PILLBOX_CARD.title": "机枪碉堡",
-    "ALLIES_PILLBOX_CARD.description": "[gold]价格：${DollarNumber}[/gold]。回合开始时对敌人造成 {Damage} 点伤害 2 次，获得 {Block} 点防御(升级不加)。",
+    "ALLIES_PILLBOX_CARD.description": "[gold]价格：${DollarNumber}[/gold]。回合开始时对敌人造成 {Damage} 点伤害 2 次，获得 {Block} 点防御。",
     "CHRONO_MINER.title": "超时空矿车",
     "CHRONO_MINER.description": "获得 [gold]${DollarValue}[/gold] 。\n超时空：使用后将此牌加入摸牌堆。",
     "INTRUDER.title": "入侵者战机",
@@ -79,7 +79,7 @@
     "CONSCRIPT.title": "动员兵",
     "CONSCRIPT.description": "造成 {Damage} 点伤害 {Repeat} 次。",
     "RHINO_TANK.title": "犀牛坦克",
-    "RHINO_TANK.description": "造成 {Damage} 点伤害，获得 {Block} 点格挡。",
+    "RHINO_TANK.description": "造成 {Damage} 点伤害，获得 {Block} 点格挡。给予敌人 {VulnerableStacks} 层[red]易伤[/red]。",
     "WAR_MINER.title": "武装采矿车",
     "WAR_MINER.description": "获得 [gold]${DollarValue}[/gold] 。\n对{IfUpgraded:show:全体|一名}敌人造成 {Damage} 点伤害。",
     "SOVIET_MC_V.title": "苏联基地车",
