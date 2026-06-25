@@ -1,4 +1,4 @@
-{
+﻿{
     "ALLIES_ENGINEER.title": "工程师",
     "ALLIES_ENGINEER.description": "从 {IfUpgraded:show:3|2} 个选项中选择一个指令。",
     "AMERICAN_SOLDIER.title": "美国大兵",

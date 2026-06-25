@@ -1,0 +1,13 @@
+{
+    "ALLIES_ARCHITECT_EVENT.title": "神秘的建筑师",
+    "ALLIES_ARCHITECT_EVENT.intro": "建筑师: ...有意思。来自另一个时空的战士，而且还是身着蓝色衣装的指挥官。你的到来...在意料之中，也在意料之外。",
+    "ALLIES_ARCHITECT_EVENT.taunt": "建筑师: 哼，所谓的「谭雅」指挥官。你以为凭借那些过时的枪炮和战术，就能在这座尖塔中生存下去吗？你的世界不过是无数平行宇宙中微不足道的一粒尘埃。",
+    "ALLIES_ARCHITECT_EVENT.response": "谭雅: 过时？！你以为躲在这个塔里摆弄些花里胡哨的机关就很了不起吗？我经历过的战争比你见过的图纸还多！苏联的铁幕、尤里的心灵控制、异次元的威胁...我都闯过来了！这座塔？不过是另一个需要征服的战场！",
+    "ALLIES_ARCHITECT_EVENT.conclusion": "建筑师: ...哈！很久没有遇到过像你这样有胆识的人了。你的斗志...值得尊敬。也许...我们可以达成某种协议。下次见面时，希望你能证明你的价值。",
+    "ALLIES_ARCHITECT_EVENT.finish": "你离开了建筑师的时空，心中充满了新的斗志。",
+    "ALLIES_ARCHITECT_EVENT.options.ARCHITECT_INTRO": "继续",
+    "ALLIES_ARCHITECT_EVENT.options.ARCHITECT_RETORT": "反驳",
+    "ALLIES_ARCHITECT_EVENT.options.ARCHITECT_SILENCE": "沉默",
+    "ALLIES_ARCHITECT_EVENT.options.ARCHITECT_END": "结束对话",
+    "ALLIES_ARCHITECT_EVENT.options.ARCHITECT_LEAVE": "离开"
+}
