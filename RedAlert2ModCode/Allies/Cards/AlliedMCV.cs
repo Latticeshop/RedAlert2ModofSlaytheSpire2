@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
+using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Utils;
@@ -42,14 +43,13 @@ public sealed class AlliedMCV : CardModel
 	];
 
 	/// <summary>
-	/// 初始建筑类型列表（发电厂、矿场、兵营、重工）
+	/// 初始建筑类型列表（发电厂、矿场、兵营）
 	/// </summary>
 	private static readonly List<System.Type> InitialBuildingTypes = new()
 	{
 		typeof(PowerPlantCard),
 		typeof(AlliedRefinery),
-		typeof(AlliesBarracksCard),
-		typeof(AlliedWarFactory)
+		typeof(AlliesBarracksCard)
 	};
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -79,7 +79,7 @@ public sealed class AlliedMCV : CardModel
 		// 传递数值映射，让UI面板能够正确显示费用和描述
 		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, buildingValuesMap);
 
-		// 如果玩家选择了卡牌，才执行能力效果
+		// 如果玩家选择了卡牌，执行能力效果
 		if (selectedCard != null)
 		{
 			// 应用基地车能力（用于显示图标）
@@ -88,11 +88,28 @@ public sealed class AlliedMCV : CardModel
 
 			// 将选择的卡牌加入手牌
 			await CardPileCmd.AddGeneratedCardToCombat(selectedCard, PileType.Hand, Owner);
+
+			GD.Print("[AlliedMCV] 玩家选择了建筑，基地车将正常进入弃牌堆");
 		}
 		else
 		{
-			// 取消选择：返还费用并将卡牌放回手牌
-			await CardUtils.HandleCardCancellation(play, this, Owner);
+			// 取消选择：将实际打出的卡牌实体放回手牌（相当于未打出）
+			GD.Print("[AlliedMCV] 玩家取消选择，基地车放回手牌");
+
+			if (play?.Card != null)
+			{
+				var card = play.Card;
+				var handPile = PileType.Hand.GetPile(card.Owner);
+
+				if (card.Pile != null)
+				{
+					card.RemoveFromCurrentPile();
+				}
+
+				await CardPileCmd.Add(card, handPile);
+				handPile.InvokeContentsChanged();
+				GD.Print("[AlliedMCV] 基地车已放回手牌");
+			}
 		}
 	}
 
@@ -163,6 +180,50 @@ public sealed class AlliedMCV : CardModel
 			availableCards.Add(newCard);
 			GD.Print($"[AlliedMCV] 添加卡组中的建筑: {deckCard.Id.Entry} (升级:{deckCard.IsUpgraded})");
 		}
+
+		// 如果牌库有飞鹰战备系列卡牌，添加空指部
+		if (HasEagleCardInDeck())
+		{
+			AddAirForceCommand(availableCards);
+		}
+	}
+
+	/// <summary>
+	/// 检查牌库中是否有飞鹰战备系列卡牌
+	/// </summary>
+	private bool HasEagleCardInDeck()
+	{
+		return DesperateMeasures.HasDesperateMeasureCardInDeck(this);
+	}
+
+	/// <summary>
+	/// 添加空指部到可用建筑列表
+	/// </summary>
+	private void AddAirForceCommand(List<CardModel> availableCards)
+	{
+		// 检查是否已有空指部
+		if (availableCards.Any(c => c is AirForceCommand))
+		{
+			return;
+		}
+
+		var model = GetCardModel(typeof(AirForceCommand));
+		if (model == null)
+		{
+			GD.PrintErr("[AlliedMCV] 无法获取空指部模型");
+			return;
+		}
+
+		var newCard = Owner.Creature.CombatState.CreateCard(model, Owner);
+
+		// 如果基地车是升级过的，空指部也显示为升级版本
+		if (base.IsUpgraded)
+		{
+			CardCmd.Upgrade(newCard);
+		}
+
+		availableCards.Add(newCard);
+		GD.Print($"[AlliedMCV] 牌库有飞鹰战备卡牌，添加空指部到选择列表 (升级:{base.IsUpgraded})");
 	}
 
 	/// <summary>

@@ -24,7 +24,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// <summary>
 /// 幻影坦克 - 盟军高科技装甲单位卡
 /// 1费攻击卡，Token衍生卡，需要作战实验室解锁
-/// 效果：若敌人意图攻击且无"无实体"时获得1层"无实体"，否则造成10(升级15)点伤害
+/// 效果：若敌人意图攻击，获得16(升级20)点格挡；否则造成10(升级15)点伤害
 /// 使用热能射线火焰特效动画
 /// </summary>
 public sealed class MirageTank : CardModel
@@ -43,8 +43,8 @@ public sealed class MirageTank : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
-        ModCardKeywords.Vehicle.CreateHoverTip(),
-        HoverTipFactory.FromPower<IntangiblePower>()
+        ModCardKeywords.Vehicle.CreateHoverTip()
+        // HoverTipFactory.FromPower<IntangiblePower>()  // 已移除无实体效果
     };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -66,22 +66,27 @@ public sealed class MirageTank : CardModel
 
         if (intendsToAttack)
         {
-            // 检查玩家是否已有无实体能力
-            bool hasIntangible = Owner.Creature.Powers.Any(p => p is IntangiblePower);
-            GD.Print($"[MirageTank] 玩家已有无实体: {hasIntangible}");
+            // 敌人意图攻击：获得格挡
+            GD.Print($"[MirageTank] 敌人意图攻击，获得格挡: {DynamicVars.Block.BaseValue}");
+            await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
 
-            if (!hasIntangible)
-            {
-                // 获得一层无实体（不播放特效）
-                GD.Print("[MirageTank] 获得1层无实体");
-                await PowerCmd.Apply<IntangiblePower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
-            }
-            else
-            {
-                // 已有无实体，改为造成伤害
-                GD.Print("[MirageTank] 已有无实体，造成伤害");
-                await DealDamage(ctx, target);
-            }
+            // === 原无实体逻辑（已注释） ===
+            // 检查玩家是否已有无实体能力
+            // bool hasIntangible = Owner.Creature.Powers.Any(p => p is IntangiblePower);
+            // GD.Print($"[MirageTank] 玩家已有无实体: {hasIntangible}");
+            //
+            // if (!hasIntangible)
+            // {
+            //     // 获得一层无实体（不播放特效）
+            //     GD.Print("[MirageTank] 获得1层无实体");
+            //     await PowerCmd.Apply<IntangiblePower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
+            // }
+            // else
+            // {
+            //     // 已有无实体，改为造成伤害
+            //     GD.Print("[MirageTank] 已有无实体，造成伤害");
+            //     await DealDamage(ctx, target);
+            // }
         }
         else
         {
@@ -89,10 +94,6 @@ public sealed class MirageTank : CardModel
             GD.Print("[MirageTank] 敌人不意图攻击，造成伤害");
             await DealDamage(ctx, target);
         }
-
-        // 最后获得格挡
-        GD.Print("[MirageTank] 获得格挡");
-        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
     }
 
     /// <summary>
@@ -139,7 +140,7 @@ public sealed class MirageTank : CardModel
     {
         // 升级后伤害增加5（10 -> 15）
         DynamicVars.Damage.UpgradeValueBy(Values.DamageUpgraded);
-        // 升级后格挡增加5（5 -> 10）
+        // 升级后格挡增加4（16 -> 20）
         DynamicVars.Block.UpgradeValueBy(Values.BlockUpgraded);
     }
 }

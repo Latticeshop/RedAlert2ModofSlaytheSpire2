@@ -385,8 +385,8 @@ public static class AlliesCardValues
 		Cost = 1,
 		Damage = 10,
 		DamageUpgraded = 5,  // 升级后15 = 10 + 5
-		Block = 5,
-		BlockUpgraded = 5,  // 升级后10 = 5 + 5
+		Block = 16,  // 攻击意图时的格挡
+		BlockUpgraded = 4,  // 升级后20 = 16 + 4
 		DollarValue = 1000
 	};
 

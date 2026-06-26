@@ -6,6 +6,8 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
+using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Allies.Powers;
 using Godot;
 
@@ -29,6 +31,16 @@ public static class DesperateMeasures
     };
 
     /// <summary>
+    /// 绝地战备卡牌类型列表
+    /// </summary>
+    private static readonly List<Type> DesperateMeasureCardTypes = new()
+    {
+        typeof(Eagle500kg),
+        typeof(EagleMachineGun),
+        typeof(EagleAirStrike)
+    };
+
+    /// <summary>
     /// 检查玩家是否有任何绝地战备能力
     /// </summary>
     /// <param name="player">玩家生物</param>
@@ -36,6 +48,24 @@ public static class DesperateMeasures
     public static bool HasDesperateMeasure(Creature player)
     {
         return player.Powers.Any(p => IsDesperateMeasurePower(p));
+    }
+
+    /// <summary>
+    /// 检查牌库中是否有任何绝地战备卡牌
+    /// </summary>
+    /// <param name="card">卡牌模型，用于访问玩家和牌库</param>
+    /// <returns>牌库中是否存在绝地战备卡牌</returns>
+    public static bool HasDesperateMeasureCardInDeck(CardModel card)
+    {
+        if (card?.Owner?.Deck?.Cards == null)
+        {
+            GD.Print("[DesperateMeasures] HasDesperateMeasureCardInDeck - 无效的卡牌或牌库");
+            return false;
+        }
+
+        bool hasCard = card.Owner.Deck.Cards.Any(c => DesperateMeasureCardTypes.Contains(c.GetType()));
+        GD.Print($"[DesperateMeasures] HasDesperateMeasureCardInDeck - 牌库中是否有绝地战备卡牌: {hasCard}");
+        return hasCard;
     }
 
     /// <summary>

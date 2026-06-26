@@ -39,14 +39,13 @@ public sealed class SovietMCV : CardModel
 	];
 
 	/// <summary>
-	/// 初始建筑类型列表（磁能反应堆、矿场、兵营、重工）
+	/// 初始建筑类型列表（磁能反应堆、矿场、兵营）
 	/// </summary>
 	private static readonly List<System.Type> InitialBuildingTypes = new()
 	{
 		typeof(NuclearReactor),
 		typeof(SovietRefinery),
-		typeof(SovietBarracksCard),
-		typeof(SovietWarFactory)
+		typeof(SovietBarracksCard)
 	};
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -76,7 +75,7 @@ public sealed class SovietMCV : CardModel
 		// 传递数值映射，让UI面板能够正确显示费用和描述
 		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, buildingValuesMap);
 
-		// 如果玩家选择了卡牌，才执行能力效果
+		// 如果玩家选择了卡牌，执行能力效果
 		if (selectedCard != null)
 		{
 			// 应用基地车能力（用于显示图标）
@@ -85,11 +84,28 @@ public sealed class SovietMCV : CardModel
 
 			// 将选择的卡牌加入手牌
 			await CardPileCmd.AddGeneratedCardToCombat(selectedCard, PileType.Hand, Owner);
+
+			GD.Print("[SovietMCV] 玩家选择了建筑，基地车将正常进入弃牌堆");
 		}
 		else
 		{
-			// 取消选择：返还费用并将卡牌放回手牌
-			await CardUtils.HandleCardCancellation(play, this, Owner);
+			// 取消选择：将实际打出的卡牌实体放回手牌（相当于未打出）
+			GD.Print("[SovietMCV] 玩家取消选择，基地车放回手牌");
+
+			if (play?.Card != null)
+			{
+				var card = play.Card;
+				var handPile = PileType.Hand.GetPile(card.Owner);
+
+				if (card.Pile != null)
+				{
+					card.RemoveFromCurrentPile();
+				}
+
+				await CardPileCmd.Add(card, handPile);
+				handPile.InvokeContentsChanged();
+				GD.Print("[SovietMCV] 基地车已放回手牌");
+			}
 		}
 	}
 
