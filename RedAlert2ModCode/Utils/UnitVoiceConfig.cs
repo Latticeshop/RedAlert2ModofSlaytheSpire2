@@ -215,6 +215,7 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconsea.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconseb.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconsec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconfea.mp3",
         },
         ["RhinoTank"] = new List<string>
         {
@@ -251,6 +252,17 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/WarMiner/Vwarsec.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/WarMiner/Vwarsed.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/WarMiner/Vwarsee.mp3",
+        },
+        ["FlakTrack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakTrack/Vflaatd.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakTrack/Vflamoa.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakTrack/Vflamob.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakTrack/Vflasea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakTrack/Vflaseb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakTrack/Vflasec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakTrack/Vflased.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakTrack/Vflasee.mp3",
         },
     };
 

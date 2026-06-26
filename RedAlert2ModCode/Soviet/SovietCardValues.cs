@@ -11,14 +11,14 @@ public static class SovietCardValues
 {
 	// ==================== 士兵单位 ====================
 	
-	/// <summary>动员兵 - 1费3伤害两次，升级后4伤害两次，价格200</summary>
+	/// <summary>动员兵 - 1费3伤害两次，升级后4伤害两次，价格100</summary>
 	public static CardValueStore.CardValues Conscript => new()
 	{
 		Cost = 1,
 		Damage = 3,
 		DamageUpgraded = 1,
 		Repeat = 2,
-		DollarValue = 200
+		DollarValue = 100
 	};
 	
 	/// <summary>军犬 - 0费3伤害1层虚弱，升级后4伤害2层虚弱，价格200</summary>
@@ -32,14 +32,14 @@ public static class SovietCardValues
 		DollarValue = 200
 	};
 	
-	/// <summary>磁暴步兵 - 2费6伤害，升级后9伤害，价格600</summary>
+	/// <summary>磁暴步兵 - 2费6伤害，升级后9伤害，价格500</summary>
 	public static CardValueStore.CardValues TeslaTrooper => new()
 	{
 		Cost = 2,
 		Damage = 6,
 		DamageUpgraded = 3,
 		Repeat = 1,
-		DollarValue = 600
+		DollarValue = 500
 	};
 	
 	/// <summary>工程师 - 1费技能卡，从选项中选择指令，价格500</summary>
@@ -66,16 +66,13 @@ public static class SovietCardValues
 		DollarValue = 900
 	};
 	
-	/// <summary>防空履带车 - 1费，获得1点敏捷，5伤害1次（升级后7伤害），2护盾，价格600</summary>
+	/// <summary>防空履带车 - 1费，获得1点敏捷，5护盾，部署：存储士兵单位，价格500</summary>
 	public static CardValueStore.CardValues FlakTrack => new()
 	{
 		Cost = 1,
-		Damage = 5,
-		DamageUpgraded = 2,
-		Repeat = 1,
-		Block = 2,
+		Block = 5,
 		MagicNumber = 1,  // 敏捷值
-		DollarValue = 600
+		DollarValue = 500
 	};
 	
 	/// <summary>苏军基地车 - 0费，价格3000</summary>
@@ -87,14 +84,14 @@ public static class SovietCardValues
 	
 	// ==================== 空军单位 ====================
 	
-	/// <summary>基洛夫飞艇 - 3费10伤害，升级后15伤害，价格1200</summary>
+	/// <summary>基洛夫飞艇 - 3费10伤害，升级后15伤害，价格2000</summary>
 	public static CardValueStore.CardValues Kirov => new()
 	{
 		Cost = 3,
 		Damage = 10,
 		DamageUpgraded = 5,
 		Repeat = 1,
-		DollarValue = 1200
+		DollarValue = 2000
 	};
 	
 	// ==================== 建筑卡牌 ====================
@@ -120,18 +117,18 @@ public static class SovietCardValues
 		DollarValue = 1000
 	};
 	
-	/// <summary>苏军维修厂 - 2费能力卡（升级后1费），价格800</summary>
+	/// <summary>苏军维修厂 - 0费能力卡（升级后0费），价格800</summary>
 	public static CardValueStore.CardValues RepairDepot => new()
 	{
-		Cost = 2,
-		CostUpgraded = 1,
+		Cost = 0,
+		CostUpgraded = 0,
 		DollarValue = 800
 	};
 	
-	/// <summary>苏军哨戒炮 - 1费，回合开始时对敌人造成1伤害2次（升级后2伤害），获得3防御，价格500</summary>
+	/// <summary>苏军哨戒炮 - 0费，回合开始时对敌人造成1伤害2次（升级后2伤害），获得3防御，价格500</summary>
 	public static CardValueStore.CardValues SovietPillbox => new()
 	{
-		Cost = 1,
+		Cost = 0,
 		Damage = 1,
 		DamageUpgraded = 1,
 		Repeat = 2,
@@ -140,19 +137,19 @@ public static class SovietCardValues
 		DollarValue = 500
 	};
 	
-	/// <summary>磁能反应堆 - 1费，每10张牌获得1能量，升级后每7张，价格800</summary>
+	/// <summary>磁能反应堆 - 0费，每10张牌获得1能量，升级后每7张，价格800</summary>
 	public static CardValueStore.CardValues NuclearReactor => new()
 	{
-		Cost = 1,
+		Cost = 0,
 		MagicNumber = 10,
 		MagicNumberUpgraded = -3,
 		DollarValue = 800
 	};
 	
-	/// <summary>矿场 - 1费，价格2000</summary>
+	/// <summary>矿场 - 0费，价格2000</summary>
 	public static CardValueStore.CardValues SovietRefinery => new()
 	{
-		Cost = 1,
+		Cost = 0,
 		DollarValue = 2000
 	};
 	
@@ -167,10 +164,10 @@ public static class SovietCardValues
 		DollarValue = 100
 	};
 	
-	/// <summary>磁暴线圈 - 2费，回合开始时对随机敌人造成3伤害1次，价格1500</summary>
+	/// <summary>磁暴线圈 - 0费，回合开始时对随机敌人造成3伤害1次，价格1500</summary>
 	public static CardValueStore.CardValues TeslaCoil => new()
 	{
-		Cost = 2,
+		Cost = 0,
 		Damage = 3,
 		DamageUpgraded = 4,
 		Repeat = 1,
@@ -179,14 +176,14 @@ public static class SovietCardValues
 	
 	// ==================== 经济单位 ====================
 	
-	/// <summary>武装采矿车 - 0费攻击造成2点伤害（升级后全体），获得2000资金</summary>
+	/// <summary>武装采矿车 - 0费攻击造成2点伤害（升级后全体），获得1400资金</summary>
 	public static CardValueStore.CardValues WarMiner => new()
 	{
 		Cost = 0,
 		Damage = 2,
 		DamageUpgraded = 0,  // 升级后伤害不变（2点），只是变为全体攻击
-		DollarValue = 2000,
-		DollarValueUpgraded = 1000
+		DollarValue = 1400,
+		DollarValueUpgraded = 600
 	};
 	
 	// ==================== 数值映射创建方法 ====================

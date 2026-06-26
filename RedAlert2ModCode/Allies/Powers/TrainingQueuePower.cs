@@ -377,6 +377,12 @@ public sealed class TrainingQueuePower : PowerModel
         
         if (cardType == null)
         {
+            cardType = Assembly.GetExecutingAssembly()
+                .GetType($"RedAlert2ModCode.Soviet.Cards.{typeName}");
+        }
+        
+        if (cardType == null)
+        {
             cardType = typeof(CardModel).Assembly.GetType($"MegaCrit.Sts2.Core.Models.Cards.{typeName}");
         }
         

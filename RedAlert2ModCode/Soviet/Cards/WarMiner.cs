@@ -90,9 +90,6 @@ public sealed class WarMiner : CardModel
 			dollarPower.AddDollar(totalAmount);
 			GD.Print($"[WarMiner] 总共获得 {totalAmount} 资金");
 		}
-
-		// 将此牌加入摸牌堆（而不是弃牌堆）
-		await CardPileCmd.Add(play.Card, PileType.Draw);
 	}
 
 	/// <summary>

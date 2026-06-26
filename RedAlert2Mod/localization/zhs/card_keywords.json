@@ -36,5 +36,7 @@
     "gold_mine_column.title": "黄金矿柱",
     "gold_mine_column.description": "每回合增加[gold]200[/gold]金矿储备。",
     "super_weapon.title": "超级武器",
-    "super_weapon.description": "需要[gold]作战实验室[/gold]前置科技。\n是科技巅峰的造物。"
+    "super_weapon.description": "需要[gold]作战实验室[/gold]前置科技。\n是科技巅峰的造物。",
+    "Ra2_deploy.title": "部署",
+    "Ra2_deploy.description": "部署后使用单位的另一种效果。"
 }

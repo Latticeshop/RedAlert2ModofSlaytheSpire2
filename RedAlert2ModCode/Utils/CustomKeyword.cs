@@ -247,6 +247,15 @@ public static class ModCardKeywords
     );
 
     /// <summary>
+    /// 部署词条 - 部署后使用单位的另一种效果
+    /// </summary>
+    public static readonly CustomKeyword Deploy = new(
+        "DEPLOY",
+        new LocString("card_keywords", "Ra2_deploy.title"),
+        new LocString("card_keywords", "Ra2_deploy.description")
+    );
+
+    /// <summary>
     /// 初始化所有自定义词条
     /// </summary>
     public static void Initialize()

@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Soviet.Cards;
 
 namespace RedAlert2ModCode.Soviet;
@@ -21,7 +23,6 @@ public static class SovietCardRegistry
         () => ModelDb.Card<RhinoTank>(),
         () => ModelDb.Card<WarMiner>(),
         () => ModelDb.Card<FlakTrack>(),
-        () => ModelDb.Card<SovietMCV>(),
     };
 
     public static List<Func<CardModel>> Aircraft { get; } = new()
@@ -45,6 +46,7 @@ public static class SovietCardRegistry
         () => ModelDb.Card<SovietWallCard>(),
         () => ModelDb.Card<NuclearReactor>(),
         () => ModelDb.Card<SovietRefinery>(),
+        () => ModelDb.Card<SovietMCV>(),
     };
 
     // 苏军技能卡
@@ -151,7 +153,19 @@ public static class SovietCardRegistry
 
     public static List<CardModel> CreateVehicles(Player owner)
     {
-        return Vehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+        List<CardModel> vehicles = Vehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+
+        if (HasRepairDepotPower(owner.Creature))
+        {
+            vehicles.Add(owner.Creature.CombatState.CreateCard(ModelDb.Card<SovietMCV>(), owner));
+        }
+
+        return vehicles;
+    }
+
+    public static bool HasRepairDepotPower(Creature creature)
+    {
+        return creature.Powers.Any(p => p is RepairDepotPower);
     }
 
     public static List<CardModel> CreateAircraft(Player owner)
