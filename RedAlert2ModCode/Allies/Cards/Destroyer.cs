@@ -12,7 +12,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.MonsterMoves.Intents;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 

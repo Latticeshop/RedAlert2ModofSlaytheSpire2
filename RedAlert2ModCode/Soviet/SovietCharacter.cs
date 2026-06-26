@@ -62,7 +62,7 @@ public sealed class Soviet : PlaceholderCharacterModel
     // 起始遗物（刀乐）
     public override IReadOnlyList<RelicModel> StartingRelics => new List<RelicModel>
     {
-        ModelDb.Relic<RedAlert2ModCode.Allies.Relics.DollarRelic>(),
+        ModelDb.Relic<RedAlert2ModCode.Common.Relics.DollarRelic>(),
     };
     
     // 卡池、遗物池、药水池

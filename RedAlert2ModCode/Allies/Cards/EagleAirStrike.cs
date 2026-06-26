@@ -11,7 +11,8 @@ using MegaCrit.Sts2.Core.Combat;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RedAlert2ModCode.Allies.Powers;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Powers;
+using RedAlert2ModCode.Common.Utils;
 using Godot;
 
 namespace RedAlert2ModCode.Allies.Cards;

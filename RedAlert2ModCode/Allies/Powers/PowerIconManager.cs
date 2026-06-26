@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using Godot;
 using MegaCrit.Sts2.Core.Models;
+using RedAlert2ModCode.Common.Powers;
 
 namespace RedAlert2ModCode.Allies.Powers;
 

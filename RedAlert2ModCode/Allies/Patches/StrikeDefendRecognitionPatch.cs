@@ -4,6 +4,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Allies.Cards;
+using RedAlert2ModCode.Common.Cards;
 
 namespace RedAlert2ModCode.Allies.Patches;
 

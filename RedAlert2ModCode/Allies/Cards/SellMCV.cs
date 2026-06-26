@@ -8,8 +8,9 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Powers;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -145,7 +146,7 @@ public sealed class SellMCV : CardModel
 		GD.Print($"[SellMCV] 将基地车卡牌移到消耗牌堆: {cardToRemove.Title} (类型: {cardToRemove.GetType().Name})");
 
 		// 获得2400资金
-		var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
 		if (dollarPower != null)
 		{
 			dollarPower.AddDollar((int)Values.DollarValue);

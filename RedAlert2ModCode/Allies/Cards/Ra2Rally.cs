@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using System.Collections.Generic;
 using System.Linq;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 

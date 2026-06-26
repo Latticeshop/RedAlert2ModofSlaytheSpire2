@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Cards;
 
 namespace RedAlert2ModCode.Soviet;

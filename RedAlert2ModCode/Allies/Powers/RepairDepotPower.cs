@@ -11,7 +11,8 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Localization;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Powers;
+using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.UI;
 
 namespace RedAlert2ModCode.Allies.Powers;

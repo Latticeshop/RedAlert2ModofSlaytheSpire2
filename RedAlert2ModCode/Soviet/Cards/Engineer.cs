@@ -13,8 +13,9 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using RedAlert2ModCode.Allies.Cards;
+using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.UI;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Utils;
 
 using EngineerChoice = RedAlert2ModCode.UI.EngineerChoiceScreen.EngineerChoice;
 

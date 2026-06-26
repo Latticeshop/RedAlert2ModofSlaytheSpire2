@@ -8,7 +8,9 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Allies.Cards;
+using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Common.Powers;
 using Godot;
 
 namespace RedAlert2ModCode.Allies;
@@ -189,18 +191,3 @@ public static class DesperateMeasures
     }
 }
 
-/// <summary>
-/// 绝地战备能力接口
-/// 所有绝地战备能力都应该实现此接口
-/// </summary>
-public interface IDesperateMeasurePower
-{
-    /// <summary>
-    /// 执行绝地战备攻击效果
-    /// 替换飞机类卡牌或能力的普通攻击
-    /// </summary>
-    /// <param name="target">攻击目标</param>
-    /// <param name="ctx">玩家选择上下文</param>
-    /// <returns>是否成功执行</returns>
-    Task<bool> ExecuteDesperateMeasureAttack(Creature target, MegaCrit.Sts2.Core.GameActions.Multiplayer.PlayerChoiceContext ctx);
-}

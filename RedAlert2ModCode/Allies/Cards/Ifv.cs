@@ -11,7 +11,8 @@ using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
 using System.Collections.Generic;
 using RedAlert2ModCode.Allies.Powers;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Powers;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 

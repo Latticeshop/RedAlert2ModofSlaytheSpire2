@@ -16,7 +16,7 @@ using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Soviet.Powers;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Soviet;

@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using RedAlert2ModCode.Allies.Cards;
+using RedAlert2ModCode.Common.Cards;
 using Godot;
 using System.Collections.Generic;
 using System.Linq;

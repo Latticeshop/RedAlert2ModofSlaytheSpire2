@@ -12,8 +12,9 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.UI;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Soviet.Cards;
 
@@ -50,7 +51,7 @@ public sealed class ShipyardCard : CardModel
 			if (!CardUtils.HasMcvPower(Owner.Creature))
 				return false;
 
-			var dollarPower = Owner.Creature.Powers.OfType<Allies.Powers.DollarPower>().FirstOrDefault();
+			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
 			if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
 				return false;
 
@@ -64,7 +65,7 @@ public sealed class ShipyardCard : CardModel
 		
 		BuildingSoundHelper.PlayBuildingPlaceSound();
 
-		var dollarPower = Owner.Creature.Powers.OfType<Allies.Powers.DollarPower>().FirstOrDefault();
+		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
 		if (dollarPower != null)
 		{
 			dollarPower.AddDollar(-(int)Values.DollarValue);

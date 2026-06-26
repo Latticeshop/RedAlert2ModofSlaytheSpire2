@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using RedAlert2ModCode.Allies.Cards;
+using RedAlert2ModCode.Common.Cards;
 
 namespace RedAlert2ModCode.Allies;
 

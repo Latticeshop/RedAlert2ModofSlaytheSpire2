@@ -1,6 +1,7 @@
 using BaseLib.Abstracts;
 using RedAlert2ModCode.Extensions;
 using RedAlert2ModCode.Allies.Cards;
+using RedAlert2ModCode.Common.Cards;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Models;
@@ -63,7 +64,7 @@ public sealed class Allies : PlaceholderCharacterModel
     // 起始遗物（刀乐）
     public override IReadOnlyList<RelicModel> StartingRelics => new List<RelicModel>
     {
-        ModelDb.Relic<RedAlert2ModCode.Allies.Relics.DollarRelic>(),
+        ModelDb.Relic<RedAlert2ModCode.Common.Relics.DollarRelic>(),
     };
     
     // 卡池、遗物池、药水池

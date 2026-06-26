@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -45,7 +45,7 @@ public sealed class AlliedRefinery : CardModel
 			if (!CardUtils.HasMcvPower(Owner.Creature))
 				return false;
 
-			var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
 			if (dollarPower == null || dollarPower.DollarValue < AlliesCardValues.AlliedRefinery.DollarValue)
 				return false;
 
@@ -59,7 +59,7 @@ public sealed class AlliedRefinery : CardModel
 		BuildingSoundHelper.PlayBuildingPlaceSound();
 		
 		// 扣除资金
-		var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
 		if (dollarPower != null)
 		{
 			dollarPower.AddDollar(-(int)AlliesCardValues.AlliedRefinery.DollarValue);

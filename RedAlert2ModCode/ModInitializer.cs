@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Models;
 using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Allies.Cards;
+using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Allies.Patches;
 using RedAlert2ModCode.Soviet;
 

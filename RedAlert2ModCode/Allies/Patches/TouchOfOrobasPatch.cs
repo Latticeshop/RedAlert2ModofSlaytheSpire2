@@ -15,10 +15,10 @@ public static class TouchOfOrobasPatch
     static void Postfix(RelicModel starterRelic, ref RelicModel __result)
     {
         // 检查起始遗物是否为刀乐遗物
-        if (starterRelic is RedAlert2ModCode.Allies.Relics.DollarRelic)
+        if (starterRelic is RedAlert2ModCode.Common.Relics.DollarRelic)
         {
             // 将刀乐遗物替换为先古刀乐遗物
-            __result = ModelDb.Relic<RedAlert2ModCode.Allies.Relics.DollarAncientRelic>();
+            __result = ModelDb.Relic<RedAlert2ModCode.Common.Relics.DollarAncientRelic>();
         }
     }
 }

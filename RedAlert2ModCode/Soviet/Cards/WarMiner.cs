@@ -10,8 +10,9 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Common.Powers;
 
 namespace RedAlert2ModCode.Soviet.Cards;
 
@@ -65,7 +66,7 @@ public sealed class WarMiner : CardModel
 		}
 		
 		// 检查是否有MCV能力获取资金
-		var dollarPower = Owner.Creature.Powers.OfType<RedAlert2ModCode.Allies.Powers.DollarPower>().FirstOrDefault();
+		var dollarPower = Owner.Creature.Powers.OfType<RedAlert2ModCode.Common.Powers.DollarPower>().FirstOrDefault();
 		if (dollarPower != null)
 		{
 			int amount = base.DynamicVars["DollarValue"].IntValue;

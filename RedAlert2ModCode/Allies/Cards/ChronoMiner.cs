@@ -11,8 +11,9 @@ using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
 using System.Collections.Generic;
 using System.Linq;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Common.Powers;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -44,7 +45,7 @@ public sealed class ChronoMiner : CardModel
 	{
 		UnitVoiceHelper.PlayUnitVoice(this.GetType());
 		// 检查是否有MCV能力获取资金
-		var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
 		if (dollarPower != null)
 		{
 			int amount = base.DynamicVars["DollarValue"].IntValue;

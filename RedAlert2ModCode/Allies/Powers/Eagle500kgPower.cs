@@ -14,7 +14,8 @@ using MegaCrit.Sts2.Core.ValueProps;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Powers;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Allies.Powers;
 

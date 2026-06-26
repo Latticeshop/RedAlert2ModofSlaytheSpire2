@@ -9,7 +9,8 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using System.Collections.Generic;
 using System.Linq;
 using RedAlert2ModCode.Allies.Powers;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Powers;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 

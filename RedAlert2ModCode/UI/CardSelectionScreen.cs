@@ -9,7 +9,8 @@ using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using RedAlert2ModCode.Allies.Cards;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Cards;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.UI;
 

@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.RelicPools;
 using MegaCrit.Sts2.Core.Models.Relics;
 using System.Collections.Generic;
+using RedAlert2ModCode.Common.Relics;
 
 namespace RedAlert2ModCode.Allies;
 
@@ -20,7 +21,7 @@ public class AlliesRelicPool : RelicPoolModel
     {
         return new RelicModel[]
         {
-            ModelDb.Relic<Relics.DollarRelic>()
+            ModelDb.Relic<Common.Relics.DollarRelic>()
         };
     }
 }

@@ -11,7 +11,8 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies.Powers;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Powers;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -44,7 +45,7 @@ public sealed class AlliesPillboxCard : CardModel
 			if (!CardUtils.HasMcvPower(Owner.Creature))
 				return false;
 
-			var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
 			if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
 				return false;
 
@@ -65,7 +66,7 @@ public sealed class AlliesPillboxCard : CardModel
 		BuildingSoundHelper.PlayBuildingPlaceSound();
 		
 		// 扣除资金
-		var dollarPower = Owner.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
+		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
 		if (dollarPower != null)
 		{
 			dollarPower.AddDollar(-(int)Values.DollarValue);

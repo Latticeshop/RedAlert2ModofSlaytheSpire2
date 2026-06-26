@@ -2,7 +2,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect;
 using RedAlert2ModCode.Soviet;
-using RedAlert2ModCode.Utils;
+using RedAlert2ModCode.Common.Utils;
 using System.Reflection;
 
 namespace RedAlert2ModCode.Allies.Patches;

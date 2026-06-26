@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Models;
+using RedAlert2ModCode.Common.Relics;
 
 namespace RedAlert2ModCode.Allies.Relics;
 

@@ -20,7 +20,7 @@ public class SovietRelicPool : RelicPoolModel
     {
         return new RelicModel[]
         {
-            ModelDb.Relic<RedAlert2ModCode.Allies.Relics.DollarRelic>()
+            ModelDb.Relic<RedAlert2ModCode.Common.Relics.DollarRelic>()
         };
     }
 }
