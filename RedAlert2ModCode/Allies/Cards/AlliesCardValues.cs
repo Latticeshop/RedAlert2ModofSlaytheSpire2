@@ -501,7 +501,7 @@ public static class AlliesCardValues
 			{ "ALLIEDWALLCARD", AlliedWall },
 			{ "ALLIESPILLBOXCARD", Pillbox },
 			{ "PATRIOTMISSILE", PatriotMissile },
-			{ "BATTLELAB", AlliedBattleLab }
+			{ "ALLIEDBATTLELAB", AlliedBattleLab }
 		};
 	}
 

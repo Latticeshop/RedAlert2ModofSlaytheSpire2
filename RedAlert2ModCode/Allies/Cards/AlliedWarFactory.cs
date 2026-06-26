@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
@@ -102,6 +104,13 @@ public sealed class AlliedWarFactory : CardModel
 		// 如果玩家选择了卡牌，才执行能力效果
 		if (selectedCard != null)
 		{
+			// 添加重工能力（用于科技线检查）- 只在选择单位后才添加
+			if (!Owner.Creature.Powers.OfType<AlliedWarFactoryPower>().Any())
+			{
+				await PowerCmd.Apply<AlliedWarFactoryPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+				GD.Print("[AlliedWarFactory] 添加重工能力");
+			}
+
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			
 			// 获取单位价格

@@ -1,18 +1,20 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
-using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Soviet.Powers;
 
 namespace RedAlert2ModCode.Soviet.Cards;
 
@@ -80,6 +82,13 @@ public sealed class SovietWarFactory : CardModel
 
 		if (selectedCard != null)
 		{
+			// 添加重工能力（用于科技线检查）- 只在选择单位后才添加
+			if (!Owner.Creature.Powers.OfType<SovietWarFactoryPower>().Any())
+			{
+				await PowerCmd.Apply<SovietWarFactoryPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+				GD.Print("[SovietWarFactory] 添加重工能力");
+			}
+
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			
 			int unitPrice = SovietCardValues.GetDollarValue(selectedCard.Id.Entry);

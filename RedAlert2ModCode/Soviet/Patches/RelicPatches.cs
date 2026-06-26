@@ -16,6 +16,28 @@ public static class RelicPatches
 {
     #region Large Capsule
 
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(LargeCapsule), "GetStrikeForCharacter")]
+    public static bool GetStrikeForCharacterPrefix(LargeCapsule __instance, CharacterModel character, ref CardModel __result)
+    {
+        if (!IsSovietCharacter(character))
+            return true;
+
+        __result = __instance.Owner.RunState.CreateCard(ModelDb.Card<Conscript>(), __instance.Owner);
+        return false;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(LargeCapsule), "GetDefendForCharacter")]
+    public static bool GetDefendForCharacterPrefix(LargeCapsule __instance, CharacterModel character, ref CardModel __result)
+    {
+        if (!IsSovietCharacter(character))
+            return true;
+
+        __result = __instance.Owner.RunState.CreateCard(ModelDb.Card<RhinoTank>(), __instance.Owner);
+        return false;
+    }
+
     [HarmonyPostfix]
     [HarmonyPatch(typeof(LargeCapsule), "AfterObtained")]
     public static void LargeCapsuleAfterObtainedPostfix(LargeCapsule __instance)
@@ -53,6 +75,43 @@ public static class RelicPatches
 
         if (transformations.Any())
             _ = CardCmd.Transform(transformations, __instance.Owner.PlayerRng.Transformations);
+    }
+
+    #endregion
+
+    #region Neow's Talisman
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(NeowsTalisman), "AfterObtained")]
+    public static bool NeowsTalismanAfterObtainedPrefix(NeowsTalisman __instance)
+    {
+        // 添加 null 检查
+        if (__instance.Owner == null)
+            return true;
+
+        if (!IsSovietCharacter(__instance.Owner.Character))
+            return true;
+
+        // 升级1张动员兵（打击牌）
+        var deck = PileType.Deck.GetPile(__instance.Owner).Cards;
+        if (deck == null)
+            return false;
+
+        var conscript = deck.FirstOrDefault(c => c is Conscript && !c.IsUpgraded);
+        if (conscript != null)
+        {
+            CardCmd.Upgrade(conscript);
+        }
+
+        // 升级1张犀牛坦克（防御牌）
+        var tank = deck.FirstOrDefault(c => c is RhinoTank && !c.IsUpgraded);
+        if (tank != null)
+        {
+            CardCmd.Upgrade(tank);
+        }
+
+        __instance.Flash();
+        return false;
     }
 
     #endregion

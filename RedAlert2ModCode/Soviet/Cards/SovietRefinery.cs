@@ -1,16 +1,18 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
-using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Soviet.Powers;
 
 namespace RedAlert2ModCode.Soviet.Cards;
 
@@ -86,6 +88,13 @@ public sealed class SovietRefinery : CardModel
 		
 		// 将矿车加入手牌
 		await CardPileCmd.AddGeneratedCardToCombat(minerCard, PileType.Hand, Owner);
+
+		// 添加矿场能力（用于科技线检查）
+		if (!Owner.Creature.Powers.OfType<SovietRefineryPower>().Any())
+		{
+			await PowerCmd.Apply<SovietRefineryPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+			GD.Print("[SovietRefinery] 添加矿场能力");
+		}
 
 		// 打出后抽一张牌
 		await CardPileCmd.Draw(ctx, 1, Owner);

@@ -160,6 +160,13 @@ public static class SovietCardValues
 		Cost = 0,
 		DollarValue = 2000
 	};
+
+	/// <summary>雷达 - 0费能力卡，价格1000，解锁苏联空军和轨道战备</summary>
+	public static CardValueStore.CardValues Radar => new()
+	{
+		Cost = 0,
+		DollarValue = 1000
+	};
 	
 	// ==================== 防御建筑 ====================
 	
@@ -240,14 +247,15 @@ public static class SovietCardValues
 		{
 			{ "SOVIETBARRACKSCARD", Barracks },
 			{ "SOVIETWARFACTORY", SovietWarFactory },
-			{ "SHIPYARDCARD", Shipyard },
+			{ "SOVIETSHIPYARDCARD", Shipyard },
 			{ "REPAIRDEPOT", RepairDepot },
 			{ "SOVIETPILLBOXCARD", SovietPillbox },
 			{ "NUCLEARREACTOR", NuclearReactor },
 			{ "SOVIETREFINERY", SovietRefinery },
 			{ "SOVIETBATTLELAB", SovietBattleLab },
 			{ "TESLACOIL", TeslaCoil },
-			{ "SOVIETWALLCARD", SovietWall }
+			{ "SOVIETWALLCARD", SovietWall },
+			{ "SOVIETRADAR", Radar }
 		};
 	}
 	

@@ -7,9 +7,10 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
-using RedAlert2ModCode.Soviet.Powers;
-using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Soviet.Powers;
+using RedAlert2ModCode.Soviet.Utils;
+using RedAlert2ModCode.UI;
 
 namespace RedAlert2ModCode.Soviet.Cards;
 
@@ -30,49 +31,46 @@ public sealed class SovietMCV : CardModel
 	public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[] { CardKeyword.Innate };
 
 	/// <summary>
-	/// 额外的悬停提示（包含MCV词条和战车词条）
+	/// 额外的悬停提示（包含MCV词条、战车词条和建筑科技线词条）
 	/// </summary>
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Mcv.CreateHoverTip(),
-		ModCardKeywords.Vehicle.CreateHoverTip()
+		ModCardKeywords.Vehicle.CreateHoverTip(),
+		ModCardKeywords.BuildingTechTree.CreateHoverTip()
 	];
-
-	/// <summary>
-	/// 初始建筑类型列表（磁能反应堆、矿场、兵营）
-	/// </summary>
-	private static readonly List<System.Type> InitialBuildingTypes = new()
-	{
-		typeof(NuclearReactor),
-		typeof(SovietRefinery),
-		typeof(SovietBarracksCard)
-	};
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
-		// 播放建筑释放音效
 		BuildingSoundHelper.PlayBuildingPlaceSound();
 		
-		// 使用 CombatState.CreateCard 创建正确初始化的卡牌副本
 		List<CardModel> availableCards = new();
 
-		// 1. 添加初始建筑
-		AddInitialBuildings(availableCards);
+		var techTree = CreateTechTreeFromDeck();
+		var unlockedBuildings = techTree.GetUnlockedBuildingTypes();
 
-		// 2. 添加卡组中已有的建筑卡牌（利用 SovietCardValues 中的映射）
-		AddDeckBuildings(availableCards);
+		foreach (var buildingType in unlockedBuildings)
+		{
+			var model = GetCardModel(buildingType);
+			if (model != null)
+			{
+				var card = Owner.Creature.CombatState.CreateCard(model, Owner);
+				
+				if (base.IsUpgraded)
+				{
+					CardCmd.Upgrade(card);
+				}
 
-		// 去重：按卡牌ID去重，保留第一个（初始建筑优先）
+				availableCards.Add(card);
+				GD.Print($"[SovietMCV] 科技线解锁建筑: {buildingType.Name}");
+			}
+		}
+
+		AddDeckBuildings(ref availableCards);
+
+		GD.Print($"[SovietMCV] 可用建筑卡牌数量: {availableCards.Count} (当前科技等级: {techTree.CurrentTechLevel})");
+
 		var buildingValuesMap = SovietCardValues.CreateBuildingValuesMap();
-		availableCards = availableCards
-			.GroupBy(c => c.Id.Entry.ToUpper().Replace("_", ""))
-			.Select(g => g.First())
-			.ToList();
-
-		GD.Print($"[SovietMCV] 可用建筑卡牌数量: {availableCards.Count}");
-
-		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
-		// 传递数值映射，让UI面板能够正确显示费用和描述
 		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, buildingValuesMap);
 
 		// 如果玩家选择了卡牌，执行能力效果
@@ -109,73 +107,60 @@ public sealed class SovietMCV : CardModel
 		}
 	}
 
-	/// <summary>
-	/// 添加初始建筑卡牌到选择列表
-	/// </summary>
-	private void AddInitialBuildings(List<CardModel> availableCards)
+	private BuildingTechTree CreateTechTreeFromDeck()
 	{
-		foreach (var buildingType in InitialBuildingTypes)
+		var techTree = SovietTechTreeConfig.CreateTechTree();
+		
+		if (Owner?.Creature?.Powers == null)
 		{
-			var model = GetCardModel(buildingType);
-			if (model != null)
-			{
-				var card = Owner.Creature.CombatState.CreateCard(model, Owner);
-				
-				// 如果基地车是升级过的，创建的卡牌也显示为升级版本
-				if (base.IsUpgraded)
-				{
-					CardCmd.Upgrade(card);
-				}
-
-				availableCards.Add(card);
-			}
+			return techTree;
 		}
+
+		techTree.UnlockTechFromPowers(Owner.Creature.Powers);
+
+		return techTree;
 	}
 
-	/// <summary>
-	/// 添加卡组中已有的建筑卡牌到选择列表（利用 SovietCardValues 中的映射）
-	/// </summary>
-	private void AddDeckBuildings(List<CardModel> availableCards)
+	private void AddDeckBuildings(ref List<CardModel> availableCards)
 	{
 		if (Owner?.Deck?.Cards == null)
 		{
 			return;
 		}
 
-		// 获取所有建筑卡牌的ID集合（来自 SovietCardValues，避免重复定义）
-		var buildingIds = SovietCardValues.CreateBuildingValuesMap().Keys.ToHashSet();
+		var techTree = SovietTechTreeConfig.CreateTechTree();
+		var techTreeBuildingTypes = techTree.GetUnlockedBuildingTypes();
 
-		// 获取卡组中的建筑卡牌（按ID去重）
-		var deckBuildingCards = Owner.Deck.Cards
-			.Where(c => 
-			{
-				string cardId = c.Id.Entry.ToUpper().Replace("_", "");
-				return buildingIds.Contains(cardId);
-			})
-			.GroupBy(c => c.Id.Entry.ToUpper().Replace("_", ""))
-			.Select(g => g.First());
-
-		foreach (var deckCard in deckBuildingCards)
+		foreach (var card in Owner.Deck.Cards)
 		{
-			// 使用反射调用 ModelDb.Card<T>() 获取卡牌模型
-			var model = GetCardModel(deckCard.GetType());
-			if (model == null)
+			var cardType = card.GetType();
+			
+			if (!techTreeBuildingTypes.Contains(cardType) && IsBuildingCardType(cardType))
 			{
-				continue;
+				var model = GetCardModel(cardType);
+				if (model != null)
+				{
+					var newCard = Owner.Creature.CombatState.CreateCard(model, Owner);
+					
+					if (base.IsUpgraded)
+					{
+						CardCmd.Upgrade(newCard);
+					}
+
+					if (!availableCards.Any(c => c.GetType() == cardType))
+					{
+						availableCards.Add(newCard);
+						GD.Print($"[SovietMCV] 添加牌库建筑: {cardType.Name}");
+					}
+				}
 			}
-
-			// 创建新的卡牌实例
-			var newCard = Owner.Creature.CombatState.CreateCard(model, Owner);
-
-			// 保持原卡牌的升级状态
-			if (deckCard.IsUpgraded)
-			{
-				CardCmd.Upgrade(newCard);
-			}
-
-			availableCards.Add(newCard);
-			GD.Print($"[SovietMCV] 添加卡组中的建筑: {deckCard.Id.Entry} (升级:{deckCard.IsUpgraded})");
 		}
+	}
+
+	private bool IsBuildingCardType(System.Type cardType)
+	{
+		var typeName = cardType.Name;
+		return typeName.Contains("Repair") || typeName.Contains("Defense") || typeName.Contains("Bunker") || typeName.Contains("Wall");
 	}
 
 	/// <summary>

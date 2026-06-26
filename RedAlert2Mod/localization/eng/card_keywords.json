@@ -38,5 +38,9 @@
     "super_weapon.title": "Super Weapon",
     "super_weapon.description": "Requires [gold]Battle Lab[/gold] as a prerequisite.\nThe pinnacle of technological achievement.",
     "Ra2_deploy.title": "Deploy",
-    "Ra2_deploy.description": "Deploy to use the unit's alternate effect."
+    "Ra2_deploy.description": "Deploy to use the unit's alternate effect.",
+    "building_tech_tree.title": "Building Tech Tree",
+    "building_tech_tree.description": "Tech Tree: MCV Power (unlocks Power Plant, Barracks, Refinery) -> Refinery Power (unlocks War Factory, Air Force, Navy) -> War Factory Power (unlocks Battle Lab).",
+    "orbital_readiness.title": "Orbital Readiness",
+    "orbital_readiness.description": "Summons orbital vehicles to strike."
 }

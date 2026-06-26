@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Soviet.Cards;
 
 namespace RedAlert2ModCode.UI;
 
@@ -426,6 +427,13 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         
         // 最后尝试从 AlliesCardValues 获取
         decimal result = AlliesCardValues.GetDollarValue(card.Id.Entry);
+        if (result > 0)
+        {
+            return result.ToString();
+        }
+        
+        // 尝试从 SovietCardValues 获取
+        result = SovietCardValues.GetDollarValue(card.Id.Entry);
         if (result > 0)
         {
             return result.ToString();

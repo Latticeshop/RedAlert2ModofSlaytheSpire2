@@ -171,6 +171,18 @@ public static class ModCardKeywords
         new LocString("card_keywords", "Ra2_deploy.description")
     );
 
+    public static readonly CustomKeyword BuildingTechTree = new(
+        "BUILDING_TECH_TREE",
+        new LocString("card_keywords", "building_tech_tree.title"),
+        new LocString("card_keywords", "building_tech_tree.description")
+    );
+
+    public static readonly CustomKeyword OrbitalReadiness = new(
+        "ORBITAL_READINESS",
+        new LocString("card_keywords", "orbital_readiness.title"),
+        new LocString("card_keywords", "orbital_readiness.description")
+    );
+
     public static void Initialize()
     {
         CustomKeywordManager.RegisterKeyword(Mcv);
@@ -192,5 +204,7 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(GemMine);
         CustomKeywordManager.RegisterKeyword(GoldMineColumn);
         CustomKeywordManager.RegisterKeyword(SuperWeapon);
+        CustomKeywordManager.RegisterKeyword(BuildingTechTree);
+        CustomKeywordManager.RegisterKeyword(OrbitalReadiness);
     }
 }

@@ -27,7 +27,7 @@
     "target_locked.description": "受攻击的目标。",
     "hornet.title": "黄蜂舰载机",
     "hornet.description": "每回合对[gold]目标锁定[/gold]的敌人造成伤害。",
-    "desperate_measure.title": "绝地战备",
+    "desperate_measure.title": "飞鹰战备",
     "desperate_measure.description": "替换[gold]战机[/gold]下一次的攻击。",
     "gold_mine.title": "黄金矿",
     "gold_mine.description": "当你打出[gold]矿车[/gold]时，额外增加[gold]$1000[/gold]。",
@@ -38,5 +38,9 @@
     "super_weapon.title": "超级武器",
     "super_weapon.description": "需要[gold]作战实验室[/gold]前置科技。\n是科技巅峰的造物。",
     "Ra2_deploy.title": "部署",
-    "Ra2_deploy.description": "部署后使用单位的另一种效果。"
+    "Ra2_deploy.description": "部署后使用单位的另一种效果。",
+    "building_tech_tree.title": "建筑科技线",
+    "building_tech_tree.description": "科技线：基地车能力(解锁发电厂，兵营，矿场)->矿场能力(解锁重工，空军，海军)->重工能力(解锁作战实验室)。",
+    "orbital_readiness.title": "轨道战备",
+    "orbital_readiness.description": "召唤轨道飞行器进行打击。"
 }
