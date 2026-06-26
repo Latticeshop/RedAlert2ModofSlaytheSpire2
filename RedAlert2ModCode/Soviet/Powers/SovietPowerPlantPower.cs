@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Soviet.Cards;
 
 namespace RedAlert2ModCode.Soviet.Powers;
 

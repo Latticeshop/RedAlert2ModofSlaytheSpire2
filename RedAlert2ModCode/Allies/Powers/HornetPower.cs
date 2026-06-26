@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RedAlert2ModCode.Common;
 using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Powers;

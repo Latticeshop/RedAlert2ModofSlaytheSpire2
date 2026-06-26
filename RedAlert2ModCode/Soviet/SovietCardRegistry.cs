@@ -5,6 +5,8 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Common;
+using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Cards;
 
@@ -16,7 +18,7 @@ public static class SovietCardRegistry
     public static List<Func<CardModel>> Soldiers { get; } = new()
     {
         () => ModelDb.Card<Conscript>(),
-        () => ModelDb.Card<Engineer>(),
+        () => ModelDb.Card<SovietEngineer>(),
     };
 
     public static List<Func<CardModel>> Vehicles { get; } = new()
@@ -28,39 +30,40 @@ public static class SovietCardRegistry
 
     public static List<Func<CardModel>> Aircraft { get; } = new()
     {
-        // 待添加：苏联飞机
     };
 
     public static List<Func<CardModel>> Ships { get; } = new()
     {
-        // 待添加：苏联船只
     };
 
     // 苏军建筑卡
-    public static List<Func<CardModel>> BuildingCards { get; } = new()
-    {
-        () => ModelDb.Card<SovietBarracksCard>(),
-        () => ModelDb.Card<SovietWarFactory>(),
-        () => ModelDb.Card<ShipyardCard>(),
-        () => ModelDb.Card<SovietRepairDepot>(),
-        () => ModelDb.Card<SovietPillboxCard>(),
-        () => ModelDb.Card<SovietWallCard>(),
-        () => ModelDb.Card<NuclearReactor>(),
-        () => ModelDb.Card<SovietRefinery>(),
-        () => ModelDb.Card<SovietMCV>(),
-    };
+	public static List<Func<CardModel>> BuildingCards { get; } = new()
+	{
+		() => ModelDb.Card<SovietBarracksCard>(),
+		() => ModelDb.Card<SovietWarFactory>(),
+		() => ModelDb.Card<SovietShipyardCard>(),
+		() => ModelDb.Card<SovietRepairDepot>(),
+		() => ModelDb.Card<SovietPillboxCard>(),
+		() => ModelDb.Card<SovietWallCard>(),
+		() => ModelDb.Card<NuclearReactor>(),
+		() => ModelDb.Card<SovietRefinery>(),
+		() => ModelDb.Card<SovietMCV>(),
+		() => ModelDb.Card<SovietBattleLab>(),
+	};
 
-    // 苏军技能卡
-    public static List<Func<CardModel>> PowerCards { get; } = new()
-    {
-        // 待添加
-    };
+    // 苏军技能卡 - 通过CommonCardRegistry获取公共共享卡（不含飞鹰战备系列）
+	public static List<Func<CardModel>> PowerCards { get; } = CommonCardRegistry.GetAllPowerCardsForSoviet();
 
-    // 苏军特殊卡
-    public static List<Func<CardModel>> SpecialCards { get; } = new()
+	// 苏军特殊卡 - 通过CommonCardRegistry获取公共卡
+	public static List<Func<CardModel>> SpecialCards { get; } = CommonCardRegistry.GetAllSpecialCardsForBoth();
+
+    /// <summary>
+    /// 获取所有公共技能卡（用于动态生成）
+    /// </summary>
+    public static List<Func<CardModel>> GetSharedPowerCards()
     {
-        // 待添加
-    };
+        return CommonCardRegistry.SharedPowerCards;
+    }
 
     /// <summary>
     /// 获取所有单位卡（士兵）

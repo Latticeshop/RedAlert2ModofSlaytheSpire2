@@ -105,6 +105,16 @@ public static class AlliesCardValues
 		RepeatUpgraded = 1,
 		DollarValue = 1200
 	};
+
+	/// <summary>夜莺直升机 - 1费攻击卡，本回合获得1点敏捷(升级2点)，造成3点伤害，可部署存储士兵单位，价格600</summary>
+	public static CardValueStore.CardValues NightHawkChopper => new()
+	{
+		Cost = 1,
+		Damage = 3,
+		MagicNumber = 1,           // 敏捷值
+		MagicNumberUpgraded = 1,   // 升级后2 = 1 + 1
+		DollarValue = 600
+	};
 	
 	// ==================== 建筑卡牌 ====================
 	
@@ -302,7 +312,7 @@ public static class AlliesCardValues
 	};
 
 	/// <summary>作战实验室 - 0费能力卡，解锁高级兵种，价格2000</summary>
-	public static CardValueStore.CardValues BattleLab => new()
+	public static CardValueStore.CardValues AlliedBattleLab => new()
 	{
 		Cost = 0,
 		DollarValue = 2000
@@ -366,15 +376,6 @@ public static class AlliesCardValues
 		Damage = 9,                 // 基础伤害
 		DamageUpgraded = 4,         // 升级后13 = 9 + 4
 		DollarValue = 0             // 绝地战备卡牌无价格
-	};
-
-	/// <summary>大生产 - 3费能力卡，稀有金卡，每有一层大生产能力，每有一层生产序列，其单位价格减少100</summary>
-	public static CardValueStore.CardValues MassProduction => new()
-	{
-		Cost = 3,                   // 3费，升级后费用不变
-		CostUpgraded = 0,           // 升级后费用不变，仍为3费
-		DollarValue = 0,            // 能力卡无价格
-		Stars = 100                 // 每层生产序列减少的价格
 	};
 
 	// ==================== 高科技(T2)单位 - 需要作战实验室解锁 ====================
@@ -470,7 +471,8 @@ public static class AlliesCardValues
 	{
 		return new System.Collections.Generic.Dictionary<string, CardValueStore.CardValues>
 		{
-			{ "INTRUDER", Intruder }
+			{ "INTRUDER", Intruder },
+			{ "NIGHTHAWKCHOPPER", NightHawkChopper }
 		};
 	}
 	
@@ -499,7 +501,7 @@ public static class AlliesCardValues
 			{ "ALLIEDWALLCARD", AlliedWall },
 			{ "ALLIESPILLBOXCARD", Pillbox },
 			{ "PATRIOTMISSILE", PatriotMissile },
-			{ "BATTLELAB", BattleLab }
+			{ "BATTLELAB", AlliedBattleLab }
 		};
 	}
 
@@ -529,7 +531,7 @@ public static class AlliesCardValues
 		{ typeof(AlliedWallCard), () => ModelDb.Card<AlliedWallCard>() },
 		{ typeof(AlliesPillboxCard), () => ModelDb.Card<AlliesPillboxCard>() },
 		{ typeof(PatriotMissile), () => ModelDb.Card<PatriotMissile>() },
-		{ typeof(BattleLab), () => ModelDb.Card<BattleLab>() },
+		{ typeof(AlliedBattleLab), () => ModelDb.Card<AlliedBattleLab>() },
 		{ typeof(ChronoSphere), () => ModelDb.Card<ChronoSphere>() },
 		{ typeof(WeatherController), () => ModelDb.Card<WeatherController>() }
 	};

@@ -69,7 +69,7 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/MirageTank/Vmirsee.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/MirageTank/Vmirsef.mp3",
         },
-        ["NightHawk"] = new List<string>
+        ["NightHawkChopper"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/NightHawk/Vblhata.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/NightHawk/Vblhatb.mp3",
@@ -173,7 +173,7 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/Dolphin/Vdolmovb.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/Dolphin/Vdolselb.mp3",
         },
-        ["IFV"] = new List<string>
+        ["Ifv"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvatc.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvmob.mp3",

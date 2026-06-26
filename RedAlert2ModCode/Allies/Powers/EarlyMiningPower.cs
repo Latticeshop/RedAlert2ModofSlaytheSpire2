@@ -28,7 +28,7 @@ public sealed class EarlyMiningPower : PowerModel
     public override PowerStackType StackType => PowerStackType.Counter;
 
     public new string PackedIconPath => "res://RedAlert2ModResources/images/packed/powers/early_mining_power.png";
-    public new AbstractModel OriginModel => ModelDb.Card<EarlyMining>();
+    public new AbstractModel OriginModel => ModelDb.Card<AlliedEarlyMining>();
 
     protected override List<DynamicVar> CanonicalVars => new()
     {

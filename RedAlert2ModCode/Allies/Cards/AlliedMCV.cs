@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Common;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;

@@ -15,57 +15,59 @@ namespace RedAlert2ModCode.UI;
 public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
 {
     private readonly TaskCompletionSource<EngineerChoice?> _completionSource = new();
-    private readonly List<EngineerChoice> _choices;
-    private bool _choiceLocked;
+	private readonly List<EngineerChoice> _choices;
+	private readonly string? _engineerPortraitPath;
+	private bool _choiceLocked;
 
-    /// <summary>
-    /// 工程师选项类型
-    /// </summary>
-    public enum ChoiceType
-    {
-        CaptureOilDerrick,      // 占领油井
-        RepairBuilding,         // 修理建筑
-        CaptureAirfield,        // 占领机场
-        CaptureHospital,        // 占领市民医院
-        CaptureWorkshop,        // 占领机械商店
-        CaptureTechOutpost,     // 占领科技前哨站
-        RepairBridge            // 维修桥梁
-    }
+	/// <summary>
+	/// 工程师选项类型
+	/// </summary>
+	public enum ChoiceType
+	{
+		CaptureOilDerrick,      // 占领油井
+		RepairBuilding,         // 修理建筑
+		CaptureAirfield,        // 占领机场
+		CaptureHospital,        // 占领市民医院
+		CaptureWorkshop,        // 占领机械商店
+		CaptureTechOutpost,     // 占领科技前哨站
+		RepairBridge            // 维修桥梁
+	}
 
-    /// <summary>
-    /// 工程师选项
-    /// </summary>
-    public sealed class EngineerChoice
-    {
-        public ChoiceType Type { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public int Weight { get; set; }
-    }
+	/// <summary>
+	/// 工程师选项
+	/// </summary>
+	public sealed class EngineerChoice
+	{
+		public ChoiceType Type { get; set; }
+		public string Title { get; set; } = string.Empty;
+		public string Description { get; set; } = string.Empty;
+		public int Weight { get; set; }
+	}
 
-    public NetScreenType ScreenType => NetScreenType.Rewards;
-    public bool UseSharedBackstop => true;
-    public Control? DefaultFocusedControl => null;
+	public NetScreenType ScreenType => NetScreenType.Rewards;
+	public bool UseSharedBackstop => true;
+	public Control? DefaultFocusedControl => null;
 
-    private EngineerChoiceScreen(List<EngineerChoice> choices)
-    {
-        _choices = choices;
-        Name = nameof(EngineerChoiceScreen);
-        SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
-        MouseFilter = MouseFilterEnum.Stop;
-        FocusMode = FocusModeEnum.All;
-        BuildUi();
-    }
+	private EngineerChoiceScreen(List<EngineerChoice> choices, string? engineerPortraitPath)
+	{
+		_choices = choices;
+		_engineerPortraitPath = engineerPortraitPath;
+		Name = nameof(EngineerChoiceScreen);
+		SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+		MouseFilter = MouseFilterEnum.Stop;
+		FocusMode = FocusModeEnum.All;
+		BuildUi();
+	}
 
-    /// <summary>
-    /// 显示选择界面
-    /// </summary>
-    public static async Task<EngineerChoice?> ShowSelection(List<EngineerChoice> choices)
-    {
-        var screen = new EngineerChoiceScreen(choices);
-        NOverlayStack.Instance?.Push(screen);
-        return await screen._completionSource.Task;
-    }
+	/// <summary>
+	/// 显示选择界面
+	/// </summary>
+	public static async Task<EngineerChoice?> ShowSelection(List<EngineerChoice> choices, string? engineerPortraitPath = null)
+	{
+		var screen = new EngineerChoiceScreen(choices, engineerPortraitPath);
+		NOverlayStack.Instance?.Push(screen);
+		return await screen._completionSource.Task;
+	}
 
     /// <summary>
     /// 构建UI界面
@@ -176,8 +178,8 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
         contentMargin.AddChild(content);
 
         // 添加工程师图片
-        string iconPath = "res://RedAlert2ModResources/images/packed/card_portraits/allies/aengicon.png";
-        if (!string.IsNullOrEmpty(iconPath) && ResourceLoader.Exists(iconPath))
+	string iconPath = _engineerPortraitPath ?? "res://RedAlert2ModResources/images/packed/card_portraits/allies/aengicon.png";
+	if (!string.IsNullOrEmpty(iconPath) && ResourceLoader.Exists(iconPath))
         {
             TextureRect texture = new()
             {

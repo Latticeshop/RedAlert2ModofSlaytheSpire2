@@ -46,4 +46,48 @@ public static class CommonCardValues
 		DamageUpgraded = 1,     // 升级后4 = 3 + 1
 		Repeat = 4              // 攻击次数
 	};
+
+	/// <summary>飞鹰空袭 - 1费攻击卡，绝地战备，对全体敌人造成8伤害（升级12伤害）</summary>
+	public static CardValueStore.CardValues EagleAirStrike => new()
+	{
+		Cost = 1,
+		Damage = 8,             // 基础伤害
+		DamageUpgraded = 4,     // 升级后12 = 8 + 4
+		Repeat = 1
+	};
+
+	/// <summary>飞鹰500kg - 3费攻击卡，绝地战备，指定敌人获得目标锁定</summary>
+	public static CardValueStore.CardValues Eagle500kg => new()
+	{
+		Cost = 3,
+		CostUpgraded = -1,      // 升级后费用减1
+		Repeat = 1
+	};
+
+	/// <summary>伞兵 - 1费攻击卡（升级后0费），将6张美国大兵加入手牌</summary>
+	public static CardValueStore.CardValues Paratrooper => new()
+	{
+		Cost = 1,
+		CostUpgraded = -1,      // 升级后0费
+		Repeat = 6              // 添加6张美国大兵
+	};
+
+	public static CardValueStore.CardValues SellMCV => new()
+	{
+		Cost = 1,
+		DollarValue = 2400
+	};
+
+	public static CardValueStore.CardValues Ra2Rally => new()
+	{
+		Cost = 1,
+		MagicNumber = 2,           // 召集单位卡数量
+		MagicNumberUpgraded = 1    // 升级后增加1张
+	};
+
+	public static CardValueStore.CardValues StopProduction => new()
+	{
+		Cost = 1,
+		Repeat = 1                  // 未升级时选择数量
+	};
 }

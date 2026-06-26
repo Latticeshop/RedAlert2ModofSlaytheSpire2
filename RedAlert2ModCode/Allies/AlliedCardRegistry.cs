@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Allies.Cards;
+using RedAlert2ModCode.Common;
 using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
@@ -38,7 +39,8 @@ public static class AlliedCardRegistry
 
     public static List<Func<CardModel>> Aircraft { get; } = new()
     {
-        () => ModelDb.Card<Intruder>()
+        () => ModelDb.Card<Intruder>(),
+        () => ModelDb.Card<NightHawkChopper>()
     };
 
     public static List<Func<CardModel>> Ships { get; } = new()
@@ -56,21 +58,21 @@ public static class AlliedCardRegistry
     };
 
     // 盟军建筑卡
-    public static List<Func<CardModel>> BuildingCards { get; } = new()
-    {
-        () => ModelDb.Card<AlliesBarracksCard>(),
-        () => ModelDb.Card<AlliedWarFactory>(),
-        () => ModelDb.Card<AlliedMCV>(),
-        () => ModelDb.Card<PowerPlantCard>(),
-        () => ModelDb.Card<AirForceCommand>(),
-        () => ModelDb.Card<AlliedRefinery>(),
-        () => ModelDb.Card<AlliedWallCard>(),
-        () => ModelDb.Card<FortifiedWall>(),
-        () => ModelDb.Card<AlliesShipyardCard>(),
-        () => ModelDb.Card<BattleLab>(),
-        () => ModelDb.Card<ChronoSphere>(),
-        () => ModelDb.Card<WeatherController>()
-    };
+	public static List<Func<CardModel>> BuildingCards { get; } = new()
+	{
+		() => ModelDb.Card<AlliesBarracksCard>(),
+		() => ModelDb.Card<AlliedWarFactory>(),
+		() => ModelDb.Card<AlliedMCV>(),
+		() => ModelDb.Card<PowerPlantCard>(),
+		() => ModelDb.Card<AirForceCommand>(),
+		() => ModelDb.Card<AlliedRefinery>(),
+		() => ModelDb.Card<AlliedWallCard>(),
+		() => ModelDb.Card<FortifiedWall>(),
+		() => ModelDb.Card<AlliesShipyardCard>(),
+		() => ModelDb.Card<AlliedBattleLab>(),
+		() => ModelDb.Card<ChronoSphere>(),
+		() => ModelDb.Card<WeatherController>()
+	};
 
     // 盟军防御塔
     public static List<Func<CardModel>> DefenseTowers { get; } = new()
@@ -80,30 +82,41 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<PatriotMissile>()
     };
 
-    // 盟军运转(技能)卡
-    public static List<Func<CardModel>> PowerCards { get; } = new()
-    {
-        () => ModelDb.Card<SellMCV>(),
-        () => ModelDb.Card<Ra2Rally>(),
-        () => ModelDb.Card<StrategyTowerDefense>(),
-        () => ModelDb.Card<OilDerrickCard>(),
-        () => ModelDb.Card<StopProductionCard>(),
-        () => ModelDb.Card<EagleMachineGun>(),
-        () => ModelDb.Card<EagleAirStrike>(),
-        () => ModelDb.Card<MassProduction>(),
-        () => ModelDb.Card<GoldMineCard>(),
-        () => ModelDb.Card<GemMineCard>(),
-        () => ModelDb.Card<GoldMineColumnCard>(),
-        () => ModelDb.Card<EarlyMining>(),
-        () => ModelDb.Card<ChronoWarp>(),
-        () => ModelDb.Card<LightningStorm>()
-    };
+    // 盟军运转(技能)卡 - 通过CommonCardRegistry获取公共卡，添加盟军专属卡
+	public static List<Func<CardModel>> PowerCards { get; } = CreatePowerCards();
 
-    // 盟军特殊卡
-    public static List<Func<CardModel>> SpecialCards { get; } = new()
+	// 盟军特殊卡 - 通过CommonCardRegistry获取公共卡
+    public static List<Func<CardModel>> SpecialCards { get; } = CreateSpecialCards();
+
+    private static List<Func<CardModel>> CreatePowerCards()
     {
-        () => ModelDb.Card<Paratrooper>()
-    };
+        var cards = CommonCardRegistry.GetAllPowerCardsForAllies();
+        cards.Add(() => ModelDb.Card<AlliedEarlyMining>());
+        cards.Add(() => ModelDb.Card<ChronoWarp>());
+        cards.Add(() => ModelDb.Card<LightningStorm>());
+        return cards;
+    }
+
+    private static List<Func<CardModel>> CreateSpecialCards()
+    {
+        return CommonCardRegistry.GetAllSpecialCardsForBoth();
+    }
+
+    /// <summary>
+    /// 获取所有公共技能卡（用于动态生成）
+    /// </summary>
+    public static List<Func<CardModel>> GetSharedPowerCards()
+    {
+        return CommonCardRegistry.SharedPowerCards;
+    }
+
+    /// <summary>
+    /// 获取所有盟军专属技能卡（用于动态生成）
+    /// </summary>
+    public static List<Func<CardModel>> GetAlliedOnlyPowerCards()
+    {
+        return CommonCardRegistry.AlliedOnlyPowerCards;
+    }
 
     /// <summary>
     /// 获取所有单位卡（士兵）

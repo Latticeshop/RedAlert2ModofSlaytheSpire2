@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RedAlert2ModCode.Common;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;

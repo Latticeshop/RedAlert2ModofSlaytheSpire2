@@ -15,28 +15,27 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
-using RedAlert2ModCode.Soviet.Powers;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Soviet;
 
-namespace RedAlert2ModCode.Soviet.Cards;
+namespace RedAlert2ModCode.Allies.Cards;
 
-public sealed partial class FlakTrack : CardModel
+public sealed partial class NightHawkChopper : CardModel
 {
-    private static readonly CardValueStore.CardValues Values = SovietCardValues.FlakTrack;
+    private static readonly CardValueStore.CardValues Values = AlliesCardValues.NightHawkChopper;
 
     private List<CardModel> _storedCards = new List<CardModel>();
     private bool _hasStored;
 
-    public FlakTrack() : base((int)Values.Cost, CardType.Skill, CardRarity.Token, TargetType.Self) { }
+    public NightHawkChopper() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
-    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/soviet/htkicon.png";
+    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/shadicon.png";
 
     protected override List<DynamicVar> CanonicalVars => new()
     {
-        new BlockVar(Values.Block, ValueProp.Unpowered),
+        new IntVar("Damage", Values.Damage),
         new IntVar("Dexterity", Values.MagicNumber),
         new StringVar("StoredCards"),
         new IntVar("StoreCount", 5)
@@ -57,7 +56,7 @@ public sealed partial class FlakTrack : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
-        ModCardKeywords.Vehicle.CreateHoverTip(),
+        ModCardKeywords.Aircraft.CreateHoverTip(),
         ModCardKeywords.Deploy.CreateHoverTip()
     ];
 
@@ -69,7 +68,7 @@ public sealed partial class FlakTrack : CardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Soviet");
+        UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Allies");
 
         if (_hasStored)
         {
@@ -85,21 +84,25 @@ public sealed partial class FlakTrack : CardModel
         }
         else
         {
-            await ExecuteAttack(play);
+            await ExecuteAttack(ctx, play);
         }
     }
 
-    private async Task ExecuteAttack(CardPlay play)
+    private async Task ExecuteAttack(PlayerChoiceContext ctx, CardPlay play)
     {
-        await PowerCmd.Apply<SovietFlakTrackDexterityPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, DynamicVars["Dexterity"].BaseValue, Owner.Creature, this);
-        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
+        int dexterity = IsUpgraded ? Values.MagicNumber + Values.MagicNumberUpgraded : Values.MagicNumber;
+        await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.DexterityPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, dexterity, Owner.Creature, this);
+        await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+            .FromCard(this)
+            .Targeting(play.Target)
+            .Execute(ctx);
     }
 
     private async Task ExecuteDeploy(PlayerChoiceContext ctx, CardPlay play)
     {
         var soldierCards = GetSoldierCardsFromHand();
 
-        var selectPrompt = new LocString("cards", "FLAK_TRACK.select_prompt");
+        var selectPrompt = new LocString("cards", "NIGHT_HAWK_CHOPPER.select_prompt");
         selectPrompt.Add("0", 0);
         selectPrompt.Add("1", 5);
         var prefs = new CardSelectorPrefs(selectPrompt, 0, 5)
@@ -120,28 +123,28 @@ public sealed partial class FlakTrack : CardModel
             NPlayerHand.Instance?.Remove(card);
             card.RemoveFromCurrentPile();
             _storedCards.Add(card);
-            GD.Print($"[FlakTrack] 存储士兵卡牌: {card.Title}");
+            GD.Print($"[NightHawkChopper] 存储士兵卡牌: {card.Title}");
         }
 
         if (_storedCards.Count > 0)
         {
             _hasStored = true;
             ((StringVar)DynamicVars["StoredCards"]).StringValue = string.Join(", ", _storedCards.Select(c => c.Title));
-            GD.Print($"[FlakTrack] 存储完成，已存储 {_storedCards.Count} 张卡牌");
+            GD.Print($"[NightHawkChopper] 存储完成，已存储 {_storedCards.Count} 张卡牌");
         }
 
         await CardPileCmd.Add(this, PileType.Hand, CardPilePosition.Bottom, this);
-        GD.Print("[FlakTrack] 返回手牌");
+        GD.Print("[NightHawkChopper] 返回手牌");
     }
 
     private async Task ReleaseStoredCards()
     {
-        GD.Print($"[FlakTrack] 释放存储的卡牌，数量: {_storedCards.Count}");
+        GD.Print($"[NightHawkChopper] 释放存储的卡牌，数量: {_storedCards.Count}");
 
         foreach (var card in _storedCards)
         {
             await CardPileCmd.Add(card, PileType.Hand, CardPilePosition.Bottom, this);
-            GD.Print($"[FlakTrack] 释放卡牌: {card.Title}");
+            GD.Print($"[NightHawkChopper] 释放卡牌: {card.Title}");
         }
 
         _storedCards.Clear();
