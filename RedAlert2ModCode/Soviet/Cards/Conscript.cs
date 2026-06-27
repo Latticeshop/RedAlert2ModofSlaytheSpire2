@@ -15,7 +15,7 @@ namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
 /// 动员兵 - 类似于打击的基础攻击牌
-/// 1费3伤害两次，升级后4伤害两次
+/// 1费3伤害1次，升级后4伤害1次
 /// 对应盟军的美国大兵
 /// </summary>
 public sealed class Conscript : CardModel
@@ -29,8 +29,7 @@ public sealed class Conscript : CardModel
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new DamageVar(Values.Damage, ValueProp.Move),
-		new RepeatVar(Values.Repeat)
+		new DamageVar(Values.Damage, ValueProp.Move)
 	};
 
 	protected override HashSet<CardTag> CanonicalTags => new() { CardTag.Strike };
@@ -44,7 +43,6 @@ public sealed class Conscript : CardModel
 	{
 		UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Soviet");
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.WithHitCount(DynamicVars.Repeat.IntValue)
 			.FromCard(this)
 			.Targeting(play.Target)
 			.Execute(ctx);

@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Nodes.Combat;
+using RedAlert2ModCode.Allies.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Common.Utils;
@@ -35,7 +36,7 @@ public sealed partial class NightHawkChopper : CardModel
 
     protected override List<DynamicVar> CanonicalVars => new()
     {
-        new IntVar("Damage", Values.Damage),
+        new DamageVar(Values.Damage, ValueProp.Move),
         new IntVar("Dexterity", Values.MagicNumber),
         new StringVar("StoredCards"),
         new IntVar("StoreCount", 5)
@@ -76,7 +77,13 @@ public sealed partial class NightHawkChopper : CardModel
             return;
         }
 
-        var selectedChoice = await FlakTrackChoiceScreen.ShowSelection();
+        var selectedChoice = await FlakTrackChoiceScreen.ShowSelection(
+            "选择夜莺直升机的行动",
+            "部署",
+            "存储当前手牌中的士兵单位",
+            "攻击",
+            "获得敏捷和攻击"
+        );
 
         if (selectedChoice == FlakTrackChoiceScreen.ChoiceType.Deploy)
         {
@@ -91,7 +98,7 @@ public sealed partial class NightHawkChopper : CardModel
     private async Task ExecuteAttack(PlayerChoiceContext ctx, CardPlay play)
     {
         int dexterity = IsUpgraded ? Values.MagicNumber + Values.MagicNumberUpgraded : Values.MagicNumber;
-        await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.DexterityPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, dexterity, Owner.Creature, this);
+        await PowerCmd.Apply<NightHawkTemporaryDexterityPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, dexterity, Owner.Creature, this);
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this)
             .Targeting(play.Target)

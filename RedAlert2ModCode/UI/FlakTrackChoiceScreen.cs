@@ -33,9 +33,27 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         BuildUi();
     }
 
+    private string _title = "选择行动";
+    private string _deployTitle = "部署";
+    private string _deployDesc = "存储当前手牌中的士兵单位";
+    private string _attackTitle = "攻击";
+    private string _attackDesc = "获得敏捷和攻击";
+
     public static async Task<ChoiceType?> ShowSelection()
     {
         var screen = new FlakTrackChoiceScreen();
+        NOverlayStack.Instance?.Push(screen);
+        return await screen._completionSource.Task;
+    }
+
+    public static async Task<ChoiceType?> ShowSelection(string title, string deployTitle, string deployDesc, string attackTitle, string attackDesc)
+    {
+        var screen = new FlakTrackChoiceScreen();
+        screen._title = title;
+        screen._deployTitle = deployTitle;
+        screen._deployDesc = deployDesc;
+        screen._attackTitle = attackTitle;
+        screen._attackDesc = attackDesc;
         NOverlayStack.Instance?.Push(screen);
         return await screen._completionSource.Task;
     }
@@ -76,7 +94,7 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
 
         Label title = new()
         {
-            Text = "选择防空履带车的行动",
+            Text = _title,
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
@@ -94,8 +112,8 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         choicesRow.AddThemeConstantOverride("separation", 30);
         root.AddChild(choicesRow);
 
-        choicesRow.AddChild(CreateChoiceButton("部署", "存储当前手牌中的士兵单位", ChoiceType.Deploy));
-        choicesRow.AddChild(CreateChoiceButton("攻击", "获得敏捷和格挡", ChoiceType.Attack));
+        choicesRow.AddChild(CreateChoiceButton(_deployTitle, _deployDesc, ChoiceType.Deploy));
+        choicesRow.AddChild(CreateChoiceButton(_attackTitle, _attackDesc, ChoiceType.Attack));
     }
 
     private Button CreateChoiceButton(string title, string description, ChoiceType type)

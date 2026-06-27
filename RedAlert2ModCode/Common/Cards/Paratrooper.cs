@@ -35,17 +35,24 @@ public sealed class Paratrooper : CardModel
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new IntVar("SoldierCount", Values.Repeat)
+		new IntVar("SoldierCount", GetSoldierCount())
 	};
+	
+	private int GetSoldierCount()
+	{
+		bool isSoviet = Owner.Character?.Id?.Entry?.Contains("SOVIET") ?? false;
+		return isSoviet ? 9 : 6;
+	}
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Attack", Owner.Character.CastAnimDelay);
 
-		int soldierCount = IsUpgraded ? Values.GetRepeat(true) : Values.Repeat;
+		// 根据玩家阵营决定添加哪种士兵和数量
+		bool isSoviet = Owner.Character?.Id?.Entry?.Contains("SOVIET") ?? false;
+		bool isAllies = !isSoviet && (Owner.Character?.Id?.Entry?.Contains("REDALERT") ?? false);
 		
-		// 根据玩家阵营决定添加哪种士兵
-		bool isAllies = Owner.Creature?.GetType().Namespace?.Contains("Allies") == true;
+		int soldierCount = isSoviet ? 9 : 6;
 		
 		// 将士兵加入手牌
 		for (int i = 0; i < soldierCount; i++)

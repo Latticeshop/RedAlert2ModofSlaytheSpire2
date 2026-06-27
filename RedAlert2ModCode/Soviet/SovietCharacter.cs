@@ -1,9 +1,11 @@
 using BaseLib.Abstracts;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Characters;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Relics;
+using MegaCrit.Sts2.Core.ValueProps;
 using RedAlert2ModCode.Soviet.Cards;
 
 namespace RedAlert2ModCode.Soviet;
@@ -40,7 +42,7 @@ public sealed class Soviet : PlaceholderCharacterModel
     public override CharacterGender Gender => CharacterGender.Masculine;
     public override int StartingHp => 90; // 苏军更耐打
     
-    // 起始卡组（7张动员兵 + 5张犀牛坦克 + 1张苏军基地车 + 1张苏军围墙）
+    // 起始卡组（12张动员兵 + 4张犀牛坦克 + 1张苏军基地车 + 1张苏军围墙）
     public override IEnumerable<CardModel> StartingDeck => new List<CardModel>
     {
         ModelDb.Card<Conscript>(),
@@ -50,7 +52,11 @@ public sealed class Soviet : PlaceholderCharacterModel
         ModelDb.Card<Conscript>(),
         ModelDb.Card<Conscript>(),
         ModelDb.Card<Conscript>(),
-        ModelDb.Card<RhinoTank>(),
+        ModelDb.Card<Conscript>(),
+        ModelDb.Card<Conscript>(),
+        ModelDb.Card<Conscript>(),
+        ModelDb.Card<Conscript>(),
+        ModelDb.Card<Conscript>(),
         ModelDb.Card<RhinoTank>(),
         ModelDb.Card<RhinoTank>(),
         ModelDb.Card<RhinoTank>(),

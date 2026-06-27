@@ -32,7 +32,7 @@ public sealed class SovietBattleLab : CardModel
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new IntVar("DollarNumber", Values.DollarValue)
+		new IntVar("DollarNumber", IsUpgraded ? Values.DollarValueUpgraded : Values.DollarValue)
 	};
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
@@ -54,7 +54,8 @@ public sealed class SovietBattleLab : CardModel
 
 			// 检查资金是否足够
 			var dollarPower = Owner.Creature.Powers.OfType<DollarPower>().FirstOrDefault();
-			if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
+			decimal requiredDollar = IsUpgraded ? Values.DollarValueUpgraded : Values.DollarValue;
+			if (dollarPower == null || dollarPower.DollarValue < requiredDollar)
 				return false;
 
 			return true;
@@ -70,8 +71,9 @@ public sealed class SovietBattleLab : CardModel
 		var dollarPower = Owner.Creature.Powers.OfType<DollarPower>().FirstOrDefault();
 		if (dollarPower != null)
 		{
-			dollarPower.AddDollar(-(int)Values.DollarValue);
-			GD.Print($"[SovietBattleLab] 扣除资金 {Values.DollarValue}");
+			decimal dollarCost = IsUpgraded ? Values.DollarValueUpgraded : Values.DollarValue;
+			dollarPower.AddDollar(-(int)dollarCost);
+			GD.Print($"[SovietBattleLab] 扣除资金 {dollarCost}");
 		}
 
 		// 获得作战实验室能力
@@ -85,6 +87,6 @@ public sealed class SovietBattleLab : CardModel
 
 	protected override void OnUpgrade()
 	{
-		// 作战实验室不需要升级效果
+		base.DynamicVars["DollarNumber"].BaseValue = Values.DollarValueUpgraded;
 	}
 }

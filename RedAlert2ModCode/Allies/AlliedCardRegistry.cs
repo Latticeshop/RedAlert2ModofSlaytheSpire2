@@ -46,7 +46,7 @@ public static class AlliedCardRegistry
     public static List<Func<CardModel>> Ships { get; } = new()
     {
         () => ModelDb.Card<Dolphin>(),
-        () => ModelDb.Card<TransportShip>(),
+        () => ModelDb.Card<AlliedTransportShip>(),
         () => ModelDb.Card<Destroyer>(),
         () => ModelDb.Card<Agisicon>()
     };

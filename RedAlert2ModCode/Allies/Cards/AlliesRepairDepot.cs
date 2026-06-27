@@ -18,7 +18,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
 /// 修理厂 - 盟军建筑
-/// 2费技能卡（蓝卡uncommon，升级后1费）
+/// 0费能力卡（蓝卡uncommon）
 /// 效果：获得能力：回合开始时，花费$1000资金从消耗牌堆选择一张牌加入弃牌堆
 /// </summary>
 public sealed class AlliesRepairDepot : CardModel
@@ -83,7 +83,5 @@ public sealed class AlliesRepairDepot : CardModel
 
 	protected override void OnUpgrade()
 	{
-		// 升级效果：能量消耗从2费降低到1费
-		EnergyCost.SetCustomBaseCost(UPGRADED_COST);
 	}
 }

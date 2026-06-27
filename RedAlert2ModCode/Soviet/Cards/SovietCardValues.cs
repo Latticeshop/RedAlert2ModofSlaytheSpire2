@@ -11,13 +11,13 @@ public static class SovietCardValues
 {
 	// ==================== 士兵单位 ====================
 	
-	/// <summary>动员兵 - 1费3伤害两次，升级后4伤害两次，价格100</summary>
+	/// <summary>动员兵 - 1费3伤害1次，升级后4伤害1次，价格100</summary>
 	public static CardValueStore.CardValues Conscript => new()
 	{
 		Cost = 1,
 		Damage = 3,
 		DamageUpgraded = 1,
-		Repeat = 2,
+		Repeat = 1,
 		DollarValue = 100
 	};
 	
@@ -118,11 +118,11 @@ public static class SovietCardValues
 		DollarValue = 1000
 	};
 	
-	/// <summary>苏军维修厂 - 0费能力卡（升级后0费），价格800</summary>
+	/// <summary>苏军维修厂 - 2费能力卡（升级后1费），价格800</summary>
 	public static CardValueStore.CardValues RepairDepot => new()
 	{
-		Cost = 0,
-		CostUpgraded = 0,
+		Cost = 2,
+		CostUpgraded = 1,
 		DollarValue = 800
 	};
 	
@@ -154,11 +154,12 @@ public static class SovietCardValues
 		DollarValue = 2000
 	};
 	
-	/// <summary>苏军作战实验室 - 0费，价格2000</summary>
+	/// <summary>苏军作战实验室 - 0费，价格2000（升级后1000）</summary>
 	public static CardValueStore.CardValues SovietBattleLab => new()
 	{
 		Cost = 0,
-		DollarValue = 2000
+		DollarValue = 2000,
+		DollarValueUpgraded = 1000
 	};
 
 	/// <summary>雷达 - 0费能力卡，价格1000，解锁苏联空军和轨道战备</summary>
@@ -176,6 +177,15 @@ public static class SovietCardValues
 		Cost = 0,
 		Block = 1,
 		BlockUpgraded = 1,
+		DollarValue = 100
+	};
+
+	/// <summary>苏军坚固围墙 - 0费3护盾（升级后5护盾），花费100资金，价格100</summary>
+	public static CardValueStore.CardValues SovietFortifiedWall => new()
+	{
+		Cost = 0,
+		Block = 3,
+		BlockUpgraded = 2,
 		DollarValue = 100
 	};
 	
@@ -196,9 +206,18 @@ public static class SovietCardValues
 	{
 		Cost = 0,
 		Damage = 2,
-		DamageUpgraded = 0,  // 升级后伤害不变（2点），只是变为全体攻击
+		DamageUpgraded = 0,
 		DollarValue = 2000,
 		DollarValueUpgraded = 500
+	};
+	
+	/// <summary>苏联运输船 - 1费技能卡，存储最多3张手牌（升级后5张），价格900</summary>
+	public static CardValueStore.CardValues SovietTransportShip => new()
+	{
+		Cost = 1,
+		MagicNumber = 3,
+		MagicNumberUpgraded = 2,
+		DollarValue = 900
 	};
 	
 	// ==================== 数值映射创建方法 ====================
@@ -210,7 +229,7 @@ public static class SovietCardValues
 			{ "CONSCRIPT", Conscript },
 			{ "ATTACKDOG", AttackDog },
 			{ "TESLATROOPER", TeslaTrooper },
-			{ "ENGINEER", Engineer }
+			{ "SOVIETENGINEER", Engineer }
 		};
 	}
 	
@@ -237,7 +256,7 @@ public static class SovietCardValues
 	{
 		return new Dictionary<string, CardValueStore.CardValues>
 		{
-			// 待添加苏军海军单位
+			{ "SOVIETTRANSPORTSHIP", SovietTransportShip }
 		};
 	}
 	
@@ -255,6 +274,7 @@ public static class SovietCardValues
 			{ "SOVIETBATTLELAB", SovietBattleLab },
 			{ "TESLACOIL", TeslaCoil },
 			{ "SOVIETWALLCARD", SovietWall },
+			{ "SOVIETFORTIFIEDWALL", SovietFortifiedWall },
 			{ "SOVIETRADAR", Radar }
 		};
 	}

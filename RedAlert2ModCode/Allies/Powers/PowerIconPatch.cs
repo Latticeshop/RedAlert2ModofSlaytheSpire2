@@ -33,6 +33,7 @@ public static class PowerIconPatch
         { typeof(RedAlert2ModCode.Soviet.Powers.SovietRadarPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/nradicon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.SovietBattleLabPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/ntchicon.png" },
         { typeof(IfvTemporaryDexterityPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/fvicon.png" },
+        { typeof(NightHawkTemporaryDexterityPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/shadicon.png" },
         { typeof(RocketSoldierTemporaryDexterityPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/jjeticon.png" },
         { typeof(PrismTowerPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/prisicon.png" },
         { typeof(DollarPower), "res://RedAlert2ModResources/images/packed/powers/dollar_power.png" },

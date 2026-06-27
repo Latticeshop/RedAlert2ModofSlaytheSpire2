@@ -283,7 +283,7 @@ public sealed class TrainingQueuePower : PowerModel
                 GD.Print($"[TrainingQueuePower] 单位消耗: 否 - UnitName={UnitName}");
             }
 
-            await CardPileCmd.AddGeneratedCardToCombat(tempCard, PileType.Discard, Owner.Player, CardPilePosition.Top);
+            await CardPileCmd.AddGeneratedCardToCombat(tempCard, PileType.Hand, Owner.Player, CardPilePosition.Top);
         }
     }
 

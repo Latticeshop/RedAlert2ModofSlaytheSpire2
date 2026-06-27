@@ -500,7 +500,8 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         desc = System.Text.RegularExpressions.Regex.Replace(desc, @"\{[^{}]+\}", "");
 
         // 特殊处理：运输船卡牌不显示存储信息（UI选择界面不需要显示）
-        if (card.Id.Entry.Equals("TRANSPORT_SHIP", System.StringComparison.OrdinalIgnoreCase))
+        if (card.Id.Entry.Equals("ALLIED_TRANSPORT_SHIP", System.StringComparison.OrdinalIgnoreCase) || 
+            card.Id.Entry.Equals("SOVIET_TRANSPORT_SHIP", System.StringComparison.OrdinalIgnoreCase))
         {
             desc = desc.Replace("\n当前存储：{StoredCards}", "");
         }

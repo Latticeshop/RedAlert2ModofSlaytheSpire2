@@ -34,6 +34,7 @@ public static class SovietCardRegistry
 
     public static List<Func<CardModel>> Ships { get; } = new()
     {
+        () => ModelDb.Card<SovietTransportShip>(),
     };
 
     // 苏军建筑卡
@@ -45,6 +46,7 @@ public static class SovietCardRegistry
 		() => ModelDb.Card<SovietRepairDepot>(),
 		() => ModelDb.Card<SovietPillboxCard>(),
 		() => ModelDb.Card<SovietWallCard>(),
+		() => ModelDb.Card<SovietFortifiedWall>(),
 		() => ModelDb.Card<NuclearReactor>(),
 		() => ModelDb.Card<SovietRefinery>(),
 		() => ModelDb.Card<SovietMCV>(),

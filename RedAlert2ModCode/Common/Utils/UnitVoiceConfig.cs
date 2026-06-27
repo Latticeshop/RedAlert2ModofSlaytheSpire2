@@ -111,7 +111,7 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispysec.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispysed.mp3",
         },
-        ["TransportShip"] = new List<string>
+        ["AlliedTransportShip"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/TransportShip/Vhoamoa.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/TransportShip/Vhoamob.mp3",
@@ -250,6 +250,15 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/FlakTrack/Vflasec.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/FlakTrack/Vflased.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/FlakTrack/Vflasee.mp3",
+        },
+        ["SovietTransportShip"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietTransportShip/Vhosmoa.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietTransportShip/Vhosmob.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietTransportShip/Vhosmoe.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietTransportShip/Vhosseb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietTransportShip/Vhossec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietTransportShip/Vhossed.mp3",
         },
     };
 

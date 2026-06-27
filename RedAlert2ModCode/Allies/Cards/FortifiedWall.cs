@@ -17,11 +17,11 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 坚固围墙 - 古老牙齿转化后的先古版本围墙
 /// 盟军建筑，技能卡，先古卡
 /// 使用普通围墙一样的图片
-/// 与普通围墙区别在于，需要消耗资金，但格挡数值更高（3/4格挡）
+/// 效果：花费资金，获得3护盾（升级后5护盾），将此牌返回手牌
 /// </summary>
 public sealed class FortifiedWall : CardModel
 {
-    private static readonly CardValueStore.CardValues Values = AlliesCardValues.AlliedWall;
+    private static readonly CardValueStore.CardValues Values = AlliesCardValues.AlliedFortifiedWall;
 
     public FortifiedWall() : base(0, CardType.Skill, CardRarity.Ancient, TargetType.Self) { }
 
@@ -29,9 +29,19 @@ public sealed class FortifiedWall : CardModel
 
     protected override List<DynamicVar> CanonicalVars => new()
     {
-        new BlockVar(3m, ValueProp.Unpowered),
+        new BlockVar(Values.Block, ValueProp.Unpowered),
         new IntVar("DollarNumber", Values.DollarValue)
     };
+
+    public override IEnumerable<CardKeyword> CanonicalKeywords
+    {
+        get
+        {
+            var keywords = new List<CardKeyword>();
+            keywords.Add(CardKeyword.Retain);
+            return keywords;
+        }
+    }
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
@@ -64,14 +74,14 @@ public sealed class FortifiedWall : CardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
-        
+
         // 扣除资金
         var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
         if (dollarPower != null)
         {
             dollarPower.AddDollar(-(int)Values.DollarValue);
         }
-        
+
         // 获得护盾（坚固围墙格挡更高）
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
     }
@@ -91,7 +101,7 @@ public sealed class FortifiedWall : CardModel
 
     protected override void OnUpgrade()
     {
-        // 升级后护盾提升到4
-        DynamicVars.Block.UpgradeValueBy(1m);
+        // 升级后护盾提升到5
+        DynamicVars.Block.UpgradeValueBy(Values.BlockUpgraded);
     }
 }

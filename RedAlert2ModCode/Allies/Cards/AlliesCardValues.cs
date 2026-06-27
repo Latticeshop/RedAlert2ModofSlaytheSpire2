@@ -169,6 +169,15 @@ public static class AlliesCardValues
 		BlockUpgraded = 2,
 		DollarValue = 100
 	};
+
+	/// <summary>盟军坚固围墙 - 0费3护盾（升级后5护盾），花费100资金，价格100</summary>
+	public static CardValueStore.CardValues AlliedFortifiedWall => new()
+	{
+		Cost = 0,
+		Block = 3,
+		BlockUpgraded = 2,
+		DollarValue = 100
+	};
 	
 	/// <summary>光棱塔 - 2费，回合开始时对随机敌人造成5伤害1次，价格1500</summary>
 	public static CardValueStore.CardValues PrismTower => new()
@@ -261,12 +270,12 @@ public static class AlliesCardValues
 
 	// ==================== 海军单位 ====================
 
-	/// <summary>运输船 - 1费技能卡，存储最多3张手牌（升级后5张），价格900</summary>
-	public static CardValueStore.CardValues TransportShip => new()
+	/// <summary>盟军运输船 - 1费技能卡，存储最多3张手牌（升级后5张），价格900</summary>
+	public static CardValueStore.CardValues AlliedTransportShip => new()
 	{
 		Cost = 1,
-		MagicNumber = 3,           // 存储数量
-		MagicNumberUpgraded = 2,   // 升级后增加2张，总共5张
+		MagicNumber = 3,
+		MagicNumberUpgraded = 2,
 		DollarValue = 900
 	};
 
@@ -311,11 +320,12 @@ public static class AlliesCardValues
 		// 船厂主要是功能牌，数值由具体生成的单位决定
 	};
 
-	/// <summary>作战实验室 - 0费能力卡，解锁高级兵种，价格2000</summary>
+	/// <summary>作战实验室 - 0费能力卡，解锁高级兵种，价格2000（升级后1000）</summary>
 	public static CardValueStore.CardValues AlliedBattleLab => new()
 	{
 		Cost = 0,
-		DollarValue = 2000
+		DollarValue = 2000,
+		DollarValueUpgraded = 1000
 	};
 
 	/// <summary>修理厂 - 2费能力卡（升级后1费），回合开始时花费$1000从消耗牌堆选择一张牌加入弃牌堆，价格800</summary>
@@ -480,7 +490,7 @@ public static class AlliesCardValues
 	{
 		return new System.Collections.Generic.Dictionary<string, CardValueStore.CardValues>
 		{
-			{ "TRANSPORTSHIP", TransportShip },
+			{ "ALLIEDTRANSPORTSHIP", AlliedTransportShip },
 			{ "DOLPHIN", Dolphin },
 			{ "DESTROYER", Destroyer },
 			{ "AGISICON", Agisicon }

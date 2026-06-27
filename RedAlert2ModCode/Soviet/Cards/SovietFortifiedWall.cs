@@ -15,84 +15,93 @@ using System.Linq;
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
-/// 苏联坚固围墙 - 古老牙齿转化后的先古版本围墙
+/// 苏军坚固围墙 - 先古版本围墙
 /// 苏联建筑，技能卡，先古卡
-/// 使用苏联围墙一样的图片
-/// 与普通围墙区别在于，需要消耗资金，但格挡数值更高（3/4格挡）
+/// 效果：花费资金，获得3护盾（升级后5护盾），将此牌返回手牌
 /// </summary>
 public sealed class SovietFortifiedWall : CardModel
 {
-	private static readonly CardValueStore.CardValues Values = SovietCardValues.SovietWall;
+    private static readonly CardValueStore.CardValues Values = SovietCardValues.SovietFortifiedWall;
 
-	public SovietFortifiedWall() : base(0, CardType.Skill, CardRarity.Ancient, TargetType.Self) { }
+    public SovietFortifiedWall() : base(0, CardType.Skill, CardRarity.Ancient, TargetType.Self) { }
 
-	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/soviet/nwalicon.png";
+    public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/soviet/nwalicon.png";
 
-	protected override List<DynamicVar> CanonicalVars => new()
-	{
-		new BlockVar(3m, ValueProp.Unpowered),
-		new IntVar("DollarNumber", Values.DollarValue)
-	};
+    protected override List<DynamicVar> CanonicalVars => new()
+    {
+        new BlockVar(Values.Block, ValueProp.Unpowered),
+        new IntVar("DollarNumber", Values.DollarValue)
+    };
 
-	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-	[
-		ModCardKeywords.Building.CreateHoverTip()
-	];
+    public override IEnumerable<CardKeyword> CanonicalKeywords
+    {
+        get
+        {
+            var keywords = new List<CardKeyword>();
+            keywords.Add(CardKeyword.Retain);
+            return keywords;
+        }
+    }
 
-	/// <summary>
-	/// 检查是否可以打出（资金是否足够）
-	/// </summary>
-	protected override bool IsPlayable
-	{
-		get
-		{
-			if (!base.IsPlayable)
-				return false;
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        ModCardKeywords.Building.CreateHoverTip()
+    ];
 
-			// 检查是否拥有MCV能力（建造厂）
-			if (!CardUtils.HasMcvPower(Owner.Creature))
-				return false;
+    /// <summary>
+    /// 检查是否可以打出（资金是否足够）
+    /// </summary>
+    protected override bool IsPlayable
+    {
+        get
+        {
+            if (!base.IsPlayable)
+                return false;
 
-			// 检查资金是否足够
-			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-			if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
-				return false;
+            // 检查是否拥有MCV能力（建造厂）
+            if (!CardUtils.HasMcvPower(Owner.Creature))
+                return false;
 
-			return true;
-		}
-	}
+            // 检查资金是否足够
+            var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+            if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
+                return false;
 
-	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
-	{
-		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
-		
-		// 扣除资金
-		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-		if (dollarPower != null)
-		{
-			dollarPower.AddDollar(-(int)Values.DollarValue);
-		}
-		
-		// 获得护盾（坚固围墙格挡更高）
-		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
-	}
+            return true;
+        }
+    }
 
-	/// <summary>
-	/// 设置卡牌使用后的去向（返回手牌）
-	/// </summary>
-	protected override PileType GetResultPileTypeForCardPlay()
-	{
-		PileType resultPileType = base.GetResultPileTypeForCardPlay();
-		if (resultPileType != PileType.Discard)
-		{
-			return resultPileType;
-		}
-		return PileType.Hand;
-	}
+    protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+    {
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
-	protected override void OnUpgrade()
-	{
-		// 升级后护盾提升到4
-		DynamicVars.Block.UpgradeValueBy(1m);
-	}
+        // 扣除资金
+        var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+        if (dollarPower != null)
+        {
+            dollarPower.AddDollar(-(int)Values.DollarValue);
+        }
+
+        // 获得护盾
+        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
+    }
+
+    /// <summary>
+    /// 设置卡牌使用后的去向（返回手牌）
+    /// </summary>
+    protected override PileType GetResultPileTypeForCardPlay()
+    {
+        PileType resultPileType = base.GetResultPileTypeForCardPlay();
+        if (resultPileType != PileType.Discard)
+        {
+            return resultPileType;
+        }
+        return PileType.Hand;
+    }
+
+    protected override void OnUpgrade()
+    {
+        // 升级后护盾提升到5
+        DynamicVars.Block.UpgradeValueBy(Values.BlockUpgraded);
+    }
 }
