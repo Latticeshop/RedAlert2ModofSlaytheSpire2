@@ -10,9 +10,9 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
-using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Soviet.Powers;
 
 namespace RedAlert2ModCode.Soviet.Cards;
 
@@ -56,7 +56,7 @@ public sealed class SovietRepairDepot : CardModel
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
 		new IntVar("DollarNumber", Values.DollarValue),
-		new IntVar("DollarCost", (int)AlliesPowerValues.RepairDepotPower.DollarValue)
+		new IntVar("DollarCost", (int)SovietPowerValues.RepairDepotPower.DollarValue)
 	};
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -74,7 +74,7 @@ public sealed class SovietRepairDepot : CardModel
 
 		GD.Print($"[SovietRepairDepot] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
 
-		await RepairDepotPower.ApplyRepairDepot(Owner.Creature, base.IsUpgraded);
+		await SovietRepairDepotPower.ApplyRepairDepot(Owner.Creature, base.IsUpgraded);
 	}
 
 	protected override void OnUpgrade()

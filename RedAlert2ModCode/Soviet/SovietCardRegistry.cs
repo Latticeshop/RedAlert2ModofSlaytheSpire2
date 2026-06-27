@@ -4,11 +4,11 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
-using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common;
 using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Cards;
+using RedAlert2ModCode.Soviet.Powers;
 
 namespace RedAlert2ModCode.Soviet;
 
@@ -171,7 +171,7 @@ public static class SovietCardRegistry
 
     public static bool HasRepairDepotPower(Creature creature)
     {
-        return creature.Powers.Any(p => p is RepairDepotPower);
+        return creature.Powers.Any(p => p is SovietRepairDepotPower);
     }
 
     public static List<CardModel> CreateAircraft(Player owner)

@@ -190,12 +190,12 @@ public class RepairDepotPower : PowerModel
 			dollarPower.AddDollar(-actualCost);
 			GD.Print($"[RepairDepotPower] 扣除资金 {actualCost}（{selectedCards.Count} 张 × {baseCostPerCard}）");
 
-			// 将选中的卡牌从消耗牌堆移动到弃牌堆
+			// 将选中的卡牌从消耗牌堆移动到手牌
 			foreach (var selectedCard in selectedCards)
 			{
 				GD.Print($"[RepairDepotPower] 选择了卡牌: {selectedCard.Id.Entry}");
-				await CardPileCmd.Add(selectedCard, PileType.Discard);
-				GD.Print($"[RepairDepotPower] 已将 {selectedCard.Id.Entry} 加入弃牌堆");
+				await CardPileCmd.Add(selectedCard, PileType.Hand);
+				GD.Print($"[RepairDepotPower] 已将 {selectedCard.Id.Entry} 加入手牌");
 			}
 		}
 		else

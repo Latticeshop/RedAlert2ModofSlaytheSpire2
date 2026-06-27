@@ -76,7 +76,7 @@ public sealed class SovietBarracksCard : CardModel
 		GD.Print($"[SovietBarracksCard] 可用卡牌数量: {availableCards.Count}");
 
 		var cardValuesMap = SovietCardValues.CreateSoldierValuesMap();
-		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap);
+		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap, FactionType.Soviet);
 
 		GD.Print($"[SovietBarracksCard] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
 

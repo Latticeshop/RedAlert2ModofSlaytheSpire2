@@ -6,6 +6,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.UI;
 
@@ -192,7 +193,7 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         style.BorderWidthRight = 3;
         style.BorderWidthTop = 3;
         style.BorderWidthBottom = 3;
-        style.BorderColor = new Color(0.3f, 0.35f, 0.45f);
+        style.BorderColor = FactionHelper.GetFactionBorderColor();
         return style;
     }
 
@@ -204,7 +205,7 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         style.BorderWidthRight = 2;
         style.BorderWidthTop = 2;
         style.BorderWidthBottom = 2;
-        style.BorderColor = new Color(0.25f, 0.3f, 0.4f);
+        style.BorderColor = FactionHelper.GetFactionBorderColor();
         style.CornerRadiusTopLeft = 8;
         style.CornerRadiusTopRight = 8;
         style.CornerRadiusBottomLeft = 8;

@@ -27,6 +27,10 @@ public static class SovietInitialDeckPatch
                 card.EnergyCost.SetCustomBaseCost(0);
                 card.AddKeyword(CardKeyword.Exhaust);
             }
+            else if (card is RhinoTank)
+            {
+                card.AddKeyword(CardKeyword.Exhaust);
+            }
         }
     }
 }

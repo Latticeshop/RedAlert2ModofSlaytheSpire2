@@ -71,7 +71,7 @@ public sealed class SovietMCV : CardModel
 		GD.Print($"[SovietMCV] 可用建筑卡牌数量: {availableCards.Count} (当前科技等级: {techTree.CurrentTechLevel})");
 
 		var buildingValuesMap = SovietCardValues.CreateBuildingValuesMap();
-		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, buildingValuesMap);
+		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, buildingValuesMap, FactionType.Soviet);
 
 		// 如果玩家选择了卡牌，执行能力效果
 		if (selectedCard != null)

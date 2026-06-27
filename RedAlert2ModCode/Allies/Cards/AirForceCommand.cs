@@ -89,7 +89,7 @@ public sealed class AirForceCommand : CardModel
 		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
 		// 传递数值映射，让UI面板能够正确显示费用和描述
 		var cardValuesMap = AlliesCardValues.CreateAircraftValuesMap();
-		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap);
+		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap, FactionType.Allied);
 
 		GD.Print($"[AirForceCommand] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
 

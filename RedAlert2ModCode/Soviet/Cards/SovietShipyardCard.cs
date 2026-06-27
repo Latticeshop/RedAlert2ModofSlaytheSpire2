@@ -72,7 +72,7 @@ public sealed class SovietShipyardCard : CardModel
 		GD.Print($"[SovietShipyardCard] 可用卡牌数量: {availableCards.Count}");
 
 		var cardValuesMap = SovietCardValues.CreateShipValuesMap();
-		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap);
+		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap, FactionType.Soviet);
 
 		GD.Print($"[SovietShipyardCard] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
 

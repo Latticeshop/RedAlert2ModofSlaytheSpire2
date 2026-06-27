@@ -21,6 +21,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     private readonly TaskCompletionSource<List<CardModel>?> _multiCompletionSource = new();
     private readonly List<CardModel> _cards;
     private readonly Dictionary<string, CardValueStore.CardValues> _cardValuesMap;
+    private readonly FactionType _faction;
     private ScrollContainer _scrollContainer;
     private HBoxContainer _cardsRow;
     private bool _choiceLocked;
@@ -33,10 +34,11 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     public bool UseSharedBackstop => true;
     public Control? DefaultFocusedControl => null;
 
-    private CardSelectionScreen(List<CardModel> cards, Dictionary<string, CardValueStore.CardValues> cardValuesMap = null)
+    private CardSelectionScreen(List<CardModel> cards, Dictionary<string, CardValueStore.CardValues> cardValuesMap = null, FactionType faction = FactionType.Allied)
     {
         _cards = cards;
         _cardValuesMap = cardValuesMap ?? new Dictionary<string, CardValueStore.CardValues>();
+        _faction = faction;
         Name = nameof(CardSelectionScreen);
         SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
         MouseFilter = MouseFilterEnum.Stop;
@@ -44,13 +46,14 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         BuildUi();
     }
 
-    private CardSelectionScreen(List<CardModel> cards, int maxSelect, int minSelect, Dictionary<string, CardValueStore.CardValues> cardValuesMap = null)
+    private CardSelectionScreen(List<CardModel> cards, int maxSelect, int minSelect, Dictionary<string, CardValueStore.CardValues> cardValuesMap = null, FactionType faction = FactionType.Allied)
     {
         _cards = cards;
         _cardValuesMap = cardValuesMap ?? new Dictionary<string, CardValueStore.CardValues>();
         _isMultiSelect = true;
         _maxSelection = maxSelect;
         _minSelection = minSelect;
+        _faction = faction;
         Name = nameof(CardSelectionScreen);
         SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
         MouseFilter = MouseFilterEnum.Stop;
@@ -58,30 +61,30 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         BuildUi();
     }
 
-    public static async Task<CardModel?> ShowSelection(List<CardModel> cards)
+    public static async Task<CardModel?> ShowSelection(List<CardModel> cards, FactionType faction = FactionType.Allied)
     {
-        var screen = new CardSelectionScreen(cards);
+        var screen = new CardSelectionScreen(cards, null, faction);
         NOverlayStack.Instance?.Push(screen);
         return await screen._completionSource.Task;
     }
 
-    public static async Task<CardModel?> ShowSelection(List<CardModel> cards, Dictionary<string, CardValueStore.CardValues> cardValuesMap)
+    public static async Task<CardModel?> ShowSelection(List<CardModel> cards, Dictionary<string, CardValueStore.CardValues> cardValuesMap, FactionType faction = FactionType.Allied)
     {
-        var screen = new CardSelectionScreen(cards, cardValuesMap);
+        var screen = new CardSelectionScreen(cards, cardValuesMap, faction);
         NOverlayStack.Instance?.Push(screen);
         return await screen._completionSource.Task;
     }
 
-    public static async Task<List<CardModel>?> ShowMultiSelection(List<CardModel> cards, int maxSelect, int minSelect)
+    public static async Task<List<CardModel>?> ShowMultiSelection(List<CardModel> cards, int maxSelect, int minSelect, FactionType faction = FactionType.Allied)
     {
-        var screen = new CardSelectionScreen(cards, maxSelect, minSelect);
+        var screen = new CardSelectionScreen(cards, maxSelect, minSelect, null, faction);
         NOverlayStack.Instance?.Push(screen);
         return await screen._multiCompletionSource.Task;
     }
 
-    public static async Task<List<CardModel>?> ShowMultiSelection(List<CardModel> cards, int maxSelect, int minSelect, Dictionary<string, CardValueStore.CardValues> cardValuesMap)
+    public static async Task<List<CardModel>?> ShowMultiSelection(List<CardModel> cards, int maxSelect, int minSelect, Dictionary<string, CardValueStore.CardValues> cardValuesMap, FactionType faction = FactionType.Allied)
     {
-        var screen = new CardSelectionScreen(cards, maxSelect, minSelect, cardValuesMap);
+        var screen = new CardSelectionScreen(cards, maxSelect, minSelect, cardValuesMap, faction);
         NOverlayStack.Instance?.Push(screen);
         return await screen._multiCompletionSource.Task;
     }
@@ -618,6 +621,16 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         return text;
     }
 
+    private Color GetBorderColor()
+    {
+        return _faction switch
+        {
+            FactionType.Soviet => new Color(0.9f, 0.4f, 0.4f),
+            FactionType.Yuri => new Color(0.8f, 0.4f, 1f),
+            _ => new Color(0.4f, 0.6f, 0.9f)
+        };
+    }
+
     private StyleBoxFlat CreatePanelStyle()
     {
         StyleBoxFlat style = new();
@@ -630,7 +643,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         style.BorderWidthRight = 2;
         style.BorderWidthTop = 2;
         style.BorderWidthBottom = 2;
-        style.BorderColor = new Color(0.3f, 0.5f, 0.8f);
+        style.BorderColor = GetBorderColor();
         return style;
     }
 
@@ -646,7 +659,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         style.BorderWidthRight = 2;
         style.BorderWidthTop = 2;
         style.BorderWidthBottom = 2;
-        style.BorderColor = new Color(0.4f, 0.6f, 0.9f);
+        style.BorderColor = GetBorderColor();
         return style;
     }
 
@@ -662,7 +675,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         style.BorderWidthRight = 2;
         style.BorderWidthTop = 2;
         style.BorderWidthBottom = 2;
-        style.BorderColor = new Color(0.8f, 0.3f, 0.3f);
+        style.BorderColor = GetBorderColor();
         return style;
     }
 

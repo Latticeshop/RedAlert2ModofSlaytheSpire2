@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Common.Cards;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.UI;
 
@@ -299,7 +300,7 @@ public sealed partial class ProductionQueueSelectionScreen : Control, IOverlaySc
         style.BorderWidthRight = 2;
         style.BorderWidthTop = 2;
         style.BorderWidthBottom = 2;
-        style.BorderColor = new Color(0.3f, 0.5f, 0.8f);
+        style.BorderColor = FactionHelper.GetFactionBorderColor();
         return style;
     }
 
@@ -315,7 +316,7 @@ public sealed partial class ProductionQueueSelectionScreen : Control, IOverlaySc
         style.BorderWidthRight = 2;
         style.BorderWidthTop = 2;
         style.BorderWidthBottom = 2;
-        style.BorderColor = new Color(0.4f, 0.6f, 0.9f);
+        style.BorderColor = FactionHelper.GetFactionBorderColor();
         return style;
     }
 
@@ -331,7 +332,7 @@ public sealed partial class ProductionQueueSelectionScreen : Control, IOverlaySc
         style.BorderWidthRight = 2;
         style.BorderWidthTop = 2;
         style.BorderWidthBottom = 2;
-        style.BorderColor = new Color(0.8f, 0.3f, 0.3f);
+        style.BorderColor = FactionHelper.GetFactionBorderColor();
         return style;
     }
 

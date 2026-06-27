@@ -97,7 +97,7 @@ public sealed class AlliedWarFactory : CardModel
 		{
 			cardValuesMap[kvp.Key] = kvp.Value;
 		}
-		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap);
+		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap, FactionType.Allied);
 
 		GD.Print($"[AlliedWarFactory] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
 

@@ -82,7 +82,7 @@ public sealed class AlliesShipyardCard : CardModel
 
 		// 使用自定义选择面板
 		var cardValuesMap = AlliesCardValues.CreateShipValuesMap();
-		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap);
+		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap, FactionType.Allied);
 
 		GD.Print($"[AlliesShipyardCard] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
 
