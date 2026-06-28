@@ -42,5 +42,7 @@
     "building_tech_tree.title": "Building Tech Tree",
     "building_tech_tree.description": "Tech Tree: MCV Power (unlocks Power Plant, Barracks, Refinery) -> Refinery Power (unlocks War Factory, Air Force, Navy) -> War Factory Power (unlocks Battle Lab).",
     "orbital_readiness.title": "Orbital Readiness",
-    "orbital_readiness.description": "Summons orbital vehicles to strike."
+    "orbital_readiness.description": "Summons orbital vehicles to strike.",
+    "terror_drone.title": "Terror Drone",
+    "terror_drone.description": "Takes damage equal to stack count each turn. Removed when the target heals."
 }

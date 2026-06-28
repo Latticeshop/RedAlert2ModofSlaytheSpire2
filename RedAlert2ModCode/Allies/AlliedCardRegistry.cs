@@ -18,9 +18,10 @@ public static class AlliedCardRegistry
     public static List<Func<CardModel>> Soldiers { get; } = new()
     {
         () => ModelDb.Card<AmericanSoldier>(),
-        () => ModelDb.Card<DogSoldier>(),
+        () => ModelDb.Card<AlliesDogSoldier>(),
+        () => ModelDb.Card<GuardianGi>(),
         () => ModelDb.Card<RocketSoldier>(),
-        () => ModelDb.Card<AlliesEngineer>()
+        () => ModelDb.Card<AlliesEngineer>(),
     };
 
     public static List<Func<CardModel>> Vehicles { get; } = new()

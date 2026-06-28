@@ -35,7 +35,6 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
         MouseFilter = MouseFilterEnum.Stop;
         FocusMode = FocusModeEnum.All;
-        BuildUi();
     }
 
     private string _title = "选择行动";
@@ -44,9 +43,17 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
     private string _attackTitle = "攻击";
     private string _attackDesc = "获得敏捷和攻击";
 
+    private Label? _titleLabel;
+    private Label? _deployTitleLabel;
+    private Label? _deployDescLabel;
+    private Label? _attackTitleLabel;
+    private Label? _attackDescLabel;
+
     public static async Task<ChoiceType?> ShowSelection()
     {
         var screen = new FlakTrackChoiceScreen();
+        screen.BuildUi();
+        screen.UpdateUiText();
         NOverlayStack.Instance?.Push(screen);
         return await screen._completionSource.Task;
     }
@@ -59,6 +66,8 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         screen._deployDesc = deployDesc;
         screen._attackTitle = attackTitle;
         screen._attackDesc = attackDesc;
+        screen.BuildUi();
+        screen.UpdateUiText();
         NOverlayStack.Instance?.Push(screen);
         return await screen._completionSource.Task;
     }
@@ -319,15 +328,15 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         root.AddThemeConstantOverride("separation", 20);
         margin.AddChild(root);
 
-        Label title = new()
+        _titleLabel = new Label()
         {
             Text = _title,
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
-        title.AddThemeFontSizeOverride("font_size", 26);
-        title.AddThemeColorOverride("font_color", new Color(1f, 0.9f, 0.7f));
-        root.AddChild(title);
+        _titleLabel.AddThemeFontSizeOverride("font_size", 26);
+        _titleLabel.AddThemeColorOverride("font_color", new Color(1f, 0.9f, 0.7f));
+        root.AddChild(_titleLabel);
 
         HBoxContainer choicesRow = new()
         {
@@ -339,11 +348,20 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         choicesRow.AddThemeConstantOverride("separation", 30);
         root.AddChild(choicesRow);
 
-        choicesRow.AddChild(CreateChoiceButton(_deployTitle, _deployDesc, ChoiceType.Deploy));
-        choicesRow.AddChild(CreateChoiceButton(_attackTitle, _attackDesc, ChoiceType.Attack));
+        choicesRow.AddChild(CreateChoiceButton(ChoiceType.Deploy, out _deployTitleLabel, out _deployDescLabel));
+        choicesRow.AddChild(CreateChoiceButton(ChoiceType.Attack, out _attackTitleLabel, out _attackDescLabel));
     }
 
-    private Button CreateChoiceButton(string title, string description, ChoiceType type)
+    private void UpdateUiText()
+    {
+        if (_titleLabel != null) _titleLabel.Text = _title;
+        if (_deployTitleLabel != null) _deployTitleLabel.Text = _deployTitle;
+        if (_deployDescLabel != null) _deployDescLabel.Text = _deployDesc;
+        if (_attackTitleLabel != null) _attackTitleLabel.Text = _attackTitle;
+        if (_attackDescLabel != null) _attackDescLabel.Text = _attackDesc;
+    }
+
+    private Button CreateChoiceButton(ChoiceType type, out Label titleLabel, out Label descLabel)
     {
         Button button = new()
         {
@@ -374,9 +392,9 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         content.AddThemeConstantOverride("separation", 8);
         contentMargin.AddChild(content);
 
-        Label titleLabel = new()
+        titleLabel = new Label()
         {
-            Text = title,
+            Text = type == ChoiceType.Deploy ? _deployTitle : _attackTitle,
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
@@ -384,9 +402,9 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         titleLabel.AddThemeColorOverride("font_color", new Color(1f, 0.9f, 0.7f));
         content.AddChild(titleLabel);
 
-        Label descLabel = new()
+        descLabel = new Label()
         {
-            Text = description,
+            Text = type == ChoiceType.Deploy ? _deployDesc : _attackDesc,
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
             AutowrapMode = TextServer.AutowrapMode.WordSmart

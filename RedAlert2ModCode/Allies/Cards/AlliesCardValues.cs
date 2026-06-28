@@ -34,6 +34,17 @@ public static class AlliesCardValues
 		DollarValue = 200
 	};
 	
+	/// <summary>重装大兵 - 1费攻击卡，获得5格挡（升级8），部署造成5伤害（升级7）+1易伤，价格250</summary>
+	public static CardValueStore.CardValues GuardianGI => new()
+	{
+		Cost = 1,
+		Block = 5,
+		BlockUpgraded = 3,
+		Damage = 5,
+		DamageUpgraded = 2,
+		DollarValue = 250
+	};
+	
 	/// <summary>火箭飞行兵 - 0费1伤害2次，获得2点敏捷，价格600</summary>
 	public static CardValueStore.CardValues RocketSoldier => new()
 	{
@@ -198,12 +209,12 @@ public static class AlliesCardValues
 		DollarValue = 500
 	};
 
-	/// <summary>爱国者导弹 - 1费能力卡，回合开始时获得6格挡（升级9），价格1000</summary>
+	/// <summary>爱国者导弹 - 1费能力卡，回合开始时获得5格挡（升级8），价格1000</summary>
 	public static CardValueStore.CardValues PatriotMissile => new()
 	{
 		Cost = 1,
-		Block = 6,
-		BlockUpgraded = 3,  // 升级后9 = 6 + 3
+		Block = 5,
+		BlockUpgraded = 3,  // 升级后8 = 5 + 3
 		DollarValue = 1000
 	};
 	
@@ -458,7 +469,8 @@ public static class AlliesCardValues
 		return new System.Collections.Generic.Dictionary<string, CardValueStore.CardValues>
 		{
 			{ "AMERICANSOLDIER", AmericanSoldier },
-			{ "DOGSOLDIER", DogSoldier },
+			{ "ALLIESDOGSOLDIER", DogSoldier },
+			{ "GUARDIANGI", GuardianGI },
 			{ "ROCKETSOLDIER", RocketSoldier },
 			{ "ALLIESENGINEER", Engineer }
 		};

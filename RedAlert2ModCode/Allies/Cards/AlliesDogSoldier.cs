@@ -15,16 +15,16 @@ using RedAlert2ModCode.Common.Utils;
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
-/// 军犬 - 攻击牌
+/// 军犬 - 攻击牌（盟军）
 /// 0费，造成3点伤害，赋予一层虚弱
 /// 升级后：4点伤害，2层虚弱，费用不变
 /// </summary>
-public sealed class DogSoldier : CardModel
+public sealed class AlliesDogSoldier : CardModel
 {
 	// 数值引用
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.DogSoldier;
 	
-	public DogSoldier() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
+	public AlliesDogSoldier() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/adogicon.png";
 

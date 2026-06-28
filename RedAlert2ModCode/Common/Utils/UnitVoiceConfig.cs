@@ -132,7 +132,7 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/ChronoMiner/Vchrseb.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/ChronoMiner/Vchrsed.mp3",
         },
-        ["DogSoldier"] = new List<string>
+        ["AlliesDogSoldier"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/DogSoldier/Idogatca.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/DogSoldier/Idogdiea.mp3",
@@ -184,6 +184,17 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvsec.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvsee.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvsef.mp3",
+        },
+        ["GuardianGi"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/GuardianGI/Iggiate.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GuardianGI/Iggimoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GuardianGI/Iggimoe.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GuardianGI/Iggiseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GuardianGI/Iggisec.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GuardianGI/Iggised.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GuardianGI/Iggisee.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GuardianGI/Iggisef.mp3",
         },
     };
 
@@ -250,6 +261,30 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/FlakTrack/Vflasec.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/FlakTrack/Vflased.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/FlakTrack/Vflasee.mp3",
+        },
+        ["SovietAttackDog"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/DogSoldier/Idogatca.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DogSoldier/Idogdiea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DogSoldier/Idogfea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DogSoldier/Idogfec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DogSoldier/Idogsela.mp3",
+        },
+        ["SovietFlakTrooper"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakTrooper/Iflaata.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakTrooper/Iflaatd.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakTrooper/Iflamoa.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakTrooper/Iflamob.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakTrooper/Iflamoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakTrooper/Iflasea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakTrooper/Iflasec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakTrooper/Iflased.mp3",
+        },
+        ["TerrorDrone"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/TerrorDrone/Vtermova.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TerrorDrone/Vtersela.mp3",
         },
         ["SovietTransportShip"] = new List<string>
         {

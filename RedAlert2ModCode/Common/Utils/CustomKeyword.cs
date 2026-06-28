@@ -183,6 +183,12 @@ public static class ModCardKeywords
         new LocString("card_keywords", "orbital_readiness.description")
     );
 
+    public static readonly CustomKeyword TerrorDrone = new(
+        "TERROR_DRONE",
+        new LocString("card_keywords", "terror_drone.title"),
+        new LocString("card_keywords", "terror_drone.description")
+    );
+
     public static void Initialize()
     {
         CustomKeywordManager.RegisterKeyword(Mcv);
@@ -206,5 +212,6 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(SuperWeapon);
         CustomKeywordManager.RegisterKeyword(BuildingTechTree);
         CustomKeywordManager.RegisterKeyword(OrbitalReadiness);
+        CustomKeywordManager.RegisterKeyword(TerrorDrone);
     }
 }

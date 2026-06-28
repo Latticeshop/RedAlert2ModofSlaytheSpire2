@@ -3,6 +3,10 @@
     "DOLLAR_POWER.description": "Current funds: ${dollar_value}.",
     "ALLIED_MC_V_POWER.title": "Allied MCV",
     "ALLIED_MC_V_POWER.description": "Construction Yard deployed.",
+    "ALLIED_REFINERY_POWER.title": "Allied Refinery",
+    "ALLIED_REFINERY_POWER.description": "Refinery deployed.",
+    "ALLIED_WAR_FACTORY_POWER.title": "Allied War Factory",
+    "ALLIED_WAR_FACTORY_POWER.description": "War Factory deployed.",
     "SOVIET_MC_V_POWER.title": "Soviet MCV",
     "SOVIET_MC_V_POWER.description": "Construction Yard deployed.",
     "SOVIET_REFINERY_POWER.title": "Soviet Refinery",
@@ -65,5 +69,9 @@
     "CHRONO_SPHERE_POWER.title": "Chronosphere",
     "CHRONO_SPHERE_POWER.description": "In [gold]{TurnsRemaining}[/gold] turns, adds a 0-cost Ethereal [gold]Chrono Warp[/gold] card to your hand.",
     "WEATHER_CONTROLLER_POWER.title": "Weather Controller",
-    "WEATHER_CONTROLLER_POWER.description": "In [gold]{TurnsRemaining}[/gold] turns, gains [gold]{Block}[/gold] Lightning Orbs, adding a 0-cost Ethereal and Exhaust [gold]Lightning Storm[/gold] card to your hand."
+    "WEATHER_CONTROLLER_POWER.description": "In [gold]{TurnsRemaining}[/gold] turns, gains [gold]{Block}[/gold] Lightning Orbs, adding a 0-cost Ethereal and Exhaust [gold]Lightning Storm[/gold] card to your hand.",
+    "SOVIET_FLAK_CANNON_POWER.title": "Flak Cannon",
+    "SOVIET_FLAK_CANNON_POWER.description": "At the start of each turn, for each enemy with Attack intent, gains {Block} Block.",
+    "SOVIET_TERROR_DRONE_POWER.title": "Terror Drone",
+    "SOVIET_TERROR_DRONE_POWER.description": "Takes {Count} damage each turn. Removed when the target heals."
 }

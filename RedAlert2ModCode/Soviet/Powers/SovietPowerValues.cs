@@ -26,6 +26,12 @@ public static class SovietPowerValues
 		BlockUpgraded = 3
 	};
 
+	public static CardValueStore.CardValues FlakCannonPower => new()
+	{
+		Block = 2,           // 每个攻击意图敌人获得的格挡
+		BlockUpgraded = 1    // 升级后3 = 2 + 1
+	};
+
 	public static CardValueStore.CardValues RepairDepotPower => new()
 	{
 		DollarValue = 1000
@@ -54,5 +60,10 @@ public static class SovietPowerValues
 	{
 		DollarValue = 5000,
 		DollarValueUpgraded = 5000
+	};
+
+	public static CardValueStore.CardValues TerrorDronePower => new()
+	{
+		Damage = 1    // 每层每回合造成的伤害
 	};
 }

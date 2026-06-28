@@ -21,6 +21,15 @@ public static class SovietCardValues
 		DollarValue = 100
 	};
 	
+	/// <summary>防空步兵 - 1费攻击卡，每有一个攻击意图敌人获得3格挡（升级4），价格300</summary>
+	public static CardValueStore.CardValues FlakTrooper => new()
+	{
+		Cost = 1,
+		Block = 3,
+		BlockUpgraded = 1,
+		DollarValue = 300
+	};
+	
 	/// <summary>军犬 - 0费3伤害1层虚弱，升级后4伤害2层虚弱，价格200</summary>
 	public static CardValueStore.CardValues AttackDog => new()
 	{
@@ -72,6 +81,15 @@ public static class SovietCardValues
 		Cost = 1,
 		Block = 5,
 		MagicNumber = 1,           // 敏捷值
+		MagicNumberUpgraded = 1,   // 升级后2 = 1 + 1
+		DollarValue = 500
+	};
+	
+	/// <summary>恐怖机器人 - 1费攻击卡，赋予恐怖机器人+缓慢，价格500</summary>
+	public static CardValueStore.CardValues TerrorDrone => new()
+	{
+		Cost = 1,
+		MagicNumber = 1,           // 恐怖机器人层数
 		MagicNumberUpgraded = 1,   // 升级后2 = 1 + 1
 		DollarValue = 500
 	};
@@ -145,6 +163,15 @@ public static class SovietCardValues
 		MagicNumber = 10,
 		MagicNumberUpgraded = -3,
 		DollarValue = 800
+	};
+	
+	/// <summary>防空炮 - 1费技能卡，回合开始时每有一个攻击意图敌人获得2格挡（升级3），价格1000</summary>
+	public static CardValueStore.CardValues FlakCannon => new()
+	{
+		Cost = 1,
+		Block = 2,
+		BlockUpgraded = 1,  // 升级后3 = 2 + 1
+		DollarValue = 1000
 	};
 	
 	/// <summary>矿场 - 0费，价格2000</summary>
@@ -227,8 +254,8 @@ public static class SovietCardValues
 		return new Dictionary<string, CardValueStore.CardValues>
 		{
 			{ "CONSCRIPT", Conscript },
-			{ "ATTACKDOG", AttackDog },
-			{ "TESLATROOPER", TeslaTrooper },
+			{ "SOVIETATTACKDOG", AttackDog },
+			{ "SOVIETFLAKTROOPER", FlakTrooper },
 			{ "SOVIETENGINEER", Engineer }
 		};
 	}
@@ -239,6 +266,7 @@ public static class SovietCardValues
 		{
 			{ "RHINOTANK", RhinoTank },
 			{ "FLAKTRACK", FlakTrack },
+			{ "TERRORDRONE", TerrorDrone },
 			{ "SOVIETMCV", SovietMCV },
 			{ "WARMINER", WarMiner }
 		};

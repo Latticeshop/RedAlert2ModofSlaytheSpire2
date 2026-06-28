@@ -19,6 +19,8 @@ public static class SovietCardRegistry
     {
         () => ModelDb.Card<Conscript>(),
         () => ModelDb.Card<SovietEngineer>(),
+        () => ModelDb.Card<SovietAttackDog>(),
+        () => ModelDb.Card<SovietFlakTrooper>(),
     };
 
     public static List<Func<CardModel>> Vehicles { get; } = new()
@@ -26,6 +28,7 @@ public static class SovietCardRegistry
         () => ModelDb.Card<RhinoTank>(),
         () => ModelDb.Card<WarMiner>(),
         () => ModelDb.Card<FlakTrack>(),
+        () => ModelDb.Card<TerrorDrone>(),
     };
 
     public static List<Func<CardModel>> Aircraft { get; } = new()
@@ -45,6 +48,7 @@ public static class SovietCardRegistry
 		() => ModelDb.Card<SovietShipyardCard>(),
 		() => ModelDb.Card<SovietRepairDepot>(),
 		() => ModelDb.Card<SovietPillboxCard>(),
+		() => ModelDb.Card<SovietFlakCannon>(),
 		() => ModelDb.Card<SovietWallCard>(),
 		() => ModelDb.Card<SovietFortifiedWall>(),
 		() => ModelDb.Card<NuclearReactor>(),

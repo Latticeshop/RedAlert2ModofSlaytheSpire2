@@ -32,6 +32,8 @@ public static class PowerIconPatch
         { typeof(RedAlert2ModCode.Soviet.Powers.SovietWarFactoryPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/nwepicon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.SovietRadarPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/nradicon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.SovietBattleLabPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/ntchicon.png" },
+        { typeof(RedAlert2ModCode.Soviet.Powers.SovietFlakCannonPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/flakicon.png" },
+        { typeof(RedAlert2ModCode.Soviet.Powers.SovietTerrorDronePower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/dronicon.png" },
         { typeof(IfvTemporaryDexterityPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/fvicon.png" },
         { typeof(NightHawkTemporaryDexterityPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/shadicon.png" },
         { typeof(RocketSoldierTemporaryDexterityPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/jjeticon.png" },
