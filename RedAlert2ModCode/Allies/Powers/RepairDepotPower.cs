@@ -179,7 +179,7 @@ public class RepairDepotPower : PowerModel
 		}
 
 		// 显示卡牌选择界面（支持多选，至少选1张，最多选实际最大牌数）
-		var selectedCards = await CardSelectionScreen.ShowMultiSelection(exhaustPile.Cards.ToList(), actualMaxCards, 1);
+		var selectedCards = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(exhaustPile.Cards.ToList(), actualMaxCards, 1, Owner.Player);
 
 		if (selectedCards != null && selectedCards.Count > 0)
 		{

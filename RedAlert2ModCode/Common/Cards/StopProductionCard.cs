@@ -49,7 +49,7 @@ public sealed class StopProductionCard : CardModel
 		}
 
 		int maxSelect = base.IsUpgraded ? productionQueues.Count : (int)Values.Repeat;
-		var selectedItems = await ProductionQueueSelectionScreen.ShowSelection(productionQueues, maxSelect);
+		var selectedItems = await ProductionQueueSelectionScreen.ShowSelectionWithSync(productionQueues, maxSelect, Owner);
 
 		if (selectedItems != null && selectedItems.Count > 0)
 		{

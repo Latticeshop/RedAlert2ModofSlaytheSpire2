@@ -12,13 +12,14 @@ public static class AlliesCardValues
 {
 	// ==================== 士兵单位 ====================
 	
-	/// <summary>美国大兵 - 1费3伤害两次，升级后4伤害两次，价格200</summary>
+	/// <summary>美国大兵 - 1费2伤害2次，升级后2伤害3次，价格200</summary>
 	public static CardValueStore.CardValues AmericanSoldier => new()
 	{
 		Cost = 1,
-		Damage = 3,
-		DamageUpgraded = 1,
+		Damage = 2,
+		DamageUpgraded = 0,
 		Repeat = 2,
+		RepeatUpgraded = 1,  // 升级后打3次
 		DollarValue = 200
 	};
 	
@@ -70,25 +71,22 @@ public static class AlliesCardValues
 		// 基地车主要是功能牌
 	};
 
-	/// <summary>灰熊坦克 - 1费5攻击5防御，升级后8攻击8防御，价格700</summary>
+	/// <summary>灰熊坦克 - 1费5攻击3防御，升级后7攻击5防御，价格700</summary>
 	public static CardValueStore.CardValues GrizzlyTank => new()
 	{
 		Cost = 1,
 		Damage = 5,
-		DamageUpgraded = 3,
-		Block = 5,
-		BlockUpgraded = 3,
+		DamageUpgraded = 2,
+		Block = 3,
+		BlockUpgraded = 2,
 		DollarValue = 700
 	};
 	
-	/// <summary>IFV步兵战车 - 1费，获得1点敏捷，2伤害2次，2护盾，升级后2伤害4次，价格600</summary>
+	/// <summary>IFV步兵战车 - 1费，获得1点敏捷，5护盾，价格600</summary>
 	public static CardValueStore.CardValues Ifv => new()
 	{
 		Cost = 1,
-		Damage = 2,
-		Repeat = 2,
-		RepeatUpgraded = 2,
-		Block = 2,
+		Block = 5,
 		MagicNumber = 1,  // 敏捷值
 		DollarValue = 600
 	};
@@ -200,12 +198,12 @@ public static class AlliesCardValues
 		DollarValue = 500
 	};
 
-	/// <summary>爱国者导弹 - 1费能力卡，回合开始时获得9格挡（升级12），价格1000</summary>
+	/// <summary>爱国者导弹 - 1费能力卡，回合开始时获得6格挡（升级9），价格1000</summary>
 	public static CardValueStore.CardValues PatriotMissile => new()
 	{
 		Cost = 1,
-		Block = 9,
-		BlockUpgraded = 3,  // 升级后12 = 9 + 3
+		Block = 6,
+		BlockUpgraded = 3,  // 升级后9 = 6 + 3
 		DollarValue = 1000
 	};
 	

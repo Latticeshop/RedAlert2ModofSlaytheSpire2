@@ -53,14 +53,14 @@ public static class SovietCardValues
 	
 	// ==================== 装甲单位 ====================
 	
-	/// <summary>犀牛坦克 - 1费5攻击7防御，升级后8攻击8防御，赋予1层易伤（升级后还是1层），价格900</summary>
+	/// <summary>犀牛坦克 - 1费5攻击3防御+1易伤，升级后7攻击5防御+1易伤，价格900</summary>
 	public static CardValueStore.CardValues RhinoTank => new()
 	{
 		Cost = 1,
 		Damage = 5,
-		DamageUpgraded = 3,
-		Block = 7,
-		BlockUpgraded = 1,
+		DamageUpgraded = 2,
+		Block = 3,
+		BlockUpgraded = 2,
 		MagicNumber = 1,      // 易伤层数
 		MagicNumberUpgraded = 0,  // 升级后不增加易伤层数
 		DollarValue = 900

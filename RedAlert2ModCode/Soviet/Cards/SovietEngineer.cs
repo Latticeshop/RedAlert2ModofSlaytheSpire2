@@ -43,7 +43,7 @@ public sealed class SovietEngineer : CardModel
 
 		List<EngineerChoiceScreen.EngineerChoice> choices = GenerateRandomChoices();
 
-	var selectedChoice = await EngineerChoiceScreen.ShowSelection(choices, PortraitPath);
+		var selectedChoice = await EngineerChoiceScreen.ShowSelectionWithSync(choices, PortraitPath, Owner);
 
 		if (selectedChoice != null)
 		{
@@ -125,7 +125,7 @@ public sealed class SovietEngineer : CardModel
 				
 				if (handCards.Any())
 				{
-					var selectedCards = await CardSelectionScreen.ShowMultiSelection(handCards, 1, 1);
+					var selectedCards = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(handCards, 1, 1, Owner);
 					
 					if (selectedCards != null && selectedCards.Any())
 					{

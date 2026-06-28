@@ -70,6 +70,142 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
 		return await screen._completionSource.Task;
 	}
 
+	/// <summary>
+	/// 显示选择界面（支持多人同步）
+	/// </summary>
+	public static async Task<EngineerChoice?> ShowSelectionWithSync(List<EngineerChoice> choices, string? engineerPortraitPath, MegaCrit.Sts2.Core.Entities.Players.Player player)
+	{
+		EngineerChoice? selectedChoice = null;
+		
+		var runManagerType = Type.GetType("MegaCrit.Sts2.Core.Runs.RunManager, MegaCrit.Sts2.Core");
+		if (runManagerType == null)
+		{
+			return await ShowSelection(choices, engineerPortraitPath);
+		}
+		
+		var instanceProp = runManagerType.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+		if (instanceProp == null)
+			return await ShowSelection(choices, engineerPortraitPath);
+		
+		var runManager = instanceProp.GetValue(null);
+		if (runManager == null)
+			return await ShowSelection(choices, engineerPortraitPath);
+		
+		var netServiceProp = runManagerType.GetProperty("NetService");
+		if (netServiceProp == null)
+			return await ShowSelection(choices, engineerPortraitPath);
+		
+		var netService = netServiceProp.GetValue(runManager);
+		if (netService == null)
+			return await ShowSelection(choices, engineerPortraitPath);
+		
+		var typeProp = netService.GetType().GetProperty("Type");
+		if (typeProp == null)
+			return await ShowSelection(choices, engineerPortraitPath);
+		
+		var netType = typeProp.GetValue(netService);
+		if (netType == null)
+			return await ShowSelection(choices, engineerPortraitPath);
+		
+		string typeName = netType.ToString();
+		if (typeName is not "Host" and not "Client")
+			return await ShowSelection(choices, engineerPortraitPath);
+		
+		var synchronizerProp = runManagerType.GetProperty("PlayerChoiceSynchronizer");
+		if (synchronizerProp == null)
+			return await ShowSelection(choices, engineerPortraitPath);
+		
+		var synchronizer = synchronizerProp.GetValue(runManager);
+		if (synchronizer == null)
+			return await ShowSelection(choices, engineerPortraitPath);
+		
+		var reserveMethod = synchronizer.GetType().GetMethod("ReserveChoiceId");
+		if (reserveMethod == null)
+			return await ShowSelection(choices, engineerPortraitPath);
+		
+		uint choiceId = (uint)reserveMethod.Invoke(synchronizer, new[] { player });
+		
+		var serviceNetIdProp = netService.GetType().GetProperty("NetId");
+		if (serviceNetIdProp == null)
+			return await ShowSelection(choices, engineerPortraitPath);
+		
+		var playerNetIdProp = player.GetType().GetProperty("NetId");
+		if (playerNetIdProp == null)
+			return await ShowSelection(choices, engineerPortraitPath);
+		
+		ulong serviceNetId = (ulong)serviceNetIdProp.GetValue(netService);
+		ulong playerNetId = (ulong)playerNetIdProp.GetValue(player);
+		bool isLocalPlayer = playerNetId == serviceNetId;
+		
+		if (isLocalPlayer)
+		{
+			selectedChoice = await ShowSelection(choices, engineerPortraitPath);
+			
+			try
+			{
+				int selectedIndex = selectedChoice != null ? choices.FindIndex(c => c.Type == selectedChoice.Type) : -1;
+				var choiceResult = new MegaCrit.Sts2.Core.GameActions.PlayerChoiceResult();
+				var choiceTypeField = choiceResult.GetType().GetField("_choiceType", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+				var payloadField = choiceResult.GetType().GetField("_payload", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+				
+				if (choiceTypeField != null)
+					choiceTypeField.SetValue(choiceResult, "RedAlert2ModEngineerChoice");
+				if (payloadField != null)
+					payloadField.SetValue(choiceResult, selectedIndex.ToString());
+				
+				var syncMethod = synchronizer.GetType().GetMethod("SyncLocalChoice");
+				if (syncMethod != null)
+				{
+					syncMethod.Invoke(synchronizer, new object[] { player, choiceId, choiceResult });
+				}
+			}
+			catch
+			{
+			}
+			
+			return selectedChoice;
+		}
+		else
+		{
+			try
+			{
+				var eventInfo = synchronizer.GetType().GetEvent("PlayerChoiceReceived");
+				if (eventInfo != null)
+				{
+					var tcs = new TaskCompletionSource<MegaCrit.Sts2.Core.GameActions.PlayerChoiceResult>();
+					
+					System.Reflection.MethodInfo handlerMethod = typeof(EngineerChoiceScreen).GetMethod("OnRemoteEngineerChoiceReceived", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+					if (handlerMethod != null)
+					{
+						var handler = System.Delegate.CreateDelegate(eventInfo.EventHandlerType, handlerMethod);
+						eventInfo.AddEventHandler(synchronizer, handler);
+						
+						var receivedChoice = await tcs.Task;
+						eventInfo.RemoveEventHandler(synchronizer, handler);
+						
+						var payloadField = receivedChoice.GetType().GetField("_payload", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+						var payload = payloadField?.GetValue(receivedChoice) as string;
+						
+						if (int.TryParse(payload, out int selectedIndex) && selectedIndex >= 0 && selectedIndex < choices.Count)
+						{
+							return choices[selectedIndex];
+						}
+					}
+				}
+			}
+			catch
+			{
+			}
+			
+			return choices.FirstOrDefault();
+		}
+	}
+	
+	private static void OnRemoteEngineerChoiceReceived(object player, uint choiceId, object result)
+	{
+		return;
+	}
+
     /// <summary>
     /// 构建UI界面
     /// </summary>

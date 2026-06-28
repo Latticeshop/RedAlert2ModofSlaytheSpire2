@@ -33,14 +33,14 @@ public sealed class Paratrooper : CardModel
 	/// </summary>
 	public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[] { CardKeyword.Exhaust };
 
-	protected override List<DynamicVar> CanonicalVars => new()
-	{
-		new IntVar("SoldierCount", GetSoldierCount())
-	};
+	protected override List<DynamicVar> CanonicalVars => new() { };
 	
 	private int GetSoldierCount()
 	{
-		bool isSoviet = Owner.Character?.Id?.Entry?.Contains("SOVIET") ?? false;
+		if (Owner == null || Owner.Character == null || Owner.Character.Id == null)
+			return 6;
+
+		bool isSoviet = Owner.Character.Id.Entry?.Contains("SOVIET") ?? false;
 		return isSoviet ? 9 : 6;
 	}
 

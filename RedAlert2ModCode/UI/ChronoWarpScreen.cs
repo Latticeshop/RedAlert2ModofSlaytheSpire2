@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 
 namespace RedAlert2ModCode.UI;
 
@@ -42,6 +45,215 @@ public sealed partial class ChronoWarpScreen : Control, IOverlayScreen
         var screen = new ChronoWarpScreen(prompt);
         NOverlayStack.Instance?.Push(screen);
         return await screen._completionSource.Task;
+    }
+
+    public static async Task<int?> ShowPileSelectionWithSync(string prompt, Player player)
+    {
+        int? selectedPile = null;
+        
+        object? runManager = GetRunManager();
+        if (runManager == null)
+        {
+            selectedPile = await ShowPileSelection(prompt);
+            return selectedPile;
+        }
+
+        if (!IsMultiplayerGame(runManager))
+        {
+            selectedPile = await ShowPileSelection(prompt);
+            return selectedPile;
+        }
+
+        object? synchronizer = await WaitForPlayerChoiceSynchronizerAsync(runManager);
+        if (synchronizer == null)
+        {
+            selectedPile = await ShowPileSelection(prompt);
+            return selectedPile;
+        }
+
+        uint choiceId = ReserveChoiceId(synchronizer, player);
+        
+        if (IsLocalPlayer(runManager, player))
+        {
+            selectedPile = await ShowPileSelection(prompt);
+            SyncChoice(synchronizer, player, choiceId, selectedPile);
+            return selectedPile;
+        }
+
+        selectedPile = await WaitForRemoteChoice(synchronizer, player, choiceId);
+        return selectedPile;
+    }
+
+    private static object? GetRunManager()
+    {
+        try
+        {
+            var runManagerType = Type.GetType("MegaCrit.Sts2.Core.Runs.RunManager, MegaCrit.Sts2.Core");
+            if (runManagerType == null) return null;
+            var instanceProp = runManagerType.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+            if (instanceProp == null) return null;
+            return instanceProp.GetValue(null);
+        }
+        catch { return null; }
+    }
+
+    private static bool IsMultiplayerGame(object runManager)
+    {
+        try
+        {
+            var netServiceProp = runManager.GetType().GetProperty("NetService");
+            if (netServiceProp == null) return false;
+            var netService = netServiceProp.GetValue(runManager);
+            if (netService == null) return false;
+            var typeProp = netService.GetType().GetProperty("Type");
+            if (typeProp == null) return false;
+            var netType = typeProp.GetValue(netService);
+            if (netType == null) return false;
+            string typeName = netType.ToString();
+            return typeName == "Host" || typeName == "Client";
+        }
+        catch { return false; }
+    }
+
+    private static async Task<object?> WaitForPlayerChoiceSynchronizerAsync(object runManager)
+    {
+        try
+        {
+            for (int i = 0; i < 60; i++)
+            {
+                var synchronizerProp = runManager.GetType().GetProperty("PlayerChoiceSynchronizer");
+                if (synchronizerProp != null)
+                {
+                    var synchronizer = synchronizerProp.GetValue(runManager);
+                    if (synchronizer != null) return synchronizer;
+                }
+                await Task.Yield();
+            }
+            var finalProp = runManager.GetType().GetProperty("PlayerChoiceSynchronizer");
+            if (finalProp != null) return finalProp.GetValue(runManager);
+        }
+        catch { }
+        return null;
+    }
+
+    private static bool IsLocalPlayer(object runManager, Player player)
+    {
+        try
+        {
+            var netServiceProp = runManager.GetType().GetProperty("NetService");
+            if (netServiceProp == null) return true;
+            var netService = netServiceProp.GetValue(runManager);
+            if (netService == null) return true;
+            var serviceNetIdProp = netService.GetType().GetProperty("NetId");
+            if (serviceNetIdProp == null) return true;
+            ulong serviceNetId = (ulong)serviceNetIdProp.GetValue(netService);
+            return player.NetId != 0UL && player.NetId == serviceNetId;
+        }
+        catch { return true; }
+    }
+
+    private static uint ReserveChoiceId(object synchronizer, Player player)
+    {
+        try
+        {
+            var reserveMethod = synchronizer.GetType().GetMethod("ReserveChoiceId");
+            if (reserveMethod != null)
+                return (uint)reserveMethod.Invoke(synchronizer, new object[] { player });
+        }
+        catch { }
+        return uint.MaxValue;
+    }
+
+    private static void SyncChoice(object synchronizer, Player player, uint choiceId, int? selectedPile)
+    {
+        try
+        {
+            var choiceResult = new MegaCrit.Sts2.Core.GameActions.PlayerChoiceResult();
+            var choiceTypeField = typeof(MegaCrit.Sts2.Core.GameActions.PlayerChoiceResult).GetField("_choiceType", 
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            var payloadField = typeof(MegaCrit.Sts2.Core.GameActions.PlayerChoiceResult).GetField("_payload", 
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            
+            if (choiceTypeField != null)
+                choiceTypeField.SetValue(choiceResult, "RedAlert2ModChronoWarpSelection");
+            if (payloadField != null)
+                payloadField.SetValue(choiceResult, selectedPile.HasValue ? selectedPile.Value.ToString() : "-1");
+            
+            var syncMethod = synchronizer.GetType().GetMethod("SyncLocalChoice");
+            if (syncMethod != null)
+                syncMethod.Invoke(synchronizer, new object[] { player, choiceId, choiceResult });
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[ChronoWarpSync] 同步选择失败: {ex}");
+        }
+    }
+
+    private static async Task<int?> WaitForRemoteChoice(object synchronizer, Player player, uint choiceId)
+    {
+        try
+        {
+            TaskCompletionSource<int?> tcs = new();
+            EventInfo? eventInfo = synchronizer.GetType().GetEvent("PlayerChoiceReceived");
+            
+            if (eventInfo != null)
+            {
+                var handlerInstance = new ChronoWarpChoiceHandler(player.NetId, choiceId, tcs);
+                var handler = System.Delegate.CreateDelegate(eventInfo.EventHandlerType, handlerInstance, "OnReceived");
+                eventInfo.AddEventHandler(synchronizer, handler);
+                
+                try
+                {
+                    Task waitTask = tcs.Task;
+                    Task timeout = Task.Delay(30000);
+                    if (await Task.WhenAny(waitTask, timeout) != waitTask)
+                        return null;
+                    return await tcs.Task;
+                }
+                finally
+                {
+                    eventInfo.RemoveEventHandler(synchronizer, handler);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[ChronoWarpSync] 等待远程选择失败: {ex}");
+        }
+        return null;
+    }
+
+    private class ChronoWarpChoiceHandler
+    {
+        private readonly ulong _expectedPlayerNetId;
+        private readonly uint _expectedChoiceId;
+        private readonly TaskCompletionSource<int?> _tcs;
+
+        public ChronoWarpChoiceHandler(ulong expectedPlayerNetId, uint expectedChoiceId, TaskCompletionSource<int?> tcs)
+        {
+            _expectedPlayerNetId = expectedPlayerNetId;
+            _expectedChoiceId = expectedChoiceId;
+            _tcs = tcs;
+        }
+
+        public void OnReceived(object receivedPlayer, uint receivedChoiceId, NetPlayerChoiceResult result)
+        {
+            if (receivedPlayer is not Player p) return;
+            if (p.NetId != _expectedPlayerNetId) return;
+            if (receivedChoiceId != _expectedChoiceId) return;
+
+            var choiceResult = MegaCrit.Sts2.Core.GameActions.PlayerChoiceResult.FromNetData(
+                p, p.RunState, result);
+            
+            var payloadField = typeof(MegaCrit.Sts2.Core.GameActions.PlayerChoiceResult).GetField("_payload",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            var payload = payloadField?.GetValue(choiceResult) as string;
+            
+            if (int.TryParse(payload, out int selectedPile))
+                _tcs.TrySetResult(selectedPile);
+            else
+                _tcs.TrySetResult(null);
+        }
     }
 
     private void BuildUi()

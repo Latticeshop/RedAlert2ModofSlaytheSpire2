@@ -17,23 +17,25 @@ public static class InitialDeckExhaustPatch
     [HarmonyPatch(typeof(RunManager), nameof(RunManager.Launch))]
     public static void LaunchPostfix(RunState __result)
     {
-        // 获取本地玩家（单人模式下为第一个玩家）
-        var localPlayer = __result.Players.FirstOrDefault();
-        if (localPlayer == null)
-            return;
-
-        // 检查是否是盟军角色
-        if (localPlayer.Character is not Allies)
-            return;
-
-        // 遍历玩家的卡组，为美国大兵和灰熊坦克添加消耗效果
-        foreach (var card in localPlayer.Deck.Cards)
+        // 遍历所有玩家（多人游戏中需要处理每个玩家）
+        foreach (var player in __result.Players)
         {
-            // 检查卡牌类型
-            if (card is AmericanSoldier || card is GrizzlyTank)
+            if (player == null)
+                continue;
+
+            // 检查是否是盟军角色
+            if (player.Character is not Allies)
+                continue;
+
+            // 遍历玩家的卡组，为美国大兵和灰熊坦克添加消耗效果
+            foreach (var card in player.Deck.Cards)
             {
-                // 添加消耗词条
-                card.AddKeyword(CardKeyword.Exhaust);
+                // 检查卡牌类型
+                if (card is AmericanSoldier || card is GrizzlyTank)
+                {
+                    // 添加消耗词条
+                    card.AddKeyword(CardKeyword.Exhaust);
+                }
             }
         }
     }

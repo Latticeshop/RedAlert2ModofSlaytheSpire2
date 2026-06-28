@@ -76,7 +76,7 @@ public sealed class SovietWarFactory : CardModel
 		GD.Print($"[SovietWarFactory] 可用卡牌数量: {availableCards.Count}");
 
 		var cardValuesMap = SovietCardValues.CreateVehicleValuesMap();
-		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap, FactionType.Soviet);
+		CardModel? selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(availableCards, Owner, cardValuesMap, FactionType.Soviet);
 
 		GD.Print($"[SovietWarFactory] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
 

@@ -77,7 +77,7 @@ public sealed partial class NightHawkChopper : CardModel
             return;
         }
 
-        var selectedChoice = await FlakTrackChoiceScreen.ShowSelection(
+        var selectedChoice = await FlakTrackChoiceScreen.ShowSelectionWithSync(Owner,
             "选择夜莺直升机的行动",
             "部署",
             "存储当前手牌中的士兵单位",

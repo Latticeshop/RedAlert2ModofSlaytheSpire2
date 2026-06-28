@@ -15,9 +15,8 @@ using RedAlert2ModCode.Common.Utils;
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
-/// 犀牛坦克 - 类似于铁斩波的攻击牌
-/// 1费5攻击7防御，升级后8攻击8防御，赋予1层易伤（升级后2层）
-/// 对应盟军的灰熊坦克，苏军坦克更强大
+/// 犀牛坦克 - 攻击牌
+/// 1费5攻击3防御+1易伤，升级后7攻击5防御+1易伤
 /// </summary>
 public sealed class RhinoTank : CardModel
 {

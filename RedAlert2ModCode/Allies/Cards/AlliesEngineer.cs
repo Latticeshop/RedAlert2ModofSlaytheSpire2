@@ -51,8 +51,8 @@ public sealed class AlliesEngineer : CardModel
 		// 生成随机选项
 		List<EngineerChoiceScreen.EngineerChoice> choices = GenerateRandomChoices();
 
-		// 显示选择界面
-	var selectedChoice = await EngineerChoiceScreen.ShowSelection(choices, PortraitPath);
+		// 显示选择界面（支持多人同步）
+		var selectedChoice = await EngineerChoiceScreen.ShowSelectionWithSync(choices, PortraitPath, Owner);
 
 		if (selectedChoice != null)
 		{
@@ -152,7 +152,7 @@ public sealed class AlliesEngineer : CardModel
 				if (handCards.Any())
 				{
 					// 使用现有的 CardSelectionScreen 进行手牌选择
-					var selectedCards = await CardSelectionScreen.ShowMultiSelection(handCards, 1, 1);
+					var selectedCards = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(handCards, 1, 1, Owner);
 					
 					if (selectedCards != null && selectedCards.Any())
 					{

@@ -77,7 +77,7 @@ public sealed partial class FlakTrack : CardModel
             return;
         }
 
-        var selectedChoice = await FlakTrackChoiceScreen.ShowSelection();
+        var selectedChoice = await FlakTrackChoiceScreen.ShowSelectionWithSync(Owner);
 
         if (selectedChoice == FlakTrackChoiceScreen.ChoiceType.Deploy)
         {

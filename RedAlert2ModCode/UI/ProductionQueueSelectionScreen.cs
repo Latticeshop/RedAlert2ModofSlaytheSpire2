@@ -1,10 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Utils;
@@ -42,6 +45,246 @@ public sealed partial class ProductionQueueSelectionScreen : Control, IOverlaySc
         var screen = new ProductionQueueSelectionScreen(items, maxSelection);
         NOverlayStack.Instance?.Push(screen);
         return await screen._completionSource.Task;
+    }
+
+    public static async Task<List<StopProductionCard.ProductionQueueItem>?> ShowSelectionWithSync(
+        List<StopProductionCard.ProductionQueueItem> items, int maxSelection, Player player)
+    {
+        List<StopProductionCard.ProductionQueueItem>? selectedItems = null;
+        
+        object? runManager = GetRunManager();
+        if (runManager == null)
+        {
+            selectedItems = await ShowSelection(items, maxSelection);
+            return selectedItems;
+        }
+
+        if (!IsMultiplayerGame(runManager))
+        {
+            selectedItems = await ShowSelection(items, maxSelection);
+            return selectedItems;
+        }
+
+        object? synchronizer = await WaitForPlayerChoiceSynchronizerAsync(runManager);
+        if (synchronizer == null)
+        {
+            selectedItems = await ShowSelection(items, maxSelection);
+            return selectedItems;
+        }
+
+        uint choiceId = ReserveChoiceId(synchronizer, player);
+        
+        if (IsLocalPlayer(runManager, player))
+        {
+            selectedItems = await ShowSelection(items, maxSelection);
+            SyncChoice(synchronizer, player, choiceId, selectedItems, items);
+            return selectedItems;
+        }
+
+        selectedItems = await WaitForRemoteChoice(synchronizer, player, choiceId, items);
+        return selectedItems;
+    }
+
+    private static object? GetRunManager()
+    {
+        try
+        {
+            var runManagerType = Type.GetType("MegaCrit.Sts2.Core.Runs.RunManager, MegaCrit.Sts2.Core");
+            if (runManagerType == null) return null;
+            var instanceProp = runManagerType.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+            if (instanceProp == null) return null;
+            return instanceProp.GetValue(null);
+        }
+        catch { return null; }
+    }
+
+    private static bool IsMultiplayerGame(object runManager)
+    {
+        try
+        {
+            var netServiceProp = runManager.GetType().GetProperty("NetService");
+            if (netServiceProp == null) return false;
+            var netService = netServiceProp.GetValue(runManager);
+            if (netService == null) return false;
+            var typeProp = netService.GetType().GetProperty("Type");
+            if (typeProp == null) return false;
+            var netType = typeProp.GetValue(netService);
+            if (netType == null) return false;
+            string typeName = netType.ToString();
+            return typeName == "Host" || typeName == "Client";
+        }
+        catch { return false; }
+    }
+
+    private static async Task<object?> WaitForPlayerChoiceSynchronizerAsync(object runManager)
+    {
+        try
+        {
+            for (int i = 0; i < 60; i++)
+            {
+                var synchronizerProp = runManager.GetType().GetProperty("PlayerChoiceSynchronizer");
+                if (synchronizerProp != null)
+                {
+                    var synchronizer = synchronizerProp.GetValue(runManager);
+                    if (synchronizer != null) return synchronizer;
+                }
+                await Task.Yield();
+            }
+            var finalProp = runManager.GetType().GetProperty("PlayerChoiceSynchronizer");
+            if (finalProp != null) return finalProp.GetValue(runManager);
+        }
+        catch { }
+        return null;
+    }
+
+    private static bool IsLocalPlayer(object runManager, Player player)
+    {
+        try
+        {
+            var netServiceProp = runManager.GetType().GetProperty("NetService");
+            if (netServiceProp == null) return true;
+            var netService = netServiceProp.GetValue(runManager);
+            if (netService == null) return true;
+            var serviceNetIdProp = netService.GetType().GetProperty("NetId");
+            if (serviceNetIdProp == null) return true;
+            ulong serviceNetId = (ulong)serviceNetIdProp.GetValue(netService);
+            return player.NetId != 0UL && player.NetId == serviceNetId;
+        }
+        catch { return true; }
+    }
+
+    private static uint ReserveChoiceId(object synchronizer, Player player)
+    {
+        try
+        {
+            var reserveMethod = synchronizer.GetType().GetMethod("ReserveChoiceId");
+            if (reserveMethod != null)
+                return (uint)reserveMethod.Invoke(synchronizer, new object[] { player });
+        }
+        catch { }
+        return uint.MaxValue;
+    }
+
+    private static void SyncChoice(object synchronizer, Player player, uint choiceId, 
+        List<StopProductionCard.ProductionQueueItem>? selectedItems, 
+        List<StopProductionCard.ProductionQueueItem> allItems)
+    {
+        try
+        {
+            var choiceResult = new MegaCrit.Sts2.Core.GameActions.PlayerChoiceResult();
+            var choiceTypeField = typeof(MegaCrit.Sts2.Core.GameActions.PlayerChoiceResult).GetField("_choiceType", 
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            var payloadField = typeof(MegaCrit.Sts2.Core.GameActions.PlayerChoiceResult).GetField("_payload", 
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            
+            if (choiceTypeField != null)
+                choiceTypeField.SetValue(choiceResult, "RedAlert2ModProductionQueueSelection");
+            
+            List<int> selectedIndices = new();
+            if (selectedItems != null)
+            {
+                foreach (var item in selectedItems)
+                {
+                    int index = allItems.FindIndex(i => i == item);
+                    if (index >= 0)
+                        selectedIndices.Add(index);
+                }
+            }
+            
+            if (payloadField != null)
+                payloadField.SetValue(choiceResult, string.Join(",", selectedIndices));
+            
+            var syncMethod = synchronizer.GetType().GetMethod("SyncLocalChoice");
+            if (syncMethod != null)
+                syncMethod.Invoke(synchronizer, new object[] { player, choiceId, choiceResult });
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[ProductionQueueSync] 同步选择失败: {ex}");
+        }
+    }
+
+    private static async Task<List<StopProductionCard.ProductionQueueItem>?> WaitForRemoteChoice(
+        object synchronizer, Player player, uint choiceId, 
+        List<StopProductionCard.ProductionQueueItem> allItems)
+    {
+        try
+        {
+            TaskCompletionSource<List<StopProductionCard.ProductionQueueItem>?> tcs = new();
+            EventInfo? eventInfo = synchronizer.GetType().GetEvent("PlayerChoiceReceived");
+            
+            if (eventInfo != null)
+            {
+                var handlerInstance = new ProductionQueueChoiceHandler(player.NetId, choiceId, tcs, allItems);
+                var handler = System.Delegate.CreateDelegate(eventInfo.EventHandlerType, handlerInstance, "OnReceived");
+                eventInfo.AddEventHandler(synchronizer, handler);
+                
+                try
+                {
+                    Task waitTask = tcs.Task;
+                    Task timeout = Task.Delay(30000);
+                    if (await Task.WhenAny(waitTask, timeout) != waitTask)
+                        return null;
+                    return await tcs.Task;
+                }
+                finally
+                {
+                    eventInfo.RemoveEventHandler(synchronizer, handler);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[ProductionQueueSync] 等待远程选择失败: {ex}");
+        }
+        return null;
+    }
+
+    private class ProductionQueueChoiceHandler
+    {
+        private readonly ulong _expectedPlayerNetId;
+        private readonly uint _expectedChoiceId;
+        private readonly TaskCompletionSource<List<StopProductionCard.ProductionQueueItem>?> _tcs;
+        private readonly List<StopProductionCard.ProductionQueueItem> _allItems;
+
+        public ProductionQueueChoiceHandler(ulong expectedPlayerNetId, uint expectedChoiceId, 
+            TaskCompletionSource<List<StopProductionCard.ProductionQueueItem>?> tcs,
+            List<StopProductionCard.ProductionQueueItem> allItems)
+        {
+            _expectedPlayerNetId = expectedPlayerNetId;
+            _expectedChoiceId = expectedChoiceId;
+            _tcs = tcs;
+            _allItems = allItems;
+        }
+
+        public void OnReceived(object receivedPlayer, uint receivedChoiceId, NetPlayerChoiceResult result)
+        {
+            if (receivedPlayer is not Player p) return;
+            if (p.NetId != _expectedPlayerNetId) return;
+            if (receivedChoiceId != _expectedChoiceId) return;
+
+            var choiceResult = MegaCrit.Sts2.Core.GameActions.PlayerChoiceResult.FromNetData(
+                p, p.RunState, result);
+            
+            var payloadField = typeof(MegaCrit.Sts2.Core.GameActions.PlayerChoiceResult).GetField("_payload",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            var payload = payloadField?.GetValue(choiceResult) as string;
+            
+            List<StopProductionCard.ProductionQueueItem> selectedItems = new();
+            if (!string.IsNullOrEmpty(payload))
+            {
+                var indices = payload.Split(',')
+                    .Select(s => int.TryParse(s, out int i) ? i : -1)
+                    .Where(i => i >= 0 && i < _allItems.Count);
+                
+                foreach (int index in indices)
+                {
+                    selectedItems.Add(_allItems[index]);
+                }
+            }
+            
+            _tcs.TrySetResult(selectedItems.Count > 0 ? selectedItems : null);
+        }
     }
 
     private void BuildUi()

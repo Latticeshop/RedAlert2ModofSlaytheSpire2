@@ -14,8 +14,8 @@ using RedAlert2ModCode.Common.Utils;
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
-/// 灰熊坦克 - 类似于铁斩波的攻击牌
-/// 1费5攻击5防御，升级后8攻击8防御
+/// 灰熊坦克 - 攻击牌
+/// 1费5攻击3防御，升级后7攻击5防御
 /// </summary>
 public sealed class GrizzlyTank : CardModel
 {

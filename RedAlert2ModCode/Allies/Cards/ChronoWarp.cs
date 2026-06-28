@@ -52,7 +52,7 @@ public sealed class ChronoWarp : CardModel
         await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
         // 第一步：选择源牌堆
-        var sourcePileInt = await ChronoWarpScreen.ShowPileSelection("选择卡牌来源：");
+        var sourcePileInt = await ChronoWarpScreen.ShowPileSelectionWithSync("选择卡牌来源：", Owner);
         if (sourcePileInt == null)
         {
             GD.Print("[ChronoWarp] 取消选择");
@@ -70,7 +70,7 @@ public sealed class ChronoWarp : CardModel
         }
 
         // 选择要移动的卡牌（可多选）
-        var selectedCards = await CardSelectionScreen.ShowMultiSelection(cardsInSource, cardsInSource.Count, 1);
+        var selectedCards = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(cardsInSource, cardsInSource.Count, 1, Owner);
         if (selectedCards == null || !selectedCards.Any())
         {
             GD.Print("[ChronoWarp] 未选择任何卡牌");
@@ -78,7 +78,7 @@ public sealed class ChronoWarp : CardModel
         }
 
         // 第二步：选择目标牌堆
-        var targetPileInt = await ChronoWarpScreen.ShowPileSelection("选择目标位置：");
+        var targetPileInt = await ChronoWarpScreen.ShowPileSelectionWithSync("选择目标位置：", Owner);
         if (targetPileInt == null)
         {
             GD.Print("[ChronoWarp] 取消选择目标");

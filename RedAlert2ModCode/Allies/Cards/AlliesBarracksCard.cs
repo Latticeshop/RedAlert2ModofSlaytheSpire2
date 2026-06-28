@@ -92,7 +92,7 @@ public sealed class AlliesBarracksCard : CardModel
 		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
 		// 传递数值映射，让UI面板能够正确显示费用
 		var cardValuesMap = AlliesCardValues.CreateSoldierValuesMap();
-		CardModel? selectedCard = await CardSelectionScreen.ShowSelection(availableCards, cardValuesMap, FactionType.Allied);
+		CardModel? selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(availableCards, Owner, cardValuesMap, FactionType.Allied);
 
 		GD.Print($"[AlliesBarracksCard] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
 
