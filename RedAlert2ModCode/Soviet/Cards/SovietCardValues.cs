@@ -41,13 +41,10 @@ public static class SovietCardValues
 		DollarValue = 200
 	};
 	
-	/// <summary>磁暴步兵 - 2费6伤害，升级后9伤害，价格500</summary>
+	/// <summary>磁暴步兵 - 1费，生成闪电球，部署给磁暴线圈充能，价格500</summary>
 	public static CardValueStore.CardValues TeslaTrooper => new()
 	{
-		Cost = 2,
-		Damage = 6,
-		DamageUpgraded = 3,
-		Repeat = 1,
+		Cost = 1,
 		DollarValue = 500
 	};
 	
@@ -216,13 +213,12 @@ public static class SovietCardValues
 		DollarValue = 100
 	};
 	
-	/// <summary>磁暴线圈 - 0费，回合开始时对随机敌人造成3伤害1次，价格1500</summary>
-	public static CardValueStore.CardValues TeslaCoil => new()
+	/// <summary>磁暴线圈 - 2费，回合开始时对敌人造成5伤害（升级8），价格1500</summary>
+	public static CardValueStore.CardValues TeslaCoilCard => new()
 	{
-		Cost = 0,
-		Damage = 3,
-		DamageUpgraded = 4,
-		Repeat = 1,
+		Cost = 2,
+		Damage = 5,
+		Stars = 8,
 		DollarValue = 1500
 	};
 	
@@ -256,6 +252,7 @@ public static class SovietCardValues
 			{ "CONSCRIPT", Conscript },
 			{ "SOVIETATTACKDOG", AttackDog },
 			{ "SOVIETFLAKTROOPER", FlakTrooper },
+			{ "SOVIETTESLATROOPER", TeslaTrooper },
 			{ "SOVIETENGINEER", Engineer }
 		};
 	}
@@ -300,7 +297,7 @@ public static class SovietCardValues
 			{ "NUCLEARREACTOR", NuclearReactor },
 			{ "SOVIETREFINERY", SovietRefinery },
 			{ "SOVIETBATTLELAB", SovietBattleLab },
-			{ "TESLACOIL", TeslaCoil },
+			{ "SOVIETTESLACOILCARD", TeslaCoilCard },
 			{ "SOVIETWALLCARD", SovietWall },
 			{ "SOVIETFORTIFIEDWALL", SovietFortifiedWall },
 			{ "SOVIETRADAR", Radar }

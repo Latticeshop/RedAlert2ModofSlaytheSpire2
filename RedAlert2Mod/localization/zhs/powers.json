@@ -73,5 +73,9 @@
     "SOVIET_FLAK_CANNON_POWER.title": "防空炮",
     "SOVIET_FLAK_CANNON_POWER.description": "回合开始时，每有一个攻击意图的敌人，获得 {Block} 点格挡。",
     "SOVIET_TERROR_DRONE_POWER.title": "恐怖机器人",
-    "SOVIET_TERROR_DRONE_POWER.description": "每回合受到 {Count} 点伤害。当目标回血时清除。"
+    "SOVIET_TERROR_DRONE_POWER.description": "每回合受到 {Count} 点伤害。当目标回血时清除。",
+    "SOVIET_TESLA_COIL_POWER.title": "磁暴线圈",
+    "SOVIET_TESLA_COIL_POWER.description": "回合开始时对敌人造成 {Damage} 点伤害。",
+    "SOVIET_TESLA_COIL_CHARGE_POWER.title": "线圈充能",
+    "SOVIET_TESLA_COIL_CHARGE_POWER.description": "每一层使磁暴线圈下次伤害提升50%。最多3层。"
 }

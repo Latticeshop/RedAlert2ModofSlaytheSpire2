@@ -16,8 +16,13 @@ public static class SovietPowerValues
 	{
 		Damage = 5,
 		Repeat = 1,
-		Stars = 2,
+		Stars = 3,
 		StarsUpgraded = 3
+	};
+
+	public static CardValueStore.CardValues TeslaCoilChargePower => new()
+	{
+		Repeat = 3    // 最大充能层数
 	};
 
 	public static CardValueStore.CardValues FlakTowerPower => new()

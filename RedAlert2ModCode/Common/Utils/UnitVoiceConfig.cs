@@ -286,6 +286,15 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/TerrorDrone/Vtermova.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/TerrorDrone/Vtersela.mp3",
         },
+        ["TeslaTrooper"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/TeslaTrooper/Itesatb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TeslaTrooper/Itesmoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TeslaTrooper/Itesmoe.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TeslaTrooper/Itessec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TeslaTrooper/Itessed.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TeslaTrooper/Itessee.mp3",
+        },
         ["SovietTransportShip"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/SovietUnits/SovietTransportShip/Vhosmoa.mp3",

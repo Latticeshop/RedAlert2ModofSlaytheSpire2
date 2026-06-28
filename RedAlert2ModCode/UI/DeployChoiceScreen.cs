@@ -14,96 +14,70 @@ using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.UI;
 
-public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
+public sealed partial class DeployChoiceScreen : Control, IOverlayScreen
 {
-    private readonly TaskCompletionSource<ChoiceType?> _completionSource = new();
+    private readonly TaskCompletionSource<int?> _completionSource = new();
     private bool _choiceLocked;
-
-    public enum ChoiceType
-    {
-        Deploy,
-        Attack
-    }
+    private FactionType _faction = FactionType.Allied;
 
     public NetScreenType ScreenType => NetScreenType.Rewards;
     public bool UseSharedBackstop => true;
     public Control? DefaultFocusedControl => null;
 
-    private FlakTrackChoiceScreen()
+    private DeployChoiceScreen(FactionType faction = FactionType.Allied)
     {
-        Name = nameof(FlakTrackChoiceScreen);
+        _faction = faction;
+        Name = nameof(DeployChoiceScreen);
         SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
         MouseFilter = MouseFilterEnum.Stop;
         FocusMode = FocusModeEnum.All;
     }
 
     private string _title = "选择行动";
-    private string _deployTitle = "部署";
-    private string _deployDesc = "存储当前手牌中的士兵单位";
-    private string _attackTitle = "攻击";
-    private string _attackDesc = "获得敏捷和攻击";
+    private List<ChoiceOption> _options = new();
 
     private Label? _titleLabel;
-    private Label? _deployTitleLabel;
-    private Label? _deployDescLabel;
-    private Label? _attackTitleLabel;
-    private Label? _attackDescLabel;
 
-    public static async Task<ChoiceType?> ShowSelection()
+    public class ChoiceOption
     {
-        var screen = new FlakTrackChoiceScreen();
-        screen.BuildUi();
-        screen.UpdateUiText();
-        NOverlayStack.Instance?.Push(screen);
-        return await screen._completionSource.Task;
+        public string Id { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string? IconPath { get; set; }
     }
 
-    public static async Task<ChoiceType?> ShowSelection(string title, string deployTitle, string deployDesc, string attackTitle, string attackDesc)
+    public static async Task<int?> ShowSelection(string title, List<ChoiceOption> options, FactionType faction = FactionType.Allied)
     {
-        var screen = new FlakTrackChoiceScreen();
+        var screen = new DeployChoiceScreen(faction);
         screen._title = title;
-        screen._deployTitle = deployTitle;
-        screen._deployDesc = deployDesc;
-        screen._attackTitle = attackTitle;
-        screen._attackDesc = attackDesc;
+        screen._options = options;
         screen.BuildUi();
         screen.UpdateUiText();
         NOverlayStack.Instance?.Push(screen);
         return await screen._completionSource.Task;
     }
 
-    public static async Task<ChoiceType?> ShowSelectionWithSync(Player player)
+    public static async Task<int?> ShowSelectionWithSync(Player player, string title, List<ChoiceOption> options, FactionType faction = FactionType.Allied)
     {
-        return await ShowSelectionWithSync(player, null, null, null, null, null);
-    }
-
-    public static async Task<ChoiceType?> ShowSelectionWithSync(Player player, string title, string deployTitle, string deployDesc, string attackTitle, string attackDesc)
-    {
-        ChoiceType? selectedChoice = null;
+        int? selectedChoice = null;
         
         object? runManager = GetRunManager();
         if (runManager == null)
         {
-            selectedChoice = string.IsNullOrEmpty(title) 
-                ? await ShowSelection() 
-                : await ShowSelection(title, deployTitle, deployDesc, attackTitle, attackDesc);
+            selectedChoice = await ShowSelection(title, options, faction);
             return selectedChoice;
         }
 
         if (!IsMultiplayerGame(runManager))
         {
-            selectedChoice = string.IsNullOrEmpty(title) 
-                ? await ShowSelection() 
-                : await ShowSelection(title, deployTitle, deployDesc, attackTitle, attackDesc);
+            selectedChoice = await ShowSelection(title, options, faction);
             return selectedChoice;
         }
 
         object? synchronizer = await WaitForPlayerChoiceSynchronizerAsync(runManager);
         if (synchronizer == null)
         {
-            selectedChoice = string.IsNullOrEmpty(title) 
-                ? await ShowSelection() 
-                : await ShowSelection(title, deployTitle, deployDesc, attackTitle, attackDesc);
+            selectedChoice = await ShowSelection(title, options, faction);
             return selectedChoice;
         }
 
@@ -111,9 +85,7 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         
         if (IsLocalPlayer(runManager, player))
         {
-            selectedChoice = string.IsNullOrEmpty(title) 
-                ? await ShowSelection() 
-                : await ShowSelection(title, deployTitle, deployDesc, attackTitle, attackDesc);
+            selectedChoice = await ShowSelection(title, options, faction);
             SyncChoice(synchronizer, player, choiceId, selectedChoice);
             return selectedChoice;
         }
@@ -202,7 +174,7 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         return uint.MaxValue;
     }
 
-    private static void SyncChoice(object synchronizer, Player player, uint choiceId, ChoiceType? selectedChoice)
+    private static void SyncChoice(object synchronizer, Player player, uint choiceId, int? selectedChoice)
     {
         try
         {
@@ -213,9 +185,9 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
                 BindingFlags.Instance | BindingFlags.NonPublic);
             
             if (choiceTypeField != null)
-                choiceTypeField.SetValue(choiceResult, "RedAlert2ModFlakTrackChoice");
+                choiceTypeField.SetValue(choiceResult, "RedAlert2ModDeployChoice");
             if (payloadField != null)
-                payloadField.SetValue(choiceResult, selectedChoice.HasValue ? ((int)selectedChoice.Value).ToString() : "-1");
+                payloadField.SetValue(choiceResult, selectedChoice.HasValue ? selectedChoice.Value.ToString() : "-1");
             
             var syncMethod = synchronizer.GetType().GetMethod("SyncLocalChoice");
             if (syncMethod != null)
@@ -223,20 +195,20 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         }
         catch (Exception ex)
         {
-            GD.PrintErr($"[FlakTrackSync] 同步选择失败: {ex}");
+            GD.PrintErr($"[DeployChoiceSync] 同步选择失败: {ex}");
         }
     }
 
-    private static async Task<ChoiceType?> WaitForRemoteChoice(object synchronizer, Player player, uint choiceId)
+    private static async Task<int?> WaitForRemoteChoice(object synchronizer, Player player, uint choiceId)
     {
         try
         {
-            TaskCompletionSource<ChoiceType?> tcs = new();
+            TaskCompletionSource<int?> tcs = new();
             EventInfo? eventInfo = synchronizer.GetType().GetEvent("PlayerChoiceReceived");
             
             if (eventInfo != null)
             {
-                var handlerInstance = new FlakTrackChoiceHandler(player.NetId, choiceId, tcs);
+                var handlerInstance = new DeployChoiceHandler(player.NetId, choiceId, tcs);
                 var handler = Delegate.CreateDelegate(eventInfo.EventHandlerType, handlerInstance, "OnReceived");
                 eventInfo.AddEventHandler(synchronizer, handler);
                 
@@ -256,18 +228,18 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         }
         catch (Exception ex)
         {
-            GD.PrintErr($"[FlakTrackSync] 等待远程选择失败: {ex}");
+            GD.PrintErr($"[DeployChoiceSync] 等待远程选择失败: {ex}");
         }
         return null;
     }
 
-    private class FlakTrackChoiceHandler
+    private class DeployChoiceHandler
     {
         private readonly ulong _expectedPlayerNetId;
         private readonly uint _expectedChoiceId;
-        private readonly TaskCompletionSource<ChoiceType?> _tcs;
+        private readonly TaskCompletionSource<int?> _tcs;
 
-        public FlakTrackChoiceHandler(ulong expectedPlayerNetId, uint expectedChoiceId, TaskCompletionSource<ChoiceType?> tcs)
+        public DeployChoiceHandler(ulong expectedPlayerNetId, uint expectedChoiceId, TaskCompletionSource<int?> tcs)
         {
             _expectedPlayerNetId = expectedPlayerNetId;
             _expectedChoiceId = expectedChoiceId;
@@ -287,8 +259,8 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
                 BindingFlags.Instance | BindingFlags.NonPublic);
             var payload = payloadField?.GetValue(choiceResult) as string;
             
-            if (int.TryParse(payload, out int selectedChoice) && selectedChoice >= 0 && selectedChoice < Enum.GetValues(typeof(ChoiceType)).Length)
-                _tcs.TrySetResult((ChoiceType)selectedChoice);
+            if (int.TryParse(payload, out int selectedChoice) && selectedChoice >= 0)
+                _tcs.TrySetResult(selectedChoice);
             else
                 _tcs.TrySetResult(null);
         }
@@ -335,7 +307,7 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
             SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
         _titleLabel.AddThemeFontSizeOverride("font_size", 26);
-        _titleLabel.AddThemeColorOverride("font_color", new Color(1f, 0.9f, 0.7f));
+        _titleLabel.AddThemeColorOverride("font_color", GetPrimaryColor());
         root.AddChild(_titleLabel);
 
         HBoxContainer choicesRow = new()
@@ -348,32 +320,30 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         choicesRow.AddThemeConstantOverride("separation", 30);
         root.AddChild(choicesRow);
 
-        choicesRow.AddChild(CreateChoiceButton(ChoiceType.Deploy, out _deployTitleLabel, out _deployDescLabel));
-        choicesRow.AddChild(CreateChoiceButton(ChoiceType.Attack, out _attackTitleLabel, out _attackDescLabel));
+        for (int i = 0; i < _options.Count; i++)
+        {
+            choicesRow.AddChild(CreateChoiceButton(i, _options[i]));
+        }
     }
 
     private void UpdateUiText()
     {
         if (_titleLabel != null) _titleLabel.Text = _title;
-        if (_deployTitleLabel != null) _deployTitleLabel.Text = _deployTitle;
-        if (_deployDescLabel != null) _deployDescLabel.Text = _deployDesc;
-        if (_attackTitleLabel != null) _attackTitleLabel.Text = _attackTitle;
-        if (_attackDescLabel != null) _attackDescLabel.Text = _attackDesc;
     }
 
-    private Button CreateChoiceButton(ChoiceType type, out Label titleLabel, out Label descLabel)
+    private Button CreateChoiceButton(int index, ChoiceOption option)
     {
         Button button = new()
         {
-            Name = $"ChoiceButton_{type}",
+            Name = $"ChoiceButton_{index}",
             CustomMinimumSize = new Vector2(300f, 220f),
             FocusMode = FocusModeEnum.All,
             MouseDefaultCursorShape = CursorShape.PointingHand
         };
 
-        button.AddThemeStyleboxOverride("normal", CreateCardStyle(new Color(0.12f, 0.18f, 0.28f, 0.9f)));
-        button.AddThemeStyleboxOverride("hover", CreateCardStyle(new Color(0.18f, 0.26f, 0.4f, 0.95f)));
-        button.AddThemeStyleboxOverride("pressed", CreateCardStyle(new Color(0.1f, 0.14f, 0.22f, 0.98f)));
+        button.AddThemeStyleboxOverride("normal", CreateCardStyle(GetButtonColor()));
+        button.AddThemeStyleboxOverride("hover", CreateCardStyle(GetButtonHoverColor()));
+        button.AddThemeStyleboxOverride("pressed", CreateCardStyle(GetSecondaryColor()));
 
         MarginContainer contentMargin = new();
         contentMargin.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
@@ -392,19 +362,19 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         content.AddThemeConstantOverride("separation", 8);
         contentMargin.AddChild(content);
 
-        titleLabel = new Label()
+        Label titleLabel = new Label()
         {
-            Text = type == ChoiceType.Deploy ? _deployTitle : _attackTitle,
+            Text = option.Title,
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
         titleLabel.AddThemeFontSizeOverride("font_size", 22);
-        titleLabel.AddThemeColorOverride("font_color", new Color(1f, 0.9f, 0.7f));
+        titleLabel.AddThemeColorOverride("font_color", GetPrimaryColor());
         content.AddChild(titleLabel);
 
-        descLabel = new Label()
+        Label descLabel = new Label()
         {
-            Text = type == ChoiceType.Deploy ? _deployDesc : _attackDesc,
+            Text = option.Description,
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
             AutowrapMode = TextServer.AutowrapMode.WordSmart
@@ -413,18 +383,53 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         descLabel.AddThemeColorOverride("font_color", new Color(0.7f, 0.75f, 0.85f));
         content.AddChild(descLabel);
 
-        button.Pressed += () => OnChoiceSelected(type);
+        button.Pressed += () => OnChoiceSelected(index);
 
         return button;
     }
 
-    private void OnChoiceSelected(ChoiceType type)
+    private Color GetPrimaryColor()
+    {
+        return _faction switch
+        {
+            FactionType.Soviet => new Color(0.9f, 0.4f, 0.4f),
+            FactionType.Yuri => new Color(0.8f, 0.4f, 1f),
+            _ => new Color(0.4f, 0.6f, 0.9f)
+        };
+    }
+
+    private Color GetSecondaryColor()
+    {
+        return new Color(0.08f, 0.1f, 0.14f, 0.92f);
+    }
+
+    private Color GetBorderColor()
+    {
+        return _faction switch
+        {
+            FactionType.Soviet => new Color(0.9f, 0.4f, 0.4f),
+            FactionType.Yuri => new Color(0.8f, 0.4f, 1f),
+            _ => new Color(0.4f, 0.6f, 0.9f)
+        };
+    }
+
+    private Color GetButtonColor()
+    {
+        return new Color(0.1f, 0.15f, 0.2f, 0.8f);
+    }
+
+    private Color GetButtonHoverColor()
+    {
+        return new Color(0.15f, 0.2f, 0.28f, 0.9f);
+    }
+
+    private void OnChoiceSelected(int index)
     {
         if (_choiceLocked)
             return;
 
         _choiceLocked = true;
-        _completionSource.SetResult(type);
+        _completionSource.SetResult(index);
         NOverlayStack.Instance?.Remove(this);
         QueueFree();
     }
@@ -432,12 +437,16 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
     private StyleBoxFlat CreatePanelStyle()
     {
         StyleBoxFlat style = new();
-        style.BgColor = new Color(0.08f, 0.1f, 0.15f, 0.95f);
-        style.BorderWidthLeft = 3;
-        style.BorderWidthRight = 3;
-        style.BorderWidthTop = 3;
-        style.BorderWidthBottom = 3;
-        style.BorderColor = FactionHelper.GetFactionBorderColor();
+        style.BgColor = GetSecondaryColor();
+        style.CornerRadiusTopLeft = 12;
+        style.CornerRadiusTopRight = 12;
+        style.CornerRadiusBottomLeft = 12;
+        style.CornerRadiusBottomRight = 12;
+        style.BorderWidthLeft = 2;
+        style.BorderWidthRight = 2;
+        style.BorderWidthTop = 2;
+        style.BorderWidthBottom = 2;
+        style.BorderColor = GetBorderColor();
         return style;
     }
 
@@ -449,7 +458,7 @@ public sealed partial class FlakTrackChoiceScreen : Control, IOverlayScreen
         style.BorderWidthRight = 2;
         style.BorderWidthTop = 2;
         style.BorderWidthBottom = 2;
-        style.BorderColor = FactionHelper.GetFactionBorderColor();
+        style.BorderColor = GetBorderColor();
         style.CornerRadiusTopLeft = 8;
         style.CornerRadiusTopRight = 8;
         style.CornerRadiusBottomLeft = 8;

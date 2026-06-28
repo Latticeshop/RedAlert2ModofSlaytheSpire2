@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
+using RedAlert2ModCode.Soviet.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
 
@@ -74,6 +75,14 @@ public sealed class SovietBarracksCard : CardModel
 
 		List<CardModel> availableCards = SovietCardRegistry.CreateSoldiers(Owner);
 		GD.Print($"[SovietBarracksCard] 可用卡牌数量: {availableCards.Count}");
+
+		// 检查是否有雷达能力，如果没有则移除防空步兵
+		bool hasRadarPower = Owner.Creature.Powers.Any(p => p is SovietRadarPower);
+		if (!hasRadarPower)
+		{
+			availableCards = availableCards.Where(c => c is not SovietFlakTrooper).ToList();
+			GD.Print($"[SovietBarracksCard] 无雷达能力，移除防空步兵，剩余卡牌数量: {availableCards.Count}");
+		}
 
 		var cardValuesMap = SovietCardValues.CreateSoldierValuesMap();
 		CardModel? selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(availableCards, Owner, cardValuesMap, FactionType.Soviet);

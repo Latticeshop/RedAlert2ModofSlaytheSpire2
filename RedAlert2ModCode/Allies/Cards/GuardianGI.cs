@@ -44,14 +44,25 @@ public sealed class GuardianGi : CardModel
     {
         UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Allies");
 
-        var selectedChoice = await FlakTrackChoiceScreen.ShowSelectionWithSync(Owner,
-            "选择重装大兵的行动",
-            "部署",
-            $"造成 {DynamicVars.Damage.BaseValue} 点伤害，赋予 1 层易伤",
-            "防御",
-            $"获得 {DynamicVars.Block} 点格挡");
+        var options = new List<DeployChoiceScreen.ChoiceOption>
+        {
+            new DeployChoiceScreen.ChoiceOption
+            {
+                Id = "deploy",
+                Title = "部署",
+                Description = $"造成 {DynamicVars.Damage.BaseValue} 点伤害，赋予 1 层易伤"
+            },
+            new DeployChoiceScreen.ChoiceOption
+            {
+                Id = "defend",
+                Title = "防御",
+                Description = $"获得 {DynamicVars.Block} 点格挡"
+            }
+        };
 
-        if (selectedChoice == FlakTrackChoiceScreen.ChoiceType.Deploy)
+        var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, "选择重装大兵的行动", options, FactionType.Allied);
+
+        if (selectedIndex == 0)
         {
             await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
                 .FromCard(this)

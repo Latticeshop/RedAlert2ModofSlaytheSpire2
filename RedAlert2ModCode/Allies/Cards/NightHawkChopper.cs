@@ -77,15 +77,25 @@ public sealed partial class NightHawkChopper : CardModel
             return;
         }
 
-        var selectedChoice = await FlakTrackChoiceScreen.ShowSelectionWithSync(Owner,
-            "选择夜莺直升机的行动",
-            "部署",
-            "存储当前手牌中的士兵单位",
-            "攻击",
-            "获得敏捷和攻击"
-        );
+        var options = new List<DeployChoiceScreen.ChoiceOption>
+        {
+            new DeployChoiceScreen.ChoiceOption
+            {
+                Id = "deploy",
+                Title = "部署",
+                Description = "存储当前手牌中的士兵单位"
+            },
+            new DeployChoiceScreen.ChoiceOption
+            {
+                Id = "attack",
+                Title = "攻击",
+                Description = "获得敏捷和攻击"
+            }
+        };
 
-        if (selectedChoice == FlakTrackChoiceScreen.ChoiceType.Deploy)
+        var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, "选择夜莺直升机的行动", options, FactionType.Allied);
+
+        if (selectedIndex == 0)
         {
             await ExecuteDeploy(ctx, play);
         }

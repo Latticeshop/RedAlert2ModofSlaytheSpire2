@@ -6,6 +6,8 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Rooms;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,30 +15,20 @@ using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Allies.Powers;
 
-/// <summary>
-/// 光棱塔能力
-/// 效果：自己回合开始时对随机敌人造成伤害
-/// 每次叠加光棱塔，伤害和次数都增加
-/// </summary>
 public class PrismTowerPower : PowerModel
 {
-	// 数值引用
 	private static readonly CardValueStore.CardValues Values = AlliesPowerValues.PrismTowerPower;
 	
 	public override PowerType Type => PowerType.Buff;
     
 	public override PowerStackType StackType => PowerStackType.Counter;
     
-	// 当前光棱塔的基础等级（用于计算叠加效果）
 	public int PrismTowerLevel { get; set; } = 1;
     
-	// 当前累积的伤害增量（每次叠加时累积）
 	public int DamageIncrement { get; set; } = 0;
     
-	// 当前伤害值
 	public int CurrentDamage { get; set; } = (int)Values.Damage;
     
-	// 当前攻击次数
 	public int CurrentHits { get; set; } = (int)Values.Repeat;
 
 	public PrismTowerPower()
@@ -44,9 +36,6 @@ public class PrismTowerPower : PowerModel
 		GD.Print($"[PrismTowerPower] 构造函数被调用 - Level={PrismTowerLevel}, Damage={CurrentDamage}, Hits={CurrentHits}");
 	}
 
-	/// <summary>
-	/// 本地化描述
-	/// </summary>
 	public override LocString Description
 	{
 		get
@@ -58,19 +47,14 @@ public class PrismTowerPower : PowerModel
 		}
 	}
 
-	/// <summary>
-	/// 应用光棱塔能力
-	/// </summary>
 	public static async Task ApplyPrismTower(Creature owner, int level, bool isUpgraded = false)
 	{
 		GD.Print($"[PrismTowerPower] ApplyPrismTower 被调用 - Level={level}, IsUpgraded={isUpgraded}");
 		
-		// 查找是否已有光棱塔能力
 		var existingPower = owner.Powers.OfType<PrismTowerPower>().FirstOrDefault();
 		
 		if (existingPower != null)
 		{
-			// 叠加效果：累积伤害增量，未升级+2，升级后+5，次数+1
 			int addIncrement = isUpgraded ? (int)(Values.Stars + Values.StarsUpgraded) : (int)Values.Stars;
 			existingPower.PrismTowerLevel += 1;
 			existingPower.DamageIncrement += addIncrement;
@@ -78,13 +62,10 @@ public class PrismTowerPower : PowerModel
 			existingPower.CurrentHits = existingPower.PrismTowerLevel;
 			GD.Print($"[PrismTowerPower] 叠加效果 - NewLevel={existingPower.PrismTowerLevel}, DamageIncrement={existingPower.DamageIncrement}, Damage={existingPower.CurrentDamage}, Hits={existingPower.CurrentHits}, AddedIncrement={addIncrement}");
 			
-			// 触发叠加动画反馈
 			await CreatureCmd.TriggerAnim(owner, "Cast", 0.3f);
-			GD.Print($"[PrismTowerPower] 触发叠加动画");
 		}
 		else
 		{
-			// 首次应用，创建新能力
 			var newPower = await PowerCmd.Apply<PrismTowerPower>(new ThrowingPlayerChoiceContext(), owner, 1m, owner, null);
 			if (newPower != null)
 			{
@@ -97,9 +78,6 @@ public class PrismTowerPower : PowerModel
 		}
 	}
 
-	/// <summary>
-	/// 回合开始时触发伤害
-	/// </summary>
 	public override async Task AfterSideTurnStart(CombatSide side, System.Collections.Generic.IReadOnlyList<Creature> participants, MegaCrit.Sts2.Core.Combat.ICombatState combatState)
 	{
 		if (side != CombatSide.Player)
@@ -107,22 +85,38 @@ public class PrismTowerPower : PowerModel
 
 		GD.Print($"[PrismTowerPower] 回合开始触发 - Level={PrismTowerLevel}, Damage={CurrentDamage}, Hits={CurrentHits}");
 
-		// 获取所有敌人
 		var enemies = combatState.Enemies.Where(static enemy => enemy.Side == CombatSide.Enemy && enemy.IsAlive).ToList();
 		if (enemies.Count == 0)
 			return;
 
-		// 对随机敌人造成伤害多次
+		List<Creature> targetList = new List<Creature>();
 		for (int i = 0; i < CurrentHits; i++)
 		{
-			// 随机选择一个敌人
 			var randomEnemy = enemies[GD.RandRange(0, enemies.Count - 1)];
+			targetList.Add(randomEnemy);
+		}
+
+		if (targetList.Count > 0)
+		{
+			AudioHelper.PlayPrismTowerChargeSound(Owner);
+			await Task.Delay(500);
+			AudioHelper.PlayPrismTowerAttackSound(Owner);
+
+			NSweepingBeamVfx? beamVfx = NSweepingBeamVfx.Create(Owner, targetList);
+			if (beamVfx != null)
+			{
+				NCombatRoom.Instance?.CombatVfxContainer.AddChild(beamVfx);
+				GD.Print("[PrismTowerPower] 射线动画播放成功");
+			}
+		}
+
+		for (int i = 0; i < targetList.Count; i++)
+		{
+			var enemy = targetList[i];
+			GD.Print($"[PrismTowerPower] 对敌人 {enemy.Name} 造成 {CurrentDamage} 点伤害");
 			
-			GD.Print($"[PrismTowerPower] 对敌人 {randomEnemy.Name} 造成 {CurrentDamage} 点伤害");
-			
-			// 造成伤害 - 使用 CreatureCmd.Damage 而不是 DamageCmd.Attack
 			await CreatureCmd.Damage(new MegaCrit.Sts2.Core.GameActions.Multiplayer.ThrowingPlayerChoiceContext(), 
-				new System.Collections.Generic.List<Creature> { randomEnemy }, 
+				new System.Collections.Generic.List<Creature> { enemy }, 
 				(decimal)CurrentDamage, 
 				MegaCrit.Sts2.Core.ValueProps.ValueProp.Unpowered, 
 				base.Owner, 

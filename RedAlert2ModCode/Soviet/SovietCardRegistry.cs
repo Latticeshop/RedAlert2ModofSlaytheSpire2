@@ -21,6 +21,7 @@ public static class SovietCardRegistry
         () => ModelDb.Card<SovietEngineer>(),
         () => ModelDb.Card<SovietAttackDog>(),
         () => ModelDb.Card<SovietFlakTrooper>(),
+        () => ModelDb.Card<SovietTeslaTrooper>(),
     };
 
     public static List<Func<CardModel>> Vehicles { get; } = new()
@@ -55,6 +56,7 @@ public static class SovietCardRegistry
 		() => ModelDb.Card<SovietRefinery>(),
 		() => ModelDb.Card<SovietMCV>(),
 		() => ModelDb.Card<SovietBattleLab>(),
+		() => ModelDb.Card<SovietTeslaCoilCard>(),
 	};
 
     // 苏军技能卡 - 通过CommonCardRegistry获取公共共享卡（不含飞鹰战备系列）

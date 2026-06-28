@@ -73,5 +73,9 @@
     "SOVIET_FLAK_CANNON_POWER.title": "Flak Cannon",
     "SOVIET_FLAK_CANNON_POWER.description": "At the start of each turn, for each enemy with Attack intent, gains {Block} Block.",
     "SOVIET_TERROR_DRONE_POWER.title": "Terror Drone",
-    "SOVIET_TERROR_DRONE_POWER.description": "Takes {Count} damage each turn. Removed when the target heals."
+    "SOVIET_TERROR_DRONE_POWER.description": "Takes {Count} damage each turn. Removed when the target heals.",
+    "SOVIET_TESLA_COIL_POWER.title": "Tesla Coil",
+    "SOVIET_TESLA_COIL_POWER.description": "At the start of each turn, deals {Damage} damage to an enemy.",
+    "SOVIET_TESLA_COIL_CHARGE_POWER.title": "Tesla Coil Charge",
+    "SOVIET_TESLA_COIL_CHARGE_POWER.description": "Each stack increases the Tesla Coil's next damage by 50%. Max 3 stacks."
 }

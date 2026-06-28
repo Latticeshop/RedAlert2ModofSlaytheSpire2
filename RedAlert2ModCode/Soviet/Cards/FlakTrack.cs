@@ -77,9 +77,25 @@ public sealed partial class FlakTrack : CardModel
             return;
         }
 
-        var selectedChoice = await FlakTrackChoiceScreen.ShowSelectionWithSync(Owner);
+        var options = new List<DeployChoiceScreen.ChoiceOption>
+        {
+            new DeployChoiceScreen.ChoiceOption
+            {
+                Id = "deploy",
+                Title = "部署",
+                Description = "存储当前手牌中的士兵单位"
+            },
+            new DeployChoiceScreen.ChoiceOption
+            {
+                Id = "attack",
+                Title = "防御",
+                Description = $"获得 {DynamicVars["Dexterity"].BaseValue} 点敏捷和 {DynamicVars.Block} 点格挡"
+            }
+        };
 
-        if (selectedChoice == FlakTrackChoiceScreen.ChoiceType.Deploy)
+        var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, "选择防空履带车的行动", options, FactionType.Soviet);
+
+        if (selectedIndex == 0)
         {
             await ExecuteDeploy(ctx, play);
         }
