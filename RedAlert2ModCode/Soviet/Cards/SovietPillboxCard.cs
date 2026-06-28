@@ -10,9 +10,9 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
-using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Soviet.Powers;
 
 namespace RedAlert2ModCode.Soviet.Cards;
 
@@ -74,7 +74,7 @@ public sealed class SovietPillboxCard : CardModel
 		
 		GD.Print($"[SovietPillboxCard] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
 
-		await PillboxPower.ApplyPillbox(Owner.Creature, base.IsUpgraded);
+		await SovietPillboxPower.ApplySovietPillbox(Owner.Creature, base.IsUpgraded);
 	}
 
 	protected override void OnUpgrade()

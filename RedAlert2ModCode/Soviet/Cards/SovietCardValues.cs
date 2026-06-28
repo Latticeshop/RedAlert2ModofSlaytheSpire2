@@ -141,10 +141,10 @@ public static class SovietCardValues
 		DollarValue = 800
 	};
 	
-	/// <summary>苏军哨戒炮 - 0费，回合开始时对敌人造成1伤害2次（升级后2伤害），获得3防御，价格500</summary>
+	/// <summary>苏军哨戒炮 - 1费，回合开始时对敌人造成1伤害2次（升级后2伤害），获得3防御，价格500</summary>
 	public static CardValueStore.CardValues SovietPillbox => new()
 	{
-		Cost = 0,
+		Cost = 1,
 		Damage = 1,
 		DamageUpgraded = 1,
 		Repeat = 2,
@@ -220,6 +220,42 @@ public static class SovietCardValues
 		Damage = 5,
 		Stars = 8,
 		DollarValue = 1500
+	};
+	
+	/// <summary>铁幕装置 - 0费能力卡，金卡，价格2500，每3回合（升级后2回合）获得一张虚无铁幕卡</summary>
+	public static CardValueStore.CardValues IronCurtainCard => new()
+	{
+		Cost = 0,
+		DollarValue = 2500,
+		Repeat = 3,
+		RepeatUpgraded = -1
+	};
+	
+	/// <summary>核弹井 - 0费能力卡，金卡，价格5000，每3回合获得一张虚无核弹攻击卡</summary>
+	public static CardValueStore.CardValues NuclearMissileSiloCard => new()
+	{
+		Cost = 0,
+		DollarValue = 5000,
+		Repeat = 3
+	};
+	
+	// ==================== 超级武器运转卡 ====================
+	
+	/// <summary>铁幕 - 1费技能卡（升级0费），金卡，消耗，获得一层无实体</summary>
+	public static CardValueStore.CardValues IronCurtain => new()
+	{
+		Cost = 1,
+		CostUpgraded = -1
+	};
+	
+	/// <summary>核弹攻击 - 3费技能卡（升级后伤害提升），金卡，消耗，对全部敌人造成50伤害（升级80），赋予25层中毒</summary>
+	public static CardValueStore.CardValues NuclearAttack => new()
+	{
+		Cost = 3,
+		CostUpgraded = 0,
+		Damage = 50,
+		DamageUpgraded = 30,
+		MagicNumber = 25
 	};
 	
 	// ==================== 经济单位 ====================
@@ -300,7 +336,9 @@ public static class SovietCardValues
 			{ "SOVIETTESLACOILCARD", TeslaCoilCard },
 			{ "SOVIETWALLCARD", SovietWall },
 			{ "SOVIETFORTIFIEDWALL", SovietFortifiedWall },
-			{ "SOVIETRADAR", Radar }
+			{ "SOVIETRADAR", Radar },
+			{ "IRONCURTAINCARD", IronCurtainCard },
+			{ "NUCLEARMISSILESILOCARD", NuclearMissileSiloCard }
 		};
 	}
 	

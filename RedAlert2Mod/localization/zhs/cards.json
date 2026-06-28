@@ -150,5 +150,13 @@
     "LIGHTNING_STORM.description": "[gold]超级武器[/gold]。\n获得 {Block} 个电球。\n[gold]电流相生[/gold]。",
     "NIGHT_HAWK_CHOPPER.title": "夜莺直升机",
     "NIGHT_HAWK_CHOPPER.description": "本回合获得 {Dexterity} 点敏捷，造成 {Damage} 点伤害。[gold]部署[/gold]：存储当前手牌中的[gold]士兵[/gold]单位。\n当前存储：{StoredCards}",
-    "NIGHT_HAWK_CHOPPER.select_prompt": "选择 {0}-{1} 张士兵单位存储。"
+    "NIGHT_HAWK_CHOPPER.select_prompt": "选择 {0}-{1} 张士兵单位存储。",
+    "IRON_CURTAIN_CARD.title": "铁幕装置",
+    "IRON_CURTAIN_CARD.description": "[gold]价格：${DollarNumber}[/gold]。\n获得[gold]铁幕装置[/gold]。",
+    "IRON_CURTAIN.title": "铁幕",
+    "IRON_CURTAIN.description": "[gold]超级武器[/gold]。\n获得一层[gold]无实体[/gold]。",
+    "NUCLEAR_MISSILE_SILO_CARD.title": "核弹井",
+    "NUCLEAR_MISSILE_SILO_CARD.description": "[gold]价格：${DollarNumber}[/gold]。\n获得[gold]核弹井[/gold]。",
+    "NUCLEAR_ATTACK.title": "核弹攻击",
+    "NUCLEAR_ATTACK.description": "[gold]超级武器[/gold]。\n对全部敌人造成 {Damage} 点伤害，赋予 {Poison} 层中毒。"
 }

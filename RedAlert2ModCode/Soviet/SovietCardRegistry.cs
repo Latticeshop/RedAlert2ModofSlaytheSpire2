@@ -57,10 +57,20 @@ public static class SovietCardRegistry
 		() => ModelDb.Card<SovietMCV>(),
 		() => ModelDb.Card<SovietBattleLab>(),
 		() => ModelDb.Card<SovietTeslaCoilCard>(),
+		() => ModelDb.Card<IronCurtainCard>(),
+		() => ModelDb.Card<NuclearMissileSiloCard>(),
 	};
 
     // 苏军技能卡 - 通过CommonCardRegistry获取公共共享卡（不含飞鹰战备系列）
-	public static List<Func<CardModel>> PowerCards { get; } = CommonCardRegistry.GetAllPowerCardsForSoviet();
+	public static List<Func<CardModel>> PowerCards { get; } = CreatePowerCards();
+
+	private static List<Func<CardModel>> CreatePowerCards()
+	{
+		var cards = CommonCardRegistry.GetAllPowerCardsForSoviet();
+		cards.Add(() => ModelDb.Card<IronCurtain>());
+		cards.Add(() => ModelDb.Card<NuclearAttack>());
+		return cards;
+	}
 
 	// 苏军特殊卡 - 通过CommonCardRegistry获取公共卡
 	public static List<Func<CardModel>> SpecialCards { get; } = CommonCardRegistry.GetAllSpecialCardsForBoth();

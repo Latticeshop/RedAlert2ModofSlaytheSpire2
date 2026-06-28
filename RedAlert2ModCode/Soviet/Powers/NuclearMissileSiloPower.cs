@@ -1,3 +1,5 @@
+#nullable enable
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,12 +13,11 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
-using RedAlert2ModCode.Allies.Cards;
-using RedAlert2ModCode.Common.Cards;
+using RedAlert2ModCode.Soviet.Cards;
 
-namespace RedAlert2ModCode.Allies.Powers;
+namespace RedAlert2ModCode.Soviet.Powers;
 
-public sealed class ChronoSpherePower : PowerModel
+public sealed class NuclearMissileSiloPower : PowerModel
 {
     public override PowerType Type => PowerType.Buff;
 
@@ -24,9 +25,6 @@ public sealed class ChronoSpherePower : PowerModel
 
     public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
 
-    /// <summary>
-    /// 是否升级
-    /// </summary>
     public bool IsUpgraded { get; set; } = false;
 
     public override LocString Description
@@ -44,16 +42,15 @@ public sealed class ChronoSpherePower : PowerModel
 
     private int GetInterval()
     {
-        var values = AlliesCardValues.ChronoSphere;
-        return IsUpgraded ? values.RepeatUpgraded : values.Repeat;
+        var values = SovietCardValues.NuclearMissileSiloCard;
+        return (int)values.Repeat;
     }
 
     public override Task AfterApplied(Creature? applier, CardModel? cardSource)
     {
-        // 立即初始化倒计时
         _turnCounter = GetInterval();
         _initialized = true;
-        GD.Print($"[ChronoSpherePower] 能力应用，初始化倒计时: {_turnCounter}");
+        GD.Print($"[NuclearMissileSiloPower] 能力应用，初始化倒计时: {_turnCounter}");
         return Task.CompletedTask;
     }
 
@@ -66,52 +63,52 @@ public sealed class ChronoSpherePower : PowerModel
             return;
 
         _turnCounter--;
-        GD.Print($"[ChronoSpherePower] 回合开始，剩余回合: {_turnCounter}");
+        GD.Print($"[NuclearMissileSiloPower] 回合开始，剩余回合: {_turnCounter}");
 
         if (_turnCounter <= 0)
         {
             _turnCounter = GetInterval();
-            
-            var chronoWarpCard = Owner.CombatState.CreateCard(ModelDb.Card<ChronoWarp>(), Owner.Player);
-            
-            if (chronoWarpCard != null)
-            {
-                chronoWarpCard.EnergyCost.SetCustomBaseCost(0);
-                chronoWarpCard.AddKeyword(CardKeyword.Ethereal);
-                chronoWarpCard.AddKeyword(CardKeyword.Exhaust);
-                GD.Print("[ChronoSpherePower] 成功为超时空传送添加0费、虚无和消耗词条");
 
-                PlayChronoReadySound();
-                
-                await CardPileCmd.AddGeneratedCardToCombat(chronoWarpCard, PileType.Hand, Owner.Player);
-                GD.Print("[ChronoSpherePower] 成功添加超时空传送到手牌");
+            var nuclearAttackCard = Owner.CombatState.CreateCard(ModelDb.Card<NuclearAttack>(), Owner.Player);
+
+            if (nuclearAttackCard != null)
+            {
+                nuclearAttackCard.EnergyCost.SetCustomBaseCost(0);
+                nuclearAttackCard.AddKeyword(CardKeyword.Ethereal);
+                nuclearAttackCard.AddKeyword(CardKeyword.Exhaust);
+                GD.Print("[NuclearMissileSiloPower] 成功为核弹攻击添加0费、虚无和消耗词条");
+
+                PlayNuclearReadySound();
+
+                await CardPileCmd.AddGeneratedCardToCombat(nuclearAttackCard, PileType.Hand, Owner.Player);
+                GD.Print("[NuclearMissileSiloPower] 成功添加核弹攻击到手牌");
             }
         }
     }
 
-    private void PlayChronoReadySound()
+    private void PlayNuclearReadySound()
     {
         try
         {
             var audioPlayer = new AudioStreamPlayer();
-            audioPlayer.Name = "ChronoReadySoundPlayer";
+            audioPlayer.Name = "NuclearReadySoundPlayer";
             var root = Engine.GetMainLoop() as SceneTree;
             if (root != null)
             {
                 root.Root.AddChild(audioPlayer);
-                var soundFile = GD.Load<AudioStream>("res://RedAlert2ModResources/audio/AlliedUnits/ChronoWarp/chrono_ready.wav");
+                var soundFile = GD.Load<AudioStream>("res://RedAlert2ModResources/audio/SovietUnits/NuclearMissile/nuclear_ready.wav");
                 if (soundFile != null)
                 {
                     audioPlayer.Stream = soundFile;
                     audioPlayer.VolumeDb = -5;
                     audioPlayer.Play();
-                    GD.Print("[ChronoSpherePower] 播放超时空传送就绪音效");
+                    GD.Print("[NuclearMissileSiloPower] 播放核弹就绪音效");
                 }
             }
         }
         catch (Exception ex)
         {
-            GD.PrintErr($"[ChronoSpherePower] 播放音效失败: {ex.Message}");
+            GD.PrintErr($"[NuclearMissileSiloPower] 播放音效失败: {ex.Message}");
         }
     }
 }

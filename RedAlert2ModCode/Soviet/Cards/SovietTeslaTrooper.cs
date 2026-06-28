@@ -21,7 +21,7 @@ public sealed class SovietTeslaTrooper : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.TeslaTrooper;
 
-	public SovietTeslaTrooper() : base((int)Values.Cost, CardType.Attack, CardRarity.Common, TargetType.Self) { }
+	public SovietTeslaTrooper() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/soviet/shkicon.png";
 

@@ -49,6 +49,8 @@ public sealed class ChronoWarp : CardModel
     {
         GD.Print("[ChronoWarp] OnPlay 被调用");
 
+        PlayChronoReleaseSound();
+
         await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
         // 第一步：选择源牌堆
@@ -117,6 +119,32 @@ public sealed class ChronoWarp : CardModel
 
     protected override void OnUpgrade()
     {
-        EnergyCost.UpgradeBy((int)Values.CostUpgraded); // 升级后费用变为 1 + (-1) = 0
+        EnergyCost.UpgradeBy((int)Values.CostUpgraded);
+    }
+
+    private void PlayChronoReleaseSound()
+    {
+        try
+        {
+            var audioPlayer = new AudioStreamPlayer();
+            audioPlayer.Name = "ChronoReleaseSoundPlayer";
+            var root = Engine.GetMainLoop() as SceneTree;
+            if (root != null)
+            {
+                root.Root.AddChild(audioPlayer);
+                var soundFile = GD.Load<AudioStream>("res://RedAlert2ModResources/audio/AlliedUnits/ChronoWarp/chrono_release.wav");
+                if (soundFile != null)
+                {
+                    audioPlayer.Stream = soundFile;
+                    audioPlayer.VolumeDb = -5;
+                    audioPlayer.Play();
+                    GD.Print("[ChronoWarp] 播放超时空传送释放音效");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[ChronoWarp] 播放音效失败: {ex.Message}");
+        }
     }
 }

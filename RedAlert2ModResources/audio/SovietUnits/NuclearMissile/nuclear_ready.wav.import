@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://o3nalxkcr6q6"
-path="res://.godot/imported/核弹 就绪.wav-ab773ce6164cf95d983d6a72c827a97f.sample"
+path="res://.godot/imported/nuclear_ready.wav-a58546c68d466ecb570a32c643f4d11f.sample"
 
 [deps]
 
-source_file="res://RedAlert2ModResources/audio/SovietUnits/核弹/核弹 就绪.wav"
-dest_files=["res://.godot/imported/核弹 就绪.wav-ab773ce6164cf95d983d6a72c827a97f.sample"]
+source_file="res://RedAlert2ModResources/audio/SovietUnits/NuclearMissile/nuclear_ready.wav"
+dest_files=["res://.godot/imported/nuclear_ready.wav-a58546c68d466ecb570a32c643f4d11f.sample"]
 
 [params]
 

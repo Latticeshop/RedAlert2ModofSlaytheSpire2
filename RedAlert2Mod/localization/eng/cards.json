@@ -150,5 +150,13 @@
     "LIGHTNING_STORM.description": "[gold]Super Weapon[/gold].\nGains {Block} Lightning Orbs.\n[gold]Chain Lightning[/gold].",
     "NIGHT_HAWK_CHOPPER.title": "Night Hawk Chopper",
     "NIGHT_HAWK_CHOPPER.description": "Gains {Dexterity} Dexterity this turn and deals {Damage} damage. [gold]Deploy[/gold]: Store [gold]Soldier[/gold] units from your hand.\nCurrently storing: {StoredCards}",
-    "NIGHT_HAWK_CHOPPER.select_prompt": "Select {0}-{1} soldier units to store."
+    "NIGHT_HAWK_CHOPPER.select_prompt": "Select {0}-{1} soldier units to store.",
+    "IRON_CURTAIN_CARD.title": "Iron Curtain",
+    "IRON_CURTAIN_CARD.description": "[gold]Cost: ${DollarNumber}[/gold].\nGains [gold]Iron Curtain[/gold].",
+    "IRON_CURTAIN.title": "Iron Curtain",
+    "IRON_CURTAIN.description": "[gold]Super Weapon[/gold].\nGain 1 stack of [gold]Intangible[/gold].",
+    "NUCLEAR_MISSILE_SILO_CARD.title": "Nuclear Missile Silo",
+    "NUCLEAR_MISSILE_SILO_CARD.description": "[gold]Cost: ${DollarNumber}[/gold].\nGains [gold]Nuclear Missile Silo[/gold].",
+    "NUCLEAR_ATTACK.title": "Nuclear Attack",
+    "NUCLEAR_ATTACK.description": "[gold]Super Weapon[/gold].\nDeals {Damage} damage to all enemies and applies {Poison} Poison."
 }

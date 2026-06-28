@@ -29,6 +29,8 @@
     "PRISM_TOWER_POWER.description": "回合开始时对随机敌人造成 {Damage} 点伤害 {Repeat} 次。",
     "PILLBOX_POWER.title": "机枪碉堡",
     "PILLBOX_POWER.description": "回合开始时对敌人造成 {Damage} 点伤害 2 次，获得 {Block} 点防御。",
+    "SOVIET_PILLBOX_POWER.title": "哨戒炮",
+    "SOVIET_PILLBOX_POWER.description": "回合开始时对敌人造成 {Damage} 点伤害 2 次，获得 {Block} 点防御。",
     "STRATEGY_TOWER_DEFENSE_POWER.title": "策略：塔防",
     "STRATEGY_TOWER_DEFENSE_POWER.description": "当你打出[gold]围墙[/gold]时，如果拥有[gold]光棱塔[/gold]能力，获得 1 回合[gold]残影[/gold]。",
     "ALLIED_TRANSPORT_SHIP_POWER.title": "盟军运输船",
@@ -77,5 +79,9 @@
     "SOVIET_TESLA_COIL_POWER.title": "磁暴线圈",
     "SOVIET_TESLA_COIL_POWER.description": "回合开始时对敌人造成 {Damage} 点伤害。",
     "SOVIET_TESLA_COIL_CHARGE_POWER.title": "线圈充能",
-    "SOVIET_TESLA_COIL_CHARGE_POWER.description": "每一层使磁暴线圈下次伤害提升50%。最多3层。"
+    "SOVIET_TESLA_COIL_CHARGE_POWER.description": "每一层使磁暴线圈下次伤害提升50%。最多3层。",
+    "IRON_CURTAIN_POWER.title": "铁幕装置",
+    "IRON_CURTAIN_POWER.description": "过 [gold]{TurnsRemaining}[/gold] 回合，将一张0费虚无的[gold]铁幕[/gold]加入手牌。",
+    "NUCLEAR_MISSILE_SILO_POWER.title": "核弹井",
+    "NUCLEAR_MISSILE_SILO_POWER.description": "过 [gold]{TurnsRemaining}[/gold] 回合，将一张0费虚无的[gold]核弹攻击[/gold]加入手牌。"
 }

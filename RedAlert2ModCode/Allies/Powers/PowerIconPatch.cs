@@ -60,6 +60,9 @@ public static class PowerIconPatch
         { typeof(EarlyMiningPower), "res://RedAlert2ModResources/images/packed/powers/early_mining_power.png" },
         { typeof(ChronoSpherePower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/csphicon.png" },
         { typeof(WeatherControllerPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/wethicon.png" },
+        { typeof(RedAlert2ModCode.Soviet.Powers.IronCurtainPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/ironicon.png" },
+        { typeof(RedAlert2ModCode.Soviet.Powers.NuclearMissileSiloPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/msslicon.png" },
+        { typeof(RedAlert2ModCode.Soviet.Powers.SovietPillboxPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/plticon.png" },
     };
 
     /// <summary>
