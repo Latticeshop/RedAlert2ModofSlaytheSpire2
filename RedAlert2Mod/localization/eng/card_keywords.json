@@ -22,7 +22,7 @@
     "battle_lab.title": "Battle Lab",
     "battle_lab.description": "In Red Alert, increases tech level to unlock more buildings and unit options.",
     "Ra2_splash.title": "Splash",
-    "Ra2_splash.description": "Deals 75% damage to other enemies.",
+    "Ra2_splash.description": "Deals 50% damage to other enemies.",
     "target_locked.title": "Target Locked",
     "target_locked.description": "The target of attacks.",
     "hornet.title": "Hornet",

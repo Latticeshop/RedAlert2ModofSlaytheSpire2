@@ -83,5 +83,6 @@ public sealed class AlliesRepairDepot : CardModel
 
 	protected override void OnUpgrade()
 	{
+		EnergyCost.SetCustomBaseCost(UPGRADED_COST);
 	}
 }

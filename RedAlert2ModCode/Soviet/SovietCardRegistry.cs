@@ -32,6 +32,11 @@ public static class SovietCardRegistry
         () => ModelDb.Card<TerrorDrone>(),
     };
 
+    public static List<Func<CardModel>> HighTechVehicles { get; } = new()
+    {
+        () => ModelDb.Card<Kirov>(),
+    };
+
     public static List<Func<CardModel>> Aircraft { get; } = new()
     {
     };
@@ -92,11 +97,13 @@ public static class SovietCardRegistry
     }
 
     /// <summary>
-    /// 获取所有单位卡（装甲）
+    /// 获取所有单位卡（装甲）- 包含高科技单位
     /// </summary>
     public static List<CardModel> GetAllVehicles()
     {
-        return Vehicles.Select(s => s()).ToList();
+        List<CardModel> vehicles = Vehicles.Select(s => s()).ToList();
+        vehicles.AddRange(HighTechVehicles.Select(s => s()).ToList());
+        return vehicles;
     }
 
     /// <summary>
@@ -177,12 +184,27 @@ public static class SovietCardRegistry
     {
         List<CardModel> vehicles = Vehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
 
+        if (HasBattleLabPower(owner.Creature))
+        {
+            vehicles.AddRange(CreateHighTechVehicles(owner));
+        }
+
         if (HasRepairDepotPower(owner.Creature))
         {
             vehicles.Add(owner.Creature.CombatState.CreateCard(ModelDb.Card<SovietMCV>(), owner));
         }
 
         return vehicles;
+    }
+
+    public static List<CardModel> CreateHighTechVehicles(Player owner)
+    {
+        return HighTechVehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+    }
+
+    public static bool HasBattleLabPower(Creature creature)
+    {
+        return creature.Powers.Any(p => p is SovietBattleLabPower);
     }
 
     public static bool HasRepairDepotPower(Creature creature)

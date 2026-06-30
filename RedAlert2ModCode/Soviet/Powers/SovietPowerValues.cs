@@ -71,4 +71,10 @@ public static class SovietPowerValues
 	{
 		Damage = 1    // 每层每回合造成的伤害
 	};
+
+	public static CardValueStore.CardValues KirovPower => new()
+	{
+		Damage = 12,
+		Stars = 3
+	};
 }

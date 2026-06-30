@@ -50,7 +50,7 @@
     "SOVIET_REPAIR_DEPOT_POWER.title": "维修厂",
     "SOVIET_REPAIR_DEPOT_POWER.description": "回合开始时，花费[gold]${DollarCost}[/gold]资金从消耗牌堆选择 {CardCount} 张牌加入手牌。{StoppedMarker}",
     "OIL_DERRICK_POWER.title": "油井",
-    "OIL_DERRICK_POWER.description": "回合开始时，获得 [gold]${DollarPerTurn}[/gold] 资金。",
+    "OIL_DERRICK_POWER.description": "回合开始时，获得[gold]${DollarPerTurn}[/gold]资金。",
     "EAGLE500KG_POWER.title": "飞鹰500kg",
     "EAGLE500KG_POWER.description": "对[gold]目标锁定[/gold]的敌人造成 {Damage} 点伤害。[gold]溅射[/gold]。",
     "EAGLE_MACHINE_GUN_POWER.title": "飞鹰机枪扫射",
@@ -83,5 +83,7 @@
     "IRON_CURTAIN_POWER.title": "铁幕装置",
     "IRON_CURTAIN_POWER.description": "过 [gold]{TurnsRemaining}[/gold] 回合，将一张0费虚无的[gold]铁幕[/gold]加入手牌。",
     "NUCLEAR_MISSILE_SILO_POWER.title": "核弹井",
-    "NUCLEAR_MISSILE_SILO_POWER.description": "过 [gold]{TurnsRemaining}[/gold] 回合，将一张0费虚无的[gold]核弹攻击[/gold]加入手牌。"
+    "NUCLEAR_MISSILE_SILO_POWER.description": "过 [gold]{TurnsRemaining}[/gold] 回合，将一张0费虚无的[gold]核弹攻击[/gold]加入手牌。",
+    "KIROV_POWER.title": "基洛夫",
+    "KIROV_POWER.description": "每回合受到 {Count} 点伤害。当目标死亡时，转移到其他敌人。"
 }

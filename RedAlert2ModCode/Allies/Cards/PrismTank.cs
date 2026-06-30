@@ -1,7 +1,6 @@
 #nullable enable
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using Godot.Collections;
@@ -50,7 +49,6 @@ public sealed class PrismTank : CardModel
         UnitVoiceHelper.PlayUnitVoice(this.GetType());
         GD.Print("[PrismTank] OnPlay 被调用");
 
-        // 获取目标敌人
         Creature? target = play.Target as Creature;
         if (target == null)
         {
@@ -58,16 +56,13 @@ public sealed class PrismTank : CardModel
             return;
         }
 
-        // 获取所有敌人（用于溅射）
         List<Creature> allEnemies = CombatState.HittableEnemies.ToList();
-        List<Creature> otherEnemies = allEnemies.Where(e => e != target).ToList();
+        List<Creature> otherEnemies = SplashDamageHelper.GetSplashTargets(target, allEnemies);
 
         GD.Print($"[PrismTank] 主目标: {target.Name}, 其他敌人数量: {otherEnemies.Count}");
 
-        // 播放射线动画
         await PlayBeamVfx(target, otherEnemies);
 
-        // 对主目标造成伤害
         decimal mainDamage = DynamicVars.Damage.BaseValue;
         GD.Print($"[PrismTank] 对主目标造成 {mainDamage} 点伤害");
         await DamageCmd.Attack(mainDamage)
@@ -75,16 +70,18 @@ public sealed class PrismTank : CardModel
             .Targeting(target)
             .Execute(ctx);
 
-        // 对其他敌人造成75%伤害（溅射）
-        decimal splashDamage = mainDamage * 0.75m;
-        GD.Print($"[PrismTank] 对其他敌人造成 {splashDamage} 点溅射伤害");
-
-        foreach (Creature otherEnemy in otherEnemies)
+        if (otherEnemies.Count > 0)
         {
-            await DamageCmd.Attack(splashDamage)
-                .FromCard(this)
-                .Targeting(otherEnemy)
-                .Execute(ctx);
+            decimal splashDamage = SplashDamageHelper.CalculateSplashDamage(mainDamage);
+            GD.Print($"[PrismTank] 对其他敌人造成 {splashDamage} 点溅射伤害");
+
+            foreach (Creature otherEnemy in otherEnemies)
+            {
+                await DamageCmd.Attack(splashDamage)
+                    .FromCard(this)
+                    .Targeting(otherEnemy)
+                    .Execute(ctx);
+            }
         }
     }
 

@@ -283,7 +283,47 @@ public sealed class TrainingQueuePower : PowerModel
                 GD.Print($"[TrainingQueuePower] 单位消耗: 否 - UnitName={UnitName}");
             }
 
+            if (TrainedCardId == "KIROV")
+            {
+                PlayKirovDeploySound();
+            }
+
             await CardPileCmd.AddGeneratedCardToCombat(tempCard, PileType.Hand, Owner.Player, CardPilePosition.Top);
+        }
+    }
+
+    private static AudioStreamPlayer? _kirovDeployAudioPlayer;
+
+    private static void EnsureKirovDeployAudioPlayer()
+    {
+        if (_kirovDeployAudioPlayer != null && GodotObject.IsInstanceValid(_kirovDeployAudioPlayer))
+            return;
+
+        _kirovDeployAudioPlayer = new AudioStreamPlayer();
+        _kirovDeployAudioPlayer.Name = "KirovDeployAudioPlayer";
+        var root = Engine.GetMainLoop() as SceneTree;
+        root?.Root.AddChild(_kirovDeployAudioPlayer);
+    }
+
+    private void PlayKirovDeploySound()
+    {
+        try
+        {
+            EnsureKirovDeployAudioPlayer();
+            if (_kirovDeployAudioPlayer == null) return;
+
+            var soundFile = GD.Load<AudioStream>("res://RedAlert2ModResources/audio/SovietUnits/Kirov/kirov_deploy.mp3");
+            if (soundFile != null)
+            {
+                _kirovDeployAudioPlayer.Stream = soundFile;
+                _kirovDeployAudioPlayer.VolumeDb = -5;
+                _kirovDeployAudioPlayer.Play();
+                GD.Print("[TrainingQueuePower] 播放基洛夫出厂音效");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[TrainingQueuePower] 播放基洛夫出厂音效失败: {ex.Message}");
         }
     }
 

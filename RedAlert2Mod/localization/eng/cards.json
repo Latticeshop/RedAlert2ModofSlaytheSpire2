@@ -95,6 +95,8 @@
     "RHINO_TANK.description": "Deals {Damage} damage and gains {Block} Block. Apply {VulnerableStacks} Vulnerable.",
     "TERROR_DRONE.title": "Terror Drone",
     "TERROR_DRONE.description": "Applies {IfUpgraded:show:2|1} stacks of [gold]Terror Drone[/gold] and [gold]Slow[/gold] to the enemy.",
+    "KIROV.title": "Kirov",
+    "KIROV.description": "Designate Kirov to an enemy's head, dealing {Damage} damage each turn.",
     "WAR_MINER.title": "War Miner",
     "WAR_MINER.description": "Gains [gold]${DollarValue}[/gold].\nDeals {Damage} damage to {IfUpgraded:show:ALL enemies|1 enemy}.",
     "SOVIET_MC_V.title": "Soviet MCV",

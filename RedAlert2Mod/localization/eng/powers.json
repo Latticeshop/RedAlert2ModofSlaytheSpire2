@@ -83,5 +83,7 @@
     "IRON_CURTAIN_POWER.title": "Iron Curtain",
     "IRON_CURTAIN_POWER.description": "In [gold]{TurnsRemaining}[/gold] turns, adds a 0-cost Ethereal [gold]Iron Curtain[/gold] card to your hand.",
     "NUCLEAR_MISSILE_SILO_POWER.title": "Nuclear Missile Silo",
-    "NUCLEAR_MISSILE_SILO_POWER.description": "In [gold]{TurnsRemaining}[/gold] turns, adds a 0-cost Ethereal [gold]Nuclear Attack[/gold] card to your hand."
+    "NUCLEAR_MISSILE_SILO_POWER.description": "In [gold]{TurnsRemaining}[/gold] turns, adds a 0-cost Ethereal [gold]Nuclear Attack[/gold] card to your hand.",
+    "KIROV_POWER.title": "Kirov",
+    "KIROV_POWER.description": "Takes {Count} damage each turn. Transfers to another enemy when the target dies."
 }

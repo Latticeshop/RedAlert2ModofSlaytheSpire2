@@ -63,6 +63,7 @@ public static class PowerIconPatch
         { typeof(RedAlert2ModCode.Soviet.Powers.IronCurtainPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/ironicon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.NuclearMissileSiloPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/msslicon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.SovietPillboxPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/plticon.png" },
+        { typeof(RedAlert2ModCode.Soviet.Powers.KirovPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/zepicon.png" },
     };
 
     /// <summary>

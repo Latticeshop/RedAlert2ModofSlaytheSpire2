@@ -100,12 +100,12 @@ public static class SovietCardValues
 	
 	// ==================== 空军单位 ====================
 	
-	/// <summary>基洛夫飞艇 - 3费10伤害，升级后15伤害，价格2000</summary>
+	/// <summary>基洛夫飞艇 - 3费，赋予基洛夫debuff，每回合造成12伤害（升级15），价格2000</summary>
 	public static CardValueStore.CardValues Kirov => new()
 	{
 		Cost = 3,
-		Damage = 10,
-		DamageUpgraded = 5,
+		Damage = 12,
+		DamageUpgraded = 3,
 		Repeat = 1,
 		DollarValue = 2000
 	};

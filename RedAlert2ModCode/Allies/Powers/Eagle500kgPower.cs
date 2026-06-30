@@ -180,21 +180,16 @@ public class Eagle500kgPower : PowerModel, IDesperateMeasurePower
 
             GD.Print($"[Eagle500kgPower] 对 {target.Name} 造成 {CurrentDamage} 点伤害");
 
-            // 溅射效果：对其他敌人造成75%伤害
-            var combatState = CombatState;  // 使用 PowerModel 的 CombatState 属性
-            if (combatState != null)
-            {
-                List<Creature> allEnemies = combatState.HittableEnemies.ToList();
-                List<Creature> otherEnemies = allEnemies.Where(e => e != target && e.IsAlive).ToList();
+            var otherEnemies = SplashDamageHelper.GetSplashTargets(target, CombatState?.HittableEnemies ?? new List<Creature>());
 
-                decimal splashDamage = (decimal)CurrentDamage * 0.75m;
+            if (otherEnemies.Count > 0)
+            {
+                decimal splashDamage = SplashDamageHelper.CalculateSplashDamage((decimal)CurrentDamage);
                 GD.Print($"[Eagle500kgPower] 溅射伤害 = {splashDamage}");
 
                 foreach (Creature otherEnemy in otherEnemies)
                 {
-                    // 播放溅射特效
                     PlaySplashEffect(otherEnemy);
-                    
                     await Cmd.Wait(0.15f);
                     
                     await CreatureCmd.Damage(ctx ?? new ThrowingPlayerChoiceContext(),
@@ -205,10 +200,6 @@ public class Eagle500kgPower : PowerModel, IDesperateMeasurePower
                         null);
                     GD.Print($"[Eagle500kgPower] 对 {otherEnemy.Name} 造成 {splashDamage} 点溅射伤害");
                 }
-            }
-            else
-            {
-                GD.Print("[Eagle500kgPower] CombatState 为空，跳过溅射效果");
             }
 
             // 减少一层能力（支持囤积战备）
