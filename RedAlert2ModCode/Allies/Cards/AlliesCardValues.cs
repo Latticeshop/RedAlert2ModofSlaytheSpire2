@@ -12,14 +12,14 @@ public static class AlliesCardValues
 {
 	// ==================== 士兵单位 ====================
 	
-	/// <summary>美国大兵 - 1费2伤害2次，升级后2伤害3次，价格200</summary>
+	/// <summary>美国大兵 - 0费2伤害2次，升级后2伤害3次，价格200</summary>
 	public static CardValueStore.CardValues AmericanSoldier => new()
 	{
-		Cost = 1,
+		Cost = 0,
 		Damage = 2,
 		DamageUpgraded = 0,
 		Repeat = 2,
-		RepeatUpgraded = 1,  // 升级后打3次
+		RepeatUpgraded = 1,
 		DollarValue = 200
 	};
 	
@@ -220,12 +220,13 @@ public static class AlliesCardValues
 	
 	// ==================== 经济单位 ====================
 	
-	/// <summary>超时空矿车 - 0费获得1000资金，升级后1500资金</summary>
+	/// <summary>超时空矿车 - 0费获得500资金（升级后1000），价格1400</summary>
 	public static CardValueStore.CardValues ChronoMiner => new()
 	{
 		Cost = 0,
-		DollarValue = 1000,
-		DollarValueUpgraded = 500
+		DollarValue = 500,
+		DollarValueUpgraded = 500,
+		BuildCost = 1400
 	};
 
 	// ==================== 运转卡牌 ====================
@@ -596,7 +597,7 @@ public static class AlliesCardValues
 		
 		if (allValues.TryGetValue(key, out var values))
 		{
-			return (int)values.DollarValue;
+			return values.BuildCost > 0 ? values.BuildCost : (int)values.DollarValue;
 		}
 		
 		return 0;

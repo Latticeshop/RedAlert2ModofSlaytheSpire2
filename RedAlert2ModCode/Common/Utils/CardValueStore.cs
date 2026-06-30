@@ -18,6 +18,7 @@ public static class CardValueStore
 		public int EnergyUpgraded { get; set; } = 0;
 		public int DollarValue { get; set; } = 0;
 		public int DollarValueUpgraded { get; set; } = 0;
+		public int BuildCost { get; set; } = 0;
 		public int Stars { get; set; } = 0;
 		public int StarsUpgraded { get; set; } = 0;
 		public int MagicNumber { get; set; } = 0;
@@ -34,6 +35,8 @@ public static class CardValueStore
 		public int GetEnergy(bool upgraded = false) => upgraded ? Energy + EnergyUpgraded : Energy;
 		
 		public int GetDollarValue(bool upgraded = false) => upgraded ? DollarValue + DollarValueUpgraded : DollarValue;
+		
+		public int GetBuildCost(bool upgraded = false) => BuildCost > 0 ? BuildCost : (upgraded ? DollarValue + DollarValueUpgraded : DollarValue);
 		
 		public int GetStars(bool upgraded = false) => upgraded ? Stars + StarsUpgraded : Stars;
 		

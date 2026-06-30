@@ -11,10 +11,10 @@ public static class SovietCardValues
 {
 	// ==================== 士兵单位 ====================
 	
-	/// <summary>动员兵 - 1费3伤害1次，升级后4伤害1次，价格100</summary>
+	/// <summary>动员兵 - 0费3伤害1次，升级后4伤害1次，价格100</summary>
 	public static CardValueStore.CardValues Conscript => new()
 	{
-		Cost = 1,
+		Cost = 0,
 		Damage = 3,
 		DamageUpgraded = 1,
 		Repeat = 1,
@@ -260,14 +260,15 @@ public static class SovietCardValues
 	
 	// ==================== 经济单位 ====================
 	
-	/// <summary>武装采矿车 - 0费攻击造成2点伤害（升级后全体），获得2000资金</summary>
+	/// <summary>武装采矿车 - 0费攻击造成2点伤害（升级后全体），获得1000资金（升级后1500），价格1400</summary>
 	public static CardValueStore.CardValues WarMiner => new()
 	{
 		Cost = 0,
 		Damage = 2,
 		DamageUpgraded = 0,
-		DollarValue = 2000,
-		DollarValueUpgraded = 500
+		DollarValue = 1000,
+		DollarValueUpgraded = 500,
+		BuildCost = 1400
 	};
 	
 	/// <summary>苏联运输船 - 1费技能卡，存储最多3张手牌（升级后5张），价格900</summary>
@@ -379,7 +380,7 @@ public static class SovietCardValues
 		
 		if (allValues.TryGetValue(key, out var values))
 		{
-			return (int)values.DollarValue;
+			return values.BuildCost > 0 ? values.BuildCost : (int)values.DollarValue;
 		}
 		
 		return 0;

@@ -15,7 +15,7 @@ namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
 /// 动员兵 - 类似于打击的基础攻击牌
-/// 1费3伤害1次，升级后4伤害1次
+/// 0费3伤害1次，升级后4伤害1次
 /// 对应盟军的美国大兵
 /// </summary>
 public sealed class Conscript : CardModel

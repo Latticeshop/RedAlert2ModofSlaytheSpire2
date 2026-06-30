@@ -61,6 +61,7 @@ public sealed class Paratrooper : CardModel
 			if (soldierCard != null)
 			{
 				soldierCard.AddKeyword(CardKeyword.Exhaust);
+				soldierCard.AddKeyword(CardKeyword.Ethereal);
 				await CardPileCmd.AddGeneratedCardToCombat(soldierCard, PileType.Hand, Owner);
 			}
 		}

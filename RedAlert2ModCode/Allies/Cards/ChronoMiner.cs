@@ -19,7 +19,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
 /// 超时空矿车 - 技能牌
-/// 0费，获得500资金（升级后800），使用后加入摸牌堆
+/// 0费，获得500资金（升级后1000），使用后加入摸牌堆
 /// 挖矿逻辑：优先挖宝石矿(2倍价值)，再挖黄金矿
 /// </summary>
 public sealed class ChronoMiner : CardModel

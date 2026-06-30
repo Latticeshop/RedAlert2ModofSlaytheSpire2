@@ -18,7 +18,7 @@ namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
 /// 武装采矿车 - 攻击牌
-/// 0费，对敌方造成2点伤害（升级后对全体敌人），获得2000资金
+/// 0费，对敌方造成2点伤害（升级后对全体敌人），获得1000资金（升级后1500）
 /// 挖矿逻辑：优先挖宝石矿(2倍价值)，再挖黄金矿
 /// </summary>
 public sealed class WarMiner : CardModel
