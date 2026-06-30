@@ -70,23 +70,15 @@ public sealed class MirageTank : CardModel
             GD.Print($"[MirageTank] 敌人意图攻击，获得格挡: {DynamicVars.Block.BaseValue}");
             await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
 
-            // === 原无实体逻辑（已注释） ===
-            // 检查玩家是否已有无实体能力
-            // bool hasIntangible = Owner.Creature.Powers.Any(p => p is IntangiblePower);
-            // GD.Print($"[MirageTank] 玩家已有无实体: {hasIntangible}");
-            //
-            // if (!hasIntangible)
-            // {
-            //     // 获得一层无实体（不播放特效）
-            //     GD.Print("[MirageTank] 获得1层无实体");
-            //     await PowerCmd.Apply<IntangiblePower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
-            // }
-            // else
-            // {
-            //     // 已有无实体，改为造成伤害
-            //     GD.Print("[MirageTank] 已有无实体，造成伤害");
-            //     await DealDamage(ctx, target);
-            // }
+            // 检查玩家是否已有残影能力
+            bool hasBlur = Owner.Creature.Powers.Any(p => p is MegaCrit.Sts2.Core.Models.Powers.BlurPower);
+            GD.Print($"[MirageTank] 玩家已有残影: {hasBlur}");
+
+            if (!hasBlur)
+            {
+                GD.Print("[MirageTank] 获得1层残影");
+                await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.BlurPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, 1m, Owner.Creature, this);
+            }
         }
         else
         {

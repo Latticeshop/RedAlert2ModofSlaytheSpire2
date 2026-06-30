@@ -93,12 +93,14 @@ public static class AlliesCardValues
 		DollarValue = 700
 	};
 	
-	/// <summary>IFV步兵战车 - 1费，获得1点敏捷，5护盾，价格600</summary>
+	/// <summary>IFV步兵战车 - 1费，抽1/2张牌，5护盾，价格600</summary>
 	public static CardValueStore.CardValues Ifv => new()
 	{
 		Cost = 1,
 		Block = 5,
-		MagicNumber = 1,  // 敏捷值
+		BlockUpgraded = 2,         // 升级后7 = 5 + 2
+		MagicNumber = 1,           // 抽牌数
+		MagicNumberUpgraded = 1,   // 升级后2 = 1 + 1
 		DollarValue = 600
 	};
 	
@@ -299,15 +301,15 @@ public static class AlliesCardValues
 		DollarValue = 500
 	};
 
-	/// <summary>驱逐舰 - 1费攻击卡，造成8伤害（升级12）。若敌人意图防御，改为给予1层易伤，造成2伤害（升级3）5次，价格1000</summary>
+	/// <summary>驱逐舰 - 1费攻击卡，造成8伤害（升级12）。若敌人意图防御，改为给予1层易伤，造成5伤害（升级8）2次，价格1000</summary>
 	public static CardValueStore.CardValues Destroyer => new()
 	{
 		Cost = 1,
 		Damage = 8,                // 基础伤害
 		DamageUpgraded = 4,        // 升级后12 = 8 + 4
-		MagicNumber = 2,           // 防御意图时的单次伤害
-		MagicNumberUpgraded = 1,   // 升级后3 = 2 + 1
-		Repeat = 5,                // 防御意图时的重复次数
+		MagicNumber = 5,           // 防御意图时的单次伤害
+		MagicNumberUpgraded = 3,   // 升级后8 = 5 + 3
+		Repeat = 2,                // 防御意图时的重复次数
 		DollarValue = 1000
 	};
 
@@ -406,8 +408,8 @@ public static class AlliesCardValues
 		Cost = 1,
 		Damage = 10,
 		DamageUpgraded = 5,  // 升级后15 = 10 + 5
-		Block = 16,  // 攻击意图时的格挡
-		BlockUpgraded = 4,  // 升级后20 = 16 + 4
+		Block = 12,  // 攻击意图时的格挡
+		BlockUpgraded = 3,  // 升级后15 = 12 + 3
 		DollarValue = 1000
 	};
 

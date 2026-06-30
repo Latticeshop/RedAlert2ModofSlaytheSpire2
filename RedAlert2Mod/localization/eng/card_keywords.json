@@ -18,7 +18,7 @@
     "unit.title": "Unit",
     "unit.description": "Card types including soldiers, vehicles, aircraft, and navy.",
     "strategy_tower_defense.title": "Strategy: Tower Defense",
-    "strategy_tower_defense.description": "When you play a [gold]Wall[/gold], if you have the [gold]Prism Tower[/gold] ability, gain 1 turn of [gold]Intangible[/gold].",
+    "strategy_tower_defense.description": "When you play a [gold]Wall[/gold], if you have the [gold]Prism Tower[/gold] ability, gain 1 turn of [gold]Blur[/gold].",
     "battle_lab.title": "Battle Lab",
     "battle_lab.description": "In Red Alert, increases tech level to unlock more buildings and unit options.",
     "Ra2_splash.title": "Splash",

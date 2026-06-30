@@ -32,7 +32,7 @@
     "SOVIET_PILLBOX_POWER.title": "Flak Tower",
     "SOVIET_PILLBOX_POWER.description": "At the start of each turn, deals {Damage} damage to an enemy 2 times and gains {Block} Block.",
     "STRATEGY_TOWER_DEFENSE_POWER.title": "Strategy: Tower Defense",
-    "STRATEGY_TOWER_DEFENSE_POWER.description": "When you play a [gold]Wall[/gold], if you have the [gold]Prism Tower[/gold] ability, gain 1 turn of [gold]Intangible[/gold].",
+    "STRATEGY_TOWER_DEFENSE_POWER.description": "When you play a [gold]Wall[/gold], if you have the [gold]Prism Tower[/gold] ability, gain 1 turn of [gold]Blur[/gold].",
     "ALLIED_TRANSPORT_SHIP_POWER.title": "Allied Transport Ship",
     "ALLIED_TRANSPORT_SHIP_POWER.description": "Currently stored cards:\n{StoredCard0}\n{StoredCard1}\n{StoredCard2}\n{StoredCard3}\n{StoredCard4}\n{StoredCard5}\n{StoredCard6}\n{StoredCard7}\n{StoredCard8}\n{StoredCard9}",
     "SOVIET_TRANSPORT_SHIP_POWER.title": "Soviet Transport Ship",

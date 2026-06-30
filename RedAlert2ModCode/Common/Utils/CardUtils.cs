@@ -207,7 +207,15 @@ public static class CardUtils
 			return 0;
 		}
 		
-		return RedAlert2ModCode.Allies.Cards.AlliesCardValues.GetDollarValue(cardModel.Id.Entry);
+		string cardId = cardModel.Id.Entry;
+		
+		int alliesCost = RedAlert2ModCode.Allies.Cards.AlliesCardValues.GetDollarValue(cardId);
+		if (alliesCost > 0)
+		{
+			return alliesCost;
+		}
+		
+		return RedAlert2ModCode.Soviet.Cards.SovietCardValues.GetDollarValue(cardId);
 	}
 	
 	public static bool IsMcvCard(CardModel cardModel)

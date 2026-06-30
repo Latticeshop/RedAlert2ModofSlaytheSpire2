@@ -87,23 +87,8 @@ public sealed class SovietMCV : CardModel
 		}
 		else
 		{
-			// 取消选择：将实际打出的卡牌实体放回手牌（相当于未打出）
 			GD.Print("[SovietMCV] 玩家取消选择，基地车放回手牌");
-
-			if (play?.Card != null)
-			{
-				var card = play.Card;
-				var handPile = PileType.Hand.GetPile(card.Owner);
-
-				if (card.Pile != null)
-				{
-					card.RemoveFromCurrentPile();
-				}
-
-				await CardPileCmd.Add(card, handPile);
-				handPile.InvokeContentsChanged();
-				GD.Print("[SovietMCV] 基地车已放回手牌");
-			}
+			await CardUtils.HandleCardCancellation(play, this, Owner);
 		}
 	}
 

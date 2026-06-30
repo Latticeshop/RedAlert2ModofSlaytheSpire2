@@ -50,6 +50,7 @@ public static class SovietCardRegistry
     {
         () => ModelDb.Card<SovietTransportShip>(),
         () => ModelDb.Card<FlakSubmarine>(),
+        () => ModelDb.Card<TyphoonSubmarine>(),
     };
 
     // 苏军建筑卡

@@ -95,6 +95,7 @@ public static class AlliedCardRegistry
         cards.Add(() => ModelDb.Card<AlliedEarlyMining>());
         cards.Add(() => ModelDb.Card<ChronoWarp>());
         cards.Add(() => ModelDb.Card<LightningStorm>());
+        cards.Add(() => ModelDb.Card<StrategyTowerDefense>());
         return cards;
     }
 

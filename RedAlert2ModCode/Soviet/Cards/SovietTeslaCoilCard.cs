@@ -70,5 +70,6 @@ public sealed class SovietTeslaCoilCard : CardModel
 
 	protected override void OnUpgrade()
 	{
+		DynamicVars["Damage"].BaseValue = Values.Stars;
 	}
 }

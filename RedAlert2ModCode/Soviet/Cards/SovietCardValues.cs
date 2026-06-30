@@ -81,15 +81,24 @@ public static class SovietCardValues
 		DollarValue = 900
 	};
 	
-	/// <summary>防空履带车 - 1费，获得1点敏捷(升级后2点)，5护盾(升级后7点)，部署：存储士兵单位，价格500</summary>
+	/// <summary>防空履带车 - 1费，抽1张牌(升级后2张)，5护盾(升级后7点)，部署：存储士兵单位，价格500</summary>
 	public static CardValueStore.CardValues FlakTrack => new()
 	{
 		Cost = 1,
 		Block = 5,
 		BlockUpgraded = 2,         // 升级后7 = 5 + 2
-		MagicNumber = 1,           // 敏捷值
+		MagicNumber = 1,           // 抽牌数
 		MagicNumberUpgraded = 1,   // 升级后2 = 1 + 1
 		DollarValue = 500
+	};
+	
+	/// <summary>台风级潜艇 - 1费攻击卡，给予1层易伤，造成4伤害（升级7）2次，价格1000</summary>
+	public static CardValueStore.CardValues TyphoonSubmarine => new()
+	{
+		Cost = 1,
+		Damage = 4,                // 基础伤害
+		DamageUpgraded = 3,        // 升级后7 = 4 + 3
+		DollarValue = 1000
 	};
 	
 	/// <summary>恐怖机器人 - 1费攻击卡，赋予恐怖机器人+缓慢，价格500</summary>
@@ -339,7 +348,8 @@ public static class SovietCardValues
 		return new Dictionary<string, CardValueStore.CardValues>
 		{
 			{ "SOVIETTRANSPORTSHIP", SovietTransportShip },
-			{ "FLAKSUBMARINE", FlakSubmarine }
+			{ "FLAKSUBMARINE", FlakSubmarine },
+			{ "TYPHOONSUBMARINE", TyphoonSubmarine }
 		};
 	}
 	

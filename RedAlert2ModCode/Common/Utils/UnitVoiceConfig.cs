@@ -286,6 +286,19 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/V3Rocket/Vv3lsed.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/V3Rocket/Vv3lsee.mp3",
         },
+        ["TyphoonSubmarine"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/TyphoonSubmarine/Vsubata.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TyphoonSubmarine/Vsubatc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TyphoonSubmarine/Vsubatd.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TyphoonSubmarine/Vsubmoa.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TyphoonSubmarine/Vsubmoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TyphoonSubmarine/Vsubmod.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TyphoonSubmarine/Vsubmoe.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TyphoonSubmarine/Vsubsea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TyphoonSubmarine/Vsubsec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TyphoonSubmarine/Vsubsee.mp3",
+        },
         ["SovietAttackDog"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/SovietUnits/DogSoldier/Idogatca.mp3",

@@ -37,7 +37,7 @@ public sealed partial class FlakTrack : CardModel
     protected override List<DynamicVar> CanonicalVars => new()
     {
         new BlockVar(Values.Block, ValueProp.Unpowered),
-        new IntVar("Dexterity", Values.MagicNumber),
+        new IntVar("DrawCount", Values.MagicNumber),
         new StringVar("StoredCards"),
         new IntVar("StoreCount", 5)
     };
@@ -89,7 +89,7 @@ public sealed partial class FlakTrack : CardModel
             {
                 Id = "attack",
                 Title = "防御",
-                Description = $"获得 {DynamicVars["Dexterity"].BaseValue} 点敏捷和 {DynamicVars.Block} 点格挡"
+                Description = $"抽 {DynamicVars["DrawCount"].BaseValue} 张牌和获得 {DynamicVars.Block} 点格挡"
             }
         };
 
@@ -101,13 +101,13 @@ public sealed partial class FlakTrack : CardModel
         }
         else
         {
-            await ExecuteAttack(play);
+            await ExecuteAttack(ctx, play);
         }
     }
 
-    private async Task ExecuteAttack(CardPlay play)
+    private async Task ExecuteAttack(PlayerChoiceContext ctx, CardPlay play)
     {
-        await PowerCmd.Apply<SovietFlakTrackDexterityPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, DynamicVars["Dexterity"].BaseValue, Owner.Creature, this);
+        await CardPileCmd.Draw(ctx, (int)DynamicVars["DrawCount"].BaseValue, Owner);
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
     }
 
@@ -187,7 +187,7 @@ public sealed partial class FlakTrack : CardModel
 
     protected override void OnUpgrade()
     {
-        DynamicVars["Dexterity"].UpgradeValueBy(Values.MagicNumberUpgraded);
+        DynamicVars["DrawCount"].UpgradeValueBy(Values.MagicNumberUpgraded);
         DynamicVars.Block.UpgradeValueBy(Values.BlockUpgraded);
     }
 }

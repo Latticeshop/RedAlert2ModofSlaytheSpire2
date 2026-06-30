@@ -5,9 +5,11 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Models.Powers;
 
 namespace RedAlert2ModCode.Allies.Powers;
 
@@ -48,8 +50,7 @@ public class StrategyTowerDefensePower : PowerModel
 		{
 			GD.Print("[StrategyTowerDefensePower] 拥有光棱塔能力，获得残影");
 			
-			// 获得残影
-			await CreatureCmd.GainBlock(Owner, 5m, MegaCrit.Sts2.Core.ValueProps.ValueProp.Unpowered, null);
+			await PowerCmd.Apply<BlurPower>(new ThrowingPlayerChoiceContext(), Owner, 1m, Owner, null);
 			GD.Print("[StrategyTowerDefensePower] 成功获得残影");
 		}
 		
