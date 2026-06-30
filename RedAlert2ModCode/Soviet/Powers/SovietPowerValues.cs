@@ -77,4 +77,10 @@ public static class SovietPowerValues
 		Damage = 12,
 		Stars = 3
 	};
+
+	public static CardValueStore.CardValues V3RocketPower => new()
+	{
+		Damage = 15,
+		DamageUpgraded = 3
+	};
 }

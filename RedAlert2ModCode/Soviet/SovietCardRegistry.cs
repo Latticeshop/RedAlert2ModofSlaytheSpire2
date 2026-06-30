@@ -37,6 +37,11 @@ public static class SovietCardRegistry
         () => ModelDb.Card<Kirov>(),
     };
 
+    public static List<Func<CardModel>> RadarVehicles { get; } = new()
+    {
+        () => ModelDb.Card<V3Rocket>(),
+    };
+
     public static List<Func<CardModel>> Aircraft { get; } = new()
     {
     };
@@ -44,6 +49,7 @@ public static class SovietCardRegistry
     public static List<Func<CardModel>> Ships { get; } = new()
     {
         () => ModelDb.Card<SovietTransportShip>(),
+        () => ModelDb.Card<FlakSubmarine>(),
     };
 
     // 苏军建筑卡
@@ -61,6 +67,7 @@ public static class SovietCardRegistry
 		() => ModelDb.Card<SovietRefinery>(),
 		() => ModelDb.Card<SovietMCV>(),
 		() => ModelDb.Card<SovietBattleLab>(),
+		() => ModelDb.Card<SovietRadar>(),
 		() => ModelDb.Card<SovietTeslaCoilCard>(),
 		() => ModelDb.Card<IronCurtainCard>(),
 		() => ModelDb.Card<NuclearMissileSiloCard>(),
@@ -97,12 +104,13 @@ public static class SovietCardRegistry
     }
 
     /// <summary>
-    /// 获取所有单位卡（装甲）- 包含高科技单位
+    /// 获取所有单位卡（装甲）- 包含高科技单位和雷达单位
     /// </summary>
     public static List<CardModel> GetAllVehicles()
     {
         List<CardModel> vehicles = Vehicles.Select(s => s()).ToList();
         vehicles.AddRange(HighTechVehicles.Select(s => s()).ToList());
+        vehicles.AddRange(RadarVehicles.Select(s => s()).ToList());
         return vehicles;
     }
 
@@ -189,6 +197,11 @@ public static class SovietCardRegistry
             vehicles.AddRange(CreateHighTechVehicles(owner));
         }
 
+        if (HasRadarPower(owner.Creature))
+        {
+            vehicles.AddRange(CreateRadarVehicles(owner));
+        }
+
         if (HasRepairDepotPower(owner.Creature))
         {
             vehicles.Add(owner.Creature.CombatState.CreateCard(ModelDb.Card<SovietMCV>(), owner));
@@ -200,6 +213,16 @@ public static class SovietCardRegistry
     public static List<CardModel> CreateHighTechVehicles(Player owner)
     {
         return HighTechVehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+    }
+
+    public static List<CardModel> CreateRadarVehicles(Player owner)
+    {
+        return RadarVehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+    }
+
+    public static bool HasRadarPower(Creature creature)
+    {
+        return creature.Powers.Any(p => p is SovietRadarPower);
     }
 
     public static bool HasBattleLabPower(Creature creature)

@@ -85,5 +85,7 @@
     "NUCLEAR_MISSILE_SILO_POWER.title": "核弹井",
     "NUCLEAR_MISSILE_SILO_POWER.description": "过 [gold]{TurnsRemaining}[/gold] 回合，将一张0费虚无的[gold]核弹攻击[/gold]加入手牌。",
     "KIROV_POWER.title": "基洛夫",
-    "KIROV_POWER.description": "每回合受到 {Count} 点伤害。当目标死亡时，转移到其他敌人。"
+    "KIROV_POWER.description": "每回合受到 {Count} 点伤害。当目标死亡时，转移到其他敌人。",
+    "V3_ROCKET_POWER.title": "V3火箭",
+    "V3_ROCKET_POWER.description": "回合开始对[gold]目标锁定[/gold]敌人造成 {Damage} 点伤害。"
 }

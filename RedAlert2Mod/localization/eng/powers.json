@@ -85,5 +85,7 @@
     "NUCLEAR_MISSILE_SILO_POWER.title": "Nuclear Missile Silo",
     "NUCLEAR_MISSILE_SILO_POWER.description": "In [gold]{TurnsRemaining}[/gold] turns, adds a 0-cost Ethereal [gold]Nuclear Attack[/gold] card to your hand.",
     "KIROV_POWER.title": "Kirov",
-    "KIROV_POWER.description": "Takes {Count} damage each turn. Transfers to another enemy when the target dies."
+    "KIROV_POWER.description": "Takes {Count} damage each turn. Transfers to another enemy when the target dies.",
+    "V3_ROCKET_POWER.title": "V3 Rocket",
+    "V3_ROCKET_POWER.description": "Deal {Damage} damage to the [gold]Target Locked[/gold] enemy at the start of turn."
 }

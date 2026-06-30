@@ -262,6 +262,30 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/FlakTrack/Vflased.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/FlakTrack/Vflasee.mp3",
         },
+        ["FlakSubmarine"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakSubmarine/Vscoata.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakSubmarine/Vscoatc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakSubmarine/Vscomoa.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakSubmarine/Vscomoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakSubmarine/Vscomoe.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakSubmarine/Vscosea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakSubmarine/Vscoseb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakSubmarine/Vscosec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/FlakSubmarine/Vscosee.mp3",
+        },
+        ["V3Rocket"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/V3Rocket/Vv3lata.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/V3Rocket/Vv3latd.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/V3Rocket/Vv3lmoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/V3Rocket/Vv3lmoe.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/V3Rocket/Vv3lsea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/V3Rocket/Vv3lseb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/V3Rocket/Vv3lsec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/V3Rocket/Vv3lsed.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/V3Rocket/Vv3lsee.mp3",
+        },
         ["SovietAttackDog"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/SovietUnits/DogSoldier/Idogatca.mp3",

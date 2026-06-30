@@ -29,6 +29,15 @@ public static class SovietCardValues
 		BlockUpgraded = 1,
 		DollarValue = 300
 	};
+
+	/// <summary>海蝎 - 1费攻击卡，每有一个攻击意图敌人获得3格挡（升级4），价格500</summary>
+	public static CardValueStore.CardValues FlakSubmarine => new()
+	{
+		Cost = 1,
+		Block = 3,
+		BlockUpgraded = 1,
+		DollarValue = 500
+	};
 	
 	/// <summary>军犬 - 0费3伤害1层虚弱，升级后4伤害2层虚弱，价格200</summary>
 	public static CardValueStore.CardValues AttackDog => new()
@@ -72,11 +81,12 @@ public static class SovietCardValues
 		DollarValue = 900
 	};
 	
-	/// <summary>防空履带车 - 1费，获得1点敏捷(升级后2点)，5护盾，部署：存储士兵单位，价格500</summary>
+	/// <summary>防空履带车 - 1费，获得1点敏捷(升级后2点)，5护盾(升级后7点)，部署：存储士兵单位，价格500</summary>
 	public static CardValueStore.CardValues FlakTrack => new()
 	{
 		Cost = 1,
 		Block = 5,
+		BlockUpgraded = 2,         // 升级后7 = 5 + 2
 		MagicNumber = 1,           // 敏捷值
 		MagicNumberUpgraded = 1,   // 升级后2 = 1 + 1
 		DollarValue = 500
@@ -108,6 +118,15 @@ public static class SovietCardValues
 		DamageUpgraded = 3,
 		Repeat = 1,
 		DollarValue = 2000
+	};
+
+	/// <summary>V3火箭 - 2费，赋予目标锁定和V3火箭能力，每回合造成15伤害（升级18），价格800</summary>
+	public static CardValueStore.CardValues V3Rocket => new()
+	{
+		Cost = 2,
+		Damage = 15,
+		DamageUpgraded = 3,
+		DollarValue = 800
 	};
 	
 	// ==================== 建筑卡牌 ====================
@@ -302,7 +321,8 @@ public static class SovietCardValues
 			{ "FLAKTRACK", FlakTrack },
 			{ "TERRORDRONE", TerrorDrone },
 			{ "SOVIETMCV", SovietMCV },
-			{ "WARMINER", WarMiner }
+			{ "WARMINER", WarMiner },
+			{ "V3ROCKET", V3Rocket }
 		};
 	}
 	
@@ -318,7 +338,8 @@ public static class SovietCardValues
 	{
 		return new Dictionary<string, CardValueStore.CardValues>
 		{
-			{ "SOVIETTRANSPORTSHIP", SovietTransportShip }
+			{ "SOVIETTRANSPORTSHIP", SovietTransportShip },
+			{ "FLAKSUBMARINE", FlakSubmarine }
 		};
 	}
 	

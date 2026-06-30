@@ -188,5 +188,6 @@ public sealed partial class FlakTrack : CardModel
     protected override void OnUpgrade()
     {
         DynamicVars["Dexterity"].UpgradeValueBy(Values.MagicNumberUpgraded);
+        DynamicVars.Block.UpgradeValueBy(Values.BlockUpgraded);
     }
 }
