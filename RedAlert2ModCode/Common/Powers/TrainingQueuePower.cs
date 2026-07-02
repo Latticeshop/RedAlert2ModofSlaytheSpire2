@@ -210,7 +210,7 @@ public sealed class TrainingQueuePower : PowerModel
             locString.Add("UnitName", displayName);
             locString.Add("UnitPrice", UnitPrice.ToString());
             
-            locString.Add("ExhaustText", ExhaustWhenPlayed ? "且消耗" : "");
+            locString.Add("ExhaustText", ExhaustWhenPlayed ? new LocString("card_keywords", "exhaust_text").GetFormattedText() : "");
             
             if (IsStopped)
             {

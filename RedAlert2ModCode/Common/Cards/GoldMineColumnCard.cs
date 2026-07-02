@@ -78,5 +78,6 @@ public class GoldMineColumnCard : CardModel
     protected override void OnUpgrade()
     {
         base.DynamicVars["Reserve"].BaseValue = Values.DollarValue + Values.DollarValueUpgraded;
+        AddKeyword(CardKeyword.Innate);
     }
 }

@@ -93,5 +93,8 @@
     "ui.card_select.title_multi": "请选择 1-{count} 张牌",
     "ui.card_select.title_single": "请选择单位",
     "ui.card_select.cost_label": "费用",
-    "ui.card_select.price_label": "价格"
+    "ui.card_select.price_label": "价格",
+    "steel_flood.title": "钢铁洪流",
+    "steel_flood.description": "当单位卡进入手牌时立即自动打出。",
+    "exhaust_text": "且消耗"
 }

@@ -182,5 +182,9 @@
     "NUCLEAR_MISSILE_SILO_CARD.title": "核弹井",
     "NUCLEAR_MISSILE_SILO_CARD.description": "[gold]价格：${DollarNumber}[/gold]。\n获得[gold]核弹井[/gold]。\n{IfUpgraded:show:核弹伤害增加。|}",
     "NUCLEAR_ATTACK.title": "核弹攻击",
-    "NUCLEAR_ATTACK.description": "[gold]超级武器[/gold]。\n对全部敌人造成 {Damage} 点伤害，赋予 {Poison} 层中毒。"
+    "NUCLEAR_ATTACK.description": "[gold]超级武器[/gold]。\n对全部敌人造成 {Damage} 点伤害，赋予 {Poison} 层中毒。",
+    "ALLIES_F2_A.title": "F2A",
+    "ALLIES_F2_A.description": "获得 [gold]钢铁洪流[/gold]能力。",
+    "SOVIET_F2_A.title": "F2A",
+    "SOVIET_F2_A.description": "获得 [gold]钢铁洪流[/gold]能力。"
 }

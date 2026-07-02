@@ -113,7 +113,7 @@ public sealed class AlliesEngineer : CardModel
 		{
 			case EngineerChoiceScreen.ChoiceType.CaptureOilDerrick:
 				// 将一张油井加入手牌
-				var oilDerrickCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<OilDerrickCard>(), Owner);
+				var oilDerrickCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<AlliesOilDerrickCard>(), Owner);
 				await CardPileCmd.AddGeneratedCardToCombat(oilDerrickCard, PileType.Hand, Owner);
 				break;
 

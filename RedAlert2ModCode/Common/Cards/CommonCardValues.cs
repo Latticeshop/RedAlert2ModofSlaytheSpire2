@@ -90,4 +90,11 @@ public static class CommonCardValues
 		Cost = 1,
 		Repeat = 1                  // 未升级时选择数量
 	};
+
+	/// <summary>F2A钢铁洪流 - 1费能力卡（升级后0费），手牌中的单位卡将自动打出</summary>
+	public static CardValueStore.CardValues F2A => new()
+	{
+		Cost = 1,
+		CostUpgraded = -1           // 升级后费用减1
+	};
 }

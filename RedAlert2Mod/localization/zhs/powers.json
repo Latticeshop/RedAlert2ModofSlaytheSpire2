@@ -87,5 +87,7 @@
     "KIROV_POWER.title": "基洛夫",
     "KIROV_POWER.description": "每回合受到 {Count} 点伤害。当目标死亡时，转移到其他敌人。",
     "V3_ROCKET_POWER.title": "V3火箭",
-    "V3_ROCKET_POWER.description": "回合开始对[gold]目标锁定[/gold]敌人造成 {Damage} 点伤害。"
+    "V3_ROCKET_POWER.description": "回合开始对[gold]目标锁定[/gold]敌人造成 {Damage} 点伤害。",
+    "STEEL_FLOOD_POWER.title": "钢铁洪流",
+    "STEEL_FLOOD_POWER.description": "当单位卡进入手牌时立即自动打出。"
 }

@@ -98,6 +98,7 @@ public static class AlliedCardRegistry
         cards.Add(() => ModelDb.Card<AlliesGoldMineCard>());
         cards.Add(() => ModelDb.Card<AlliesGemMineCard>());
         cards.Add(() => ModelDb.Card<AlliesGoldMineColumnCard>());
+        cards.Add(() => ModelDb.Card<AlliesF2A>());
         cards.Add(() => ModelDb.Card<EagleMachineGun>());
         cards.Add(() => ModelDb.Card<EagleAirStrike>());
         cards.Add(() => ModelDb.Card<Eagle500kg>());

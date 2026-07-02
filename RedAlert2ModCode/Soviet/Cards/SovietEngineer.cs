@@ -93,7 +93,7 @@ public sealed class SovietEngineer : CardModel
 		switch (choice.Type)
 		{
 			case EngineerChoiceScreen.ChoiceType.CaptureOilDerrick:
-				var oilDerrickCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<OilDerrickCard>(), Owner);
+				var oilDerrickCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<SovietOilDerrickCard>(), Owner);
 				await CardPileCmd.AddGeneratedCardToCombat(oilDerrickCard, PileType.Hand, Owner);
 				break;
 

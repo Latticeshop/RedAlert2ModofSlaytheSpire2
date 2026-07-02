@@ -87,5 +87,7 @@
     "KIROV_POWER.title": "Kirov",
     "KIROV_POWER.description": "Takes {Count} damage each turn. Transfers to another enemy when the target dies.",
     "V3_ROCKET_POWER.title": "V3 Rocket",
-    "V3_ROCKET_POWER.description": "Deal {Damage} damage to the [gold]Target Locked[/gold] enemy at the start of turn."
+    "V3_ROCKET_POWER.description": "Deal {Damage} damage to the [gold]Target Locked[/gold] enemy at the start of turn.",
+    "STEEL_FLOOD_POWER.title": "Steel Flood",
+    "STEEL_FLOOD_POWER.description": "When a unit card enters your hand, it is automatically played."
 }

@@ -93,5 +93,8 @@
     "ui.card_select.title_multi": "Select 1-{count} cards",
     "ui.card_select.title_single": "Select a unit",
     "ui.card_select.cost_label": "Cost",
-    "ui.card_select.price_label": "Price"
+    "ui.card_select.price_label": "Price",
+    "steel_flood.title": "Steel Flood",
+    "steel_flood.description": "When a unit card enters your hand, it is automatically played.",
+    "exhaust_text": "and Exhaust"
 }

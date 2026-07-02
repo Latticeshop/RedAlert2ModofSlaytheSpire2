@@ -182,5 +182,9 @@
     "NUCLEAR_MISSILE_SILO_CARD.title": "Nuclear Missile Silo",
     "NUCLEAR_MISSILE_SILO_CARD.description": "[gold]Cost: ${DollarNumber}[/gold].\nGains [gold]Nuclear Missile Silo[/gold].\n{IfUpgraded:show:Nuclear damage increased.|}",
     "NUCLEAR_ATTACK.title": "Nuclear Attack",
-    "NUCLEAR_ATTACK.description": "[gold]Super Weapon[/gold].\nDeals {Damage} damage to all enemies and applies {Poison} Poison."
+    "NUCLEAR_ATTACK.description": "[gold]Super Weapon[/gold].\nDeals {Damage} damage to all enemies and applies {Poison} Poison.",
+    "ALLIES_F2_A.title": "F2A",
+    "ALLIES_F2_A.description": "Gain [gold]Steel Flood[/gold] power.",
+    "SOVIET_F2_A.title": "F2A",
+    "SOVIET_F2_A.description": "Gain [gold]Steel Flood[/gold] power."
 }

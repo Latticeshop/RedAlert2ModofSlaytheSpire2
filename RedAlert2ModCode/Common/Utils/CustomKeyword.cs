@@ -189,6 +189,12 @@ public static class ModCardKeywords
         new LocString("card_keywords", "terror_drone.description")
     );
 
+    public static readonly CustomKeyword SteelFlood = new(
+        "STEEL_FLOOD",
+        new LocString("card_keywords", "steel_flood.title"),
+        new LocString("card_keywords", "steel_flood.description")
+    );
+
     public static void Initialize()
     {
         CustomKeywordManager.RegisterKeyword(Mcv);
@@ -213,5 +219,6 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(BuildingTechTree);
         CustomKeywordManager.RegisterKeyword(OrbitalReadiness);
         CustomKeywordManager.RegisterKeyword(TerrorDrone);
+        CustomKeywordManager.RegisterKeyword(SteelFlood);
     }
 }

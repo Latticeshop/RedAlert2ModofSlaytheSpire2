@@ -83,6 +83,7 @@ public static class SovietCardRegistry
         cards.Add(() => ModelDb.Card<SovietGoldMineCard>());
         cards.Add(() => ModelDb.Card<SovietGemMineCard>());
         cards.Add(() => ModelDb.Card<SovietGoldMineColumnCard>());
+        cards.Add(() => ModelDb.Card<SovietF2A>());
         cards.Add(() => ModelDb.Card<IronCurtain>());
         cards.Add(() => ModelDb.Card<NuclearAttack>());
         return cards;
