@@ -16,7 +16,7 @@ using RedAlert2ModCode.Common.Powers;
 
 namespace RedAlert2ModCode.Common.Cards;
 
-public sealed class GoldMineColumnCard : CardModel
+public class GoldMineColumnCard : CardModel
 {
     private static readonly CardValueStore.CardValues Values = CommonCardValues.GoldMineColumn;
     

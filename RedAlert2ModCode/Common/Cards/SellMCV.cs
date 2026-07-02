@@ -16,7 +16,7 @@ using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Common.Cards;
 
-public sealed class SellMCV : CardModel
+public class SellMCV : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = CommonCardValues.SellMCV;
 

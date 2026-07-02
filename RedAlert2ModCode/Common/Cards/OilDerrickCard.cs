@@ -13,7 +13,7 @@ using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Common.Cards;
 
-public sealed class OilDerrickCard : CardModel
+public class OilDerrickCard : CardModel
 {
     private static readonly CardValueStore.CardValues Values = CommonCardValues.OilDerrick;
 

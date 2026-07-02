@@ -1287,7 +1287,205 @@ RedAlert2ModCode/
 
 ---
 
-## 📁 标准项目结构
+## � 公共卡牌架构
+
+### 设计背景
+
+红警2中有一些公共建筑和技能（如油井、黄金矿、伞兵等），这些卡牌在盟军和苏军中都存在，逻辑完全相同，但游戏UI需要区分阵营（卡框颜色等）。由于游戏的本地化系统使用类名自动生成 key（`MyClassName` → `MY_CLASS_NAME`），且卡牌实例是单例模式（`ModelDb.Card<T>()` 返回同一实例），直接共用一份卡牌会导致：
+
+1. **卡框颜色问题**：第一个注册的阵营会决定卡框颜色，另一个阵营的卡框会继承错误颜色
+2. **本地化问题**：两个阵营使用同一本地化key，无法独立控制
+3. **实例冲突**：单例模式导致两个阵营共享同一实例状态
+
+### 解决方案：继承分离模式
+
+采用"公共基类 + 阵营子类"的架构，实现逻辑共用但实例分离：
+
+```
+Common/Cards/
+├── GoldMineCard.cs          # 公共基类 - 包含完整逻辑
+├── OilDerrickCard.cs        # 公共基类 - 包含完整逻辑
+├── SellMCV.cs               # 公共基类 - 包含完整逻辑
+├── Ra2Rally.cs              # 公共基类 - 包含完整逻辑
+├── Paratrooper.cs           # 公共基类 - 包含完整逻辑
+├── StopProductionCard.cs    # 公共基类 - 包含完整逻辑
+├── GemMineCard.cs           # 公共基类 - 包含完整逻辑
+└── GoldMineColumnCard.cs    # 公共基类 - 包含完整逻辑
+
+Allies/Cards/
+├── AlliesGoldMineCard.cs    # 盟军子类 - 仅继承，无逻辑
+├── AlliesOilDerrickCard.cs  # 盟军子类 - 仅继承，无逻辑
+└── ...                      # 其他盟军公共卡牌
+
+Soviet/Cards/
+├── SovietGoldMineCard.cs    # 苏军子类 - 仅继承，无逻辑
+├── SovietOilDerrickCard.cs  # 苏军子类 - 仅继承，无逻辑
+└── ...                      # 其他苏军公共卡牌
+```
+
+### 实现模式
+
+**公共基类**（[Common/Cards/GoldMineCard.cs](file:///d:/RedAlert2Project/red-alert-2-mod/RedAlert2ModCode/Common/Cards/GoldMineCard.cs)）：
+
+```csharp
+public class GoldMineCard : CardModel
+{
+    private static readonly CardValueStore.CardValues Values = CommonCardValues.GoldMine;
+    
+    public GoldMineCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
+
+    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/gold_mine.png";
+
+    protected override List<DynamicVar> CanonicalVars => new()
+    {
+        new IntVar("Reserve", Values.DollarValue)
+    };
+
+    protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+    {
+        // 完整的卡牌逻辑
+        int amount = base.DynamicVars["Reserve"].IntValue;
+        var goldMinePower = Owner.Creature.Powers.OfType<GoldMinePower>().FirstOrDefault();
+        if (goldMinePower != null)
+        {
+            goldMinePower.AddReserve(amount);
+        }
+        else
+        {
+            var newPower = await PowerCmd.Apply<GoldMinePower>(ctx, Owner.Creature, 1m, Owner.Creature, null);
+            if (newPower != null)
+            {
+                newPower.CurrentReserve = amount;
+                newPower.IsUpgraded = IsUpgraded;
+            }
+        }
+    }
+
+    protected override void OnUpgrade()
+    {
+        base.DynamicVars["Reserve"].BaseValue = Values.DollarValue + Values.DollarValueUpgraded;
+    }
+}
+```
+
+**阵营子类**（[Allies/Cards/AlliesGoldMineCard.cs](file:///d:/RedAlert2Project/red-alert-2-mod/RedAlert2ModCode/Allies/Cards/AlliesGoldMineCard.cs)）：
+
+```csharp
+using RedAlert2ModCode.Common.Cards;
+
+namespace RedAlert2ModCode.Allies.Cards;
+
+public sealed class AlliesGoldMineCard : GoldMineCard
+{
+}
+```
+
+**阵营子类**（[Soviet/Cards/SovietGoldMineCard.cs](file:///d:/RedAlert2Project/red-alert-2-mod/RedAlert2ModCode/Soviet/Cards/SovietGoldMineCard.cs)）：
+
+```csharp
+using RedAlert2ModCode.Common.Cards;
+
+namespace RedAlert2ModCode.Soviet.Cards;
+
+public sealed class SovietGoldMineCard : GoldMineCard
+{
+}
+```
+
+### 本地化规则
+
+由于游戏使用类名自动生成本地化key，公共卡牌需要创建两份本地化条目：
+
+| 公共卡牌 | 盟军本地化key | 苏军本地化key |
+|---------|-------------|-------------|
+| 黄金矿 | `ALLIES_GOLD_MINE_CARD.title` | `SOVIET_GOLD_MINE_CARD.title` |
+| 宝石矿 | `ALLIES_GEM_MINE_CARD.title` | `SOVIET_GEM_MINE_CARD.title` |
+| 黄金矿柱 | `ALLIES_GOLD_MINE_COLUMN_CARD.title` | `SOVIET_GOLD_MINE_COLUMN_CARD.title` |
+| 油井 | `ALLIES_OIL_DERRICK_CARD.title` | `SOVIET_OIL_DERRICK_CARD.title` |
+| 卖本 | `ALLIES_SELL_MC_V.title` | `SOVIET_SELL_MC_V.title` |
+| 集结 | `ALLIES_RA2_RALLY.title` | `SOVIET_RA2_RALLY.title` |
+| 伞兵 | `ALLIES_PARATROOPER.title` | `SOVIET_PARATROOPER.title` |
+| 停产 | `ALLIES_STOP_PRODUCTION_CARD.title` | `SOVIET_STOP_PRODUCTION_CARD.title` |
+
+**本地化文件示例**（[localization/zhs/cards.json](file:///d:/RedAlert2Project/red-alert-2-mod/RedAlert2Mod/localization/zhs/cards.json)）：
+
+```json
+{
+    "ALLIES_GOLD_MINE_CARD.title": "黄金矿",
+    "ALLIES_GOLD_MINE_CARD.description": "获得 {Reserve} [gold]黄金矿[/gold]储备。",
+    "SOVIET_GOLD_MINE_CARD.title": "黄金矿",
+    "SOVIET_GOLD_MINE_CARD.description": "获得 {Reserve} [gold]黄金矿[/gold]储备。"
+}
+```
+
+### 资源与能力共享
+
+虽然卡牌实例分离，但以下资源和逻辑仍然共用：
+
+| 共享类型 | 说明 |
+|---------|------|
+| **能力(Power)** | 公共卡牌使用的能力（如 `GoldMinePower`、`OilDerrickPower`）存放在 `Common/Powers/` 目录，两个阵营共用同一份 |
+| **资源文件** | 卡牌图片、能力图标等资源文件存放在 `RedAlert2ModResources/`，两个阵营共用同一份 |
+| **数值配置** | 卡牌数值存放在 `Common/Cards/CommonCardValues.cs`，两个阵营共用同一份 |
+| **逻辑代码** | 所有 `OnPlay`、`OnUpgrade` 等方法在公共基类中实现，子类自动继承 |
+
+### 架构优势
+
+**1. 逻辑复用**
+- 修改公共卡牌逻辑时，只需修改 `Common/Cards/` 目录下的基类文件
+- 两个阵营的卡牌会自动获得更新
+
+**2. 实例隔离**
+- 通过不同类名创建不同单例，避免卡框颜色和状态冲突
+- 游戏根据类名自动分配正确的阵营卡框颜色
+
+**3. 独立本地化**
+- 虽然两份本地化内容相同，但可以独立修改
+- 如果未来需要为不同阵营定制不同描述，可以轻松实现
+
+**4. 资源共享**
+- 图片、图标等资源只需要一份，减少资源包体积
+
+### 公共卡牌注册
+
+在阵营的 `CardRegistry` 中注册各自的公共卡牌子类：
+
+```csharp
+// AlliedCardRegistry.cs
+private static List<Func<CardModel>> CreatePowerCards()
+{
+    var cards = new List<Func<CardModel>>();
+    cards.Add(() => ModelDb.Card<AlliesGoldMineCard>());
+    cards.Add(() => ModelDb.Card<AlliesOilDerrickCard>());
+    cards.Add(() => ModelDb.Card<AlliesSellMCV>());
+    // ... 其他盟军公共卡牌
+    return cards;
+}
+
+// SovietCardRegistry.cs
+private static List<Func<CardModel>> CreatePowerCards()
+{
+    var cards = new List<Func<CardModel>>();
+    cards.Add(() => ModelDb.Card<SovietGoldMineCard>());
+    cards.Add(() => ModelDb.Card<SovietOilDerrickCard>());
+    cards.Add(() => ModelDb.Card<SovietSellMCV>());
+    // ... 其他苏军公共卡牌
+    return cards;
+}
+```
+
+### 新增公共卡牌流程
+
+1. **创建公共基类**：在 `Common/Cards/` 目录下创建卡牌类（不带阵营前缀）
+2. **创建盟军子类**：在 `Allies/Cards/` 目录下创建继承自基类的卡牌（带 `Allies` 前缀）
+3. **创建苏军子类**：在 `Soviet/Cards/` 目录下创建继承自基类的卡牌（带 `Soviet` 前缀）
+4. **注册卡牌**：在 `AlliedCardRegistry` 和 `SovietCardRegistry` 中注册对应的子类
+5. **添加本地化**：在 `cards.json` 中添加两份本地化条目（带阵营前缀）
+6. **验证编译**：运行 `dotnet build` 确保没有错误
+
+---
+
+## �📁 标准项目结构
 
 ```
 ProjectRoot/

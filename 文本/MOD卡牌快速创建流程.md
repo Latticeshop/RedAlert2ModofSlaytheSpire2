@@ -440,23 +440,294 @@ private static List<Func<CardModel>> CreatePowerCards()
 
 ---
 
-## 四、常见遗漏检查清单
+## 四、创造公共卡牌流程（以黄金矿为例）
 
-| 检查项 | 单位卡 | 建筑卡 | 战备卡 |
-|--------|:------:|:------:|:------:|
-| 语音注册 | ✅ | ❌ | ❌ |
-| 卡牌图标 | ✅ | ✅ | ✅ |
-| 数值存储 | ✅ | ✅ | ✅ |
-| 价格映射 | ✅ | ✅ | ❌ |
-| CardRegistry注册 | ✅ | ✅ | ✅ |
-| 能力图标补丁 | ❌ | ✅ | ✅ |
-| 科技解锁配置 | ✅ | ✅ | ❌ |
-| 本地化 | ✅ | ✅ | ✅ |
-| 音效播放 | ✅ | ✅ | ❌ |
+### 适用场景
+
+公共卡牌是指在两个或多个阵营中都存在的卡牌，逻辑完全相同，但需要独立的卡牌实例和本地化（用于卡框颜色和独立文本）。
+
+**公共卡牌列表**：
+| 卡牌名称 | 类型 | 说明 |
+|---------|------|------|
+| 黄金矿 | Power卡 | 资源类卡牌，获得黄金矿储备 |
+| 宝石矿 | Power卡 | 资源类卡牌，获得宝石矿储备 |
+| 黄金矿柱 | Power卡 | 资源类卡牌，获得黄金矿储备和矿柱能力 |
+| 油井 | Power卡 | 建筑类卡牌，获得资金 |
+| 卖本 | Attack卡 | 技能卡，售卖基地车获得资金 |
+| 集结 | Skill卡 | 技能卡，召集单位卡到手牌 |
+| 伞兵 | Attack卡 | 技能卡，添加虚无士兵到手牌 |
+| 停产 | Skill卡 | 技能卡，控制生产序列启停 |
 
 ---
 
-## 五、路径规范总结
+### 1. 创建公共基类
+
+#### 在 Common/Cards/ 目录下创建
+
+```csharp
+using Godot;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.HoverTips;
+using System.Collections.Generic;
+using System.Linq;
+using RedAlert2ModCode.Common.Powers;
+using RedAlert2ModCode.Common.Utils;
+
+namespace RedAlert2ModCode.Common.Cards;
+
+public class GoldMineCard : CardModel
+{
+    private static readonly CardValueStore.CardValues Values = CommonCardValues.GoldMine;
+    
+    public GoldMineCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
+
+    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/gold_mine.png";
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        ModCardKeywords.GoldMine.CreateHoverTip()
+    ];
+
+    protected override List<DynamicVar> CanonicalVars => new()
+    {
+        new IntVar("Reserve", Values.DollarValue)
+    };
+
+    protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+    {
+        int amount = base.DynamicVars["Reserve"].IntValue;
+
+        var goldMinePower = Owner.Creature.Powers.OfType<GoldMinePower>().FirstOrDefault();
+        if (goldMinePower != null)
+        {
+            goldMinePower.AddReserve(amount);
+        }
+        else
+        {
+            var newPower = await PowerCmd.Apply<GoldMinePower>(ctx, Owner.Creature, 1m, Owner.Creature, null);
+            if (newPower != null)
+            {
+                newPower.CurrentReserve = amount;
+                newPower.IsUpgraded = IsUpgraded;
+            }
+        }
+    }
+
+    protected override void OnUpgrade()
+    {
+        base.DynamicVars["Reserve"].BaseValue = Values.DollarValue + Values.DollarValueUpgraded;
+    }
+}
+```
+
+> **注意**：公共基类不带阵营前缀，且**不使用 sealed**（允许继承）。
+
+---
+
+### 2. 创建盟军子类
+
+#### 在 Allies/Cards/ 目录下创建
+
+```csharp
+using RedAlert2ModCode.Common.Cards;
+
+namespace RedAlert2ModCode.Allies.Cards;
+
+public sealed class AlliesGoldMineCard : GoldMineCard
+{
+}
+```
+
+> **注意**：盟军子类带 `Allies` 前缀，使用 `sealed`（不允许进一步继承）。
+
+---
+
+### 3. 创建苏军子类
+
+#### 在 Soviet/Cards/ 目录下创建
+
+```csharp
+using RedAlert2ModCode.Common.Cards;
+
+namespace RedAlert2ModCode.Soviet.Cards;
+
+public sealed class SovietGoldMineCard : GoldMineCard
+{
+}
+```
+
+> **注意**：苏军子类带 `Soviet` 前缀，使用 `sealed`（不允许进一步继承）。
+
+---
+
+### 4. 数值存储
+
+#### 在 CommonCardValues.cs 中定义
+
+```csharp
+public static CardValueStore.CardValues GoldMine => new()
+{
+    Cost = 1,
+    DollarValue = 1000,
+    DollarValueUpgraded = 500
+};
+```
+
+---
+
+### 5. 注册到阵营卡池
+
+#### 在 AlliedCardRegistry.cs 中注册
+
+```csharp
+private static List<Func<CardModel>> CreatePowerCards()
+{
+    var cards = new List<Func<CardModel>>();
+    cards.Add(() => ModelDb.Card<AlliesGoldMineCard>());
+    cards.Add(() => ModelDb.Card<AlliesGemMineCard>());
+    cards.Add(() => ModelDb.Card<AlliesGoldMineColumnCard>());
+    cards.Add(() => ModelDb.Card<AlliesOilDerrickCard>());
+    cards.Add(() => ModelDb.Card<AlliesSellMCV>());
+    cards.Add(() => ModelDb.Card<AlliesRa2Rally>());
+    cards.Add(() => ModelDb.Card<AlliesParatrooper>());
+    cards.Add(() => ModelDb.Card<AlliesStopProductionCard>());
+    // ... 其他盟军专属卡牌
+    return cards;
+}
+```
+
+#### 在 SovietCardRegistry.cs 中注册
+
+```csharp
+private static List<Func<CardModel>> CreatePowerCards()
+{
+    var cards = new List<Func<CardModel>>();
+    cards.Add(() => ModelDb.Card<SovietGoldMineCard>());
+    cards.Add(() => ModelDb.Card<SovietGemMineCard>());
+    cards.Add(() => ModelDb.Card<SovietGoldMineColumnCard>());
+    cards.Add(() => ModelDb.Card<SovietOilDerrickCard>());
+    cards.Add(() => ModelDb.Card<SovietSellMCV>());
+    cards.Add(() => ModelDb.Card<SovietRa2Rally>());
+    cards.Add(() => ModelDb.Card<SovietParatrooper>());
+    cards.Add(() => ModelDb.Card<SovietStopProductionCard>());
+    // ... 其他苏军专属卡牌
+    return cards;
+}
+```
+
+---
+
+### 6. 创建对应能力（如需要）
+
+公共卡牌使用的能力存放在 `Common/Powers/` 目录，两个阵营共用同一份：
+
+```csharp
+// Common/Powers/GoldMinePower.cs
+public sealed class GoldMinePower : PowerModel
+{
+    public override PowerType Type => PowerType.Buff;
+    public override PowerStackType StackType => PowerStackType.Counter;
+    
+    public int CurrentReserve { get; set; } = 0;
+    
+    public void AddReserve(int amount)
+    {
+        CurrentReserve += amount;
+    }
+}
+```
+
+注册能力图标到 `PowerIconPatch.cs`：
+
+```csharp
+{ typeof(GoldMinePower), "res://RedAlert2ModResources/images/packed/powers/GoldMinePower.png" },
+```
+
+---
+
+### 7. 本地化（两份）
+
+由于游戏使用类名自动生成本地化key，公共卡牌需要创建两份本地化条目：
+
+#### cards.json（中文）
+
+```json
+{
+    "ALLIES_GOLD_MINE_CARD.title": "黄金矿",
+    "ALLIES_GOLD_MINE_CARD.description": "获得 {Reserve} [gold]黄金矿[/gold]储备。",
+    "SOVIET_GOLD_MINE_CARD.title": "黄金矿",
+    "SOVIET_GOLD_MINE_CARD.description": "获得 {Reserve} [gold]黄金矿[/gold]储备。"
+}
+```
+
+#### cards.json（英文）
+
+```json
+{
+    "ALLIES_GOLD_MINE_CARD.title": "Gold Mine",
+    "ALLIES_GOLD_MINE_CARD.description": "Gains {Reserve} [gold]Gold Mine[/gold] reserve.",
+    "SOVIET_GOLD_MINE_CARD.title": "Gold Mine",
+    "SOVIET_GOLD_MINE_CARD.description": "Gains {Reserve} [gold]Gold Mine[/gold] reserve."
+}
+```
+
+> **重要**：两份本地化内容相同，但必须分别创建，因为游戏使用类名自动生成key。
+
+---
+
+### 8. 能力本地化（共用）
+
+能力本地化只需一份，存放在 `powers.json` 中：
+
+```json
+{
+    "GOLD_MINE_POWER.title": "黄金矿",
+    "GOLD_MINE_POWER.smartDescription": "黄金矿储备：{CurrentReserve}"
+}
+```
+
+---
+
+### 公共卡牌创建流程总结
+
+| 步骤 | 操作 | 文件路径 |
+|------|------|---------|
+| 1 | 创建公共基类（完整逻辑） | `Common/Cards/GoldMineCard.cs` |
+| 2 | 创建盟军子类（仅继承） | `Allies/Cards/AlliesGoldMineCard.cs` |
+| 3 | 创建苏军子类（仅继承） | `Soviet/Cards/SovietGoldMineCard.cs` |
+| 4 | 定义数值 | `Common/Cards/CommonCardValues.cs` |
+| 5 | 注册到盟军卡池 | `Allies/AlliedCardRegistry.cs` |
+| 6 | 注册到苏军卡池 | `Soviet/SovietCardRegistry.cs` |
+| 7 | 创建共用能力（如需要） | `Common/Powers/GoldMinePower.cs` |
+| 8 | 注册能力图标 | `Allies/Powers/PowerIconPatch.cs` |
+| 9 | 添加盟军本地化 | `localization/zhs/cards.json` |
+| 10 | 添加苏军本地化 | `localization/zhs/cards.json` |
+| 11 | 添加能力本地化（共用） | `localization/zhs/powers.json` |
+
+---
+
+## 五、常见遗漏检查清单
+
+| 检查项 | 单位卡 | 建筑卡 | 战备卡 | 公共卡 |
+|--------|:------:|:------:|:------:|:------:|
+| 语音注册 | ✅ | ❌ | ❌ | ❌ |
+| 卡牌图标 | ✅ | ✅ | ✅ | ✅ |
+| 数值存储 | ✅ | ✅ | ✅ | ✅（Common） |
+| 价格映射 | ✅ | ✅ | ❌ | ❌ |
+| CardRegistry注册 | ✅ | ✅ | ✅ | ✅（双阵营） |
+| 能力图标补丁 | ❌ | ✅ | ✅ | ✅（共用） |
+| 科技解锁配置 | ✅ | ✅ | ❌ | ❌ |
+| 本地化 | ✅ | ✅ | ✅ | ✅（双份） |
+| 音效播放 | ✅ | ✅ | ❌ | ❌（资源卡） |
+
+---
+
+## 六、路径规范总结
 
 ### 语音文件路径
 ```
@@ -483,7 +754,7 @@ RedAlert2Mod/localization/eng/powers.json   # 英文能力
 
 ---
 
-## 六、ID转换规则
+## 七、ID转换规则
 
 ```
 MyClassName → MY_CLASS_NAME
@@ -492,11 +763,13 @@ MyClassName → MY_CLASS_NAME
 V3Rocket → V3_ROCKET
 SovietRadar → SOVIET_RADAR
 Eagle500kg → EAGLE_500KG
+AlliesGoldMineCard → ALLIES_GOLD_MINE_CARD
+SovietGoldMineCard → SOVIET_GOLD_MINE_CARD
 ```
 
 ---
 
-## 七、编译与部署
+## 八、编译与部署
 
 ### 编译命令
 ```bash
@@ -510,7 +783,7 @@ dotnet build RedAlert2Mod.csproj -c Release -o build
 
 ---
 
-## 八、重要注意事项
+## 九、重要注意事项
 
 ### 1. 项目文件优先重命名英文再使用
 

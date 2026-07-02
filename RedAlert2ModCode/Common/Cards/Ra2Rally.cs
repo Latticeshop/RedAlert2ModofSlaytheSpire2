@@ -14,7 +14,7 @@ using RedAlert2ModCode.Soviet;
 
 namespace RedAlert2ModCode.Common.Cards;
 
-public sealed class Ra2Rally : CardModel
+public class Ra2Rally : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = CommonCardValues.Ra2Rally;
 

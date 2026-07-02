@@ -18,7 +18,7 @@ using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Common.Cards;
 
-public sealed class StopProductionCard : CardModel
+public class StopProductionCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = CommonCardValues.StopProduction;
 

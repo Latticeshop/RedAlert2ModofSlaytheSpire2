@@ -4,8 +4,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
-using RedAlert2ModCode.Common;
-using RedAlert2ModCode.Common.Cards;
+using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Cards;
 using RedAlert2ModCode.Soviet.Powers;
@@ -14,7 +13,6 @@ namespace RedAlert2ModCode.Soviet;
 
 public static class SovietCardRegistry
 {
-    // 苏军单位卡
     public static List<Func<CardModel>> Soldiers { get; } = new()
     {
         () => ModelDb.Card<Conscript>(),
@@ -53,60 +51,72 @@ public static class SovietCardRegistry
         () => ModelDb.Card<TyphoonSubmarine>(),
     };
 
-    // 苏军建筑卡
-	public static List<Func<CardModel>> BuildingCards { get; } = new()
-	{
-		() => ModelDb.Card<SovietBarracksCard>(),
-		() => ModelDb.Card<SovietWarFactory>(),
-		() => ModelDb.Card<SovietShipyardCard>(),
-		() => ModelDb.Card<SovietRepairDepot>(),
-		() => ModelDb.Card<SovietPillboxCard>(),
-		() => ModelDb.Card<SovietFlakCannon>(),
-		() => ModelDb.Card<SovietWallCard>(),
-		() => ModelDb.Card<SovietFortifiedWall>(),
-		() => ModelDb.Card<NuclearReactor>(),
-		() => ModelDb.Card<SovietRefinery>(),
-		() => ModelDb.Card<SovietMCV>(),
-		() => ModelDb.Card<SovietBattleLab>(),
-		() => ModelDb.Card<SovietRadar>(),
-		() => ModelDb.Card<SovietTeslaCoilCard>(),
-		() => ModelDb.Card<IronCurtainCard>(),
-		() => ModelDb.Card<NuclearMissileSiloCard>(),
-	};
-
-    // 苏军技能卡 - 通过CommonCardRegistry获取公共共享卡（不含飞鹰战备系列）
-	public static List<Func<CardModel>> PowerCards { get; } = CreatePowerCards();
-
-	private static List<Func<CardModel>> CreatePowerCards()
-	{
-		var cards = CommonCardRegistry.GetAllPowerCardsForSoviet();
-		cards.Add(() => ModelDb.Card<IronCurtain>());
-		cards.Add(() => ModelDb.Card<NuclearAttack>());
-		return cards;
-	}
-
-	// 苏军特殊卡 - 通过CommonCardRegistry获取公共卡
-	public static List<Func<CardModel>> SpecialCards { get; } = CommonCardRegistry.GetAllSpecialCardsForBoth();
-
-    /// <summary>
-    /// 获取所有公共技能卡（用于动态生成）
-    /// </summary>
-    public static List<Func<CardModel>> GetSharedPowerCards()
+    public static List<Func<CardModel>> BuildingCards { get; } = new()
     {
-        return CommonCardRegistry.SharedPowerCards;
+        () => ModelDb.Card<SovietBarracksCard>(),
+        () => ModelDb.Card<SovietWarFactory>(),
+        () => ModelDb.Card<SovietShipyardCard>(),
+        () => ModelDb.Card<SovietRepairDepot>(),
+        () => ModelDb.Card<SovietPillboxCard>(),
+        () => ModelDb.Card<SovietFlakCannon>(),
+        () => ModelDb.Card<SovietWallCard>(),
+        () => ModelDb.Card<SovietFortifiedWall>(),
+        () => ModelDb.Card<NuclearReactor>(),
+        () => ModelDb.Card<SovietRefinery>(),
+        () => ModelDb.Card<SovietMCV>(),
+        () => ModelDb.Card<SovietBattleLab>(),
+        () => ModelDb.Card<SovietRadar>(),
+        () => ModelDb.Card<SovietTeslaCoilCard>(),
+        () => ModelDb.Card<IronCurtainCard>(),
+        () => ModelDb.Card<NuclearMissileSiloCard>(),
+    };
+
+    public static List<Func<CardModel>> PowerCards { get; } = CreatePowerCards();
+
+    private static List<Func<CardModel>> CreatePowerCards()
+    {
+        var cards = new List<Func<CardModel>>();
+        cards.Add(() => ModelDb.Card<SovietSellMCV>());
+        cards.Add(() => ModelDb.Card<SovietRa2Rally>());
+        cards.Add(() => ModelDb.Card<SovietStopProductionCard>());
+        cards.Add(() => ModelDb.Card<SovietOilDerrickCard>());
+        cards.Add(() => ModelDb.Card<SovietGoldMineCard>());
+        cards.Add(() => ModelDb.Card<SovietGemMineCard>());
+        cards.Add(() => ModelDb.Card<SovietGoldMineColumnCard>());
+        cards.Add(() => ModelDb.Card<IronCurtain>());
+        cards.Add(() => ModelDb.Card<NuclearAttack>());
+        return cards;
     }
 
-    /// <summary>
-    /// 获取所有单位卡（士兵）
-    /// </summary>
+    public static List<Func<CardModel>> SpecialCards { get; } = CreateSpecialCards();
+
+    private static List<Func<CardModel>> CreateSpecialCards()
+    {
+        return new List<Func<CardModel>>
+        {
+            () => ModelDb.Card<SovietParatrooper>(),
+        };
+    }
+
+    public static List<Func<CardModel>> GetSharedPowerCards()
+    {
+        return new List<Func<CardModel>>
+        {
+            () => ModelDb.Card<SovietSellMCV>(),
+            () => ModelDb.Card<SovietRa2Rally>(),
+            () => ModelDb.Card<SovietStopProductionCard>(),
+            () => ModelDb.Card<SovietOilDerrickCard>(),
+            () => ModelDb.Card<SovietGoldMineCard>(),
+            () => ModelDb.Card<SovietGemMineCard>(),
+            () => ModelDb.Card<SovietGoldMineColumnCard>(),
+        };
+    }
+
     public static List<CardModel> GetAllSoldiers()
     {
         return Soldiers.Select(s => s()).ToList();
     }
 
-    /// <summary>
-    /// 获取所有单位卡（装甲）- 包含高科技单位和雷达单位
-    /// </summary>
     public static List<CardModel> GetAllVehicles()
     {
         List<CardModel> vehicles = Vehicles.Select(s => s()).ToList();
@@ -115,25 +125,16 @@ public static class SovietCardRegistry
         return vehicles;
     }
 
-    /// <summary>
-    /// 获取所有单位卡（飞机）
-    /// </summary>
     public static List<CardModel> GetAllAircraft()
     {
         return Aircraft.Select(s => s()).ToList();
     }
 
-    /// <summary>
-    /// 获取所有单位卡（船只）
-    /// </summary>
     public static List<CardModel> GetAllShips()
     {
         return Ships.Select(s => s()).ToList();
     }
 
-    /// <summary>
-    /// 获取所有单位卡
-    /// </summary>
     public static List<CardModel> GetAllUnits()
     {
         List<CardModel> units = new();
@@ -144,33 +145,21 @@ public static class SovietCardRegistry
         return units;
     }
 
-    /// <summary>
-    /// 获取所有建筑卡
-    /// </summary>
     public static List<CardModel> GetAllBuildingCards()
     {
         return BuildingCards.Select(s => s()).ToList();
     }
 
-    /// <summary>
-    /// 获取所有技能卡
-    /// </summary>
     public static List<CardModel> GetAllPowerCards()
     {
         return PowerCards.Select(s => s()).ToList();
     }
 
-    /// <summary>
-    /// 获取所有特殊卡
-    /// </summary>
     public static List<CardModel> GetAllSpecialCards()
     {
         return SpecialCards.Select(s => s()).ToList();
     }
 
-    /// <summary>
-    /// 获取所有卡牌
-    /// </summary>
     public static List<CardModel> GetAllCards()
     {
         List<CardModel> cards = new();
@@ -181,9 +170,6 @@ public static class SovietCardRegistry
         return cards;
     }
 
-    /// <summary>
-    /// 根据拥有者创建士兵卡牌列表
-    /// </summary>
     public static List<CardModel> CreateSoldiers(Player owner)
     {
         return Soldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();

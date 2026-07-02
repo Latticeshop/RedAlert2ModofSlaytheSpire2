@@ -4,8 +4,6 @@ using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Models;
 using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Allies.Cards;
-using RedAlert2ModCode.Common;
-using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Allies.Patches;
 using RedAlert2ModCode.Soviet;
 
@@ -40,24 +38,12 @@ public static class ModInitializer
         ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AlliesBarracksCard));
         ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(ChronoMiner));
         ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AlliedRefinery));
-        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(MirageTank));  // 高科技(T2)单位
-        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(PrismTank));  // 高科技(T2)单位
-        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AircraftCarrier));  // 高科技(T2)海军单位
-        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AlliesRepairDepot));  // 修理厂
-        // Rally 通过 AlliedCardRegistry.PowerCards 注册，不需要在这里重复注册
+        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(MirageTank));
+        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(PrismTank));
+        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AircraftCarrier));
+        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AlliesRepairDepot));
         
-        // 注册所有公共卡牌到CommonCardPool
-        ModHelper.AddModelToPool(typeof(CommonCardPool), typeof(OilDerrickCard));
-        ModHelper.AddModelToPool(typeof(CommonCardPool), typeof(GoldMineCard));
-        ModHelper.AddModelToPool(typeof(CommonCardPool), typeof(GoldMineColumnCard));
-        ModHelper.AddModelToPool(typeof(CommonCardPool), typeof(GemMineCard));
-        ModHelper.AddModelToPool(typeof(CommonCardPool), typeof(SellMCV));
-        ModHelper.AddModelToPool(typeof(CommonCardPool), typeof(StopProductionCard));
-        ModHelper.AddModelToPool(typeof(CommonCardPool), typeof(Paratrooper));
-        ModHelper.AddModelToPool(typeof(CommonCardPool), typeof(Ra2Rally));
-        ModHelper.AddModelToPool(typeof(CommonCardPool), typeof(EagleMachineGun));
-        ModHelper.AddModelToPool(typeof(CommonCardPool), typeof(EagleAirStrike));
-        ModHelper.AddModelToPool(typeof(CommonCardPool), typeof(Eagle500kg));
+        // 公共卡牌和盟军专属卡牌通过各阵营 CardPool.GenerateAllCards() -> *CardRegistry 获取，无需在此注册
         
         Godot.Bridge.ScriptManagerBridge.LookupScriptsInAssembly(Assembly.GetExecutingAssembly());
         

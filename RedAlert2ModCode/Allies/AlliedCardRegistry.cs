@@ -5,9 +5,8 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Allies.Cards;
-using RedAlert2ModCode.Common;
-using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Powers;
 
 namespace RedAlert2ModCode.Allies;
@@ -31,7 +30,7 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<ChronoMiner>()
     };
 
-    /// <summary>高科技(T2)装甲单位 - 需要作战实验室解锁</summary>
+    /// <summary>高科技(T3)装甲单位 - 需要作战实验室解锁</summary>
     public static List<Func<CardModel>> HighTechVehicles { get; } = new()
     {
         () => ModelDb.Card<MirageTank>(),
@@ -52,28 +51,28 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<Agisicon>()
     };
 
-    /// <summary>高科技(T2)海军单位 - 需要作战实验室解锁</summary>
+    /// <summary>高科技(T3)海军单位 - 需要作战实验室解锁</summary>
     public static List<Func<CardModel>> HighTechShips { get; } = new()
     {
         () => ModelDb.Card<AircraftCarrier>()
     };
 
     // 盟军建筑卡
-	public static List<Func<CardModel>> BuildingCards { get; } = new()
-	{
-		() => ModelDb.Card<AlliesBarracksCard>(),
-		() => ModelDb.Card<AlliedWarFactory>(),
-		() => ModelDb.Card<AlliedMCV>(),
-		() => ModelDb.Card<PowerPlantCard>(),
-		() => ModelDb.Card<AirForceCommand>(),
-		() => ModelDb.Card<AlliedRefinery>(),
-		() => ModelDb.Card<AlliedWallCard>(),
-		() => ModelDb.Card<FortifiedWall>(),
-		() => ModelDb.Card<AlliesShipyardCard>(),
-		() => ModelDb.Card<AlliedBattleLab>(),
-		() => ModelDb.Card<ChronoSphere>(),
-		() => ModelDb.Card<WeatherController>()
-	};
+    public static List<Func<CardModel>> BuildingCards { get; } = new()
+    {
+        () => ModelDb.Card<AlliesBarracksCard>(),
+        () => ModelDb.Card<AlliedWarFactory>(),
+        () => ModelDb.Card<AlliedMCV>(),
+        () => ModelDb.Card<PowerPlantCard>(),
+        () => ModelDb.Card<AirForceCommand>(),
+        () => ModelDb.Card<AlliedRefinery>(),
+        () => ModelDb.Card<AlliedWallCard>(),
+        () => ModelDb.Card<FortifiedWall>(),
+        () => ModelDb.Card<AlliesShipyardCard>(),
+        () => ModelDb.Card<AlliedBattleLab>(),
+        () => ModelDb.Card<ChronoSphere>(),
+        () => ModelDb.Card<WeatherController>()
+    };
 
     // 盟军防御塔
     public static List<Func<CardModel>> DefenseTowers { get; } = new()
@@ -83,15 +82,25 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<PatriotMissile>()
     };
 
-    // 盟军运转(技能)卡 - 通过CommonCardRegistry获取公共卡，添加盟军专属卡
-	public static List<Func<CardModel>> PowerCards { get; } = CreatePowerCards();
+    // 盟军技能卡 
+    public static List<Func<CardModel>> PowerCards { get; } = CreatePowerCards();
 
-	// 盟军特殊卡 - 通过CommonCardRegistry获取公共卡
+	// 盟军特殊卡 
     public static List<Func<CardModel>> SpecialCards { get; } = CreateSpecialCards();
 
     private static List<Func<CardModel>> CreatePowerCards()
     {
-        var cards = CommonCardRegistry.GetAllPowerCardsForAllies();
+        var cards = new List<Func<CardModel>>();
+        cards.Add(() => ModelDb.Card<AlliesSellMCV>());
+        cards.Add(() => ModelDb.Card<AlliesRa2Rally>());
+        cards.Add(() => ModelDb.Card<AlliesStopProductionCard>());
+        cards.Add(() => ModelDb.Card<AlliesOilDerrickCard>());
+        cards.Add(() => ModelDb.Card<AlliesGoldMineCard>());
+        cards.Add(() => ModelDb.Card<AlliesGemMineCard>());
+        cards.Add(() => ModelDb.Card<AlliesGoldMineColumnCard>());
+        cards.Add(() => ModelDb.Card<EagleMachineGun>());
+        cards.Add(() => ModelDb.Card<EagleAirStrike>());
+        cards.Add(() => ModelDb.Card<Eagle500kg>());
         cards.Add(() => ModelDb.Card<AlliedEarlyMining>());
         cards.Add(() => ModelDb.Card<ChronoWarp>());
         cards.Add(() => ModelDb.Card<LightningStorm>());
@@ -101,7 +110,10 @@ public static class AlliedCardRegistry
 
     private static List<Func<CardModel>> CreateSpecialCards()
     {
-        return CommonCardRegistry.GetAllSpecialCardsForBoth();
+        return new List<Func<CardModel>>
+        {
+            () => ModelDb.Card<AlliesParatrooper>(),
+        };
     }
 
     /// <summary>
@@ -109,15 +121,33 @@ public static class AlliedCardRegistry
     /// </summary>
     public static List<Func<CardModel>> GetSharedPowerCards()
     {
-        return CommonCardRegistry.SharedPowerCards;
+    /// <summary>
+    /// 获取所有盟军专属技能卡（用于动态生成）- 飞鹰战备系列 + 其他盟军专属卡
+    /// </summary>
+        return new List<Func<CardModel>>
+        {
+            () => ModelDb.Card<AlliesSellMCV>(),
+            () => ModelDb.Card<AlliesRa2Rally>(),
+            () => ModelDb.Card<AlliesStopProductionCard>(),
+            () => ModelDb.Card<AlliesOilDerrickCard>(),
+            () => ModelDb.Card<AlliesGoldMineCard>(),
+            () => ModelDb.Card<AlliesGemMineCard>(),
+            () => ModelDb.Card<AlliesGoldMineColumnCard>(),
+        };
     }
 
-    /// <summary>
-    /// 获取所有盟军专属技能卡（用于动态生成）
-    /// </summary>
     public static List<Func<CardModel>> GetAlliedOnlyPowerCards()
     {
-        return CommonCardRegistry.AlliedOnlyPowerCards;
+        return new List<Func<CardModel>>
+        {
+            () => ModelDb.Card<EagleMachineGun>(),
+            () => ModelDb.Card<EagleAirStrike>(),
+            () => ModelDb.Card<Eagle500kg>(),
+            () => ModelDb.Card<AlliedEarlyMining>(),
+            () => ModelDb.Card<ChronoWarp>(),
+            () => ModelDb.Card<LightningStorm>(),
+            () => ModelDb.Card<StrategyTowerDefense>(),
+        };
     }
 
     /// <summary>
@@ -247,7 +277,7 @@ public static class AlliedCardRegistry
     }
 
     /// <summary>
-    /// 创建高科技(T2)装甲单位卡牌列表
+    /// 创建高科技(T3)装甲单位卡牌列表
     /// </summary>
     public static List<CardModel> CreateHighTechVehicles(Player owner)
     {
@@ -308,7 +338,7 @@ public static class AlliedCardRegistry
     {
         List<CardModel> units = new();
         units.AddRange(CreateSoldiers(owner));
-        units.AddRange(CreateVehicles(owner));  // CreateVehicles已包含高科技单位筛选逻辑
+        units.AddRange(CreateVehicles(owner));
         units.AddRange(CreateAircraft(owner));
         units.AddRange(CreateShips(owner));
         return units;

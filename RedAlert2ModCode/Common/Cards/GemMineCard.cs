@@ -16,7 +16,7 @@ using RedAlert2ModCode.Common.Powers;
 
 namespace RedAlert2ModCode.Common.Cards;
 
-public sealed class GemMineCard : CardModel
+public class GemMineCard : CardModel
 {
     private static readonly CardValueStore.CardValues Values = CommonCardValues.GemMine;
     

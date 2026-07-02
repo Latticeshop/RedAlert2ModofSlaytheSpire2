@@ -14,13 +14,7 @@ using Godot;
 
 namespace RedAlert2ModCode.Common.Cards;
 
-/// <summary>
-/// 伞兵 - 攻击卡（公共）
-/// 1费（升级后0费），common白卡
-/// 效果：将少许部队加入手牌。消耗。
-/// 将6张美国大兵（盟军）或动员兵（苏军）添加到手牌，伞兵和添加的大兵都添加消耗词条
-/// </summary>
-public sealed class Paratrooper : CardModel
+public class Paratrooper : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = CommonCardValues.Paratrooper;
 
@@ -28,9 +22,6 @@ public sealed class Paratrooper : CardModel
 
 	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/aparicon.png";
 
-	/// <summary>
-	/// 消耗词条
-	/// </summary>
 	public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[] { CardKeyword.Exhaust };
 
 	protected override List<DynamicVar> CanonicalVars => new() { };
@@ -48,13 +39,11 @@ public sealed class Paratrooper : CardModel
 	{
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Attack", Owner.Character.CastAnimDelay);
 
-		// 根据玩家阵营决定添加哪种士兵和数量
 		bool isSoviet = Owner.Character?.Id?.Entry?.Contains("SOVIET") ?? false;
 		bool isAllies = !isSoviet && (Owner.Character?.Id?.Entry?.Contains("REDALERT") ?? false);
 		
 		int soldierCount = isSoviet ? 9 : 6;
 		
-		// 将士兵加入手牌
 		for (int i = 0; i < soldierCount; i++)
 		{
 			var soldierCard = CreateSoldierCard(isAllies);
@@ -67,9 +56,6 @@ public sealed class Paratrooper : CardModel
 		}
 	}
 
-	/// <summary>
-	/// 创建士兵卡牌
-	/// </summary>
 	private CardModel? CreateSoldierCard(bool isAllies)
 	{
 		try
@@ -94,7 +80,6 @@ public sealed class Paratrooper : CardModel
 
 	protected override void OnUpgrade()
 	{
-		// 升级效果：费用从1降低到0
 		EnergyCost.UpgradeBy((int)Values.CostUpgraded);
 	}
 }
