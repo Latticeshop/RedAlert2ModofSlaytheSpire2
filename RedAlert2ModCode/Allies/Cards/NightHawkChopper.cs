@@ -82,18 +82,18 @@ public sealed partial class NightHawkChopper : CardModel
             new DeployChoiceScreen.ChoiceOption
             {
                 Id = "deploy",
-                Title = "部署",
-                Description = "存储当前手牌中的士兵单位"
+                Title = new LocString("card_keywords", "ui.night_hawk.deploy_title"),
+                Description = new LocString("card_keywords", "ui.night_hawk.deploy_desc")
             },
             new DeployChoiceScreen.ChoiceOption
             {
                 Id = "attack",
-                Title = "攻击",
-                Description = "获得敏捷和攻击"
+                Title = new LocString("card_keywords", "ui.night_hawk.attack_title"),
+                Description = new LocString("card_keywords", "ui.night_hawk.attack_desc")
             }
         };
 
-        var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, "选择夜莺直升机的行动", options, FactionType.Allied);
+        var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, new LocString("card_keywords", "ui.night_hawk.title"), options, FactionType.Allied);
 
         if (selectedIndex == 0)
         {

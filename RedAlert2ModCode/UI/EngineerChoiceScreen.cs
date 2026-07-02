@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
@@ -18,6 +19,7 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
     private readonly TaskCompletionSource<EngineerChoice?> _completionSource = new();
 	private readonly List<EngineerChoice> _choices;
 	private readonly string? _engineerPortraitPath;
+	private readonly FactionType _faction;
 	private bool _choiceLocked;
 
 	/// <summary>
@@ -40,8 +42,8 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
 	public sealed class EngineerChoice
 	{
 		public ChoiceType Type { get; set; }
-		public string Title { get; set; } = string.Empty;
-		public string Description { get; set; } = string.Empty;
+		public object Title { get; set; } = string.Empty;
+		public object Description { get; set; } = string.Empty;
 		public int Weight { get; set; }
 	}
 
@@ -49,10 +51,49 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
 	public bool UseSharedBackstop => true;
 	public Control? DefaultFocusedControl => null;
 
-	private EngineerChoiceScreen(List<EngineerChoice> choices, string? engineerPortraitPath)
+	private string GetLocStringText(object? locStringObj)
+	{
+		if (locStringObj == null) return string.Empty;
+		if (locStringObj is string str) return str;
+
+		System.Reflection.MethodInfo? formatMethod = locStringObj.GetType().GetMethod("GetFormattedText");
+		if (formatMethod != null)
+		{
+			try
+			{
+				object? result = formatMethod.Invoke(locStringObj, null);
+				if (result is string formattedText && !string.IsNullOrEmpty(formattedText))
+				{
+					return formattedText;
+				}
+			}
+			catch { }
+		}
+
+		System.Reflection.MethodInfo? rawMethod = locStringObj.GetType().GetMethod("GetRawText");
+		if (rawMethod != null)
+		{
+			object? result = rawMethod.Invoke(locStringObj, null);
+			if (result is string rawText && !string.IsNullOrEmpty(rawText))
+			{
+				return rawText;
+			}
+		}
+
+		string toString = locStringObj.ToString() ?? string.Empty;
+		if (!toString.StartsWith("MegaCrit.Sts2.Core.Localization") && !toString.Contains("LocString"))
+		{
+			return toString;
+		}
+
+		return string.Empty;
+	}
+
+	private EngineerChoiceScreen(List<EngineerChoice> choices, string? engineerPortraitPath, FactionType faction = FactionType.Allied)
 	{
 		_choices = choices;
 		_engineerPortraitPath = engineerPortraitPath;
+		_faction = faction;
 		Name = nameof(EngineerChoiceScreen);
 		SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
 		MouseFilter = MouseFilterEnum.Stop;
@@ -63,9 +104,9 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
 	/// <summary>
 	/// 显示选择界面
 	/// </summary>
-	public static async Task<EngineerChoice?> ShowSelection(List<EngineerChoice> choices, string? engineerPortraitPath = null)
+	public static async Task<EngineerChoice?> ShowSelection(List<EngineerChoice> choices, string? engineerPortraitPath = null, FactionType faction = FactionType.Allied)
 	{
-		var screen = new EngineerChoiceScreen(choices, engineerPortraitPath);
+		var screen = new EngineerChoiceScreen(choices, engineerPortraitPath, faction);
 		NOverlayStack.Instance?.Push(screen);
 		return await screen._completionSource.Task;
 	}
@@ -73,65 +114,65 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
 	/// <summary>
 	/// 显示选择界面（支持多人同步）
 	/// </summary>
-	public static async Task<EngineerChoice?> ShowSelectionWithSync(List<EngineerChoice> choices, string? engineerPortraitPath, MegaCrit.Sts2.Core.Entities.Players.Player player)
+	public static async Task<EngineerChoice?> ShowSelectionWithSync(List<EngineerChoice> choices, string? engineerPortraitPath, MegaCrit.Sts2.Core.Entities.Players.Player player, FactionType faction = FactionType.Allied)
 	{
 		EngineerChoice? selectedChoice = null;
 		
 		var runManagerType = Type.GetType("MegaCrit.Sts2.Core.Runs.RunManager, MegaCrit.Sts2.Core");
 		if (runManagerType == null)
 		{
-			return await ShowSelection(choices, engineerPortraitPath);
+			return await ShowSelection(choices, engineerPortraitPath, faction);
 		}
 		
 		var instanceProp = runManagerType.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
 		if (instanceProp == null)
-			return await ShowSelection(choices, engineerPortraitPath);
+			return await ShowSelection(choices, engineerPortraitPath, faction);
 		
 		var runManager = instanceProp.GetValue(null);
 		if (runManager == null)
-			return await ShowSelection(choices, engineerPortraitPath);
+			return await ShowSelection(choices, engineerPortraitPath, faction);
 		
 		var netServiceProp = runManagerType.GetProperty("NetService");
 		if (netServiceProp == null)
-			return await ShowSelection(choices, engineerPortraitPath);
+			return await ShowSelection(choices, engineerPortraitPath, faction);
 		
 		var netService = netServiceProp.GetValue(runManager);
 		if (netService == null)
-			return await ShowSelection(choices, engineerPortraitPath);
+			return await ShowSelection(choices, engineerPortraitPath, faction);
 		
 		var typeProp = netService.GetType().GetProperty("Type");
 		if (typeProp == null)
-			return await ShowSelection(choices, engineerPortraitPath);
+			return await ShowSelection(choices, engineerPortraitPath, faction);
 		
 		var netType = typeProp.GetValue(netService);
 		if (netType == null)
-			return await ShowSelection(choices, engineerPortraitPath);
+			return await ShowSelection(choices, engineerPortraitPath, faction);
 		
 		string typeName = netType.ToString();
 		if (typeName is not "Host" and not "Client")
-			return await ShowSelection(choices, engineerPortraitPath);
+			return await ShowSelection(choices, engineerPortraitPath, faction);
 		
 		var synchronizerProp = runManagerType.GetProperty("PlayerChoiceSynchronizer");
 		if (synchronizerProp == null)
-			return await ShowSelection(choices, engineerPortraitPath);
+			return await ShowSelection(choices, engineerPortraitPath, faction);
 		
 		var synchronizer = synchronizerProp.GetValue(runManager);
 		if (synchronizer == null)
-			return await ShowSelection(choices, engineerPortraitPath);
+			return await ShowSelection(choices, engineerPortraitPath, faction);
 		
 		var reserveMethod = synchronizer.GetType().GetMethod("ReserveChoiceId");
 		if (reserveMethod == null)
-			return await ShowSelection(choices, engineerPortraitPath);
+			return await ShowSelection(choices, engineerPortraitPath, faction);
 		
 		uint choiceId = (uint)reserveMethod.Invoke(synchronizer, new[] { player });
 		
 		var serviceNetIdProp = netService.GetType().GetProperty("NetId");
 		if (serviceNetIdProp == null)
-			return await ShowSelection(choices, engineerPortraitPath);
+			return await ShowSelection(choices, engineerPortraitPath, faction);
 		
 		var playerNetIdProp = player.GetType().GetProperty("NetId");
 		if (playerNetIdProp == null)
-			return await ShowSelection(choices, engineerPortraitPath);
+			return await ShowSelection(choices, engineerPortraitPath, faction);
 		
 		ulong serviceNetId = (ulong)serviceNetIdProp.GetValue(netService);
 		ulong playerNetId = (ulong)playerNetIdProp.GetValue(player);
@@ -139,7 +180,7 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
 		
 		if (isLocalPlayer)
 		{
-			selectedChoice = await ShowSelection(choices, engineerPortraitPath);
+			selectedChoice = await ShowSelection(choices, engineerPortraitPath, faction);
 			
 			try
 			{
@@ -251,7 +292,7 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
         // 创建标题
         Label title = new()
         {
-            Text = "选择一个指令",
+            Text = GetLocStringText(new LocString("card_keywords", "engineer_choice.title")),
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
@@ -291,9 +332,9 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
         };
 
         // 设置按钮样式
-        button.AddThemeStyleboxOverride("normal", CreateCardStyle(new Color(0.1f, 0.15f, 0.25f, 0.9f)));
-        button.AddThemeStyleboxOverride("hover", CreateCardStyle(new Color(0.15f, 0.22f, 0.35f, 0.95f)));
-        button.AddThemeStyleboxOverride("pressed", CreateCardStyle(new Color(0.08f, 0.12f, 0.2f, 0.98f)));
+        button.AddThemeStyleboxOverride("normal", CreateCardStyle(GetButtonColor()));
+        button.AddThemeStyleboxOverride("hover", CreateCardStyle(GetButtonHoverColor()));
+        button.AddThemeStyleboxOverride("pressed", CreateCardStyle(GetButtonPressedColor()));
 
         // 创建内容边距
         MarginContainer contentMargin = new();
@@ -332,7 +373,7 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
         // 添加标题（金色更醒目）
         Label title = new()
         {
-            Text = choice.Title,
+            Text = GetLocStringText(choice.Title),
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
@@ -343,7 +384,7 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
         // 添加描述
         Label description = new()
         {
-            Text = choice.Description,
+            Text = GetLocStringText(choice.Description),
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
@@ -384,7 +425,7 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
         style.BorderWidthRight = 2;
         style.BorderWidthTop = 2;
         style.BorderWidthBottom = 2;
-        style.BorderColor = FactionHelper.GetFactionBorderColor();
+        style.BorderColor = GetFactionColor();
         return style;
     }
 
@@ -403,7 +444,7 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
         style.BorderWidthRight = 2;
         style.BorderWidthTop = 2;
         style.BorderWidthBottom = 2;
-        style.BorderColor = FactionHelper.GetFactionBorderColor();
+        style.BorderColor = GetFactionColor();
         return style;
     }
 
@@ -417,5 +458,45 @@ public sealed partial class EngineerChoiceScreen : Control, IOverlayScreen
         // 使用 TrySetCanceled 避免在任务已完成时抛出异常
         _completionSource.TrySetCanceled();
         base._ExitTree();
+    }
+
+    private Color GetFactionColor()
+    {
+        return _faction switch
+        {
+            FactionType.Soviet => new Color(0.9f, 0.4f, 0.4f),
+            FactionType.Yuri => new Color(0.8f, 0.4f, 1f),
+            _ => new Color(0.4f, 0.6f, 0.9f)
+        };
+    }
+
+    private Color GetButtonColor()
+    {
+        return _faction switch
+        {
+            FactionType.Soviet => new Color(0.2f, 0.08f, 0.08f, 0.9f),
+            FactionType.Yuri => new Color(0.2f, 0.08f, 0.2f, 0.9f),
+            _ => new Color(0.1f, 0.15f, 0.25f, 0.9f)
+        };
+    }
+
+    private Color GetButtonHoverColor()
+    {
+        return _faction switch
+        {
+            FactionType.Soviet => new Color(0.3f, 0.12f, 0.12f, 0.95f),
+            FactionType.Yuri => new Color(0.3f, 0.12f, 0.3f, 0.95f),
+            _ => new Color(0.15f, 0.22f, 0.35f, 0.95f)
+        };
+    }
+
+    private Color GetButtonPressedColor()
+    {
+        return _faction switch
+        {
+            FactionType.Soviet => new Color(0.15f, 0.06f, 0.06f, 0.98f),
+            FactionType.Yuri => new Color(0.15f, 0.06f, 0.15f, 0.98f),
+            _ => new Color(0.08f, 0.12f, 0.2f, 0.98f)
+        };
     }
 }

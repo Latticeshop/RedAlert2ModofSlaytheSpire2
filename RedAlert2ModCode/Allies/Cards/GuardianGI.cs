@@ -44,23 +44,28 @@ public sealed class GuardianGi : CardModel
     {
         UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Allies");
 
-        var options = new List<DeployChoiceScreen.ChoiceOption>
-        {
-            new DeployChoiceScreen.ChoiceOption
-            {
-                Id = "deploy",
-                Title = "部署",
-                Description = $"造成 {DynamicVars.Damage.BaseValue} 点伤害，赋予 1 层易伤"
-            },
-            new DeployChoiceScreen.ChoiceOption
-            {
-                Id = "defend",
-                Title = "防御",
-                Description = $"获得 {DynamicVars.Block} 点格挡"
-            }
-        };
+        var deployDesc = new LocString("card_keywords", "ui.guardian_gi.deploy_desc");
+            deployDesc.Add("Damage", DynamicVars.Damage.BaseValue);
+            var defendDesc = new LocString("card_keywords", "ui.guardian_gi.defend_desc");
+            defendDesc.Add("Block", DynamicVars.Block.BaseValue);
 
-        var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, "选择重装大兵的行动", options, FactionType.Allied);
+            var options = new List<DeployChoiceScreen.ChoiceOption>
+            {
+                new DeployChoiceScreen.ChoiceOption
+                {
+                    Id = "deploy",
+                    Title = new LocString("card_keywords", "ui.guardian_gi.deploy_title"),
+                    Description = deployDesc
+                },
+                new DeployChoiceScreen.ChoiceOption
+                {
+                    Id = "defend",
+                    Title = new LocString("card_keywords", "ui.guardian_gi.defend_title"),
+                    Description = defendDesc
+                }
+            };
+
+        var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, new LocString("card_keywords", "ui.guardian_gi.title"), options, FactionType.Allied);
 
         if (selectedIndex == 0)
         {

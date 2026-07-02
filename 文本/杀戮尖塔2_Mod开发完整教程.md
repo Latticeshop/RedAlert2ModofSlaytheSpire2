@@ -472,6 +472,23 @@ protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay
 }
 ```
 
+**UI刷新注意事项**：当卡牌打出后需要向手牌添加新卡牌时（如基地车选择建筑后），可能会出现卡牌卡在画面中央的情况。此时需要在添加卡牌后调用 `CardPileCmd.Draw(ctx, 0, Owner)` 触发UI刷新：
+
+```csharp
+protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+{
+    // ... 选择建筑逻辑 ...
+    
+    // 将选择的卡牌加入手牌
+    await CardPileCmd.AddGeneratedCardToCombat(selectedCard, PileType.Hand, Owner);
+    
+    // 触发UI刷新：抽0张牌（仅触发刷新机制）
+    await CardPileCmd.Draw(ctx, 0, Owner);
+}
+```
+
+**适用场景**：基地车卡牌、集结卡牌、伞兵卡牌等需要在打出后向手牌添加卡牌的场景。
+
 #### OnUpgrade - 升级时触发
 ```csharp
 protected override void OnUpgrade()

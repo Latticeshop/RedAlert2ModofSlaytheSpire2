@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Godot;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
@@ -27,6 +28,44 @@ public sealed partial class ProductionQueueSelectionScreen : Control, IOverlaySc
     public NetScreenType ScreenType => NetScreenType.Rewards;
     public bool UseSharedBackstop => true;
     public Control? DefaultFocusedControl => null;
+
+    private string GetLocStringText(object? locStringObj)
+    {
+        if (locStringObj == null) return string.Empty;
+        if (locStringObj is string str) return str;
+
+        System.Reflection.MethodInfo? formatMethod = locStringObj.GetType().GetMethod("GetFormattedText");
+        if (formatMethod != null)
+        {
+            try
+            {
+                object? result = formatMethod.Invoke(locStringObj, null);
+                if (result is string formattedText && !string.IsNullOrEmpty(formattedText))
+                {
+                    return formattedText;
+                }
+            }
+            catch { }
+        }
+
+        System.Reflection.MethodInfo? rawMethod = locStringObj.GetType().GetMethod("GetRawText");
+        if (rawMethod != null)
+        {
+            object? result = rawMethod.Invoke(locStringObj, null);
+            if (result is string rawText && !string.IsNullOrEmpty(rawText))
+            {
+                return rawText;
+            }
+        }
+
+        string toString = locStringObj.ToString() ?? string.Empty;
+        if (!toString.StartsWith("MegaCrit.Sts2.Core.Localization") && !toString.Contains("LocString"))
+        {
+            return toString;
+        }
+
+        return string.Empty;
+    }
 
     private ProductionQueueSelectionScreen(List<StopProductionCard.ProductionQueueItem> items, int maxSelection)
     {
@@ -323,7 +362,7 @@ public sealed partial class ProductionQueueSelectionScreen : Control, IOverlaySc
 
         Label title = new()
         {
-            Text = "请选择要启动或停止的生产序列",
+            Text = GetLocStringText(new LocString("card_keywords", "ui.production_queue.title")),
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
@@ -368,7 +407,7 @@ public sealed partial class ProductionQueueSelectionScreen : Control, IOverlaySc
 
         Button cancelButton = new()
         {
-            Text = "X 取消",
+            Text = GetLocStringText(new LocString("card_keywords", "ui.production_queue.cancel")),
             CustomMinimumSize = new Vector2(160f, 50f),
             SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
             FocusMode = FocusModeEnum.All,
@@ -384,7 +423,7 @@ public sealed partial class ProductionQueueSelectionScreen : Control, IOverlaySc
 
         Button confirmButton = new()
         {
-            Text = "确认选择",
+            Text = GetLocStringText(new LocString("card_keywords", "ui.production_queue.confirm")),
             CustomMinimumSize = new Vector2(160f, 50f),
             SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
             FocusMode = FocusModeEnum.All,
@@ -458,7 +497,7 @@ public sealed partial class ProductionQueueSelectionScreen : Control, IOverlaySc
 
         Label status = new()
         {
-            Text = item.IsStopped ? "已停产" : "生产中",
+            Text = item.IsStopped ? GetLocStringText(new LocString("card_keywords", "ui.production_queue.stopped")) : GetLocStringText(new LocString("card_keywords", "ui.production_queue.running")),
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
             Modulate = item.IsStopped ? new Color(1f, 0.8f, 0.6f) : new Color(0.6f, 1f, 0.6f)

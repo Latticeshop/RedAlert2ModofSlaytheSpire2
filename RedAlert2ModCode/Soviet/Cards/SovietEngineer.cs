@@ -43,7 +43,7 @@ public sealed class SovietEngineer : CardModel
 
 		List<EngineerChoiceScreen.EngineerChoice> choices = GenerateRandomChoices();
 
-		var selectedChoice = await EngineerChoiceScreen.ShowSelectionWithSync(choices, PortraitPath, Owner);
+		var selectedChoice = await EngineerChoiceScreen.ShowSelectionWithSync(choices, PortraitPath, Owner, FactionType.Soviet);
 
 		if (selectedChoice != null)
 		{

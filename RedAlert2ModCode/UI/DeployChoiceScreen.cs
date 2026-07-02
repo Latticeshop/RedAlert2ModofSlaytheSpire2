@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using Godot;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
@@ -24,6 +25,44 @@ public sealed partial class DeployChoiceScreen : Control, IOverlayScreen
     public bool UseSharedBackstop => true;
     public Control? DefaultFocusedControl => null;
 
+    private string GetLocStringText(object? locStringObj)
+    {
+        if (locStringObj == null) return string.Empty;
+        if (locStringObj is string str) return str;
+
+        System.Reflection.MethodInfo? formatMethod = locStringObj.GetType().GetMethod("GetFormattedText");
+        if (formatMethod != null)
+        {
+            try
+            {
+                object? result = formatMethod.Invoke(locStringObj, null);
+                if (result is string formattedText && !string.IsNullOrEmpty(formattedText))
+                {
+                    return formattedText;
+                }
+            }
+            catch { }
+        }
+
+        System.Reflection.MethodInfo? rawMethod = locStringObj.GetType().GetMethod("GetRawText");
+        if (rawMethod != null)
+        {
+            object? result = rawMethod.Invoke(locStringObj, null);
+            if (result is string rawText && !string.IsNullOrEmpty(rawText))
+            {
+                return rawText;
+            }
+        }
+
+        string toString = locStringObj.ToString() ?? string.Empty;
+        if (!toString.StartsWith("MegaCrit.Sts2.Core.Localization") && !toString.Contains("LocString"))
+        {
+            return toString;
+        }
+
+        return string.Empty;
+    }
+
     private DeployChoiceScreen(FactionType faction = FactionType.Allied)
     {
         _faction = faction;
@@ -33,7 +72,7 @@ public sealed partial class DeployChoiceScreen : Control, IOverlayScreen
         FocusMode = FocusModeEnum.All;
     }
 
-    private string _title = "选择行动";
+    private object _title = new LocString("card_keywords", "ui.deploy_choice.title");
     private List<ChoiceOption> _options = new();
 
     private Label? _titleLabel;
@@ -41,12 +80,12 @@ public sealed partial class DeployChoiceScreen : Control, IOverlayScreen
     public class ChoiceOption
     {
         public string Id { get; set; } = string.Empty;
-        public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public object Title { get; set; } = string.Empty;
+        public object Description { get; set; } = string.Empty;
         public string? IconPath { get; set; }
     }
 
-    public static async Task<int?> ShowSelection(string title, List<ChoiceOption> options, FactionType faction = FactionType.Allied)
+    public static async Task<int?> ShowSelection(object title, List<ChoiceOption> options, FactionType faction = FactionType.Allied)
     {
         var screen = new DeployChoiceScreen(faction);
         screen._title = title;
@@ -57,7 +96,7 @@ public sealed partial class DeployChoiceScreen : Control, IOverlayScreen
         return await screen._completionSource.Task;
     }
 
-    public static async Task<int?> ShowSelectionWithSync(Player player, string title, List<ChoiceOption> options, FactionType faction = FactionType.Allied)
+    public static async Task<int?> ShowSelectionWithSync(Player player, object title, List<ChoiceOption> options, FactionType faction = FactionType.Allied)
     {
         int? selectedChoice = null;
         
@@ -302,7 +341,7 @@ public sealed partial class DeployChoiceScreen : Control, IOverlayScreen
 
         _titleLabel = new Label()
         {
-            Text = _title,
+            Text = GetLocStringText(_title),
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
@@ -328,7 +367,7 @@ public sealed partial class DeployChoiceScreen : Control, IOverlayScreen
 
     private void UpdateUiText()
     {
-        if (_titleLabel != null) _titleLabel.Text = _title;
+        if (_titleLabel != null) _titleLabel.Text = GetLocStringText(_title);
     }
 
     private Button CreateChoiceButton(int index, ChoiceOption option)
@@ -364,7 +403,7 @@ public sealed partial class DeployChoiceScreen : Control, IOverlayScreen
 
         Label titleLabel = new Label()
         {
-            Text = option.Title,
+            Text = GetLocStringText(option.Title),
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
@@ -374,7 +413,7 @@ public sealed partial class DeployChoiceScreen : Control, IOverlayScreen
 
         Label descLabel = new Label()
         {
-            Text = option.Description,
+            Text = GetLocStringText(option.Description),
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
             AutowrapMode = TextServer.AutowrapMode.WordSmart

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using Godot;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -22,6 +23,44 @@ public sealed partial class ChronoWarpScreen : Control, IOverlayScreen
     public NetScreenType ScreenType => NetScreenType.Rewards;
     public bool UseSharedBackstop => true;
     public Control? DefaultFocusedControl => null;
+
+    private string GetLocStringText(object? locStringObj)
+    {
+        if (locStringObj == null) return string.Empty;
+        if (locStringObj is string str) return str;
+
+        System.Reflection.MethodInfo? formatMethod = locStringObj.GetType().GetMethod("GetFormattedText");
+        if (formatMethod != null)
+        {
+            try
+            {
+                object? result = formatMethod.Invoke(locStringObj, null);
+                if (result is string formattedText && !string.IsNullOrEmpty(formattedText))
+                {
+                    return formattedText;
+                }
+            }
+            catch { }
+        }
+
+        System.Reflection.MethodInfo? rawMethod = locStringObj.GetType().GetMethod("GetRawText");
+        if (rawMethod != null)
+        {
+            object? result = rawMethod.Invoke(locStringObj, null);
+            if (result is string rawText && !string.IsNullOrEmpty(rawText))
+            {
+                return rawText;
+            }
+        }
+
+        string toString = locStringObj.ToString() ?? string.Empty;
+        if (!toString.StartsWith("MegaCrit.Sts2.Core.Localization") && !toString.Contains("LocString"))
+        {
+            return toString;
+        }
+
+        return string.Empty;
+    }
 
     public enum PileChoice
     {
@@ -309,9 +348,9 @@ public sealed partial class ChronoWarpScreen : Control, IOverlayScreen
         choicesRow.AddThemeConstantOverride("separation", 20);
         root.AddChild(choicesRow);
 
-        choicesRow.AddChild(CreatePileButton((int)PileChoice.Draw, "摸牌堆"));
-        choicesRow.AddChild(CreatePileButton((int)PileChoice.Hand, "手牌"));
-        choicesRow.AddChild(CreatePileButton((int)PileChoice.Discard, "弃牌堆"));
+        choicesRow.AddChild(CreatePileButton((int)PileChoice.Draw, GetLocStringText(new LocString("card_keywords", "ui.pile_draw"))));
+        choicesRow.AddChild(CreatePileButton((int)PileChoice.Hand, GetLocStringText(new LocString("card_keywords", "ui.pile_hand"))));
+        choicesRow.AddChild(CreatePileButton((int)PileChoice.Discard, GetLocStringText(new LocString("card_keywords", "ui.pile_discard"))));
     }
 
     private Button CreatePileButton(int pileChoice, string label)

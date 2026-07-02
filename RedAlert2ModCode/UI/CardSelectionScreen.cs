@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 // 移除 MegaLabel 引用，使用普通 Label 避免 Godot 字体覆盖 bug
@@ -33,6 +34,44 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     public NetScreenType ScreenType => NetScreenType.Rewards;
     public bool UseSharedBackstop => true;
     public Control? DefaultFocusedControl => null;
+
+    private string GetLocStringText(object? locStringObj)
+    {
+        if (locStringObj == null) return string.Empty;
+        if (locStringObj is string str) return str;
+
+        System.Reflection.MethodInfo? formatMethod = locStringObj.GetType().GetMethod("GetFormattedText");
+        if (formatMethod != null)
+        {
+            try
+            {
+                object? result = formatMethod.Invoke(locStringObj, null);
+                if (result is string formattedText && !string.IsNullOrEmpty(formattedText))
+                {
+                    return formattedText;
+                }
+            }
+            catch { }
+        }
+
+        System.Reflection.MethodInfo? rawMethod = locStringObj.GetType().GetMethod("GetRawText");
+        if (rawMethod != null)
+        {
+            object? result = rawMethod.Invoke(locStringObj, null);
+            if (result is string rawText && !string.IsNullOrEmpty(rawText))
+            {
+                return rawText;
+            }
+        }
+
+        string toString = locStringObj.ToString() ?? string.Empty;
+        if (!toString.StartsWith("MegaCrit.Sts2.Core.Localization") && !toString.Contains("LocString"))
+        {
+            return toString;
+        }
+
+        return string.Empty;
+    }
 
     private CardSelectionScreen(List<CardModel> cards, Dictionary<string, CardValueStore.CardValues> cardValuesMap = null, FactionType faction = FactionType.Allied)
     {
@@ -124,9 +163,20 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         margin.AddChild(root);
 
         // 使用普通 Label 替代 MegaLabel，避免 Godot 字体覆盖 bug
+        LocString titleLocString;
+        if (_isMultiSelect)
+        {
+            titleLocString = new LocString("card_keywords", "ui.card_select.title_multi");
+            titleLocString.Add("count", _maxSelection);
+        }
+        else
+        {
+            titleLocString = new LocString("card_keywords", "ui.card_select.title_single");
+        }
+        
         Label title = new()
         {
-            Text = _isMultiSelect ? $"请选择 1-{_maxSelection} 张牌" : "请选择单位",
+            Text = GetLocStringText(titleLocString),
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
@@ -173,7 +223,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             
             Button cancelButton = new()
             {
-                Text = "X 取消",
+                Text = GetLocStringText(new LocString("card_keywords", "ui.production_queue.cancel")),
                 CustomMinimumSize = new Vector2(160f, 50f),
                 SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
                 FocusMode = FocusModeEnum.All,
@@ -189,7 +239,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
 
             Button confirmButton = new()
             {
-                Text = "确认选择",
+                Text = GetLocStringText(new LocString("card_keywords", "ui.production_queue.confirm")),
                 CustomMinimumSize = new Vector2(160f, 50f),
                 SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
                 FocusMode = FocusModeEnum.All,
@@ -210,7 +260,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             // 单选模式：只有取消按钮
             Button cancelButton = new()
             {
-                Text = "X 取消",
+                Text = GetLocStringText(new LocString("card_keywords", "ui.production_queue.cancel")),
                 CustomMinimumSize = new Vector2(160f, 50f),
                 SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
                 FocusMode = FocusModeEnum.All,
@@ -271,7 +321,9 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         }
 
         // 获取能量费用和价格
-        string costText = $"费用：{GetEnergyCostText(card)}  |  价格：${GetDollarValueText(card)}";
+        string costLabel = GetLocStringText(new LocString("card_keywords", "ui.card_select.cost_label"));
+        string priceLabel = GetLocStringText(new LocString("card_keywords", "ui.card_select.price_label"));
+        string costText = $"{costLabel}：{GetEnergyCostText(card)}  |  {priceLabel}：${GetDollarValueText(card)}";
 
         // 使用普通 Label 替代 MegaLabel
         Label cost = new()
@@ -321,49 +373,6 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         // 不需要存储卡牌元数据，通过按钮名称匹配
 
         return button;
-    }
-
-    private string GetLocStringText(object? locStringObj)
-    {
-        if (locStringObj == null) return string.Empty;
-
-        // 优先使用 GetRawText() 获取原始文本，避免 SmartFormat 无法处理 ${DollarNumber} 格式
-        System.Reflection.MethodInfo? rawMethod = locStringObj.GetType().GetMethod("GetRawText");
-        if (rawMethod != null)
-        {
-            object? result = rawMethod.Invoke(locStringObj, null);
-            if (result is string rawText && !string.IsNullOrEmpty(rawText))
-            {
-                return rawText;
-            }
-        }
-
-        // 回退到 GetFormattedText() 方法
-        System.Reflection.MethodInfo? formatMethod = locStringObj.GetType().GetMethod("GetFormattedText");
-        if (formatMethod != null)
-        {
-            try
-            {
-                object? result = formatMethod.Invoke(locStringObj, null);
-                if (result is string formattedText && !string.IsNullOrEmpty(formattedText))
-                {
-                    return formattedText;
-                }
-            }
-            catch
-            {
-                // SmartFormat 解析失败，继续尝试其他方式
-            }
-        }
-
-        // 最后回退到 ToString()
-        string str = locStringObj.ToString() ?? string.Empty;
-        if (!str.StartsWith("MegaCrit.Sts2.Core.Localization") && !str.Contains("LocString"))
-        {
-            return str;
-        }
-
-        return string.Empty;
     }
 
     private string GetEnergyCostText(CardModel card)

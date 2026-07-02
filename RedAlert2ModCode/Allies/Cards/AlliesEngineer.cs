@@ -52,7 +52,7 @@ public sealed class AlliesEngineer : CardModel
 		List<EngineerChoiceScreen.EngineerChoice> choices = GenerateRandomChoices();
 
 		// 显示选择界面（支持多人同步）
-		var selectedChoice = await EngineerChoiceScreen.ShowSelectionWithSync(choices, PortraitPath, Owner);
+		var selectedChoice = await EngineerChoiceScreen.ShowSelectionWithSync(choices, PortraitPath, Owner, FactionType.Allied);
 
 		if (selectedChoice != null)
 		{

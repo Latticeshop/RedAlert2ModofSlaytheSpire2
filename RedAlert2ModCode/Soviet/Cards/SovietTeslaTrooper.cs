@@ -5,6 +5,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Orbs;
@@ -49,22 +50,22 @@ public sealed class SovietTeslaTrooper : CardModel
 		}
 
 		var options = new List<DeployChoiceScreen.ChoiceOption>
-		{
-			new DeployChoiceScreen.ChoiceOption
 			{
-				Id = "deploy",
-				Title = "部署",
-				Description = "给磁暴线圈充能，下次伤害提升50%"
-			},
-			new DeployChoiceScreen.ChoiceOption
-			{
-				Id = "orb",
-				Title = "生成闪电球",
-				Description = "获得一个闪电球"
-			}
-		};
+				new DeployChoiceScreen.ChoiceOption
+				{
+					Id = "deploy",
+					Title = new LocString("card_keywords", "ui.tesla_trooper.deploy_title"),
+					Description = new LocString("card_keywords", "ui.tesla_trooper.deploy_desc")
+				},
+				new DeployChoiceScreen.ChoiceOption
+				{
+					Id = "orb",
+					Title = new LocString("card_keywords", "ui.tesla_trooper.orb_title"),
+					Description = new LocString("card_keywords", "ui.tesla_trooper.orb_desc")
+				}
+			};
 
-		var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, "选择磁暴步兵的行动", options, FactionType.Soviet);
+			var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, new LocString("card_keywords", "ui.tesla_trooper.title"), options, FactionType.Soviet);
 
 		if (selectedIndex == 0)
 		{

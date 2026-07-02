@@ -917,8 +917,166 @@ CardCmd.Enchant<MyEnchant>(card, 1m);
 | 怪物 | `MONSTER_ID.name/moves.STATE.title` | monsters.json |
 | 遭遇 | `ENCOUNTER_ID.title/loss` | encounters.json |
 | 附魔 | `ENCHANT_ID.title/description` | enchantments.json |
+| 自定义词条/UI文本 | `keyword.title/description` 或 `ui.xxx` | card_keywords.json |
 
 **ID转换规则**: `MyClassName` → `MY_CLASS_NAME`
+
+---
+
+## 🎨 UI选择页面本地化配置
+
+### 核心原理
+
+游戏仅加载特定名称的JSON本地化文件，自定义的 `ui_strings.json`、`engineer_choices.json` 等文件**不会被游戏自动识别**。自定义UI文本必须整合到游戏原生支持的本地化文件中，推荐使用 `card_keywords.json`。
+
+### 游戏支持的本地化文件
+
+| 文件 | 用途 |
+|------|------|
+| `cards.json` | 卡牌标题和描述 |
+| `card_keywords.json` | 卡牌词条、自定义UI文本 |
+| `powers.json` | 能力标题和描述 |
+| `relics.json` | 遗物标题和描述 |
+| `characters.json` | 角色标题和描述 |
+| `monsters.json` | 怪物名称和动作 |
+| `events.json` | 事件标题和选项 |
+| `ancients.json` | 先古之民内容 |
+| `modifiers.json` | 修饰词 |
+
+### 实现步骤
+
+#### 1. 在 card_keywords.json 中添加本地化键
+
+```json
+{
+    "ui.card_select.title_multi": "请选择 1-{count} 张牌",
+    "ui.card_select.title_single": "请选择单位",
+    "ui.card_select.cost_label": "费用",
+    "ui.card_select.price_label": "价格",
+    "ui.production_queue.title": "请选择要启动或停止的生产序列",
+    "ui.production_queue.cancel": "X 取消",
+    "ui.production_queue.confirm": "确认选择",
+    "ui.deploy_choice.title": "选择行动"
+}
+```
+
+#### 2. 在UI类中添加 GetLocStringText 方法
+
+```csharp
+private string GetLocStringText(object? locStringObj)
+{
+    if (locStringObj == null) return string.Empty;
+    if (locStringObj is string str) return str;
+
+    System.Reflection.MethodInfo? rawMethod = locStringObj.GetType().GetMethod("GetRawText");
+    if (rawMethod != null)
+    {
+        object? result = rawMethod.Invoke(locStringObj, null);
+        if (result is string rawText && !string.IsNullOrEmpty(rawText))
+        {
+            return rawText;
+        }
+    }
+
+    System.Reflection.MethodInfo? formatMethod = locStringObj.GetType().GetMethod("GetFormattedText");
+    if (formatMethod != null)
+    {
+        try
+        {
+            object? result = formatMethod.Invoke(locStringObj, null);
+            if (result is string formattedText && !string.IsNullOrEmpty(formattedText))
+            {
+                return formattedText;
+            }
+        }
+        catch { }
+    }
+
+    string toString = locStringObj.ToString() ?? string.Empty;
+    if (!toString.StartsWith("MegaCrit.Sts2.Core.Localization") && !toString.Contains("LocString"))
+    {
+        return toString;
+    }
+
+    return string.Empty;
+}
+```
+
+#### 3. 在代码中使用 LocString
+
+```csharp
+// 简单文本
+Text = GetLocStringText(new LocString("card_keywords", "ui.card_select.title_single"));
+
+// 带动态变量的文本
+var titleLocString = new LocString("card_keywords", "ui.card_select.title_multi");
+titleLocString.Add("count", _maxSelection);
+Text = GetLocStringText(titleLocString);
+
+// 在 ChoiceOption 类中使用
+public class ChoiceOption
+{
+    public object Title { get; set; } = string.Empty;
+    public object Description { get; set; } = string.Empty;
+}
+
+// 创建选项时使用 LocString
+new DeployChoiceScreen.ChoiceOption
+{
+    Title = new LocString("card_keywords", "ui.flak_track.deploy_title"),
+    Description = new LocString("card_keywords", "ui.flak_track.deploy_desc")
+}
+```
+
+### 命名空间约定
+
+为了避免键名冲突，建议使用以下命名空间前缀：
+
+| 前缀 | 用途 |
+|------|------|
+| `ui.card_select.xxx` | 卡牌选择界面 |
+| `ui.production_queue.xxx` | 生产序列界面 |
+| `ui.deploy_choice.xxx` | 部署选择界面 |
+| `ui.chrono_warp.xxx` | 超时空传送界面 |
+| `ui.flak_track.xxx` | 防空履带车选项 |
+| `ui.tesla_trooper.xxx` | 磁暴步兵选项 |
+| `engineer_choice.xxx` | 工程师选项 |
+
+### 动态变量替换
+
+LocString 支持动态变量，使用 `{变量名}` 格式：
+
+```json
+{
+    "ui.card_select.title_multi": "请选择 1-{count} 张牌",
+    "ui.guardian_gi.deploy_desc": "造成 {Damage} 点伤害，赋予 1 层易伤"
+}
+```
+
+在代码中添加变量：
+
+```csharp
+var locString = new LocString("card_keywords", "ui.guardian_gi.deploy_desc");
+locString.Add("Damage", DynamicVars.Damage.BaseValue);
+Text = GetLocStringText(locString);
+```
+
+### 支持的 Add 方法重载
+
+```csharp
+locString.Add("name", decimal value);    // 数值
+locString.Add("name", bool value);       // 布尔值
+locString.Add("name", string value);     // 字符串
+locString.Add("name", IList<string> value); // 字符串列表
+locString.Add("name", LocString value);  // 嵌套本地化字符串
+```
+
+### 注意事项
+
+1. **不要创建自定义JSON文件**：游戏不会自动加载非标准名称的本地化文件
+2. **使用 object 类型**：ChoiceOption 的 Title 和 Description 应定义为 `object` 类型，同时支持 `string` 和 `LocString`
+3. **统一使用 GetLocStringText**：所有显示文本的地方都应通过此方法处理
+4. **中英文文件同步**：修改中文 `zhs/card_keywords.json` 后，必须同步修改英文 `eng/card_keywords.json`
 
 ---
 
@@ -1483,9 +1641,37 @@ private static List<Func<CardModel>> CreatePowerCards()
 5. **添加本地化**：在 `cards.json` 中添加两份本地化条目（带阵营前缀）
 6. **验证编译**：运行 `dotnet build` 确保没有错误
 
+### UI刷新注意事项
+
+**问题**：当卡牌打出后需要向手牌添加新卡牌时（如基地车选择建筑后），可能会出现卡牌卡在画面中央的情况，需要手动刷新游戏UI才能恢复正常。
+
+**原因**：游戏的卡牌堆刷新机制需要通过特定操作触发，单纯调用 `CardPileCmd.AddGeneratedCardToCombat()` 添加卡牌可能不会自动触发UI刷新。
+
+**解决方案**：在添加卡牌到手牌后，调用 `CardPileCmd.Draw(ctx, 0, Owner)` 触发UI刷新。虽然抽0张牌，但会强制更新手牌区域的UI显示。
+
+```csharp
+// 在 OnPlay 方法中
+protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+{
+    // ... 选择建筑逻辑 ...
+    
+    // 将选择的卡牌加入手牌
+    await CardPileCmd.AddGeneratedCardToCombat(selectedCard, PileType.Hand, Owner);
+    
+    // 触发UI刷新：抽0张牌（仅触发刷新机制）
+    await CardPileCmd.Draw(ctx, 0, Owner);
+}
+```
+
+**适用场景**：
+- 基地车卡牌（选择建筑后加入手牌）
+- 集结卡牌（添加单位卡到手牌）
+- 伞兵卡牌（添加士兵卡到手牌）
+- 所有需要在打出后向手牌添加卡牌的场景
+
 ---
 
-## �📁 标准项目结构
+## � 标准项目结构
 
 ```
 ProjectRoot/

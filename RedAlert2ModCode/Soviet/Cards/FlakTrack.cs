@@ -82,18 +82,18 @@ public sealed partial class FlakTrack : CardModel
             new DeployChoiceScreen.ChoiceOption
             {
                 Id = "deploy",
-                Title = "部署",
-                Description = "存储当前手牌中的士兵单位"
+                Title = new LocString("card_keywords", "ui.flak_track.deploy_title"),
+                Description = new LocString("card_keywords", "ui.flak_track.deploy_desc")
             },
             new DeployChoiceScreen.ChoiceOption
             {
                 Id = "attack",
-                Title = "防御",
-                Description = $"抽 {DynamicVars["DrawCount"].BaseValue} 张牌和获得 {DynamicVars.Block} 点格挡"
+                Title = new LocString("card_keywords", "ui.flak_track.defend_title"),
+                Description = new LocString("card_keywords", "ui.flak_track.defend_desc")
             }
         };
 
-        var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, "选择防空履带车的行动", options, FactionType.Soviet);
+        var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, new LocString("card_keywords", "ui.flak_track.title"), options, FactionType.Soviet);
 
         if (selectedIndex == 0)
         {
