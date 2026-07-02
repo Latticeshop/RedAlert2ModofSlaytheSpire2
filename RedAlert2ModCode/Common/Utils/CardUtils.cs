@@ -154,18 +154,10 @@ public static class CardUtils
 		{
 			var card = play.Card;
 			
-			var handPile = PileType.Hand.GetPile(card.Owner);
+			// 不要手动调用 RemoveFromCurrentPile()，让 CardPileCmd.Add 处理牌堆转移和视觉节点
+			await CardPileCmd.Add(card, PileType.Hand);
 			
-			if (card.Pile != null)
-			{
-				card.RemoveFromCurrentPile();
-			}
-			
-			await CardPileCmd.Add(card, handPile);
-			
-			handPile.InvokeContentsChanged();
-			
-			GD.Print($"[CardUtils] 卡牌已放回手牌，当前手牌数: {handPile.Cards.Count}");
+			GD.Print($"[CardUtils] 卡牌已放回手牌，当前手牌数: {PileType.Hand.GetPile(card.Owner).Cards.Count}");
 		}
 		else
 		{

@@ -89,9 +89,6 @@ public sealed class AlliedMCV : CardModel
 			// 将选择的卡牌加入手牌
 			await CardPileCmd.AddGeneratedCardToCombat(selectedCard, PileType.Hand, Owner);
 
-			// 触发UI刷新：抽0张牌（仅触发刷新机制）
-			await CardPileCmd.Draw(ctx, 0, Owner);
-
 			GD.Print("[AlliedMCV] 玩家选择了建筑，基地车将正常进入弃牌堆");
 		}
 		else
