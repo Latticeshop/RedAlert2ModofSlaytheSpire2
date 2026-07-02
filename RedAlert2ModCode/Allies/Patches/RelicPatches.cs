@@ -19,38 +19,24 @@ public static class RelicPatches
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(LargeCapsule), "GetStrikeForCharacter")]
-    public static bool GetStrikeForCharacterPrefix(LargeCapsule __instance, CharacterModel character, ref CardModel __result)
+    public static bool GetStrikeForCharacterPrefix(CharacterModel character, ref CardModel __result)
     {
         if (!IsAlliesCharacter(character))
             return true;
 
-        __result = __instance.Owner.RunState.CreateCard(ModelDb.Card<AmericanSoldier>(), __instance.Owner);
+        __result = ModelDb.Card<AmericanSoldier>();
         return false;
     }
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(LargeCapsule), "GetDefendForCharacter")]
-    public static bool GetDefendForCharacterPrefix(LargeCapsule __instance, CharacterModel character, ref CardModel __result)
+    public static bool GetDefendForCharacterPrefix(CharacterModel character, ref CardModel __result)
     {
         if (!IsAlliesCharacter(character))
             return true;
 
-        __result = __instance.Owner.RunState.CreateCard(ModelDb.Card<GrizzlyTank>(), __instance.Owner);
+        __result = ModelDb.Card<GrizzlyTank>();
         return false;
-    }
-
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(LargeCapsule), "AfterObtained")]
-    public static void LargeCapsuleAfterObtainedPostfix(LargeCapsule __instance)
-    {
-        if (!IsAlliesCharacter(__instance.Owner.Character))
-            return;
-
-        var soldier = __instance.Owner.RunState.CreateCard(ModelDb.Card<AmericanSoldier>(), __instance.Owner);
-        var tank = __instance.Owner.RunState.CreateCard(ModelDb.Card<GrizzlyTank>(), __instance.Owner);
-        
-        _ = CardPileCmd.Add(soldier, PileType.Deck);
-        _ = CardPileCmd.Add(tank, PileType.Deck);
     }
 
     #endregion
@@ -143,6 +129,6 @@ public static class RelicPatches
 
     private static bool IsAlliesCharacter(CharacterModel character)
     {
-        return character?.Id?.Entry?.Contains("REDALERT") ?? false;
+        return character?.Id?.Entry?.Contains("ALLIES") ?? false;
     }
 }

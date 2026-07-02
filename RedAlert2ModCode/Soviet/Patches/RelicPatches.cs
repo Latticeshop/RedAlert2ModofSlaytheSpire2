@@ -18,38 +18,24 @@ public static class RelicPatches
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(LargeCapsule), "GetStrikeForCharacter")]
-    public static bool GetStrikeForCharacterPrefix(LargeCapsule __instance, CharacterModel character, ref CardModel __result)
+    public static bool GetStrikeForCharacterPrefix(CharacterModel character, ref CardModel __result)
     {
         if (!IsSovietCharacter(character))
             return true;
 
-        __result = __instance.Owner.RunState.CreateCard(ModelDb.Card<Conscript>(), __instance.Owner);
+        __result = ModelDb.Card<Conscript>();
         return false;
     }
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(LargeCapsule), "GetDefendForCharacter")]
-    public static bool GetDefendForCharacterPrefix(LargeCapsule __instance, CharacterModel character, ref CardModel __result)
+    public static bool GetDefendForCharacterPrefix(CharacterModel character, ref CardModel __result)
     {
         if (!IsSovietCharacter(character))
             return true;
 
-        __result = __instance.Owner.RunState.CreateCard(ModelDb.Card<RhinoTank>(), __instance.Owner);
+        __result = ModelDb.Card<RhinoTank>();
         return false;
-    }
-
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(LargeCapsule), "AfterObtained")]
-    public static void LargeCapsuleAfterObtainedPostfix(LargeCapsule __instance)
-    {
-        if (!IsSovietCharacter(__instance.Owner.Character))
-            return;
-
-        var conscript = __instance.Owner.RunState.CreateCard(ModelDb.Card<Conscript>(), __instance.Owner);
-        var tank = __instance.Owner.RunState.CreateCard(ModelDb.Card<RhinoTank>(), __instance.Owner);
-        
-        _ = CardPileCmd.Add(conscript, PileType.Deck);
-        _ = CardPileCmd.Add(tank, PileType.Deck);
     }
 
     #endregion
