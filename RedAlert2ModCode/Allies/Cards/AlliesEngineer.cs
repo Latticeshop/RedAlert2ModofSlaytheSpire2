@@ -113,7 +113,7 @@ public sealed class AlliesEngineer : CardModel
 		{
 			case EngineerChoiceScreen.ChoiceType.CaptureOilDerrick:
 				// 将一张油井加入手牌
-				var oilDerrickCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<AlliesOilDerrickCard>(), Owner);
+				var oilDerrickCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<OilDerrickCard>(), Owner);
 				await CardPileCmd.AddGeneratedCardToCombat(oilDerrickCard, PileType.Hand, Owner);
 				break;
 
@@ -124,7 +124,7 @@ public sealed class AlliesEngineer : CardModel
 
 			case EngineerChoiceScreen.ChoiceType.CaptureAirfield:
 				// 加入一张伞兵卡牌
-				var paratrooperCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<AlliesParatrooper>(), Owner);
+				var paratrooperCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<Paratrooper>(), Owner);
 				await CardPileCmd.AddGeneratedCardToCombat(paratrooperCard, PileType.Hand, Owner);
 				break;
 

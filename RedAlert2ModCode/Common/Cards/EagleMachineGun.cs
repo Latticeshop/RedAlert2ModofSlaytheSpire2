@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -23,6 +24,12 @@ public sealed class EagleMachineGun : CardModel
     public EagleMachineGun() : base((int)Values.Cost, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
 
     public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/EagleMachineGun.png";
+
+    public override CardPoolModel Pool => IsMutable && Owner != null
+        ? Owner.Character.CardPool
+        : ModelDb.CardPool<TokenCardPool>();
+
+    public override CardPoolModel VisualCardPool => Pool;
 
     protected override List<DynamicVar> CanonicalVars => new()
     {

@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Cards;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,12 @@ public class Ra2Rally : CardModel
 	public Ra2Rally() : base((int)Values.Cost, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/rallyicon.png";
+
+    public override CardPoolModel Pool => IsMutable && Owner != null
+        ? Owner.Character.CardPool
+        : ModelDb.CardPool<TokenCardPool>();
+
+    public override CardPoolModel VisualCardPool => Pool;
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{

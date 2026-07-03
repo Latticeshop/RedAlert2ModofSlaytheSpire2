@@ -1,6 +1,7 @@
 using Godot;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -23,6 +24,12 @@ public class GoldMineColumnCard : CardModel
     public GoldMineColumnCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
     public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/gold_mine_column.png";
+
+    public override CardPoolModel Pool => IsMutable && Owner != null
+        ? Owner.Character.CardPool
+        : ModelDb.CardPool<TokenCardPool>();
+
+    public override CardPoolModel VisualCardPool => Pool;
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [

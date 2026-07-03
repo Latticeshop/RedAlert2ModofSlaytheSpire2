@@ -91,14 +91,14 @@ public static class AlliedCardRegistry
     private static List<Func<CardModel>> CreatePowerCards()
     {
         var cards = new List<Func<CardModel>>();
-        cards.Add(() => ModelDb.Card<AlliesSellMCV>());
-        cards.Add(() => ModelDb.Card<AlliesRa2Rally>());
-        cards.Add(() => ModelDb.Card<AlliesStopProductionCard>());
-        cards.Add(() => ModelDb.Card<AlliesOilDerrickCard>());
-        cards.Add(() => ModelDb.Card<AlliesGoldMineCard>());
-        cards.Add(() => ModelDb.Card<AlliesGemMineCard>());
-        cards.Add(() => ModelDb.Card<AlliesGoldMineColumnCard>());
-        cards.Add(() => ModelDb.Card<AlliesF2A>());
+        cards.Add(() => ModelDb.Card<SellMCV>());
+        cards.Add(() => ModelDb.Card<Ra2Rally>());
+        cards.Add(() => ModelDb.Card<StopProductionCard>());
+        cards.Add(() => ModelDb.Card<OilDerrickCard>());
+        cards.Add(() => ModelDb.Card<GoldMineCard>());
+        cards.Add(() => ModelDb.Card<GemMineCard>());
+        cards.Add(() => ModelDb.Card<GoldMineColumnCard>());
+        cards.Add(() => ModelDb.Card<F2A>());
         cards.Add(() => ModelDb.Card<EagleMachineGun>());
         cards.Add(() => ModelDb.Card<EagleAirStrike>());
         cards.Add(() => ModelDb.Card<Eagle500kg>());
@@ -113,7 +113,7 @@ public static class AlliedCardRegistry
     {
         return new List<Func<CardModel>>
         {
-            () => ModelDb.Card<AlliesParatrooper>(),
+            () => ModelDb.Card<Paratrooper>(),
         };
     }
 
@@ -122,21 +122,22 @@ public static class AlliedCardRegistry
     /// </summary>
     public static List<Func<CardModel>> GetSharedPowerCards()
     {
-    /// <summary>
-    /// 获取所有盟军专属技能卡（用于动态生成）- 飞鹰战备系列 + 其他盟军专属卡
-    /// </summary>
         return new List<Func<CardModel>>
         {
-            () => ModelDb.Card<AlliesSellMCV>(),
-            () => ModelDb.Card<AlliesRa2Rally>(),
-            () => ModelDb.Card<AlliesStopProductionCard>(),
-            () => ModelDb.Card<AlliesOilDerrickCard>(),
-            () => ModelDb.Card<AlliesGoldMineCard>(),
-            () => ModelDb.Card<AlliesGemMineCard>(),
-            () => ModelDb.Card<AlliesGoldMineColumnCard>(),
+            () => ModelDb.Card<SellMCV>(),
+            () => ModelDb.Card<Ra2Rally>(),
+            () => ModelDb.Card<StopProductionCard>(),
+            () => ModelDb.Card<OilDerrickCard>(),
+            () => ModelDb.Card<GoldMineCard>(),
+            () => ModelDb.Card<GemMineCard>(),
+            () => ModelDb.Card<GoldMineColumnCard>(),
+            () => ModelDb.Card<F2A>(),
         };
     }
 
+    /// <summary>
+    /// 获取所有盟军专属技能卡（用于动态生成）- 飞鹰战备系列 + 其他盟军专属卡
+    /// </summary>
     public static List<Func<CardModel>> GetAlliedOnlyPowerCards()
     {
         return new List<Func<CardModel>>

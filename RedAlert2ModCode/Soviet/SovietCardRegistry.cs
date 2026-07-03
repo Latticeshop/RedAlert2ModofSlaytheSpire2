@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Allies;
+using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Cards;
 using RedAlert2ModCode.Soviet.Powers;
@@ -76,14 +77,14 @@ public static class SovietCardRegistry
     private static List<Func<CardModel>> CreatePowerCards()
     {
         var cards = new List<Func<CardModel>>();
-        cards.Add(() => ModelDb.Card<SovietSellMCV>());
-        cards.Add(() => ModelDb.Card<SovietRa2Rally>());
-        cards.Add(() => ModelDb.Card<SovietStopProductionCard>());
-        cards.Add(() => ModelDb.Card<SovietOilDerrickCard>());
-        cards.Add(() => ModelDb.Card<SovietGoldMineCard>());
-        cards.Add(() => ModelDb.Card<SovietGemMineCard>());
-        cards.Add(() => ModelDb.Card<SovietGoldMineColumnCard>());
-        cards.Add(() => ModelDb.Card<SovietF2A>());
+        cards.Add(() => ModelDb.Card<SellMCV>());
+        cards.Add(() => ModelDb.Card<Ra2Rally>());
+        cards.Add(() => ModelDb.Card<StopProductionCard>());
+        cards.Add(() => ModelDb.Card<OilDerrickCard>());
+        cards.Add(() => ModelDb.Card<GoldMineCard>());
+        cards.Add(() => ModelDb.Card<GemMineCard>());
+        cards.Add(() => ModelDb.Card<GoldMineColumnCard>());
+        cards.Add(() => ModelDb.Card<F2A>());
         cards.Add(() => ModelDb.Card<IronCurtain>());
         cards.Add(() => ModelDb.Card<NuclearAttack>());
         return cards;
@@ -95,7 +96,7 @@ public static class SovietCardRegistry
     {
         return new List<Func<CardModel>>
         {
-            () => ModelDb.Card<SovietParatrooper>(),
+            () => ModelDb.Card<Paratrooper>(),
         };
     }
 
@@ -103,13 +104,14 @@ public static class SovietCardRegistry
     {
         return new List<Func<CardModel>>
         {
-            () => ModelDb.Card<SovietSellMCV>(),
-            () => ModelDb.Card<SovietRa2Rally>(),
-            () => ModelDb.Card<SovietStopProductionCard>(),
-            () => ModelDb.Card<SovietOilDerrickCard>(),
-            () => ModelDb.Card<SovietGoldMineCard>(),
-            () => ModelDb.Card<SovietGemMineCard>(),
-            () => ModelDb.Card<SovietGoldMineColumnCard>(),
+            () => ModelDb.Card<SellMCV>(),
+            () => ModelDb.Card<Ra2Rally>(),
+            () => ModelDb.Card<StopProductionCard>(),
+            () => ModelDb.Card<OilDerrickCard>(),
+            () => ModelDb.Card<GoldMineCard>(),
+            () => ModelDb.Card<GemMineCard>(),
+            () => ModelDb.Card<GoldMineColumnCard>(),
+            () => ModelDb.Card<F2A>(),
         };
     }
 

@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
@@ -26,7 +27,13 @@ public class StopProductionCard : CardModel
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/stop_production.png";
 
-	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    public override CardPoolModel Pool => IsMutable && Owner != null
+        ? Owner.Character.CardPool
+        : ModelDb.CardPool<TokenCardPool>();
+
+    public override CardPoolModel VisualCardPool => Pool;
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.ProductionQueue.CreateHoverTip()
 	];

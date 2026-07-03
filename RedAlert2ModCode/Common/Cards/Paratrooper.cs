@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Soviet.Cards;
 using RedAlert2ModCode.Common.Utils;
@@ -22,7 +23,13 @@ public class Paratrooper : CardModel
 
 	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/aparicon.png";
 
-	public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[] { CardKeyword.Exhaust };
+    public override CardPoolModel Pool => IsMutable && Owner != null
+        ? Owner.Character.CardPool
+        : ModelDb.CardPool<TokenCardPool>();
+
+    public override CardPoolModel VisualCardPool => Pool;
+
+    public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[] { CardKeyword.Exhaust };
 
 	protected override List<DynamicVar> CanonicalVars => new() { };
 	

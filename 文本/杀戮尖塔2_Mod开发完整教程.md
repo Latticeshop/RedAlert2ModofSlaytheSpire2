@@ -557,9 +557,108 @@ res://images/packed/card_portraits/<卡池名称>/<卡牌ID小写>.png
 - `{Damage}` 会被动态变量的当前值替换
 - `{Damage:diff()}` 显示升级后的差值（如"造成 2→4 点伤害"）
 
+### 3.8 公共卡牌架构（多阵营共享）
+
+当你的Mod包含多个阵营/角色，且某些卡牌在多个阵营中逻辑完全相同时，可以使用公共卡牌架构避免代码重复。
+
+#### 方案一：继承分离模式（传统方案）
+
+采用"公共基类 + 阵营子类"的架构：
+
+```csharp
+// Common/Cards/GoldMineCard.cs - 公共基类
+public class GoldMineCard : CardModel
+{
+    public override string PortraitPath => "res://.../gold_mine.png";
+    
+    protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+    {
+        // 完整逻辑
+    }
+}
+
+// Allies/Cards/AlliesGoldMineCard.cs - 盟军子类
+public sealed class AlliesGoldMineCard : GoldMineCard { }
+
+// Soviet/Cards/SovietGoldMineCard.cs - 苏军子类
+public sealed class SovietGoldMineCard : GoldMineCard { }
+```
+
+**本地化**（需要两份）：
+```json
+{
+    "ALLIES_GOLD_MINE_CARD.title": "黄金矿",
+    "SOVIET_GOLD_MINE_CARD.title": "黄金矿"
+}
+```
+
+#### 方案二：Pool动态切换模式（推荐方案）
+
+通过重写 `Pool` 和 `VisualCardPool` 属性，让同一卡牌实例根据持有者动态切换阵营颜色：
+
+```csharp
+using MegaCrit.Sts2.Core.Models.CardPools;
+
+public class GoldMineCard : CardModel
+{
+    public override string PortraitPath => "res://.../gold_mine.png";
+
+    public override CardPoolModel Pool => IsMutable && Owner != null
+        ? Owner.Character.CardPool
+        : ModelDb.CardPool<TokenCardPool>();
+
+    public override CardPoolModel VisualCardPool => Pool;
+
+    protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+    {
+        // 完整逻辑
+    }
+}
+```
+
+**核心原理**：
+
+| 属性 | 说明 |
+|------|------|
+| `Pool` | 卡牌所属卡池，决定卡框颜色 |
+| `VisualCardPool` | UI显示时使用的卡池 |
+| `IsMutable` | 是否为战斗实例（战斗实例才有Owner） |
+| `Owner.Character.CardPool` | 当前持有者的阵营卡池 |
+| `TokenCardPool` | 无主卡牌使用的卡池（白色/无色） |
+
+**颜色显示逻辑**：
+
+| 场景 | 条件 | 显示颜色 |
+|------|------|---------|
+| 百科中 | `IsMutable == false` 或 `Owner == null` | 白色/无色 |
+| 游戏中-盟军 | `Owner.Character.CardPool` 返回盟军卡池 | 蓝色 |
+| 游戏中-苏军 | `Owner.Character.CardPool` 返回苏军卡池 | 红色 |
+
+**本地化**（仅需一份）：
+```json
+{
+    "GOLD_MINE_CARD.title": "黄金矿"
+}
+```
+
+**注册**（两个阵营注册同一个类）：
+```csharp
+// AlliedCardRegistry.cs 和 SovietCardRegistry.cs
+cards.Add(() => ModelDb.Card<GoldMineCard>());
+```
+
+**方案对比**：
+
+| 对比项 | 方案一：继承分离 | 方案二：Pool动态切换 |
+|--------|----------------|-------------------|
+| 代码量 | 多（每个卡牌需要3个文件） | 少（每个卡牌只需要1个文件） |
+| 本地化 | 需要两份（带阵营前缀） | 需要一份（无阵营前缀） |
+| 百科显示 | 显示阵营颜色 | 显示白色/无色（符合预期） |
+| 适用场景 | 需要独立定制描述 | 逻辑完全相同的公共卡牌 |
+
 ---
 
-## 3.8 自定义词条（Custom Keywords）
+## 3.9 自定义词条（Custom Keywords）
 
 Mod可以添加自定义词条来增强卡牌的视觉效果和交互体验。词条会在卡牌描述下方显示金色文本，鼠标悬停时显示详细描述。
 

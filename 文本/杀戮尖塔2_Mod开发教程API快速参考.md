@@ -1455,7 +1455,7 @@ RedAlert2ModCode/
 2. **本地化问题**：两个阵营使用同一本地化key，无法独立控制
 3. **实例冲突**：单例模式导致两个阵营共享同一实例状态
 
-### 解决方案：继承分离模式
+### 方案一：继承分离模式（传统方案）
 
 采用"公共基类 + 阵营子类"的架构，实现逻辑共用但实例分离：
 
@@ -1480,8 +1480,6 @@ Soviet/Cards/
 ├── SovietOilDerrickCard.cs  # 苏军子类 - 仅继承，无逻辑
 └── ...                      # 其他苏军公共卡牌
 ```
-
-### 实现模式
 
 **公共基类**（[Common/Cards/GoldMineCard.cs](file:///d:/RedAlert2Project/red-alert-2-mod/RedAlert2ModCode/Common/Cards/GoldMineCard.cs)）：
 
@@ -1550,9 +1548,7 @@ public sealed class SovietGoldMineCard : GoldMineCard
 }
 ```
 
-### 本地化规则
-
-由于游戏使用类名自动生成本地化key，公共卡牌需要创建两份本地化条目：
+**本地化规则**（两份本地化条目）：
 
 | 公共卡牌 | 盟军本地化key | 苏军本地化key |
 |---------|-------------|-------------|
@@ -1565,16 +1561,96 @@ public sealed class SovietGoldMineCard : GoldMineCard
 | 伞兵 | `ALLIES_PARATROOPER.title` | `SOVIET_PARATROOPER.title` |
 | 停产 | `ALLIES_STOP_PRODUCTION_CARD.title` | `SOVIET_STOP_PRODUCTION_CARD.title` |
 
-**本地化文件示例**（[localization/zhs/cards.json](file:///d:/RedAlert2Project/red-alert-2-mod/RedAlert2Mod/localization/zhs/cards.json)）：
+**注册方式**：
 
-```json
+```csharp
+// AlliedCardRegistry.cs
+cards.Add(() => ModelDb.Card<AlliesGoldMineCard>());
+
+// SovietCardRegistry.cs
+cards.Add(() => ModelDb.Card<SovietGoldMineCard>());
+```
+
+### 方案二：Pool动态切换模式（推荐方案）
+
+参考"海克斯符文"mod的"白洞"卡牌实现，通过重写 `Pool` 和 `VisualCardPool` 属性，让同一公共卡牌实例根据当前持有者动态切换阵营颜色。此方案更简洁，无需创建阵营子类。
+
+**核心原理**：
+
+1. **颜色切换**：重写 `Pool` 属性，当卡牌有Owner时返回Owner的阵营卡池，否则返回 `TokenCardPool`（白色/无色）
+2. **本地化简化**：只需要一份不带阵营前缀的本地化键，百科和游戏中都使用相同的key
+
+**公共卡牌实现**（[Common/Cards/OilDerrickCard.cs](file:///d:/RedAlert2Project/red-alert-2-mod/RedAlert2ModCode/Common/Cards/OilDerrickCard.cs)）：
+
+```csharp
+using MegaCrit.Sts2.Core.Models.CardPools;
+
+public class OilDerrickCard : CardModel
 {
-    "ALLIES_GOLD_MINE_CARD.title": "黄金矿",
-    "ALLIES_GOLD_MINE_CARD.description": "获得 {Reserve} [gold]黄金矿[/gold]储备。",
-    "SOVIET_GOLD_MINE_CARD.title": "黄金矿",
-    "SOVIET_GOLD_MINE_CARD.description": "获得 {Reserve} [gold]黄金矿[/gold]储备。"
+    private static readonly CardValueStore.CardValues Values = CommonCardValues.OilDerrick;
+
+    public OilDerrickCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
+
+    public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/oil_derrick.png";
+
+    public override CardPoolModel Pool => IsMutable && Owner != null
+        ? Owner.Character.CardPool
+        : ModelDb.CardPool<TokenCardPool>();
+
+    public override CardPoolModel VisualCardPool => Pool;
+
+    // ... 卡牌逻辑 ...
 }
 ```
+
+**关键代码说明**：
+
+| 属性 | 说明 |
+|------|------|
+| `Pool` | 卡牌所属的卡池。游戏根据卡池决定卡框颜色和其他视觉属性 |
+| `VisualCardPool` | 卡牌在UI上显示时使用的卡池。通常与Pool相同 |
+| `IsMutable` | 判断卡牌是否为战斗实例（而非原型）。战斗实例才有Owner |
+| `Owner.Character.CardPool` | 获取当前持有者的阵营卡池（如 `AlliesCardPool`、`SovietCardPool`） |
+| `TokenCardPool` | 无主卡牌（如百科中）使用的卡池，显示为白色/无色 |
+
+**颜色显示逻辑**：
+
+| 场景 | 条件 | 显示颜色 |
+|------|------|---------|
+| 百科中 | `IsMutable == false` 或 `Owner == null` | 白色/无色（TokenCardPool） |
+| 游戏中-盟军 | `Owner.Character.CardPool` 返回 `AlliesCardPool` | 蓝色（盟军） |
+| 游戏中-苏军 | `Owner.Character.CardPool` 返回 `SovietCardPool` | 红色（苏军） |
+
+**本地化规则**（仅需一份）：
+
+| 公共卡牌 | 本地化key |
+|---------|-----------|
+| 黄金矿 | `GOLD_MINE_CARD.title` |
+| 宝石矿 | `GEM_MINE_CARD.title` |
+| 黄金矿柱 | `GOLD_MINE_COLUMN_CARD.title` |
+| 油井 | `OIL_DERRICK_CARD.title` |
+| 卖本 | `SELL_MC_V.title` |
+| 集结 | `RA2_RALLY.title` |
+| 伞兵 | `PARATROOPER.title` |
+| 停产 | `STOP_PRODUCTION_CARD.title` |
+
+**注册方式**（直接使用公共基类）：
+
+```csharp
+// AlliedCardRegistry.cs 和 SovietCardRegistry.cs 都注册同一个类
+cards.Add(() => ModelDb.Card<OilDerrickCard>());
+```
+
+**方案对比**：
+
+| 对比项 | 方案一：继承分离 | 方案二：Pool动态切换 |
+|--------|----------------|-------------------|
+| 代码量 | 多（每个卡牌需要3个文件） | 少（每个卡牌只需要1个文件） |
+| 本地化 | 需要两份（带阵营前缀） | 需要一份（无阵营前缀） |
+| 百科显示 | 显示阵营颜色 | 显示白色/无色（符合预期） |
+| 游戏内颜色 | 根据阵营子类自动切换 | 根据Owner动态切换 |
+| 实例隔离 | 完全隔离（不同单例） | 共享实例（但通过Pool动态区分） |
+| 适用场景 | 需要独立定制描述 | 逻辑完全相同的公共卡牌 |
 
 ### 资源与能力共享
 
@@ -1632,14 +1708,12 @@ private static List<Func<CardModel>> CreatePowerCards()
 }
 ```
 
-### 新增公共卡牌流程
+### 新增公共卡牌流程（方案二推荐）
 
-1. **创建公共基类**：在 `Common/Cards/` 目录下创建卡牌类（不带阵营前缀）
-2. **创建盟军子类**：在 `Allies/Cards/` 目录下创建继承自基类的卡牌（带 `Allies` 前缀）
-3. **创建苏军子类**：在 `Soviet/Cards/` 目录下创建继承自基类的卡牌（带 `Soviet` 前缀）
-4. **注册卡牌**：在 `AlliedCardRegistry` 和 `SovietCardRegistry` 中注册对应的子类
-5. **添加本地化**：在 `cards.json` 中添加两份本地化条目（带阵营前缀）
-6. **验证编译**：运行 `dotnet build` 确保没有错误
+1. **创建公共基类**：在 `Common/Cards/` 目录下创建卡牌类，重写 `Pool` 和 `VisualCardPool` 属性
+2. **注册卡牌**：在 `AlliedCardRegistry` 和 `SovietCardRegistry` 中注册同一个公共基类
+3. **添加本地化**：在 `cards.json` 中添加一份不带阵营前缀的本地化条目
+4. **验证编译**：运行 `dotnet build` 确保没有错误
 
 ### UI刷新注意事项
 

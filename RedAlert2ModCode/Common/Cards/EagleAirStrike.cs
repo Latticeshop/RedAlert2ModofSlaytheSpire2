@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -32,7 +33,13 @@ public sealed class EagleAirStrike : CardModel
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/EagleAirStrike.png";
 
-	protected override List<DynamicVar> CanonicalVars => new()
+    public override CardPoolModel Pool => IsMutable && Owner != null
+        ? Owner.Character.CardPool
+        : ModelDb.CardPool<TokenCardPool>();
+
+    public override CardPoolModel VisualCardPool => Pool;
+
+    protected override List<DynamicVar> CanonicalVars => new()
 	{
 		new DamageVar(Values.Damage + (IsUpgraded ? Values.DamageUpgraded : 0m), ValueProp.Move)
 	};
