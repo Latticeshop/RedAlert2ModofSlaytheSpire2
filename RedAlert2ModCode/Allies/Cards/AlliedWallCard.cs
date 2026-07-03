@@ -26,13 +26,13 @@ public sealed class AlliedWallCard : CardModel
 	// 数值引用
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.AlliedWall;
 	
-	public AlliedWallCard() : base(0, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+	public AlliedWallCard() : base(0, CardType.Skill, CardRarity.Token, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/wallicon.png";
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new BlockVar(Values.Block, ValueProp.Unpowered),
+		new BlockVar(Values.Block, ValueProp.Move),
 		new IntVar("DollarNumber", Values.DollarValue)
 	};
 

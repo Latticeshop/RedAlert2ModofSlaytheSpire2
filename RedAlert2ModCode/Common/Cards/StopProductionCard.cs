@@ -12,7 +12,6 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.HoverTips;
-using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
@@ -101,23 +100,7 @@ public class StopProductionCard : CardModel
 
 					GD.Print($"[StopProductionCard] 训练队列 {unitName} 停产状态反转: {newStopped}");
 				}
-				else if (item.Power is RepairDepotPower repairPower)
-				{
-					bool wasStopped = repairPower.IsStopped;
-					Creature owner = repairPower.Owner;
-
-					owner.RemovePowerInternal(repairPower);
-					GD.Print($"[StopProductionCard] 移除修理厂能力");
-
-					bool newStopped = !wasStopped;
-
-					await RepairDepotPower.ApplyRepairDepot(
-						owner: owner,
-						isStopped: newStopped
-					);
-
-					GD.Print($"[StopProductionCard] 修理厂停产状态反转: {newStopped}");
-				}
+				
 			}
 		}
 		else
@@ -146,18 +129,6 @@ public class StopProductionCard : CardModel
 				IconPath = power.PackedIconPath,
 				IsStopped = power.IsStopped,
 				Type = "训练队列"
-			});
-		}
-
-		foreach (var power in Owner.Creature.Powers.OfType<RepairDepotPower>())
-		{
-			queues.Add(new ProductionQueueItem
-			{
-				Power = power,
-				Name = "维修厂",
-				IconPath = power.PackedIconPath,
-				IsStopped = power.IsStopped,
-				Type = "修理厂"
 			});
 		}
 

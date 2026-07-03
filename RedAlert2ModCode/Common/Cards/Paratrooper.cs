@@ -29,7 +29,7 @@ public class Paratrooper : CardModel
 
     public override CardPoolModel VisualCardPool => Pool;
 
-    public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[] { CardKeyword.Exhaust };
+    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? Array.Empty<CardKeyword>() : new CardKeyword[] { CardKeyword.Exhaust };
 
 	protected override List<DynamicVar> CanonicalVars => new() { };
 	
@@ -87,6 +87,6 @@ public class Paratrooper : CardModel
 
 	protected override void OnUpgrade()
 	{
-		EnergyCost.UpgradeBy((int)Values.CostUpgraded);
+		RemoveKeyword(CardKeyword.Exhaust);
 	}
 }

@@ -269,12 +269,6 @@ public static class AlliedCardRegistry
             vehicles.AddRange(CreateHighTechVehicles(owner));
         }
         
-        // 检查是否有修理厂能力，如果有则添加盟军基地车
-        if (HasRepairDepotPower(owner.Creature))
-        {
-            vehicles.Add(owner.Creature.CombatState.CreateCard(ModelDb.Card<AlliedMCV>(), owner));
-        }
-        
         return vehicles;
     }
 
@@ -292,14 +286,6 @@ public static class AlliedCardRegistry
     public static bool HasBattleLabPower(Creature creature)
     {
         return creature.Powers.Any(p => p is BattleLabPower);
-    }
-
-    /// <summary>
-    /// 检查是否有修理厂能力
-    /// </summary>
-    public static bool HasRepairDepotPower(Creature creature)
-    {
-        return creature.Powers.Any(p => p is RepairDepotPower);
     }
 
     public static List<CardModel> CreateAircraft(Player owner)

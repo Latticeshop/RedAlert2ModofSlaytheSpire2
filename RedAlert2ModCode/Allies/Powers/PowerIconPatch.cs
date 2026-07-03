@@ -47,8 +47,6 @@ public static class PowerIconPatch
         { typeof(PatriotMissilePower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/samicon.png" },
         { typeof(HornetPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/hornet.png" },
         { typeof(TargetLockedPower), "res://RedAlert2ModResources/images/packed/powers/target_locked.png" },
-        { typeof(RepairDepotPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/fixicon.png" },
-        { typeof(RedAlert2ModCode.Soviet.Powers.SovietRepairDepotPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/rfixicon.png" },
         { typeof(OilDerrickPower), "res://RedAlert2ModResources/images/packed/card_portraits/oil_derrick_power.png" },
         { typeof(Eagle500kgPower), "res://RedAlert2ModResources/images/packed/powers/Eagle500kgPower.png" },
         { typeof(EagleMachineGunPower), "res://RedAlert2ModResources/images/packed/powers/EagleMachineGunPower.png" },

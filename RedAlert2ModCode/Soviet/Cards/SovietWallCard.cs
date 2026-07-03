@@ -23,13 +23,13 @@ public sealed class SovietWallCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.SovietWall;
 	
-	public SovietWallCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+	public SovietWallCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Token, TargetType.Self) { }
 
 	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/soviet/nwalicon.png";
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new BlockVar(Values.Block, ValueProp.Unpowered),
+		new BlockVar(Values.Block, ValueProp.Move),
 		new IntVar("DollarNumber", Values.DollarValue)
 	};
 

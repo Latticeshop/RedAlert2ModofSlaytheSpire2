@@ -192,11 +192,6 @@ public static class SovietCardRegistry
             vehicles.AddRange(CreateRadarVehicles(owner));
         }
 
-        if (HasRepairDepotPower(owner.Creature))
-        {
-            vehicles.Add(owner.Creature.CombatState.CreateCard(ModelDb.Card<SovietMCV>(), owner));
-        }
-
         return vehicles;
     }
 
@@ -218,11 +213,6 @@ public static class SovietCardRegistry
     public static bool HasBattleLabPower(Creature creature)
     {
         return creature.Powers.Any(p => p is SovietBattleLabPower);
-    }
-
-    public static bool HasRepairDepotPower(Creature creature)
-    {
-        return creature.Powers.Any(p => p is SovietRepairDepotPower);
     }
 
     public static List<CardModel> CreateAircraft(Player owner)

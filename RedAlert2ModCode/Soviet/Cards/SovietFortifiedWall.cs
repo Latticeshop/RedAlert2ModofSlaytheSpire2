@@ -29,7 +29,7 @@ public sealed class SovietFortifiedWall : CardModel
 
     protected override List<DynamicVar> CanonicalVars => new()
     {
-        new BlockVar(Values.Block, ValueProp.Unpowered),
+        new BlockVar(Values.Block, ValueProp.Move),
         new IntVar("DollarNumber", Values.DollarValue)
     };
 

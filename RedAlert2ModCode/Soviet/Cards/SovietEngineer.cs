@@ -116,7 +116,8 @@ public sealed class SovietEngineer : CardModel
 
 			case EngineerChoiceScreen.ChoiceType.CaptureTechOutpost:
 				await PowerCmd.Apply<RedAlert2ModCode.Allies.Powers.PatriotMissilePower>(ctx, Owner.Creature, 1, Owner.Creature, this);
-				await RedAlert2ModCode.Soviet.Powers.SovietRepairDepotPower.ApplyRepairDepot(Owner.Creature);
+				var repairDepotCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<SovietRepairDepot>(), Owner);
+				await CardPileCmd.AddGeneratedCardToCombat(repairDepotCard, PileType.Hand, Owner);
 				break;
 
 			case EngineerChoiceScreen.ChoiceType.RepairBridge:

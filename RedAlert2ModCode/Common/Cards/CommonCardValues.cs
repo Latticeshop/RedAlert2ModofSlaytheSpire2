@@ -64,11 +64,10 @@ public static class CommonCardValues
 		Repeat = 1
 	};
 
-	/// <summary>伞兵 - 1费攻击卡（升级后0费），将6张美国大兵加入手牌</summary>
+	/// <summary>伞兵 - 1费攻击卡，将6张美国大兵加入手牌（升级后去掉消耗）</summary>
 	public static CardValueStore.CardValues Paratrooper => new()
 	{
 		Cost = 1,
-		CostUpgraded = -1,      // 升级后0费
 		Repeat = 6              // 添加6张美国大兵
 	};
 

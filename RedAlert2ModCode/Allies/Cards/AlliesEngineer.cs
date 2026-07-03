@@ -139,9 +139,9 @@ public sealed class AlliesEngineer : CardModel
 				break;
 
 			case EngineerChoiceScreen.ChoiceType.CaptureTechOutpost:
-				// 获得爱国者飞弹和维修厂能力
 				await PowerCmd.Apply<PatriotMissilePower>(ctx, Owner.Creature, 1, Owner.Creature, this);
-				await RepairDepotPower.ApplyRepairDepot(Owner.Creature);
+				var repairDepotCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<AlliesRepairDepot>(), Owner);
+				await CardPileCmd.AddGeneratedCardToCombat(repairDepotCard, PileType.Hand, Owner);
 				break;
 
 			case EngineerChoiceScreen.ChoiceType.RepairBridge:
