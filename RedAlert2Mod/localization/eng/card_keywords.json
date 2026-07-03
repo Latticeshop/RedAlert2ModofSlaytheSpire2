@@ -61,6 +61,8 @@
     "engineer_choice.repair_bridge.title": "Repair Bridge",
     "engineer_choice.repair_bridge.description": "Discard a card to draw 2 cards",
     "ui.chrono_warp.title": "Choose a Pile",
+    "ui.chrono_warp.source": "Choose card source:",
+    "ui.chrono_warp.target": "Choose destination:",
     "ui.deploy_choice.title": "Choose Action",
     "ui.production_queue.title": "Select production queues to start or stop",
     "ui.production_queue.cancel": "X Cancel",

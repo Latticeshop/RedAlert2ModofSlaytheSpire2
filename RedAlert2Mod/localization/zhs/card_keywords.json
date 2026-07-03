@@ -61,6 +61,8 @@
     "engineer_choice.repair_bridge.title": "维修桥梁",
     "engineer_choice.repair_bridge.description": "选择消耗一张手牌，抽两张牌",
     "ui.chrono_warp.title": "选择一个牌堆",
+    "ui.chrono_warp.source": "选择卡牌来源：",
+    "ui.chrono_warp.target": "选择目标位置：",
     "ui.deploy_choice.title": "选择行动",
     "ui.production_queue.title": "请选择要启动或停止的生产序列",
     "ui.production_queue.cancel": "X 取消",

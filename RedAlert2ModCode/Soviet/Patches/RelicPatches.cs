@@ -67,21 +67,19 @@ public static class RelicPatches
 
     #region Neow's Talisman
 
-    [HarmonyPrefix]
+    [HarmonyPostfix]
     [HarmonyPatch(typeof(NeowsTalisman), "AfterObtained")]
-    public static bool NeowsTalismanAfterObtainedPrefix(NeowsTalisman __instance)
+    public static void NeowsTalismanAfterObtainedPostfix(NeowsTalisman __instance)
     {
-        // 添加 null 检查
         if (__instance.Owner == null)
-            return true;
+            return;
 
         if (!IsSovietCharacter(__instance.Owner.Character))
-            return true;
+            return;
 
-        // 升级1张动员兵（打击牌）
         var deck = PileType.Deck.GetPile(__instance.Owner).Cards;
         if (deck == null)
-            return false;
+            return;
 
         var conscript = deck.FirstOrDefault(c => c is Conscript && !c.IsUpgraded);
         if (conscript != null)
@@ -89,15 +87,11 @@ public static class RelicPatches
             CardCmd.Upgrade(conscript);
         }
 
-        // 升级1张犀牛坦克（防御牌）
         var tank = deck.FirstOrDefault(c => c is RhinoTank && !c.IsUpgraded);
         if (tank != null)
         {
             CardCmd.Upgrade(tank);
         }
-
-        __instance.Flash();
-        return false;
     }
 
     #endregion

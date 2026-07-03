@@ -102,7 +102,7 @@ public sealed class SovietEngineer : CardModel
 				break;
 
 			case EngineerChoiceScreen.ChoiceType.CaptureAirfield:
-				var paratrooperCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<Paratrooper>(), Owner);
+				var paratrooperCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<SovietParatrooper>(), Owner);
 				await CardPileCmd.AddGeneratedCardToCombat(paratrooperCard, PileType.Hand, Owner);
 				break;
 

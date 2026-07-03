@@ -39,5 +39,6 @@ public class F2A : CardModel
 
     protected override void OnUpgrade()
     {
+        base.EnergyCost.UpgradeBy(-1);
     }
 }

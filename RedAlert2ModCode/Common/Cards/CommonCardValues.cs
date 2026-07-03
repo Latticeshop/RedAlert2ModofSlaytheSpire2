@@ -81,8 +81,8 @@ public static class CommonCardValues
 	public static CardValueStore.CardValues Ra2Rally => new()
 	{
 		Cost = 1,
-		MagicNumber = 2,           // 召集单位卡数量
-		MagicNumberUpgraded = 1    // 升级后增加1张
+		MagicNumber = 4,           // 召集单位卡数量
+		MagicNumberUpgraded = 2    // 升级后增加2张
 	};
 
 	public static CardValueStore.CardValues StopProduction => new()

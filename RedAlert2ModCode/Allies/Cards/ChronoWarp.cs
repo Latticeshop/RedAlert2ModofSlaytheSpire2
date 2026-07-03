@@ -7,6 +7,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -54,7 +55,7 @@ public sealed class ChronoWarp : CardModel
         await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
         // 第一步：选择源牌堆
-        var sourcePileInt = await ChronoWarpScreen.ShowPileSelectionWithSync("选择卡牌来源：", Owner);
+        var sourcePileInt = await ChronoWarpScreen.ShowPileSelectionWithSync(new LocString("card_keywords", "ui.chrono_warp.source").GetFormattedText(), Owner);
         if (sourcePileInt == null)
         {
             GD.Print("[ChronoWarp] 取消选择");
@@ -80,7 +81,7 @@ public sealed class ChronoWarp : CardModel
         }
 
         // 第二步：选择目标牌堆
-        var targetPileInt = await ChronoWarpScreen.ShowPileSelectionWithSync("选择目标位置：", Owner);
+        var targetPileInt = await ChronoWarpScreen.ShowPileSelectionWithSync(new LocString("card_keywords", "ui.chrono_warp.target").GetFormattedText(), Owner);
         if (targetPileInt == null)
         {
             GD.Print("[ChronoWarp] 取消选择目标");
