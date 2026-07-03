@@ -1,6 +1,6 @@
 {
     "PARATROOPER.title": "Paratrooper",
-    "PARATROOPER.description": "[gold]Exhaust[/gold]. Add a few [gold]Ethereal[/gold] units to your hand.",
+    "PARATROOPER.description": "Add a few [gold]Ethereal[/gold] units to your hand.",
     "SELL_MC_V.title": "Sell MCV",
     "SELL_MC_V.description": "Sell the Construction Yard for {DollarValue} funds.{IfUpgraded:show:Gain an Engineer.|}",
     "OIL_DERRICK_CARD.title": "Oil Derrick",

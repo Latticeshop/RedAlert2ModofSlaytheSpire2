@@ -1,6 +1,6 @@
 {
     "PARATROOPER.title": "伞兵",
-    "PARATROOPER.description": "[gold]消耗[/gold]。将些许[gold]虚无[/gold]的部队加入手牌。",
+    "PARATROOPER.description": "将些许[gold]虚无[/gold]的部队加入手牌。",
     "SELL_MC_V.title": "卖基地",
     "SELL_MC_V.description": "出售基地获得 {DollarValue} 资金。{IfUpgraded:show:获得一名工程师。|}",
     "OIL_DERRICK_CARD.title": "油井",
