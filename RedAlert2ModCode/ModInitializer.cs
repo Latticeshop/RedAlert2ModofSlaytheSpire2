@@ -1,3 +1,4 @@
+// 小格子铺 | Latticeshop
 using System.Reflection;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Modding;

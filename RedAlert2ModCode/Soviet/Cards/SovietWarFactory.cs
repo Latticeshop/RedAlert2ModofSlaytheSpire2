@@ -82,12 +82,9 @@ public sealed class SovietWarFactory : CardModel
 
 		if (selectedCard != null)
 		{
-			// 添加重工能力（用于科技线检查）- 只在选择单位后才添加
-			if (!Owner.Creature.Powers.OfType<SovietWarFactoryPower>().Any())
-			{
-				await PowerCmd.Apply<SovietWarFactoryPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
-				GD.Print("[SovietWarFactory] 添加重工能力");
-			}
+			// 添加重工能力（用于科技线检查），每次打出都增加层数
+			await PowerCmd.Apply<SovietWarFactoryPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+			GD.Print("[SovietWarFactory] 添加重工能力");
 
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			

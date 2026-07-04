@@ -106,12 +106,9 @@ public sealed class AlliedRefinery : CardModel
 		// 将矿车加入手牌
 		await CardPileCmd.AddGeneratedCardToCombat(minerCard, PileType.Hand, Owner);
 
-		// 添加矿场能力（用于科技线检查）
-		if (!Owner.Creature.Powers.OfType<AlliedRefineryPower>().Any())
-		{
-			await PowerCmd.Apply<AlliedRefineryPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
-			GD.Print("[AlliedRefinery] 添加矿场能力");
-		}
+		// 添加矿场能力（用于科技线检查），每次打出都增加层数
+		await PowerCmd.Apply<AlliedRefineryPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+		GD.Print("[AlliedRefinery] 添加矿场能力");
 
 		// 打出后抽一张牌
 		await CardPileCmd.Draw(ctx, 1, Owner);

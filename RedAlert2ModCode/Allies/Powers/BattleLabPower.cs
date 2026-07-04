@@ -13,9 +13,7 @@ public sealed class BattleLabPower : PowerModel
 {
     public override PowerType Type => PowerType.Buff;
 
-    public override PowerStackType StackType => PowerStackType.Single;
-
-    public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
+    public override PowerStackType StackType => PowerStackType.Counter;
 
     /// <summary>
     /// 本地化描述，显示"已解锁高级科技"

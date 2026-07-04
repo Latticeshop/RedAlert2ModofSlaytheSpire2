@@ -456,13 +456,14 @@ public static class AlliesCardValues
 		Block = 3                      // 触发时获得的电球数量
 	};
 
-	/// <summary>闪电风暴 - 4费技能卡（升级后3费），金卡，高科技运转卡，需要作战实验室</summary>
+	/// <summary>闪电风暴 - 3费技能卡（升级后3费），金卡，高科技运转卡，需要作战实验室</summary>
 	public static CardValueStore.CardValues LightningStorm => new()
 	{
-		Cost = 4,                      // 基础费用
-		CostUpgraded = -1,             // 升级后费用变为 4 + (-1) = 3
+		Cost = 3,                      // 基础费用
+		CostUpgraded = 0,              // 升级后费用不变
 		DollarValue = 0,               // 运转卡无价格
-		Block = 1                      // 电球数量
+		Block = 2,                     // 电球数量（升级后翻倍）
+		BlockUpgraded = 2              // 升级后电球数量增加2（2+2=4）
 	};
 
 	// ==================== 数值映射创建方法 ====================

@@ -85,6 +85,7 @@ public sealed class LightningStorm : CardModel
 
     protected override void OnUpgrade()
     {
-        EnergyCost.UpgradeBy((int)Values.CostUpgraded); // 升级后费用变为 4 + (-1) = 3
+        EnergyCost.UpgradeBy((int)Values.CostUpgraded); // 升级后费用不变（3+0=3）
+        DynamicVars["Block"].UpgradeValueBy((int)Values.BlockUpgraded); // 升级后电球数量增加2（2+2=4）
     }
 }

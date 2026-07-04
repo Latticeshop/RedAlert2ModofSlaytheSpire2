@@ -1,8 +1,10 @@
+// 小格子铺 | Latticeshop
 using BaseLib.Abstracts;
 using RedAlert2ModCode.Extensions;
 using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Common.Cards;
 using Godot;
+using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -41,7 +43,12 @@ public sealed class Allies : PlaceholderCharacterModel
     public override Color NameColor => Color;
     public override Color MapDrawingColor => Color;
     public override CharacterGender Gender => CharacterGender.Feminine; // 谭雅是女性角色
-    public override int StartingHp => 80;
+    public override int StartingHp => 85;
+    
+    public override string CustomArmPointingTexturePath => "res://RedAlert2ModResources/images/ui/hands/multiplayer_hand_allies_point.png";
+    public override string CustomArmRockTexturePath => "res://RedAlert2ModResources/images/ui/hands/multiplayer_hand_allies_rock.png";
+    public override string CustomArmPaperTexturePath => "res://RedAlert2ModResources/images/ui/hands/multiplayer_hand_allies_paper.png";
+    public override string CustomArmScissorsTexturePath => "res://RedAlert2ModResources/images/ui/hands/multiplayer_hand_allies_scissors.png";
     
     // 起始卡组（5张美国大兵 + 5张灰熊坦克 + 1张盟军基地车 + 1张盟军围墙）
     public override IEnumerable<CardModel> StartingDeck => new List<CardModel>

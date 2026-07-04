@@ -65,11 +65,9 @@ public sealed class SovietRadar : CardModel
 			GD.Print($"[SovietRadar] 扣除资金 {Values.DollarValue}");
 		}
 
-		if (!Owner.Creature.Powers.OfType<SovietRadarPower>().Any())
-		{
-			await PowerCmd.Apply<SovietRadarPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
-			GD.Print("[SovietRadar] 添加雷达能力");
-		}
+		// 添加雷达能力（用于科技线检查），每次打出都增加层数
+		await PowerCmd.Apply<SovietRadarPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+		GD.Print("[SovietRadar] 添加雷达能力");
 
 		await CardPileCmd.Draw(ctx, 1, Owner);
 	}

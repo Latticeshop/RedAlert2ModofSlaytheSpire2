@@ -1,5 +1,7 @@
+// 小格子铺 | Latticeshop
 using BaseLib.Abstracts;
 using Godot;
+using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models;
@@ -41,7 +43,12 @@ public sealed class Soviet : PlaceholderCharacterModel
     public override Color NameColor => Color;
     public override Color MapDrawingColor => Color;
     public override CharacterGender Gender => CharacterGender.Masculine;
-    public override int StartingHp => 90; // 苏军更耐打
+    public override int StartingHp => 85; // 苏军血量
+    
+    public override string CustomArmPointingTexturePath => "res://RedAlert2ModResources/images/ui/hands/multiplayer_hand_soviet_point.png";
+    public override string CustomArmRockTexturePath => "res://RedAlert2ModResources/images/ui/hands/multiplayer_hand_soviet_rock.png";
+    public override string CustomArmPaperTexturePath => "res://RedAlert2ModResources/images/ui/hands/multiplayer_hand_soviet_paper.png";
+    public override string CustomArmScissorsTexturePath => "res://RedAlert2ModResources/images/ui/hands/multiplayer_hand_soviet_scissors.png";
     
     // 起始卡组（6张动员兵 + 4张犀牛坦克 + 1张苏军基地车 + 1张苏军围墙）
     public override IEnumerable<CardModel> StartingDeck => new List<CardModel>
