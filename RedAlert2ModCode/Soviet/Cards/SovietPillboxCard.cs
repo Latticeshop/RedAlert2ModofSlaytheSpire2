@@ -53,7 +53,7 @@ public sealed class SovietPillboxCard : CardModel
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new DamageVar(Values.Damage, ValueProp.Unpowered),
+		new DamageVar(Values.Damage, ValueProp.Move),
 		new BlockVar(Values.Block, ValueProp.Unpowered),
 		new IntVar("DollarNumber", Values.DollarValue),
 		new IntVar("Repeat", Values.Repeat)

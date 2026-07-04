@@ -55,10 +55,9 @@ public sealed class KirovPower : PowerModel
                 new ThrowingPlayerChoiceContext(),
                 new List<Creature> { Owner },
                 (decimal)DamagePerStack,
-                ValueProp.Unpowered,
+                ValueProp.Move,
                 null,
-                null
-            );
+                null);
         }
     }
 

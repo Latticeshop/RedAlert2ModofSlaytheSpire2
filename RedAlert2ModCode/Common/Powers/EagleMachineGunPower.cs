@@ -108,7 +108,9 @@ public class EagleMachineGunPower : PowerModel, IDesperateMeasurePower
 
                     if (aliveEnemies.Count > 0)
                     {
-                        var randomEnemy = aliveEnemies[GD.RandRange(0, aliveEnemies.Count - 1)];
+                        var rng = base.Owner?.Player?.RunState?.Rng?.CombatCardSelection;
+                        var randomIndex = rng?.NextInt(aliveEnemies.Count) ?? GD.RandRange(0, aliveEnemies.Count - 1);
+                        var randomEnemy = aliveEnemies[randomIndex];
                         await PowerCmd.Apply<TargetLockedPower>(new ThrowingPlayerChoiceContext(), randomEnemy, 1m, base.Owner, null);
                         GD.Print($"[EagleMachineGunPower] 随机赋予 {randomEnemy.Name} 目标锁定");
                         target = randomEnemy;
@@ -128,7 +130,7 @@ public class EagleMachineGunPower : PowerModel, IDesperateMeasurePower
                 await CreatureCmd.Damage(ctx ?? new ThrowingPlayerChoiceContext(),
                     new List<Creature> { target },
                     (decimal)CurrentDamage,
-                    ValueProp.Unpowered,
+                    ValueProp.Move,
                     base.Owner,
                     null);
                 

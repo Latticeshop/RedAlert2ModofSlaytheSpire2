@@ -147,9 +147,10 @@ public class HornetPower : PowerModel
                     .ToList();
 
                 if (aliveEnemies.Count > 0)
-                {
-                    // 随机选择一个敌人
-                    var randomEnemy = aliveEnemies[GD.RandRange(0, aliveEnemies.Count - 1)];
+                    {
+                        var rng = Owner?.Player?.RunState?.Rng?.CombatCardSelection;
+                        var randomIndex = rng?.NextInt(aliveEnemies.Count) ?? GD.RandRange(0, aliveEnemies.Count - 1);
+                        var randomEnemy = aliveEnemies[randomIndex];
                     GD.Print($"[HornetPower] 随机选择敌人: {randomEnemy.Name}");
                     
                     // 清除其他敌人可能存在的目标锁定（保持唯一性）
@@ -201,8 +202,8 @@ public class HornetPower : PowerModel
             await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(),
                 new List<Creature> { target },
                 (decimal)CurrentDamage,
-                ValueProp.Unpowered,
-                base.Owner,
+                ValueProp.Move,
+                Owner,
                 null);
 
             GD.Print($"[HornetPower] 第{i+1}次攻击 - 造成 {CurrentDamage} 点伤害");

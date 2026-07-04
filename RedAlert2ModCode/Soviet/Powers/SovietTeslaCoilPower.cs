@@ -90,7 +90,9 @@ public class SovietTeslaCoilPower : PowerModel
 			GD.Print($"[TeslaCoilPower] 移除充能能力");
 		}
 
-		var randomEnemy = enemies[GD.RandRange(0, enemies.Count - 1)];
+		var rng = Owner?.Player?.RunState?.Rng?.CombatCardSelection;
+		var randomIndex = rng?.NextInt(enemies.Count) ?? GD.RandRange(0, enemies.Count - 1);
+		var randomEnemy = enemies[randomIndex];
 
 		AudioHelper.PlayTeslaCoilChargeSound(Owner);
 		await Task.Delay(500);

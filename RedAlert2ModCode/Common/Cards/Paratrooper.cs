@@ -49,7 +49,7 @@ public class Paratrooper : CardModel
 		bool isSoviet = Owner.Character?.Id?.Entry?.Contains("SOVIET") ?? false;
 		bool isAllies = !isSoviet && (Owner.Character?.Id?.Entry?.Contains("REDALERT") ?? false);
 		
-		int soldierCount = isSoviet ? 9 : 6;
+		int soldierCount = isSoviet ? 5 : 3;
 		
 		for (int i = 0; i < soldierCount; i++)
 		{
@@ -67,16 +67,24 @@ public class Paratrooper : CardModel
 	{
 		try
 		{
+			CardModel soldierCard;
 			if (isAllies)
 			{
 				var template = ModelDb.Card<AmericanSoldier>();
-				return Owner.Creature.CombatState.CreateCard(template, Owner);
+				soldierCard = Owner.Creature.CombatState.CreateCard(template, Owner);
 			}
 			else
 			{
 				var template = ModelDb.Card<Conscript>();
-				return Owner.Creature.CombatState.CreateCard(template, Owner);
+				soldierCard = Owner.Creature.CombatState.CreateCard(template, Owner);
 			}
+
+			if (IsUpgraded && !soldierCard.IsUpgraded)
+			{
+				CardCmd.Upgrade(soldierCard);
+			}
+
+			return soldierCard;
 		}
 		catch (Exception ex)
 		{

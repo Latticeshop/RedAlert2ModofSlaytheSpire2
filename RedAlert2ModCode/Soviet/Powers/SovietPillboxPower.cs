@@ -86,13 +86,15 @@ public sealed class SovietPillboxPower : PowerModel
 
 		var enemies = combatState.Enemies.Where(static enemy => enemy.Side == CombatSide.Enemy && enemy.IsAlive).ToList();
 		
+		var rng = Owner?.Player?.RunState?.Rng?.CombatCardSelection;
 		for (int i = 0; i < stacks; i++)
 		{
 			for (int j = 0; j < Values.Repeat; j++)
 			{
 				if (enemies.Count > 0)
 				{
-					var randomEnemy = enemies[GD.RandRange(0, enemies.Count - 1)];
+					var randomIndex = rng?.NextInt(enemies.Count) ?? GD.RandRange(0, enemies.Count - 1);
+					var randomEnemy = enemies[randomIndex];
 					GD.Print($"[SovietPillboxPower] 第{i+1}层第{j+1}次攻击 - 对敌人 {randomEnemy.Name} 造成 {CurrentDamage} 点伤害");
 					
 					await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(), 

@@ -1798,6 +1798,72 @@ ProjectRoot/
 
 ---
 
+## 🎮 联机模式同步机制
+
+### 多人同步随机数生成
+
+**问题**：使用 `GD.RandRange()` 或 `new Random()` 会导致联机模式下不同客户端随机结果不一致，引发 `StateDivergence` 错误。
+
+**正确用法**：
+```csharp
+var rng = Owner?.Player?.RunState?.Rng?.CombatCardSelection;
+var randomIndex = rng?.NextInt(enemies.Count) ?? GD.RandRange(0, enemies.Count - 1);
+```
+
+**常用方法**：
+| 方法 | 说明 |
+|------|------|
+| `NextInt(int max)` | [0, max) |
+| `NextInt(int min, int max)` | [min, max) |
+| `NextDouble()` | [0.0, 1.0) |
+| `NextBool()` | 随机布尔值 |
+
+**使用场景**：防御塔随机目标、工程师选项排序等需要多人同步的随机操作。
+
+**错误示例**：
+```csharp
+// ❌ 会导致联机不同步
+var idx = GD.RandRange(0, enemies.Count - 1);
+var idx = new Random().Next(enemies.Count);
+```
+
+### DamageVar攻击类型与增伤机制
+
+#### ValueProp枚举
+
+| 值 | 说明 | 是否受增伤buff |
+|----|------|--------------|
+| `ValueProp.Move` | 攻击卡伤害 | ✅ |
+| `ValueProp.Unpowered` | 能力/遗物/药水伤害 | ❌ |
+
+#### 使用示例
+
+**攻击卡（受增伤buff影响）**：
+```csharp
+new DamageVar(6m, ValueProp.Move)
+```
+
+**能力卡（不受增伤buff影响）**：
+```csharp
+new DamageVar(8m, ValueProp.Unpowered)
+```
+
+#### 红警Mod增伤规则
+
+| 卡牌类型 | 是否受增伤buff | ValueProp | 示例 |
+|---------|--------------|-----------|------|
+| 攻击卡（单位卡、武器卡） | ✅ | `ValueProp.Move` | 动员兵、灰熊坦克、核弹 |
+| 技能卡（非能力类） | ✅ | `ValueProp.Move` | 飞鹰空袭、闪电风暴 |
+| 能力卡（防御塔等Power卡） | ❌ | `ValueProp.Unpowered` | 哨戒炮、磁暴线圈、光棱塔 |
+| 遗物/药水伤害 | ❌ | `ValueProp.Unpowered` | 遗物效果、药水效果 |
+
+**关键原则**：
+- 打出卡牌直接造成的伤害用 `ValueProp.Move`
+- 能力(Power)回合触发的伤害用 `ValueProp.Unpowered`
+- 防御塔其伤害通过能力触发，使用 `ValueProp.Unpowered`
+
+---
+
 ## 🔊 音效播放系统
 
 ### 建筑音效播放

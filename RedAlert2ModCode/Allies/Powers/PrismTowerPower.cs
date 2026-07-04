@@ -89,10 +89,12 @@ public class PrismTowerPower : PowerModel
 		if (enemies.Count == 0)
 			return;
 
+		var rng = Owner?.Player?.RunState?.Rng?.CombatCardSelection;
 		List<Creature> targetList = new List<Creature>();
 		for (int i = 0; i < CurrentHits; i++)
 		{
-			var randomEnemy = enemies[GD.RandRange(0, enemies.Count - 1)];
+			var randomIndex = rng?.NextInt(enemies.Count) ?? GD.RandRange(0, enemies.Count - 1);
+			var randomEnemy = enemies[randomIndex];
 			targetList.Add(randomEnemy);
 		}
 

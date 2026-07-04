@@ -139,8 +139,9 @@ public sealed class V3RocketPower : PowerModel
                 "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_12.wav",
             };
 
-            var random = new Random();
-            string randomFile = explosionFiles[random.Next(explosionFiles.Count)];
+            var rng = Owner?.Player?.RunState?.Rng?.CombatCardSelection;
+            int randomIndex = rng?.NextInt(explosionFiles.Count) ?? new Random().Next(explosionFiles.Count);
+            string randomFile = explosionFiles[randomIndex];
 
             EnsureExplosionAudioPlayer();
             if (_explosionAudioPlayer == null) return;
@@ -185,7 +186,7 @@ public sealed class V3RocketPower : PowerModel
                 await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(),
                     new List<Creature> { target },
                     (decimal)CurrentDamage,
-                    ValueProp.Unpowered,
+                    ValueProp.Move,
                     Owner,
                     null);
 

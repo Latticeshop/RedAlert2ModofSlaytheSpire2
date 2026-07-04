@@ -1938,7 +1938,100 @@ public override async Task AfterSideTurnStart(CombatSide side, CombatState comba
 
 ---
 
-## �🎯 快速开始检查清单
+## 联机模式同步机制
+
+### 多人同步随机数生成
+
+在联机模式下，使用普通的随机数生成器（如 `GD.RandRange()` 或 `new Random()`）会导致不同客户端之间的随机结果不一致，从而引发 `StateDivergence` 错误。游戏提供了同步的随机数生成器来解决这个问题。
+
+**正确用法**：
+```csharp
+var rng = Owner?.Player?.RunState?.Rng?.CombatCardSelection;
+if (rng != null)
+{
+    var randomIndex = rng.NextInt(enemies.Count);
+    // 使用同步的随机数
+}
+else
+{
+    // 单机模式下的回退方案
+    var randomIndex = GD.RandRange(0, enemies.Count - 1);
+}
+```
+
+**常用的同步随机数方法**：
+| 方法 | 说明 |
+|------|------|
+| `NextInt(int max)` | 返回 [0, max) 范围内的随机整数 |
+| `NextInt(int min, int max)` | 返回 [min, max) 范围内的随机整数 |
+| `NextDouble()` | 返回 [0.0, 1.0) 范围内的随机双精度数 |
+| `NextBool()` | 返回随机布尔值 |
+
+**使用场景**：
+- 防御塔攻击多目标时随机选择目标
+- 工程师选项的随机排序
+- 任何需要在多人模式下保持一致的随机操作
+
+**错误示例**（会导致联机不同步）：
+```csharp
+// ❌ 错误：使用非同步随机数
+var randomIndex = GD.RandRange(0, enemies.Count - 1);
+
+// ❌ 错误：使用非同步随机数
+var rand = new Random();
+var randomIndex = rand.Next(enemies.Count);
+```
+
+### DamageVar攻击类型与增伤机制
+
+游戏中的伤害数值通过 `DamageVar` 定义，其第二个参数 `ValueProp` 决定了伤害是否能受到增益效果（如力量加成、迟缓debuff增伤等）的影响。
+
+#### ValueProp枚举类型
+
+| 枚举值 | 说明 | 是否受增伤buff影响 |
+|--------|------|------------------|
+| `ValueProp.Move` | 攻击卡牌造成的伤害 | ✅ 是 |
+| `ValueProp.Unpowered` | 能力/遗物/药水造成的伤害 | ❌ 否 |
+
+#### 使用示例
+
+**攻击卡牌（受增伤buff影响）**：
+```csharp
+// 攻击卡牌使用 ValueProp.Move，伤害会受到力量等buff加成
+protected override List<DynamicVar> CanonicalVars => new List<DynamicVar>
+{
+    new DamageVar(6m, ValueProp.Move)
+};
+```
+
+**能力卡牌（不受增伤buff影响）**：
+```csharp
+// 防御塔能力使用 ValueProp.Unpowered，伤害不受力量等buff加成
+protected override List<DynamicVar> CanonicalVars => new List<DynamicVar>
+{
+    new DamageVar(8m, ValueProp.Unpowered)
+};
+```
+
+#### 红警Mod增伤规则
+
+对于红警2 Mod，伤害能否受增伤buff影响的规则如下：
+
+| 卡牌类型 | 是否受增伤buff | ValueProp | 示例 |
+|---------|--------------|-----------|------|
+| 攻击卡（单位卡、武器卡） | ✅ 是 | `ValueProp.Move` | 动员兵、灰熊坦克、核弹 |
+| 技能卡（非能力类） | ✅ 是 | `ValueProp.Move` | 飞鹰空袭、闪电风暴 |
+| 能力卡（防御塔等Power卡） | ❌ 否 | `ValueProp.Unpowered` | 哨戒炮、磁暴线圈、光棱塔 |
+| 遗物/药水伤害 | ❌ 否 | `ValueProp.Unpowered` | 各种遗物效果、药水效果 |
+
+**关键原则**：
+- 所有通过打出卡牌直接造成的伤害（攻击卡、技能卡）应使用 `ValueProp.Move`
+- 所有通过能力(Power)回合触发造成的伤害应使用 `ValueProp.Unpowered`
+- 防御塔其伤害是通过能力触发的，因此使用 `ValueProp.Unpowered`
+
+---
+
+## 🎯 快速开始检查清单
 
 - [ ] 安装Megadot编辑器
 - [ ] 配置.NET 9.0环境

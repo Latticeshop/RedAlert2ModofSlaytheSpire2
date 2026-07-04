@@ -29,7 +29,7 @@ public sealed class LightningStorm : CardModel
 {
     private static readonly CardValueStore.CardValues Values = AlliesCardValues.LightningStorm;
     
-    public LightningStorm() : base((int)Values.Cost, CardType.Skill, CardRarity.Rare, TargetType.Self)
+    public LightningStorm() : base((int)Values.Cost, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies)
     {
     }
 

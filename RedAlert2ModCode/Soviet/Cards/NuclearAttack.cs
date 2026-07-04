@@ -26,7 +26,7 @@ public sealed class NuclearAttack : CardModel
 {
     private static readonly CardValueStore.CardValues Values = SovietCardValues.NuclearAttack;
 
-    public NuclearAttack() : base((int)Values.Cost, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
+    public NuclearAttack() : base((int)Values.Cost, CardType.Attack, CardRarity.Rare, TargetType.AllEnemies) { }
 
     public override HashSet<CardKeyword> CanonicalKeywords => new HashSet<CardKeyword>
     {
@@ -37,7 +37,7 @@ public sealed class NuclearAttack : CardModel
 
     protected override List<DynamicVar> CanonicalVars => new()
     {
-        new DamageVar(Values.Damage, ValueProp.Unpowered),
+        new DamageVar(Values.Damage, ValueProp.Move),
         new IntVar("Poison", Values.MagicNumber)
     };
 
@@ -74,7 +74,7 @@ public sealed class NuclearAttack : CardModel
             foreach (var enemy in allEnemies)
             {
                 await CreatureCmd.Damage(ctx, new List<Creature> { enemy },
-                    (decimal)damage, ValueProp.Unpowered, Owner.Creature, this);
+                    (decimal)damage, ValueProp.Move, Owner.Creature, this);
 
                 await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.PoisonPower>(ctx, enemy, (decimal)poisonAmount, Owner.Creature, this);
             }

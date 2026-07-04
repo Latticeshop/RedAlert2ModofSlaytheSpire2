@@ -150,8 +150,8 @@ public class EagleAirStrikePower : PowerModel, IDesperateMeasurePower
                 await CreatureCmd.Damage(ctx ?? new ThrowingPlayerChoiceContext(),
                     new List<Creature> { enemy },
                     (decimal)CurrentDamage,
-                    ValueProp.Unpowered,
-                    base.Owner,
+                    ValueProp.Move,
+                    Owner,
                     null);
                 
                 GD.Print($"[EagleAirStrikePower] 对 {enemy.Name} 造成 {CurrentDamage} 点伤害");

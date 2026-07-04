@@ -61,11 +61,10 @@ public sealed class SovietTerrorDronePower : PowerModel
         await CreatureCmd.Damage(
             new ThrowingPlayerChoiceContext(),
             new List<Creature> { Owner },
-            (decimal)totalDamage,
-            ValueProp.Unpowered,
+            (decimal)DamagePerStack,
+            ValueProp.Move,
             null,
-            null
-        );
+            null);
     }
 
     private static AudioStreamPlayer? _audioPlayer;

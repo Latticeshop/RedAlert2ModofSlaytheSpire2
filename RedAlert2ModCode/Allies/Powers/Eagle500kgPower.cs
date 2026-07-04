@@ -174,7 +174,7 @@ public class Eagle500kgPower : PowerModel, IDesperateMeasurePower
             await CreatureCmd.Damage(ctx ?? new ThrowingPlayerChoiceContext(),
                 new List<Creature> { target },
                 (decimal)CurrentDamage,
-                ValueProp.Unpowered,
+                ValueProp.Move,
                 base.Owner,
                 null);
 
@@ -195,7 +195,7 @@ public class Eagle500kgPower : PowerModel, IDesperateMeasurePower
                     await CreatureCmd.Damage(ctx ?? new ThrowingPlayerChoiceContext(),
                         new List<Creature> { otherEnemy },
                         splashDamage,
-                        ValueProp.Unpowered,
+                        ValueProp.Move,
                         base.Owner,
                         null);
                     GD.Print($"[Eagle500kgPower] 对 {otherEnemy.Name} 造成 {splashDamage} 点溅射伤害");
@@ -253,8 +253,9 @@ public class Eagle500kgPower : PowerModel, IDesperateMeasurePower
 
         if (aliveEnemies.Count > 0)
         {
-            // 随机选择一个敌人
-            var randomEnemy = aliveEnemies[GD.RandRange(0, aliveEnemies.Count - 1)];
+            var rng = owner?.Player?.RunState?.Rng?.CombatCardSelection;
+            var randomIndex = rng?.NextInt(aliveEnemies.Count) ?? GD.RandRange(0, aliveEnemies.Count - 1);
+            var randomEnemy = aliveEnemies[randomIndex];
             GD.Print($"[Eagle500kgPower] 随机选择敌人: {randomEnemy.Name}");
             
             // 赋予目标锁定

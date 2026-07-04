@@ -40,6 +40,9 @@ public sealed class SteelFloodPower : PowerModel
         if (card.Keywords.Contains(CardKeyword.Unplayable))
             return false;
 
+        if (card.GetType().Name.Contains("Wall"))
+            return false;
+
         return true;
     }
 
