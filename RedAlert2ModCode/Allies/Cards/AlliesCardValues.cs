@@ -82,14 +82,14 @@ public static class AlliesCardValues
 		// 基地车主要是功能牌
 	};
 
-	/// <summary>灰熊坦克 - 1费5攻击3防御，升级后7攻击5防御，价格700</summary>
+	/// <summary>灰熊坦克 - 1费3攻击5防御，升级后5攻击8防御，价格700</summary>
 	public static CardValueStore.CardValues GrizzlyTank => new()
 	{
 		Cost = 1,
-		Damage = 5,
+		Damage = 3,
 		DamageUpgraded = 2,
-		Block = 3,
-		BlockUpgraded = 2,
+		Block = 5,
+		BlockUpgraded = 3,
 		DollarValue = 700
 	};
 	

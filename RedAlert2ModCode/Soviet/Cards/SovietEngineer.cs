@@ -35,7 +35,7 @@ public sealed class SovietEngineer : CardModel
 		UnitVoiceHelper.PlayUnitVoice(GetType(), "Soviet");
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
-		List<EngineerChoice> choices = EngineerChoiceHelper.GenerateRandomChoices(IsUpgraded);
+		List<EngineerChoice> choices = EngineerChoiceHelper.GenerateRandomChoices(IsUpgraded, Owner);
 
 		var selectedChoice = await EngineerChoiceScreen.ShowSelectionWithSync(choices, PortraitPath, Owner, FactionType.Soviet);
 

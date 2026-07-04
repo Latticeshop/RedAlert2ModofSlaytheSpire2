@@ -4,10 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Random;
+using MegaCrit.Sts2.Core.Runs;
 using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Cards;
@@ -22,24 +25,22 @@ public static class EngineerChoiceHelper
     private const int BASE_CHOICE_COUNT = 2;
     private const int UPGRADED_CHOICE_COUNT = 1;
 
-    public static List<EngineerChoice> GenerateRandomChoices(bool isUpgraded)
+    public static List<EngineerChoice> GenerateRandomChoices(bool isUpgraded, Player player)
     {
         int choiceCount = isUpgraded ? BASE_CHOICE_COUNT + UPGRADED_CHOICE_COUNT : BASE_CHOICE_COUNT;
-        return WeightedRandomSelection(EngineerChoiceValues.AllChoices, choiceCount);
+        return WeightedRandomSelection(EngineerChoiceValues.AllChoices, choiceCount, player.RunState.Rng.CombatCardSelection);
     }
 
     private static List<EngineerChoice> WeightedRandomSelection(
-        List<EngineerChoice> choices, int count)
+        List<EngineerChoice> choices, int count, Rng rng)
     {
         List<EngineerChoice> result = new();
         List<EngineerChoice> remaining = new List<EngineerChoice>(choices);
-        
-        Random random = new();
 
         for (int i = 0; i < count && remaining.Count > 0; i++)
         {
             int totalWeight = remaining.Sum(c => c.Weight);
-            int randomValue = random.Next(totalWeight);
+            int randomValue = rng.NextInt(totalWeight);
             int currentWeight = 0;
 
             foreach (var choice in remaining)

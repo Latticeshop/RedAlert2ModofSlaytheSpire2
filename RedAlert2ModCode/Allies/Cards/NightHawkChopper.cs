@@ -137,10 +137,13 @@ public sealed partial class NightHawkChopper : CardModel
 
         foreach (var card in selectedCards)
         {
-            NPlayerHand.Instance?.Remove(card);
-            card.RemoveFromCurrentPile();
             _storedCards.Add(card);
             GD.Print($"[NightHawkChopper] 存储士兵卡牌: {card.Title}");
+        }
+
+        foreach (var card in _storedCards)
+        {
+            await CardPileCmd.RemoveFromCombat(card);
         }
 
         if (_storedCards.Count > 0)
@@ -160,6 +163,7 @@ public sealed partial class NightHawkChopper : CardModel
 
         foreach (var card in _storedCards)
         {
+            card.HasBeenRemovedFromState = false;
             await CardPileCmd.Add(card, PileType.Hand, CardPilePosition.Bottom, this);
             GD.Print($"[NightHawkChopper] 释放卡牌: {card.Title}");
         }

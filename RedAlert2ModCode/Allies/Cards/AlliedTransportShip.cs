@@ -101,10 +101,13 @@ public sealed class AlliedTransportShip : CardModel
 
         foreach (var card in selectedCards)
         {
-            NPlayerHand.Instance?.Remove(card);
-            card.RemoveFromCurrentPile();
             _storedCards.Add(card);
             GD.Print($"[AlliedTransportShip] 存储卡牌: {card.Title}");
+        }
+
+        foreach (var card in _storedCards)
+        {
+            await CardPileCmd.RemoveFromCombat(card);
         }
 
         if (_storedCards.Count > 0)
@@ -127,6 +130,7 @@ public sealed class AlliedTransportShip : CardModel
 
         foreach (var card in _storedCards)
         {
+            card.HasBeenRemovedFromState = false;
             await CardPileCmd.Add(card, PileType.Hand, CardPilePosition.Bottom, this);
             GD.Print($"[AlliedTransportShip] 释放卡牌: {card.Title}");
         }

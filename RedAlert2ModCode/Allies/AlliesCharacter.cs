@@ -43,11 +43,9 @@ public sealed class Allies : PlaceholderCharacterModel
     public override CharacterGender Gender => CharacterGender.Feminine; // 谭雅是女性角色
     public override int StartingHp => 80;
     
-    // 起始卡组（7张美国大兵 + 5张灰熊坦克 + 1张盟军基地车 + 1张盟军围墙）
+    // 起始卡组（5张美国大兵 + 5张灰熊坦克 + 1张盟军基地车 + 1张盟军围墙）
     public override IEnumerable<CardModel> StartingDeck => new List<CardModel>
     {
-        ModelDb.Card<AmericanSoldier>(),
-        ModelDb.Card<AmericanSoldier>(),
         ModelDb.Card<AmericanSoldier>(),
         ModelDb.Card<AmericanSoldier>(),
         ModelDb.Card<AmericanSoldier>(),
