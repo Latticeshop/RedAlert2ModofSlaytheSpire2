@@ -39,15 +39,13 @@ public sealed class Soviet : PlaceholderCharacterModel
     
     // 必需属性
     public override Color NameColor => Color;
+    public override Color MapDrawingColor => Color;
     public override CharacterGender Gender => CharacterGender.Masculine;
     public override int StartingHp => 90; // 苏军更耐打
     
-    // 起始卡组（12张动员兵 + 4张犀牛坦克 + 1张苏军基地车 + 1张苏军围墙）
+    // 起始卡组（9张动员兵 + 4张犀牛坦克 + 1张苏军基地车 + 1张苏军围墙）
     public override IEnumerable<CardModel> StartingDeck => new List<CardModel>
     {
-        ModelDb.Card<Conscript>(),
-        ModelDb.Card<Conscript>(),
-        ModelDb.Card<Conscript>(),
         ModelDb.Card<Conscript>(),
         ModelDb.Card<Conscript>(),
         ModelDb.Card<Conscript>(),

@@ -21,9 +21,6 @@ public sealed class AlliesRepairDepot : CardModel
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.RepairDepot;
 	private static readonly int BASE_COST = (int)Values.Cost;
 	private static readonly int UPGRADED_COST = Values.CostUpgraded > 0 ? Values.CostUpgraded : BASE_COST;
-	private static readonly int BASE_STATUS_COUNT = 2;
-	private static readonly int UPGRADED_STATUS_COUNT = 3;
-
 	public AlliesRepairDepot() : base(BASE_COST, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/fixicon.png";
@@ -53,8 +50,7 @@ public sealed class AlliesRepairDepot : CardModel
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new IntVar("DollarNumber", Values.DollarValue),
-		new IntVar("StatusCount", BASE_STATUS_COUNT)
+		new IntVar("DollarNumber", Values.DollarValue)
 	};
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -80,26 +76,10 @@ public sealed class AlliesRepairDepot : CardModel
 				GD.Print($"[AlliesRepairDepot] 从消耗牌堆选择卡牌加入手牌: {selectedCard.Id.Entry}");
 			}
 		}
-
-		int statusCount = base.IsUpgraded ? UPGRADED_STATUS_COUNT : BASE_STATUS_COUNT;
-		var handPile = PileType.Hand.GetPile(Owner);
-		var statusCards = handPile?.Cards.Where(c => c.Rarity == CardRarity.Status).ToList() ?? new List<CardModel>();
-
-		int actualCount = Math.Min(statusCards.Count, statusCount);
-		if (actualCount > 0)
-		{
-			var selectedCards = statusCards.Take(actualCount).ToList();
-			foreach (var card in selectedCards)
-			{
-				await CardPileCmd.Add(card, PileType.Exhaust);
-				GD.Print($"[AlliesRepairDepot] 消耗状态牌: {card.Id.Entry}");
-			}
-		}
 	}
 
 	protected override void OnUpgrade()
 	{
 		EnergyCost.SetCustomBaseCost(UPGRADED_COST);
-		DynamicVars["StatusCount"].UpgradeValueBy(UPGRADED_STATUS_COUNT - BASE_STATUS_COUNT);
 	}
 }

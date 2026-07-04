@@ -70,17 +70,6 @@ public sealed class SovietRepairDepot : CardModel
 
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
-		var exhaustPile = PileType.Exhaust.GetPile(Owner);
-		if (exhaustPile != null && exhaustPile.Cards.Count > 0)
-		{
-			var selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(exhaustPile.Cards.ToList(), Owner);
-			if (selectedCard != null)
-			{
-				await CardPileCmd.Add(selectedCard, PileType.Hand);
-				GD.Print($"[SovietRepairDepot] 从消耗牌堆选择卡牌加入手牌: {selectedCard.Id.Entry}");
-			}
-		}
-
 		int statusCount = base.IsUpgraded ? UPGRADED_STATUS_COUNT : BASE_STATUS_COUNT;
 		var handPile = PileType.Hand.GetPile(Owner);
 		var statusCards = handPile?.Cards.Where(c => c.Rarity == CardRarity.Status).ToList() ?? new List<CardModel>();

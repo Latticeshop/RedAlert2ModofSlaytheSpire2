@@ -10,6 +10,8 @@
     "REDALERT2MODCODE-ALLIES.eventDeathPrevention": "The Allied Forces have not abandoned this fight.",
     "REDALERT2MODCODE-ALLIES.unlockText": "Unlocked.",
     "REDALERT2MODCODE-ALLIES.description": "The Allied faction from Red Alert 2, specializing in high-tech weapons and rapid mobility tactics.",
+    "REDALERT2MODCODE-ALLIES.banter.alive.endTurnPing": "You're too slow!",
+    "REDALERT2MODCODE-ALLIES.banter.dead.endTurnPing": "Gug, ah!",
     "REDALERT2MODCODE-SOVIET.title": "Soviet Union",
     "REDALERT2MODCODE-SOVIET.titleObject": "Soviet Union",
     "REDALERT2MODCODE-SOVIET.pronounObject": "them",
@@ -20,5 +22,7 @@
     "REDALERT2MODCODE-SOVIET.cardsModifierDescription": "Only Soviet cards appear in rewards.",
     "REDALERT2MODCODE-SOVIET.eventDeathPrevention": "The Soviet will never yield.",
     "REDALERT2MODCODE-SOVIET.unlockText": "Unlocked.",
-    "REDALERT2MODCODE-SOVIET.description": "The Soviet faction from Red Alert 2, known for overwhelming firepower and the steel avalanche."
+    "REDALERT2MODCODE-SOVIET.description": "The Soviet faction from Red Alert 2, known for overwhelming firepower and the steel avalanche.",
+    "REDALERT2MODCODE-SOVIET.banter.alive.endTurnPing": "Comrade, comrade...",
+    "REDALERT2MODCODE-SOVIET.banter.dead.endTurnPing": "The Soviet Union lives on..."
 }

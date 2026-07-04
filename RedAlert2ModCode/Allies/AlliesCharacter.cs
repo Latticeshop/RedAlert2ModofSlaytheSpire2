@@ -39,6 +39,7 @@ public sealed class Allies : PlaceholderCharacterModel
     
     // 必需属性
     public override Color NameColor => Color;
+    public override Color MapDrawingColor => Color;
     public override CharacterGender Gender => CharacterGender.Feminine; // 谭雅是女性角色
     public override int StartingHp => 80;
     

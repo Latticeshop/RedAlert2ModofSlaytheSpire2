@@ -21,7 +21,8 @@ public class AlliesRelicPool : RelicPoolModel
     {
         return new RelicModel[]
         {
-            ModelDb.Relic<Common.Relics.DollarRelic>()
+            ModelDb.Relic<Common.Relics.DollarRelic>(),
+            ModelDb.Relic<Common.Relics.DollarAncientRelic>()
         };
     }
 }

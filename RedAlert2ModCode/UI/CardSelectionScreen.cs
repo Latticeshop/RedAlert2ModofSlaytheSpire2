@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 // 移除 MegaLabel 引用，使用普通 Label 避免 Godot 字体覆盖 bug
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
 using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Utils;
@@ -40,28 +41,37 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         if (locStringObj == null) return string.Empty;
         if (locStringObj is string str) return str;
 
-        System.Reflection.MethodInfo? formatMethod = locStringObj.GetType().GetMethod("GetFormattedText");
-        if (formatMethod != null)
+        Type locStringType = locStringObj.GetType();
+        
+        System.Reflection.MethodInfo? formattedMethod = locStringType.GetMethod("GetFormattedText", new Type[0]);
+        if (formattedMethod != null)
         {
             try
             {
-                object? result = formatMethod.Invoke(locStringObj, null);
+                object? result = formattedMethod.Invoke(locStringObj, null);
                 if (result is string formattedText && !string.IsNullOrEmpty(formattedText))
                 {
                     return formattedText;
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                GD.PrintErr($"[CardSelectionScreen] GetFormattedText 失败: {ex.Message}");
+            }
         }
 
-        System.Reflection.MethodInfo? rawMethod = locStringObj.GetType().GetMethod("GetRawText");
+        System.Reflection.MethodInfo? rawMethod = locStringType.GetMethod("GetRawText");
         if (rawMethod != null)
         {
-            object? result = rawMethod.Invoke(locStringObj, null);
-            if (result is string rawText && !string.IsNullOrEmpty(rawText))
+            try
             {
-                return rawText;
+                object? result = rawMethod.Invoke(locStringObj, null);
+                if (result is string rawText && !string.IsNullOrEmpty(rawText))
+                {
+                    return rawText;
+                }
             }
+            catch { }
         }
 
         string toString = locStringObj.ToString() ?? string.Empty;
@@ -100,31 +110,59 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         BuildUi();
     }
 
-    public static async Task<CardModel?> ShowSelection(List<CardModel> cards, FactionType faction = FactionType.Allied)
+    public static async Task<CardModel?> ShowSelection(List<CardModel> cards, Player player, FactionType faction = FactionType.Allied)
     {
         var screen = new CardSelectionScreen(cards, null, faction);
         NOverlayStack.Instance?.Push(screen);
+        
+        if (!MultiplayerSyncHelper.IsLocalPlayer(player))
+        {
+            screen.Close();
+            return null;
+        }
+        
         return await screen._completionSource.Task;
     }
 
-    public static async Task<CardModel?> ShowSelection(List<CardModel> cards, Dictionary<string, CardValueStore.CardValues> cardValuesMap, FactionType faction = FactionType.Allied)
+    public static async Task<CardModel?> ShowSelection(List<CardModel> cards, Player player, Dictionary<string, CardValueStore.CardValues> cardValuesMap, FactionType faction = FactionType.Allied)
     {
         var screen = new CardSelectionScreen(cards, cardValuesMap, faction);
         NOverlayStack.Instance?.Push(screen);
+        
+        if (!MultiplayerSyncHelper.IsLocalPlayer(player))
+        {
+            screen.Close();
+            return null;
+        }
+        
         return await screen._completionSource.Task;
     }
 
-    public static async Task<List<CardModel>?> ShowMultiSelection(List<CardModel> cards, int maxSelect, int minSelect, FactionType faction = FactionType.Allied)
+    public static async Task<List<CardModel>?> ShowMultiSelection(List<CardModel> cards, int maxSelect, int minSelect, Player player, FactionType faction = FactionType.Allied)
     {
         var screen = new CardSelectionScreen(cards, maxSelect, minSelect, null, faction);
         NOverlayStack.Instance?.Push(screen);
+        
+        if (!MultiplayerSyncHelper.IsLocalPlayer(player))
+        {
+            screen.Close();
+            return null;
+        }
+        
         return await screen._multiCompletionSource.Task;
     }
 
-    public static async Task<List<CardModel>?> ShowMultiSelection(List<CardModel> cards, int maxSelect, int minSelect, Dictionary<string, CardValueStore.CardValues> cardValuesMap, FactionType faction = FactionType.Allied)
+    public static async Task<List<CardModel>?> ShowMultiSelection(List<CardModel> cards, int maxSelect, int minSelect, Player player, Dictionary<string, CardValueStore.CardValues> cardValuesMap, FactionType faction = FactionType.Allied)
     {
         var screen = new CardSelectionScreen(cards, maxSelect, minSelect, cardValuesMap, faction);
         NOverlayStack.Instance?.Push(screen);
+        
+        if (!MultiplayerSyncHelper.IsLocalPlayer(player))
+        {
+            screen.Close();
+            return null;
+        }
+        
         return await screen._multiCompletionSource.Task;
     }
 
@@ -421,37 +459,36 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     
     private string GetDollarValueText(CardModel card)
     {
-        // 首先尝试从传递的映射中获取
         string cardKey = card.Id.Entry.ToUpper();
         if (_cardValuesMap.TryGetValue(cardKey, out var values))
         {
+            if (values.BuildCost > 0)
+                return values.BuildCost.ToString();
             decimal value = card.IsUpgraded ? values.DollarValue + values.DollarValueUpgraded : values.DollarValue;
             return value.ToString();
         }
         
-        // 如果传递的映射中没有，尝试使用 FindCardValues 方法查找
         CardValueStore.CardValues foundValues = FindCardValues(card.Id.Entry);
         if (foundValues != null)
         {
+            if (foundValues.BuildCost > 0)
+                return foundValues.BuildCost.ToString();
             decimal value = card.IsUpgraded ? foundValues.DollarValue + foundValues.DollarValueUpgraded : foundValues.DollarValue;
             return value.ToString();
         }
         
-        // 最后尝试从 AlliesCardValues 获取
         decimal result = AlliesCardValues.GetDollarValue(card.Id.Entry);
         if (result > 0)
         {
             return result.ToString();
         }
         
-        // 尝试从 SovietCardValues 获取
         result = SovietCardValues.GetDollarValue(card.Id.Entry);
         if (result > 0)
         {
             return result.ToString();
         }
         
-        // 额外尝试：直接访问卡牌的动态变量
         if (card.DynamicVars != null)
         {
             foreach (var varItem in card.DynamicVars)
@@ -533,24 +570,29 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         CardValueStore.CardValues values = FindCardValues(card.Id.Entry);
         if (values != null)
         {
-            text = text.Replace("{Damage}", values.GetDamage(isUpgraded).ToString());
-            text = text.Replace("{Block}", values.GetBlock(isUpgraded).ToString());
-            text = text.Replace("{Repeat}", values.GetRepeat(isUpgraded).ToString());
-            text = text.Replace("{Cost}", values.GetCost(isUpgraded).ToString());
-            text = text.Replace("{MagicNumber}", values.GetMagicNumber(isUpgraded).ToString());
-            text = text.Replace("{DollarValue}", values.GetDollarValue(isUpgraded).ToString());
-            text = text.Replace("{DollarNumber}", values.GetDollarValue(isUpgraded).ToString());
-            // 工程师使用的覆甲变量名
-            text = text.Replace("{PlatingAmount}", values.GetBlock(isUpgraded).ToString());
+            string damage = values.GetDamage(isUpgraded).ToString();
+            string block = values.GetBlock(isUpgraded).ToString();
+            string repeat = values.GetRepeat(isUpgraded).ToString();
+            string cost = values.GetCost(isUpgraded).ToString();
+            string magicNumber = values.GetMagicNumber(isUpgraded).ToString();
+            string dollarValue = values.GetDollarValue(isUpgraded).ToString();
             
-            // 驱逐舰使用的变量
+            text = text.Replace("{Damage}", damage).Replace("${Damage}", damage);
+            text = text.Replace("{Block}", block).Replace("${Block}", block);
+            text = text.Replace("{Repeat}", repeat).Replace("${Repeat}", repeat);
+            text = text.Replace("{Cost}", cost).Replace("${Cost}", cost);
+            text = text.Replace("{MagicNumber}", magicNumber).Replace("${MagicNumber}", magicNumber);
+            text = text.Replace("{DollarValue}", dollarValue).Replace("${DollarValue}", dollarValue);
+            text = text.Replace("{DollarNumber}", dollarValue).Replace("${DollarNumber}", dollarValue);
+            
+            text = text.Replace("{PlatingAmount}", block).Replace("${PlatingAmount}", block);
+            
             int defendDamage = isUpgraded ? values.MagicNumber + values.MagicNumberUpgraded : values.MagicNumber;
-            text = text.Replace("{DefendDamage}", defendDamage.ToString());
-            text = text.Replace("{RepeatCount}", values.Repeat.ToString());
+            text = text.Replace("{DefendDamage}", defendDamage.ToString()).Replace("${DefendDamage}", defendDamage.ToString());
+            text = text.Replace("{RepeatCount}", repeat).Replace("${RepeatCount}", repeat);
             
-            // 运输船使用的变量
             int storeCount = isUpgraded ? values.MagicNumber + values.MagicNumberUpgraded : values.MagicNumber;
-            text = text.Replace("{StoreCount}", storeCount.ToString());
+            text = text.Replace("{StoreCount}", storeCount.ToString()).Replace("${StoreCount}", storeCount.ToString());
         }
         
         return text;
@@ -604,7 +646,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         foreach (var varItem in card.DynamicVars)
         {
             string varName = varItem.GetType().Name.Replace("Var", "");
-            string pattern = $"\\{{{varName}\\}}";
+            string pattern = $"\\$?\\{{{varName}\\}}";
             
             object? value = null;
             var valueProp = varItem.GetType().GetProperty("Value");
@@ -742,6 +784,11 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     }
 
     private void OnCancelClicked()
+    {
+        Close();
+    }
+
+    public void Close()
     {
         if (_choiceLocked) return;
         _choiceLocked = true;
