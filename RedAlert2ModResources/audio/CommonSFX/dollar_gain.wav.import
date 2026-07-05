@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://dp2lwuvca78mr"
-path="res://.godot/imported/dollar_gain.wav-b7de5c3242641384f79359a73da70784.sample"
+path="res://.godot/imported/dollar_gain.wav-d8a280acd0696f23e4301c7732f916bd.sample"
 
 [deps]
 
-source_file="res://RedAlert2ModResources/audio/dollar_gain.wav"
-dest_files=["res://.godot/imported/dollar_gain.wav-b7de5c3242641384f79359a73da70784.sample"]
+source_file="res://RedAlert2ModResources/audio/CommonSFX/dollar_gain.wav"
+dest_files=["res://.godot/imported/dollar_gain.wav-d8a280acd0696f23e4301c7732f916bd.sample"]
 
 [params]
 

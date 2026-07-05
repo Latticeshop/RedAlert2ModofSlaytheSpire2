@@ -1699,6 +1699,231 @@ if (fireVfx != null)
 | 复用场景 | 使用 `PackedScene` 复用而不是每次创建新场景 |
 | 限制数量 | 避免同时播放过多特效 |
 | 及时销毁 | 使用 `QueueFree()` 在动画结束后销毁节点 |
+
+---
+
+## 11. 联机同步（Multiplayer Sync）
+
+### 11.1 设计理念
+
+自定义UI面板（如卡牌选择、建筑出售、工程师选择等）在联机模式下必须确保同步，否则会导致客户端状态不一致（StateDivergence）。核心原则是：**仅本地玩家显示和操作面板，其他玩家等待结果同步**。
+
+### 11.2 MultiplayerSyncHelper 工具类
+
+该工具类封装了联机同步的核心逻辑，提供统一的同步接口：
+
+```csharp
+public static class MultiplayerSyncHelper
+{
+    // 判断是否为联机游戏
+    public static bool IsMultiplayerGame()
+    
+    // 判断玩家是否为本地玩家
+    public static bool IsLocalPlayer(Player player)
+    
+    // 单选同步：返回选中项的索引（null表示取消）
+    public static Task<int?> ExecuteSyncChoice(Player player, Func<Task<int?>> localChoiceFunc)
+    
+    // 多选同步：返回选中项的索引列表
+    public static Task<List<int>> ExecuteSyncMultiChoice(Player player, Func<Task<List<int>?>> localChoiceFunc)
+}
+```
+
+**核心工作原理**：
+
+1. **单机模式**：直接执行本地选择函数
+2. **联机模式-本地玩家**：显示面板，获取选择结果，同步给其他玩家
+3. **联机模式-远程玩家**：等待本地玩家的选择结果，不显示面板
+
+### 11.3 UI面板设计模式
+
+#### 步骤1：创建基础显示方法（ShowSelection）
+
+```csharp
+public static async Task<int?> ShowSelection(object title, List<ChoiceOption> options, Player player, FactionType faction = FactionType.Allied)
+{
+    var screen = new DeployChoiceScreen(faction);
+    screen._title = title;
+    screen._options = options;
+    screen.BuildUi();
+    screen.UpdateUiText();
+    NOverlayStack.Instance?.Push(screen);
+    
+    if (!MultiplayerSyncHelper.IsLocalPlayer(player))
+    {
+        screen.Close();
+        return null;
+    }
+    
+    return await screen._completionSource.Task;
+}
+```
+
+**关键要点**：
+- 使用 `NOverlayStack.Instance?.Push(screen)` 将面板推入UI栈
+- 在 `ShowSelection` 开头检查 `IsLocalPlayer`，非本地玩家立即关闭面板
+- 使用 `TaskCompletionSource` 等待用户选择
+
+#### 步骤2：创建同步显示方法（ShowSelectionWithSync）
+
+```csharp
+public static async Task<int?> ShowSelectionWithSync(Player player, object title, List<ChoiceOption> options, FactionType faction = FactionType.Allied)
+{
+    return await MultiplayerSyncHelper.ExecuteSyncChoice(player, async () =>
+    {
+        return await ShowSelection(title, options, player, faction);
+    });
+}
+```
+
+#### 步骤3：实现 Close() 方法
+
+所有自定义UI面板必须实现 `Close()` 方法，用于清理面板资源：
+
+```csharp
+public void Close()
+{
+    if (_choiceLocked) return;
+    _choiceLocked = true;
+    _completionSource.TrySetResult(null);
+    NOverlayStack.Instance?.Remove(this);
+    QueueFree();
+}
+```
+
+### 11.4 单选同步示例（工程师选择）
+
+适用于只需选择一个选项的场景：
+
+```csharp
+public static async Task<EngineerChoice?> ShowSelectionWithSync(
+    List<EngineerChoice> choices, 
+    string? engineerPortraitPath, 
+    Player player, 
+    FactionType faction = FactionType.Allied)
+{
+    List<EngineerChoice> choicesCopy = new(choices);
+    
+    int? selectedIndex = await MultiplayerSyncHelper.ExecuteSyncChoice(player, async () =>
+    {
+        EngineerChoice? choice = await ShowSelection(choicesCopy, engineerPortraitPath, player, faction);
+        return choice != null ? choicesCopy.FindIndex(c => c.Type == choice.Type) : null;
+    });
+    
+    if (selectedIndex.HasValue && selectedIndex.Value >= 0 && selectedIndex.Value < choicesCopy.Count)
+    {
+        return choicesCopy[selectedIndex.Value];
+    }
+    
+    return null;
+}
+```
+
+**实现要点**：
+1. 创建数据副本 `choicesCopy`，避免并发修改
+2. 在本地选择函数中，通过 `FindIndex` 将对象转换为索引
+3. 在同步方法返回后，通过索引从副本中恢复选中对象
+
+### 11.5 多选同步示例（出售建筑）
+
+适用于可选择多个选项的场景：
+
+```csharp
+public static async Task<List<int>> ShowSelectionWithSync(
+    List<(PowerModel Power, int Index)> buildingPowerItems, 
+    int maxSelect, 
+    Player player, 
+    FactionType faction)
+{
+    List<(PowerModel Power, int Index)> itemsCopy = new(buildingPowerItems);
+
+    return await MultiplayerSyncHelper.ExecuteSyncMultiChoice(player, async () =>
+    {
+        List<int>? selected = await ShowSelection(itemsCopy, maxSelect, player, faction);
+        return selected;
+    });
+}
+```
+
+**实现要点**：
+1. 创建数据副本 `itemsCopy`
+2. 本地选择函数直接返回索引列表（因为 `ShowSelection` 已经返回索引）
+3. `ExecuteSyncMultiChoice` 返回 `List<int>` 类型的索引列表
+
+### 11.6 在卡牌中使用同步方法
+
+```csharp
+protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+{
+    // 获取建筑能力列表
+    var buildingPowerItems = GetBuildingPowerItems(Owner.Creature);
+    
+    // 使用同步方法显示面板
+    List<int> selectedIndices = await SellBuildingScreen.ShowSelectionWithSync(
+        buildingPowerItems, maxSelection, Owner, faction);
+    
+    // 处理选择结果
+    foreach (int index in selectedIndices)
+    {
+        var item = buildingPowerItems[index];
+        // ... 执行出售逻辑
+    }
+}
+```
+
+### 11.7 关键注意事项
+
+| 注意事项 | 说明 |
+|---------|------|
+| **数据复制** | 在同步方法中必须创建数据副本，避免并发修改导致的状态不一致 |
+| **索引传递** | 通过索引而非对象引用传递选择结果，确保不同客户端间的一致性 |
+| **Close方法** | 所有自定义UI面板必须实现 `public void Close()` 方法，用于清理非本地玩家的面板 |
+| **IsLocalPlayer检查** | 在 `ShowSelection` 方法开头检查，非本地玩家立即关闭面板 |
+| **单例面板** | 同一类型的面板在同步时应保证只有一个实例 |
+| **取消处理** | 当用户取消选择时，应返回 `null` 或空列表，调用方需处理此情况 |
+
+### 11.8 已实现同步的面板
+
+| 面板类 | 同步方法 | 同步类型 | 用途 |
+|--------|---------|---------|------|
+| `CardSelectionScreen` | `ShowSelectionWithSync` | 单选 | 单张卡牌选择（如基地车展开） |
+| `CardSelectionSyncHelper` | `ShowMultiSelectionWithSync` | 多选 | 多张卡牌选择（如集结） |
+| `SellBuildingScreen` | `ShowSelectionWithSync` | 多选 | 出售建筑 |
+| `ProductionQueueSelectionScreen` | `ShowSelectionWithSync` | 多选 | 生产序列管理 |
+| `EngineerChoiceScreen` | `ShowSelectionWithSync` | 单选 | 工程师选择 |
+| `DeployChoiceScreen` | `ShowSelectionWithSync` | 单选 | 部署选择（如防空履带车） |
+| `ChronoWarpScreen` | `ShowPileSelectionWithSync` | 单选 | 超时空传送选择 |
+
+### 11.9 常见错误与排查
+
+#### 错误1：联机模式下面板不显示
+
+**原因**：`ShowSelection` 方法中缺少 `IsLocalPlayer` 检查
+
+**解决**：在 `Push` 面板后立即检查 `IsLocalPlayer`，非本地玩家调用 `Close()`
+
+#### 错误2：StateDivergence 状态不一致
+
+**原因**：未使用 `ShowSelectionWithSync` 方法，或选择结果未正确同步
+
+**解决**：确保所有自定义UI面板的调用都使用 `ShowSelectionWithSync` 方法
+
+#### 错误3：远程玩家无法获取选择结果
+
+**原因**：未正确传递索引，或数据在不同客户端间不一致
+
+**解决**：
+1. 使用索引传递选择结果，而非对象引用
+2. 在同步方法中创建数据副本
+3. 确保数据在所有客户端上完全一致
+
+#### 错误4：Close() 方法未实现
+
+**原因**：自定义面板缺少 `Close()` 方法
+
+**解决**：为所有自定义UI面板实现 `Close()` 方法，确保正确清理资源
+
+---
 | 使用对象池 | 对于频繁使用的特效，考虑使用对象池模式 |
 
 ---

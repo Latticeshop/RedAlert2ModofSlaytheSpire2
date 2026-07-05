@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
+using RedAlert2ModCode.Soviet.Powers;
 
 namespace RedAlert2ModCode.Soviet.Cards;
 
@@ -81,11 +82,19 @@ public sealed class WarMiner : CardModel
 
 			// 检查是否有提前倒矿debuff（本回合矿车收益为80%）
 			var earlyMiningPower = Owner.Creature.Powers.OfType<EarlyMiningPower>().FirstOrDefault();
+			var sovietEarlyMiningPower = Owner.Creature.Powers.OfType<SovietEarlyMiningPower>().FirstOrDefault();
+			
 			if (earlyMiningPower != null)
 			{
 				float multiplier = earlyMiningPower.GetMiningMultiplier();
 				totalAmount = Mathf.FloorToInt(totalAmount * multiplier);
 				GD.Print($"[WarMiner] 检测到提前倒矿debuff，总资金 * {multiplier} = {totalAmount}");
+			}
+			else if (sovietEarlyMiningPower != null)
+			{
+				float multiplier = sovietEarlyMiningPower.GetMiningMultiplier();
+				totalAmount = Mathf.FloorToInt(totalAmount * multiplier);
+				GD.Print($"[WarMiner] 检测到苏联提前倒矿debuff，总资金 * {multiplier} = {totalAmount}");
 			}
 
 			dollarPower.AddDollar(totalAmount);

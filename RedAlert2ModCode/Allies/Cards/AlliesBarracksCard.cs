@@ -101,6 +101,10 @@ public sealed class AlliesBarracksCard : CardModel
 		{
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			
+			// 添加兵营能力（用于出售检查和生产序列管理）
+			await PowerCmd.Apply<AlliedBarracksPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+			GD.Print("[AlliesBarracksCard] 添加兵营能力");
+			
 			// 获取单位价格
 			int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
 			

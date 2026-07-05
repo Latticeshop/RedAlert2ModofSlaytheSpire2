@@ -45,11 +45,22 @@ public class SellMCV : CardModel
 			if (!base.IsPlayable)
 				return false;
 
-			if (!HasMcvCardInPiles())
+			// if (!HasMcvCardInPiles())
+			// 	return false;
+
+			if (!HasMcvPower())
 				return false;
 
 			return true;
 		}
+	}
+
+	private bool HasMcvPower()
+	{
+		if (Owner?.Creature == null)
+			return false;
+
+		return Owner.Creature.Powers.Any(p => p is AlliedMCVPower || p is SovietMCVPower);
 	}
 
 	private bool HasMcvCardInPiles()
@@ -103,18 +114,18 @@ public class SellMCV : CardModel
 	{
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
-		var mcvCards = GetAllMcvCards();
-		if (mcvCards.Count == 0)
-		{
-			GD.PrintErr("[SellMCV] 牌堆中没有基地车卡牌");
-			return;
-		}
-
-		CardModel cardToRemove = mcvCards.FirstOrDefault(c => c.Pile == PileType.Hand.GetPile(Owner))
-		                          ?? mcvCards.First();
-
-		await CardPileCmd.Add(cardToRemove, PileType.Exhaust);
-		GD.Print($"[SellMCV] 将基地车卡牌移到消耗牌堆: {cardToRemove.Title}");
+		// var mcvCards = GetAllMcvCards();
+		// if (mcvCards.Count == 0)
+		// {
+		// 	GD.PrintErr("[SellMCV] 牌堆中没有基地车卡牌");
+		// 	return;
+		// }
+		//
+		// CardModel cardToRemove = mcvCards.FirstOrDefault(c => c.Pile == PileType.Hand.GetPile(Owner))
+		//                           ?? mcvCards.First();
+		//
+		// await CardPileCmd.Add(cardToRemove, PileType.Exhaust);
+		// GD.Print($"[SellMCV] 将基地车卡牌移到消耗牌堆: {cardToRemove.Title}");
 
 		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
 		if (dollarPower != null)
@@ -123,22 +134,30 @@ public class SellMCV : CardModel
 			GD.Print($"[SellMCV] 获得资金 {Values.DollarValue}");
 		}
 
-		bool hasAlliedMcv = GetAllMcvCards().Any(c => c is AlliedMCV);
-		if (!hasAlliedMcv)
+		var alliedMcvPower = Owner.Creature.Powers.OfType<AlliedMCVPower>().FirstOrDefault();
+		if (alliedMcvPower != null)
 		{
-			var alliedMcvPower = Owner.Creature.Powers.OfType<AlliedMCVPower>().FirstOrDefault();
-			if (alliedMcvPower != null)
+			if (alliedMcvPower.Amount > 1)
+			{
+				await PowerCmd.Apply<AlliedMCVPower>(ctx, Owner.Creature, -1, Owner.Creature, this);
+				GD.Print($"[SellMCV] 盟军基地车能力层数减少: {alliedMcvPower.Amount - 1}");
+			}
+			else
 			{
 				await PowerCmd.Remove(alliedMcvPower);
 				GD.Print("[SellMCV] 已清除盟军基地车能力");
 			}
 		}
 
-		bool hasSovietMcv = GetAllMcvCards().Any(c => c is SovietMCV);
-		if (!hasSovietMcv)
+		var sovietMcvPower = Owner.Creature.Powers.OfType<SovietMCVPower>().FirstOrDefault();
+		if (sovietMcvPower != null)
 		{
-			var sovietMcvPower = Owner.Creature.Powers.OfType<SovietMCVPower>().FirstOrDefault();
-			if (sovietMcvPower != null)
+			if (sovietMcvPower.Amount > 1)
+			{
+				await PowerCmd.Apply<SovietMCVPower>(ctx, Owner.Creature, -1, Owner.Creature, this);
+				GD.Print($"[SellMCV] 苏联基地车能力层数减少: {sovietMcvPower.Amount - 1}");
+			}
+			else
 			{
 				await PowerCmd.Remove(sovietMcvPower);
 				GD.Print("[SellMCV] 已清除苏联基地车能力");

@@ -74,7 +74,7 @@ public static class SovietPowerValues
 
 	public static CardValueStore.CardValues KirovPower => new()
 	{
-		Damage = 12,
+		Damage = 20,
 		Stars = 3
 	};
 

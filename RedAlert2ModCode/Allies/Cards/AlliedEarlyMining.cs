@@ -11,6 +11,7 @@ using System.Linq;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Soviet.Cards;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -38,13 +39,13 @@ public sealed class AlliedEarlyMining : CardModel
         var discardPile = PileType.Discard.GetPile(Owner);
 
         var minerCards = drawPile.Cards
-            .Where(c => c.GetType() == typeof(ChronoMiner))
+            .Where(c => c.GetType() == typeof(ChronoMiner) || c.GetType() == typeof(WarMiner))
             .ToList();
 
         if (IsUpgraded)
         {
             var discardMinerCards = discardPile.Cards
-                .Where(c => c.GetType() == typeof(ChronoMiner))
+                .Where(c => c.GetType() == typeof(ChronoMiner) || c.GetType() == typeof(WarMiner))
                 .ToList();
             minerCards.AddRange(discardMinerCards);
         }

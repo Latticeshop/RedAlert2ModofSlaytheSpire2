@@ -93,6 +93,9 @@ public sealed class SovietBarracksCard : CardModel
 		{
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			
+			await PowerCmd.Apply<SovietBarracksPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+			GD.Print("[SovietBarracksCard] 添加兵营能力");
+			
 			int unitPrice = SovietCardValues.GetDollarValue(selectedCard.Id.Entry);
 			
 			await TrainingQueuePower.ApplyTrainingQueue(

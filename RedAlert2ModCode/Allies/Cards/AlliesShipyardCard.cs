@@ -91,6 +91,9 @@ public sealed class AlliesShipyardCard : CardModel
 		{
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			
+			await PowerCmd.Apply<AlliedShipyardPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+			GD.Print("[AlliesShipyardCard] 添加船厂能力");
+			
 			// 获取单位价格
 			int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
 			

@@ -54,13 +54,7 @@ public sealed class Kirov : CardModel
         if (IsUpgraded)
             damage += (int)Values.DamageUpgraded;
 
-        await PowerCmd.Apply<KirovPower>(
-            new ThrowingPlayerChoiceContext(),
-            target,
-            1,
-            Owner.Creature,
-            this
-        );
+        await KirovPower.ApplyKirov(target, Owner.Creature, this, damage);
 
         GD.Print($"[Kirov] 已对 {target.Name} 施加基洛夫debuff，伤害: {damage}");
     }

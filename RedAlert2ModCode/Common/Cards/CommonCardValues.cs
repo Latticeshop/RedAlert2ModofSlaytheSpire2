@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using RedAlert2ModCode.Allies.Cards;
+using RedAlert2ModCode.Soviet.Cards;
 using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Common.Cards;
@@ -96,4 +101,46 @@ public static class CommonCardValues
 		Cost = 1,
 		CostUpgraded = -1           // 升级后费用减1
 	};
+
+	/// <summary>出售 - 1费技能卡，出售0-3个建筑获得50%造价资金（升级后可出售更多）</summary>
+	public static CardValueStore.CardValues SellBuilding => new()
+	{
+		Cost = 1,
+		Repeat = 3,                // 最大出售建筑数量
+		RepeatUpgraded = 0         // 升级后最大数量不变，改为"任意"数量
+	};
+
+	private static Dictionary<Type, decimal> _sellablePowerDollarMap;
+
+	public static Dictionary<Type, decimal> GetSellablePowerDollarMap()
+	{
+		if (_sellablePowerDollarMap == null)
+		{
+			_sellablePowerDollarMap = new Dictionary<Type, decimal>();
+			foreach (var kvp in AlliesCardValues.CreateSellablePowerDollarMap())
+			{
+				_sellablePowerDollarMap[kvp.Key] = kvp.Value;
+			}
+			foreach (var kvp in SovietCardValues.CreateSellablePowerDollarMap())
+			{
+				_sellablePowerDollarMap[kvp.Key] = kvp.Value;
+			}
+		}
+		return _sellablePowerDollarMap;
+	}
+
+	public static int GetSellablePowerDollarValue(Type powerType)
+	{
+		var map = GetSellablePowerDollarMap();
+		if (map.TryGetValue(powerType, out var value))
+		{
+			return (int)value;
+		}
+		return 500;
+	}
+
+	public static IEnumerable<Type> GetSellablePowerTypes()
+	{
+		return GetSellablePowerDollarMap().Keys;
+	}
 }

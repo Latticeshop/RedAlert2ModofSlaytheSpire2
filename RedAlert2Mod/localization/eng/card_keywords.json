@@ -98,5 +98,10 @@
     "ui.card_select.price_label": "Price",
     "steel_flood.title": "Steel Flood",
     "steel_flood.description": "When a unit card enters your hand, it is automatically played.",
-    "exhaust_text": "and Exhaust"
+    "exhaust_text": "and Exhaust",
+    "ui.sell_building.title": "Select buildings to sell",
+    "ui.sell_building.cancel": "Cancel",
+    "ui.sell_building.confirm": "Confirm Sale",
+    "ui.sell_building.sell_value": "Sell Value",
+    "ui.sell_building.layer_count": "Stacks"
 }

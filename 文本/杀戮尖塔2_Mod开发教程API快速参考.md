@@ -1142,6 +1142,153 @@ await RelicCmd.Obtain(relic.ToMutable(), owner);
 
 ---
 
+## 🔗 联机同步（Multiplayer Sync）
+
+### 设计理念
+
+自定义UI面板（如卡牌选择、建筑出售、工程师选择等）在联机模式下必须确保同步，否则会导致客户端状态不一致（StateDivergence）。核心原则是：**仅本地玩家显示和操作面板，其他玩家等待结果同步**。
+
+### MultiplayerSyncHelper 核心方法
+
+```csharp
+public static bool IsMultiplayerGame()
+public static bool IsLocalPlayer(Player player)
+public static Task<int?> ExecuteSyncChoice(Player player, Func<Task<int?>> localChoiceFunc)
+public static Task<List<int>> ExecuteSyncMultiChoice(Player player, Func<Task<List<int>?>> localChoiceFunc)
+```
+
+### UI面板设计模式
+
+#### 1. 基础显示方法（ShowSelection）
+
+```csharp
+public static async Task<int?> ShowSelection(object title, List<ChoiceOption> options, Player player, FactionType faction = FactionType.Allied)
+{
+    var screen = new DeployChoiceScreen(faction);
+    screen._title = title;
+    screen._options = options;
+    screen.BuildUi();
+    screen.UpdateUiText();
+    NOverlayStack.Instance?.Push(screen);
+    
+    if (!MultiplayerSyncHelper.IsLocalPlayer(player))
+    {
+        screen.Close();
+        return null;
+    }
+    
+    return await screen._completionSource.Task;
+}
+```
+
+#### 2. 同步显示方法（ShowSelectionWithSync）
+
+```csharp
+public static async Task<int?> ShowSelectionWithSync(Player player, object title, List<ChoiceOption> options, FactionType faction = FactionType.Allied)
+{
+    return await MultiplayerSyncHelper.ExecuteSyncChoice(player, async () =>
+    {
+        return await ShowSelection(title, options, player, faction);
+    });
+}
+```
+
+### 单选同步（ExecuteSyncChoice）
+
+适用于只需选择一个选项的场景（如工程师选择、超时空传送选择）：
+
+```csharp
+public static async Task<EngineerChoice?> ShowSelectionWithSync(
+    List<EngineerChoice> choices, 
+    string? engineerPortraitPath, 
+    Player player, 
+    FactionType faction = FactionType.Allied)
+{
+    List<EngineerChoice> choicesCopy = new(choices);
+    
+    int? selectedIndex = await MultiplayerSyncHelper.ExecuteSyncChoice(player, async () =>
+    {
+        EngineerChoice? choice = await ShowSelection(choicesCopy, engineerPortraitPath, player, faction);
+        return choice != null ? choicesCopy.FindIndex(c => c.Type == choice.Type) : null;
+    });
+    
+    if (selectedIndex.HasValue && selectedIndex.Value >= 0 && selectedIndex.Value < choicesCopy.Count)
+    {
+        return choicesCopy[selectedIndex.Value];
+    }
+    
+    return null;
+}
+```
+
+### 多选同步（ExecuteSyncMultiChoice）
+
+适用于可选择多个选项的场景（如出售建筑、生产序列管理）：
+
+```csharp
+public static async Task<List<int>> ShowSelectionWithSync(
+    List<(PowerModel Power, int Index)> buildingPowerItems, 
+    int maxSelect, 
+    Player player, 
+    FactionType faction)
+{
+    List<(PowerModel Power, int Index)> itemsCopy = new(buildingPowerItems);
+
+    return await MultiplayerSyncHelper.ExecuteSyncMultiChoice(player, async () =>
+    {
+        List<int>? selected = await ShowSelection(itemsCopy, maxSelect, player, faction);
+        return selected;
+    });
+}
+```
+
+### 调用示例
+
+在卡牌逻辑中使用同步方法：
+
+```csharp
+protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+{
+    // 获取建筑能力列表
+    var buildingPowerItems = GetBuildingPowerItems(Owner.Creature);
+    
+    // 使用同步方法显示面板
+    List<int> selectedIndices = await SellBuildingScreen.ShowSelectionWithSync(
+        buildingPowerItems, maxSelection, Owner, faction);
+    
+    // 处理选择结果
+    foreach (int index in selectedIndices)
+    {
+        var item = buildingPowerItems[index];
+        // ... 执行出售逻辑
+    }
+}
+```
+
+### 关键注意事项
+
+| 注意事项 | 说明 |
+|---------|------|
+| **数据复制** | 在同步方法中必须创建数据副本，避免并发修改导致的状态不一致 |
+| **索引传递** | 通过索引而非对象引用传递选择结果，确保不同客户端间的一致性 |
+| **Close方法** | 所有自定义UI面板必须实现 `public void Close()` 方法，用于清理非本地玩家的面板 |
+| **IsLocalPlayer检查** | 在 `ShowSelection` 方法开头检查，非本地玩家立即关闭面板 |
+| **单例面板** | 同一类型的面板在同步时应保证只有一个实例 |
+
+### 已实现同步的面板
+
+| 面板类 | 同步方法 | 同步类型 |
+|--------|---------|---------|
+| `CardSelectionScreen` | `ShowSelectionWithSync` | 单选 |
+| `CardSelectionSyncHelper` | `ShowMultiSelectionWithSync` | 多选 |
+| `SellBuildingScreen` | `ShowSelectionWithSync` | 多选 |
+| `ProductionQueueSelectionScreen` | `ShowSelectionWithSync` | 多选 |
+| `EngineerChoiceScreen` | `ShowSelectionWithSync` | 单选 |
+| `DeployChoiceScreen` | `ShowSelectionWithSync` | 单选 |
+| `ChronoWarpScreen` | `ShowPileSelectionWithSync` | 单选 |
+
+---
+
 ## ✨ 攻击特效（VFX）
 
 ### 特效类型速查

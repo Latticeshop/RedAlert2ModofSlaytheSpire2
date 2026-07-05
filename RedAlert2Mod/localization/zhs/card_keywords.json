@@ -98,5 +98,10 @@
     "ui.card_select.price_label": "价格",
     "steel_flood.title": "钢铁洪流",
     "steel_flood.description": "当单位卡进入手牌时立即自动打出。",
-    "exhaust_text": "且消耗"
+    "exhaust_text": "且消耗",
+    "ui.sell_building.title": "请选择要出售的建筑",
+    "ui.sell_building.cancel": "取消",
+    "ui.sell_building.confirm": "确认出售",
+    "ui.sell_building.sell_value": "出售价值",
+    "ui.sell_building.layer_count": "层数"
 }

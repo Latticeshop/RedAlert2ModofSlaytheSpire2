@@ -52,25 +52,7 @@ public static class SovietCardRegistry
         () => ModelDb.Card<TyphoonSubmarine>(),
     };
 
-    public static List<Func<CardModel>> BuildingCards { get; } = new()
-    {
-        () => ModelDb.Card<SovietBarracksCard>(),
-        () => ModelDb.Card<SovietWarFactory>(),
-        () => ModelDb.Card<SovietShipyardCard>(),
-        () => ModelDb.Card<SovietRepairDepot>(),
-        () => ModelDb.Card<SovietPillboxCard>(),
-        () => ModelDb.Card<SovietFlakCannon>(),
-        () => ModelDb.Card<SovietWallCard>(),
-        () => ModelDb.Card<SovietFortifiedWall>(),
-        () => ModelDb.Card<NuclearReactor>(),
-        () => ModelDb.Card<SovietRefinery>(),
-        () => ModelDb.Card<SovietMCV>(),
-        () => ModelDb.Card<SovietBattleLab>(),
-        () => ModelDb.Card<SovietRadar>(),
-        () => ModelDb.Card<SovietTeslaCoilCard>(),
-        () => ModelDb.Card<IronCurtainCard>(),
-        () => ModelDb.Card<NuclearMissileSiloCard>(),
-    };
+    public static List<Func<CardModel>> BuildingCards { get; } = SovietCardValues.CreateBuildingCardFactories();
 
     public static List<Func<CardModel>> PowerCards { get; } = CreatePowerCards();
 
@@ -78,6 +60,7 @@ public static class SovietCardRegistry
     {
         var cards = new List<Func<CardModel>>();
         cards.Add(() => ModelDb.Card<SellMCV>());
+        cards.Add(() => ModelDb.Card<SellBuildingCard>());
         cards.Add(() => ModelDb.Card<Ra2Rally>());
         cards.Add(() => ModelDb.Card<StopProductionCard>());
         cards.Add(() => ModelDb.Card<OilDerrickCard>());
@@ -85,6 +68,7 @@ public static class SovietCardRegistry
         cards.Add(() => ModelDb.Card<GemMineCard>());
         cards.Add(() => ModelDb.Card<GoldMineColumnCard>());
         cards.Add(() => ModelDb.Card<F2A>());
+        cards.Add(() => ModelDb.Card<SovietEarlyMining>());
         cards.Add(() => ModelDb.Card<IronCurtain>());
         cards.Add(() => ModelDb.Card<NuclearAttack>());
         return cards;
@@ -105,6 +89,7 @@ public static class SovietCardRegistry
         return new List<Func<CardModel>>
         {
             () => ModelDb.Card<SellMCV>(),
+            () => ModelDb.Card<SellBuildingCard>(),
             () => ModelDb.Card<Ra2Rally>(),
             () => ModelDb.Card<StopProductionCard>(),
             () => ModelDb.Card<OilDerrickCard>(),
@@ -197,7 +182,25 @@ public static class SovietCardRegistry
 
     public static List<CardModel> CreateHighTechVehicles(Player owner)
     {
-        return HighTechVehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+        List<CardModel> highTechVehicles = HighTechVehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+        
+        List<CardModel> result = new();
+        foreach (var vehicle in highTechVehicles)
+        {
+            if (vehicle.Id.Entry == "KIROV")
+            {
+                if (HasRadarPower(owner.Creature))
+                {
+                    result.Add(vehicle);
+                }
+            }
+            else
+            {
+                result.Add(vehicle);
+            }
+        }
+        
+        return result;
     }
 
     public static List<CardModel> CreateRadarVehicles(Player owner)

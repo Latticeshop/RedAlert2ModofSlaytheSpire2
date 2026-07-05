@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://clog7h2heisjq"
-path="res://.godot/imported/building_place.wav-d7195755e6607923e2e7f636e4c9c4c5.sample"
+path="res://.godot/imported/building_place.wav-c7c5ec76e148b2357e7f8ef9b2cf15cd.sample"
 
 [deps]
 
-source_file="res://RedAlert2ModResources/audio/building_place.wav"
-dest_files=["res://.godot/imported/building_place.wav-d7195755e6607923e2e7f636e4c9c4c5.sample"]
+source_file="res://RedAlert2ModResources/audio/CommonSFX/building_place.wav"
+dest_files=["res://.godot/imported/building_place.wav-c7c5ec76e148b2357e7f8ef9b2cf15cd.sample"]
 
 [params]
 

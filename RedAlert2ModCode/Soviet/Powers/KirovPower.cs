@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using RedAlert2ModCode.Common.Utils;
 using System.Collections.Generic;
@@ -25,16 +26,28 @@ public sealed class KirovPower : PowerModel
 
     public new string PackedIconPath => "res://RedAlert2ModResources/images/packed/card_portraits/soviet/zepicon.png";
 
-    public int DamagePerStack => (int)Values.Damage;
+    public int CurrentDamage { get; set; } = (int)Values.Damage;
+
+    public int DamagePerStack => CurrentDamage;
 
     public override LocString Description
     {
         get
         {
             var locString = new LocString("powers", base.Id.Entry + ".description");
-            locString.Add("Count", DamagePerStack);
+            locString.Add("Count", CurrentDamage);
             return locString;
         }
+    }
+
+    public static async Task<KirovPower?> ApplyKirov(Creature target, Creature source, CardModel sourceCard, int damage)
+    {
+        var power = await PowerCmd.Apply<KirovPower>(new ThrowingPlayerChoiceContext(), target, 1m, source, sourceCard);
+        if (power != null)
+        {
+            power.CurrentDamage = damage;
+        }
+        return power;
     }
 
     public override async Task AfterSideTurnStart(CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)

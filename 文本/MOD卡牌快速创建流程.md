@@ -1003,4 +1003,162 @@ RedAlert2ModResources/audio/SovietUnits/TyphoonSubmarine/Vsubata.mp3
 
 ---
 
+---
+
+## 十、联机同步实现指南
+
+### 适用场景
+
+当你的卡牌需要弹出自定义UI面板让玩家进行选择时（如基地车展开、工程师选择、出售建筑等），必须实现联机同步，否则会导致联机模式下状态不一致（StateDivergence）。
+
+### 核心原则
+
+**仅本地玩家显示和操作面板，其他玩家等待结果同步**。
+
+### 实现步骤
+
+#### 步骤1：创建基础显示方法（ShowSelection）
+
+```csharp
+public static async Task<int?> ShowSelection(object title, List<ChoiceOption> options, Player player, FactionType faction = FactionType.Allied)
+{
+    var screen = new DeployChoiceScreen(faction);
+    screen._title = title;
+    screen._options = options;
+    screen.BuildUi();
+    screen.UpdateUiText();
+    NOverlayStack.Instance?.Push(screen);
+    
+    if (!MultiplayerSyncHelper.IsLocalPlayer(player))
+    {
+        screen.Close();
+        return null;
+    }
+    
+    return await screen._completionSource.Task;
+}
+```
+
+**关键要点**：
+- 使用 `NOverlayStack.Instance?.Push(screen)` 将面板推入UI栈
+- 在 `ShowSelection` 开头检查 `IsLocalPlayer`，非本地玩家立即关闭面板
+- 使用 `TaskCompletionSource` 等待用户选择
+
+#### 步骤2：创建同步显示方法（ShowSelectionWithSync）
+
+```csharp
+public static async Task<int?> ShowSelectionWithSync(Player player, object title, List<ChoiceOption> options, FactionType faction = FactionType.Allied)
+{
+    return await MultiplayerSyncHelper.ExecuteSyncChoice(player, async () =>
+    {
+        return await ShowSelection(title, options, player, faction);
+    });
+}
+```
+
+#### 步骤3：实现 Close() 方法
+
+所有自定义UI面板必须实现 `Close()` 方法，用于清理面板资源：
+
+```csharp
+public void Close()
+{
+    if (_choiceLocked) return;
+    _choiceLocked = true;
+    _completionSource.TrySetResult(null);
+    NOverlayStack.Instance?.Remove(this);
+    QueueFree();
+}
+```
+
+### 单选同步示例
+
+适用于只需选择一个选项的场景（如工程师选择）：
+
+```csharp
+public static async Task<EngineerChoice?> ShowSelectionWithSync(
+    List<EngineerChoice> choices, 
+    string? engineerPortraitPath, 
+    Player player, 
+    FactionType faction = FactionType.Allied)
+{
+    List<EngineerChoice> choicesCopy = new(choices);
+    
+    int? selectedIndex = await MultiplayerSyncHelper.ExecuteSyncChoice(player, async () =>
+    {
+        EngineerChoice? choice = await ShowSelection(choicesCopy, engineerPortraitPath, player, faction);
+        return choice != null ? choicesCopy.FindIndex(c => c.Type == choice.Type) : null;
+    });
+    
+    if (selectedIndex.HasValue && selectedIndex.Value >= 0 && selectedIndex.Value < choicesCopy.Count)
+    {
+        return choicesCopy[selectedIndex.Value];
+    }
+    
+    return null;
+}
+```
+
+### 多选同步示例
+
+适用于可选择多个选项的场景（如出售建筑）：
+
+```csharp
+public static async Task<List<int>> ShowSelectionWithSync(
+    List<(PowerModel Power, int Index)> buildingPowerItems, 
+    int maxSelect, 
+    Player player, 
+    FactionType faction)
+{
+    List<(PowerModel Power, int Index)> itemsCopy = new(buildingPowerItems);
+
+    return await MultiplayerSyncHelper.ExecuteSyncMultiChoice(player, async () =>
+    {
+        List<int>? selected = await ShowSelection(itemsCopy, maxSelect, player, faction);
+        return selected;
+    });
+}
+```
+
+### 在卡牌中调用同步方法
+
+```csharp
+protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+{
+    var buildingPowerItems = GetBuildingPowerItems(Owner.Creature);
+    
+    List<int> selectedIndices = await SellBuildingScreen.ShowSelectionWithSync(
+        buildingPowerItems, maxSelection, Owner, faction);
+    
+    foreach (int index in selectedIndices)
+    {
+        var item = buildingPowerItems[index];
+        // ... 执行逻辑
+    }
+}
+```
+
+### 关键注意事项
+
+| 注意事项 | 说明 |
+|---------|------|
+| **数据复制** | 在同步方法中必须创建数据副本，避免并发修改导致的状态不一致 |
+| **索引传递** | 通过索引而非对象引用传递选择结果，确保不同客户端间的一致性 |
+| **Close方法** | 所有自定义UI面板必须实现 `public void Close()` 方法，用于清理非本地玩家的面板 |
+| **IsLocalPlayer检查** | 在 `ShowSelection` 方法开头检查，非本地玩家立即关闭面板 |
+| **取消处理** | 当用户取消选择时，应返回 `null` 或空列表，调用方需处理此情况 |
+
+### 常见遗漏检查清单（联机同步）
+
+| 检查项 | 是否需要 | 说明 |
+|--------|:--------:|------|
+| 创建 ShowSelection 方法 | ✅ | 基础显示方法，包含 IsLocalPlayer 检查 |
+| 创建 ShowSelectionWithSync 方法 | ✅ | 同步显示方法，使用 MultiplayerSyncHelper |
+| 实现 Close() 方法 | ✅ | 用于清理面板资源 |
+| 数据副本创建 | ✅ | 在同步方法中创建数据副本 |
+| 索引传递 | ✅ | 通过索引而非对象引用传递选择结果 |
+| 使用 ShowSelectionWithSync 调用 | ✅ | 在卡牌逻辑中使用同步方法 |
+
+---
+
 *本文档基于实际开发经验整理，与API快速参考手册配合使用效果更佳。*

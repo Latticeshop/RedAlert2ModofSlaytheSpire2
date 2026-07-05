@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
+using RedAlert2ModCode.Soviet.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
 
@@ -79,6 +80,9 @@ public sealed class SovietShipyardCard : CardModel
 		if (selectedCard != null)
 		{
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+			
+			await PowerCmd.Apply<SovietShipyardPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+			GD.Print("[SovietShipyardCard] 添加船厂能力");
 			
 			int unitPrice = SovietCardValues.GetDollarValue(selectedCard.Id.Entry);
 			

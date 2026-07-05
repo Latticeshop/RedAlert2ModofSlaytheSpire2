@@ -64,6 +64,11 @@ public static class PowerIconPatch
         { typeof(RedAlert2ModCode.Soviet.Powers.KirovPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/zepicon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.V3RocketPower), "res://RedAlert2ModResources/images/packed/powers/v3.png" },
         { typeof(SteelFloodPower), "res://RedAlert2ModResources/images/packed/powers/SteelFloodPower.png" },
+        { typeof(AlliedBarracksPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/brrkicon.png" },
+        { typeof(AlliedShipyardPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/ayaricon.png" },
+        { typeof(RedAlert2ModCode.Soviet.Powers.SovietBarracksPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/handicon.png" },
+        { typeof(RedAlert2ModCode.Soviet.Powers.SovietShipyardPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/yardicon.png" },
+        { typeof(AlliedAirForceCommandPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/heliicon.png" },
     };
 
     /// <summary>

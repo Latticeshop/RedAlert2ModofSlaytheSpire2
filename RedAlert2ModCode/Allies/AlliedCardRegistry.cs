@@ -57,30 +57,11 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<AircraftCarrier>()
     };
 
-    // 盟军建筑卡
-    public static List<Func<CardModel>> BuildingCards { get; } = new()
-    {
-        () => ModelDb.Card<AlliesBarracksCard>(),
-        () => ModelDb.Card<AlliedWarFactory>(),
-        () => ModelDb.Card<AlliedMCV>(),
-        () => ModelDb.Card<PowerPlantCard>(),
-        () => ModelDb.Card<AirForceCommand>(),
-        () => ModelDb.Card<AlliedRefinery>(),
-        () => ModelDb.Card<AlliedWallCard>(),
-        () => ModelDb.Card<FortifiedWall>(),
-        () => ModelDb.Card<AlliesShipyardCard>(),
-        () => ModelDb.Card<AlliedBattleLab>(),
-        () => ModelDb.Card<ChronoSphere>(),
-        () => ModelDb.Card<WeatherController>()
-    };
+    // 盟军建筑卡 - 从存储类获取
+    public static List<Func<CardModel>> BuildingCards { get; } = AlliesCardValues.CreateBuildingCardFactories();
 
-    // 盟军防御塔
-    public static List<Func<CardModel>> DefenseTowers { get; } = new()
-    {
-        () => ModelDb.Card<PrismTowerCard>(),
-        () => ModelDb.Card<AlliesPillboxCard>(),
-        () => ModelDb.Card<PatriotMissile>()
-    };
+    // 盟军防御塔 - 从存储类获取
+    public static List<Func<CardModel>> DefenseTowers { get; } = AlliesCardValues.CreateDefenseTowerCardFactories();
 
     // 盟军技能卡 
     public static List<Func<CardModel>> PowerCards { get; } = CreatePowerCards();
@@ -92,6 +73,7 @@ public static class AlliedCardRegistry
     {
         var cards = new List<Func<CardModel>>();
         cards.Add(() => ModelDb.Card<SellMCV>());
+        cards.Add(() => ModelDb.Card<SellBuildingCard>());
         cards.Add(() => ModelDb.Card<Ra2Rally>());
         cards.Add(() => ModelDb.Card<StopProductionCard>());
         cards.Add(() => ModelDb.Card<OilDerrickCard>());
@@ -125,6 +107,7 @@ public static class AlliedCardRegistry
         return new List<Func<CardModel>>
         {
             () => ModelDb.Card<SellMCV>(),
+            () => ModelDb.Card<SellBuildingCard>(),
             () => ModelDb.Card<Ra2Rally>(),
             () => ModelDb.Card<StopProductionCard>(),
             () => ModelDb.Card<OilDerrickCard>(),

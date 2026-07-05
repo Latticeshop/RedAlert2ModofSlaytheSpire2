@@ -98,6 +98,9 @@ public sealed class AirForceCommand : CardModel
 		{
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			
+			await PowerCmd.Apply<AlliedAirForceCommandPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+			GD.Print("[AirForceCommand] 添加空指部能力");
+			
 			// 获取单位价格
 			int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
 			

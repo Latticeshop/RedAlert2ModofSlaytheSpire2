@@ -137,11 +137,11 @@ public static class AlliesCardValues
 		// 兵营主要是功能牌，数值由具体生成的单位决定
 	};
 	
-	/// <summary>盟军重工 - 0费，价格1000</summary>
+	/// <summary>盟军重工 - 0费能力卡，价格2000</summary>
 	public static CardValueStore.CardValues AlliedWarFactory => new()
 	{
 		Cost = 0,
-		DollarValue = 1000
+		DollarValue = 2000
 		// 重工主要是功能牌，数值由具体生成的单位决定
 	};
 	
@@ -526,6 +526,52 @@ public static class AlliesCardValues
 			{ "ALLIESPILLBOXCARD", Pillbox },
 			{ "PATRIOTMISSILE", PatriotMissile },
 			{ "ALLIEDBATTLELAB", AlliedBattleLab }
+		};
+	}
+
+	public static System.Collections.Generic.Dictionary<System.Type, decimal> CreateSellablePowerDollarMap()
+	{
+		return new System.Collections.Generic.Dictionary<System.Type, decimal>
+		{
+			{ typeof(RedAlert2ModCode.Allies.Powers.AlliedRefineryPower), AlliedRefinery.DollarValue },
+			{ typeof(RedAlert2ModCode.Allies.Powers.AlliedWarFactoryPower), AlliedWarFactory.DollarValue },
+			{ typeof(RedAlert2ModCode.Allies.Powers.BattleLabPower), AlliedBattleLab.DollarValue },
+			{ typeof(RedAlert2ModCode.Allies.Powers.AlliedAirForceCommandPower), AirForceCommand.DollarValue },
+			{ typeof(RedAlert2ModCode.Allies.Powers.AlliedMCVPower), AlliedMCV.DollarValue },
+			{ typeof(RedAlert2ModCode.Allies.Powers.AlliedBarracksPower), Barracks.DollarValue },
+			{ typeof(RedAlert2ModCode.Allies.Powers.AlliedShipyardPower), Shipyard.DollarValue },
+			{ typeof(RedAlert2ModCode.Allies.Powers.PrismTowerPower), PrismTower.DollarValue },
+			{ typeof(RedAlert2ModCode.Allies.Powers.PillboxPower), Pillbox.DollarValue },
+			{ typeof(RedAlert2ModCode.Allies.Powers.PatriotMissilePower), PatriotMissile.DollarValue }
+		};
+	}
+
+	public static System.Collections.Generic.List<System.Func<CardModel>> CreateBuildingCardFactories()
+	{
+		return new System.Collections.Generic.List<System.Func<CardModel>>
+		{
+			() => ModelDb.Card<AlliesBarracksCard>(),
+			() => ModelDb.Card<AlliedWarFactory>(),
+			() => ModelDb.Card<AlliedMCV>(),
+			() => ModelDb.Card<PowerPlantCard>(),
+			() => ModelDb.Card<AirForceCommand>(),
+			() => ModelDb.Card<AlliedRefinery>(),
+			() => ModelDb.Card<AlliedWallCard>(),
+			() => ModelDb.Card<FortifiedWall>(),
+			() => ModelDb.Card<AlliesShipyardCard>(),
+			() => ModelDb.Card<AlliedBattleLab>(),
+			() => ModelDb.Card<ChronoSphere>(),
+			() => ModelDb.Card<WeatherController>()
+		};
+	}
+
+	public static System.Collections.Generic.List<System.Func<CardModel>> CreateDefenseTowerCardFactories()
+	{
+		return new System.Collections.Generic.List<System.Func<CardModel>>
+		{
+			() => ModelDb.Card<PrismTowerCard>(),
+			() => ModelDb.Card<AlliesPillboxCard>(),
+			() => ModelDb.Card<PatriotMissile>()
 		};
 	}
 

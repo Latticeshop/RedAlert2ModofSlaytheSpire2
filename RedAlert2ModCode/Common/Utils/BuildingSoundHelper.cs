@@ -4,7 +4,7 @@ namespace RedAlert2ModCode.Common.Utils;
 
 public static class BuildingSoundHelper
 {
-    private const string BuildingPlaceSoundPath = "res://RedAlert2ModResources/audio/building_place.wav";
+    private const string BuildingPlaceSoundPath = "res://RedAlert2ModResources/audio/CommonSFX/building_place.wav";
     private static AudioStreamPlayer? _audioPlayer;
 
     private static void EnsureAudioPlayer()
