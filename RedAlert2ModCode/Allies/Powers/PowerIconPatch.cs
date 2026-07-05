@@ -56,6 +56,7 @@ public static class PowerIconPatch
         { typeof(GemMinePower), "res://RedAlert2ModResources/images/packed/powers/gem_mine_power.png" },
         { typeof(GoldMineColumnPower), "res://RedAlert2ModResources/images/packed/powers/gold_mine_column_power.png" },
         { typeof(EarlyMiningPower), "res://RedAlert2ModResources/images/packed/powers/early_mining_power.png" },
+        { typeof(RedAlert2ModCode.Soviet.Powers.SovietEarlyMiningPower), "res://RedAlert2ModResources/images/packed/powers/early_mining_soviet_power.png" },
         { typeof(ChronoSpherePower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/csphicon.png" },
         { typeof(WeatherControllerPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/wethicon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.IronCurtainPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/ironicon.png" },

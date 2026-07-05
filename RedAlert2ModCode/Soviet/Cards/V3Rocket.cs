@@ -50,7 +50,7 @@ public sealed class V3Rocket : CardModel
             return;
         }
 
-        await PowerCmd.Apply<TargetLockedPower>(ctx, target, 1m, Owner?.Creature, this);
+        await TargetLockedManager.ApplyTargetLocked(target, Owner?.Creature, this);
 
         await V3RocketPower.ApplyV3Rocket(Owner!.Creature, IsUpgraded);
     }

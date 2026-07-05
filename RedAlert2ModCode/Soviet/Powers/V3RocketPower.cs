@@ -26,6 +26,7 @@ public sealed class V3RocketPower : PowerModel
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
+    public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
 
     public int CurrentDamage { get; set; } = (int)Values.Damage;
 
@@ -38,17 +39,29 @@ public sealed class V3RocketPower : PowerModel
         get
         {
             var locString = new LocString("powers", base.Id.Entry + ".description");
-            locString.Add("Damage", CurrentDamage);
+            int displayDamage = IsUpgraded ? (int)(Values.Damage + Values.DamageUpgraded) : CurrentDamage;
+            locString.Add("Damage", displayDamage);
             return locString;
         }
     }
 
     public static async Task<V3RocketPower?> ApplyV3Rocket(Creature owner, bool isUpgraded = false)
     {
+        int damage = isUpgraded ? (int)(Values.Damage + Values.DamageUpgraded) : (int)Values.Damage;
+        
+        var existingPower = owner.Powers.OfType<V3RocketPower>().FirstOrDefault(p => p.CurrentDamage == damage);
+        
+        if (existingPower != null)
+        {
+            await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), existingPower, 1m, owner, null);
+            GD.Print($"[V3RocketPower] 叠加到已存在的V3火箭能力，层数: {existingPower.Amount}，伤害: {damage}");
+            return existingPower;
+        }
+        
         var power = await PowerCmd.Apply<V3RocketPower>(new ThrowingPlayerChoiceContext(), owner, 1m, owner, null);
         if (power != null)
         {
-            power.CurrentDamage = isUpgraded ? (int)(Values.Damage + Values.DamageUpgraded) : (int)Values.Damage;
+            power.CurrentDamage = damage;
             power.IsUpgraded = isUpgraded;
         }
         return power;
@@ -175,20 +188,31 @@ public sealed class V3RocketPower : PowerModel
 
             if (targetLockedEnemies.Any())
             {
-                PlayV3LaunchSound();
-                await Cmd.Wait(0.5f);
+                int stacks = (int)Amount;
+                GD.Print($"[V3RocketPower] 触发V3火箭，层数: {stacks}，伤害: {CurrentDamage}");
 
-                Creature target = targetLockedEnemies.First();
-                PlaySmashEffect(target);
-                PlayRandomExplosionSound();
-                await Cmd.Wait(0.3f);
+                for (int i = 0; i < stacks; i++)
+                {
+                    PlayV3LaunchSound();
+                    await Cmd.Wait(0.5f);
 
-                await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(),
-                    new List<Creature> { target },
-                    (decimal)CurrentDamage,
-                    ValueProp.Move,
-                    Owner,
-                    null);
+                    Creature target = targetLockedEnemies.First();
+                    PlaySmashEffect(target);
+                    PlayRandomExplosionSound();
+                    await Cmd.Wait(0.3f);
+
+                    await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(),
+                        new List<Creature> { target },
+                        (decimal)CurrentDamage,
+                        ValueProp.Move,
+                        Owner,
+                        null);
+
+                    if (i < stacks - 1)
+                    {
+                        await Cmd.Wait(0.2f);
+                    }
+                }
 
                 await PowerCmd.Remove(this);
             }

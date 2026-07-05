@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Soviet.Cards;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,10 +24,13 @@ public sealed class KirovPower : PowerModel
 
     public override PowerType Type => PowerType.Debuff;
     public override PowerStackType StackType => PowerStackType.Counter;
+    public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
 
     public new string PackedIconPath => "res://RedAlert2ModResources/images/packed/card_portraits/soviet/zepicon.png";
 
     public int CurrentDamage { get; set; } = (int)Values.Damage;
+
+    public bool IsUpgraded { get; set; } = false;
 
     public int DamagePerStack => CurrentDamage;
 
@@ -35,13 +39,23 @@ public sealed class KirovPower : PowerModel
         get
         {
             var locString = new LocString("powers", base.Id.Entry + ".description");
-            locString.Add("Count", CurrentDamage);
+            int displayDamage = IsUpgraded ? (int)(Values.Damage + SovietCardValues.Kirov.DamageUpgraded) : CurrentDamage;
+            locString.Add("Count", displayDamage);
             return locString;
         }
     }
 
     public static async Task<KirovPower?> ApplyKirov(Creature target, Creature source, CardModel sourceCard, int damage)
     {
+        var existingPower = target.Powers.OfType<KirovPower>().FirstOrDefault(p => p.CurrentDamage == damage);
+        
+        if (existingPower != null)
+        {
+            await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), existingPower, 1m, source, sourceCard);
+            GD.Print($"[KirovPower] 叠加到已存在的基洛夫能力，层数: {existingPower.Amount}，伤害: {damage}");
+            return existingPower;
+        }
+        
         var power = await PowerCmd.Apply<KirovPower>(new ThrowingPlayerChoiceContext(), target, 1m, source, sourceCard);
         if (power != null)
         {
@@ -133,17 +147,23 @@ public sealed class KirovPower : PowerModel
 
         Creature newTarget = otherEnemies[0];
         int stacks = (int)Amount;
+        int currentDamage = CurrentDamage;
 
         await PowerCmd.Remove(this);
 
-        await PowerCmd.Apply<KirovPower>(
+        var transferredPower = await PowerCmd.Apply<KirovPower>(
             new ThrowingPlayerChoiceContext(),
             newTarget,
             stacks,
             null,
             null
         );
+        
+        if (transferredPower != null)
+        {
+            transferredPower.CurrentDamage = currentDamage;
+        }
 
-        GD.Print($"[KirovPower] 基洛夫已转移到 {newTarget.Name}，层数: {stacks}");
+        GD.Print($"[KirovPower] 基洛夫已转移到 {newTarget.Name}，层数: {stacks}，伤害: {currentDamage}");
     }
 }

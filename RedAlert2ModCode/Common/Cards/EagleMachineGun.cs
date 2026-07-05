@@ -59,26 +59,7 @@ public sealed class EagleMachineGun : CardModel
 
         if (play.Target != null && play.Target.IsAlive)
         {
-            var combatState = Owner.Creature.CombatState;
-            if (combatState != null)
-            {
-                var allEnemies = combatState.Enemies
-                    .Where(enemy => enemy.Side == CombatSide.Enemy && enemy.IsAlive)
-                    .ToList();
-
-                foreach (var enemy in allEnemies)
-                {
-                    var targetLockedPower = enemy.Powers.FirstOrDefault(p => p is TargetLockedPower) as TargetLockedPower;
-                    if (targetLockedPower != null && enemy != play.Target)
-                    {
-                        await PowerCmd.Remove(targetLockedPower);
-                        GD.Print($"[EagleMachineGun] 清除 {enemy.Name} 的目标锁定");
-                    }
-                }
-            }
-
-            await PowerCmd.Apply<TargetLockedPower>(new ThrowingPlayerChoiceContext(), play.Target, 1m, Owner.Creature, this);
-            GD.Print($"[EagleMachineGun] 已为 {play.Target.Name} 赋予目标锁定");
+            await TargetLockedManager.ApplyTargetLocked(play.Target, Owner.Creature, this);
         }
         else
         {

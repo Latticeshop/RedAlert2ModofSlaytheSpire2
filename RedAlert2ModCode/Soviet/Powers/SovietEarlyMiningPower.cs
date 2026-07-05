@@ -1,6 +1,7 @@
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
@@ -26,6 +27,16 @@ public sealed class SovietEarlyMiningPower : PowerModel
     {
         new IntVar("MiningMultiplierPercent", 80)
     };
+
+    public override LocString Description
+    {
+        get
+        {
+            var locString = new LocString("powers", base.Id.Entry + ".description");
+            locString.Add("MiningMultiplierPercent", DynamicVars["MiningMultiplierPercent"].IntValue);
+            return locString;
+        }
+    }
 
     public float GetMiningMultiplier()
     {

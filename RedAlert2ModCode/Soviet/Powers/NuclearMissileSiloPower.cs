@@ -72,6 +72,12 @@ public sealed class NuclearMissileSiloPower : PowerModel
 
             if (nuclearAttackCard != null)
             {
+                if (IsUpgraded)
+                {
+                    CardCmd.Upgrade(nuclearAttackCard);
+                    GD.Print("[NuclearMissileSiloPower] 核弹攻击已升级");
+                }
+                
                 nuclearAttackCard.EnergyCost.SetCustomBaseCost(0);
                 nuclearAttackCard.AddKeyword(CardKeyword.Ethereal);
                 nuclearAttackCard.AddKeyword(CardKeyword.Exhaust);

@@ -69,29 +69,7 @@ public sealed class Eagle500kg : CardModel
 		// 2. 指定一名敌人获得目标锁定debuff
 		if (play.Target != null && play.Target.IsAlive)
 		{
-			// 清除其他敌人可能存在的目标锁定（保持唯一性）
-			// 使用 Owner.Creature.CombatState 获取战斗状态
-			var combatState = Owner.Creature.CombatState;
-			if (combatState != null)
-			{
-				var allEnemies = combatState.Enemies
-					.Where(enemy => enemy.Side == CombatSide.Enemy && enemy.IsAlive)
-					.ToList();
-
-				foreach (var enemy in allEnemies)
-				{
-					var targetLockedPower = enemy.Powers.FirstOrDefault(p => p is TargetLockedPower) as TargetLockedPower;
-					if (targetLockedPower != null && enemy != play.Target)
-					{
-						await PowerCmd.Remove(targetLockedPower);
-						GD.Print($"[Eagle500kg] 清除 {enemy.Name} 的目标锁定");
-					}
-				}
-			}
-
-			// 赋予目标锁定
-			await PowerCmd.Apply<TargetLockedPower>(new ThrowingPlayerChoiceContext(), play.Target, 1m, Owner.Creature, this);
-			GD.Print($"[Eagle500kg] 已为 {play.Target.Name} 赋予目标锁定");
+			await TargetLockedManager.ApplyTargetLocked(play.Target, Owner.Creature, this);
 		}
 		else
 		{

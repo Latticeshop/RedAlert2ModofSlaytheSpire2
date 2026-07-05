@@ -57,27 +57,9 @@ public sealed class AircraftCarrier : CardModel
             return;
         }
 
-        // 获取所有敌人
-        var combatState = Owner.Creature.CombatState;
-        var allEnemies = combatState.Enemies
-            .Where(enemy => enemy.Side == CombatSide.Enemy && enemy.IsAlive)
-            .ToList();
-
-        // 先清除所有敌人的目标锁定能力（保持唯一性）
-        GD.Print($"[AircraftCarrier] 清除所有敌人的目标锁定");
-        foreach (var enemy in allEnemies)
-        {
-            var targetLockedPower = enemy.Powers.FirstOrDefault(p => p is TargetLockedPower) as TargetLockedPower;
-            if (targetLockedPower != null)
-            {
-                GD.Print($"[AircraftCarrier] 移除敌人 {enemy.Name} 的目标锁定");
-                await PowerCmd.Remove(targetLockedPower);
-            }
-        }
-
-        // 为新目标添加目标锁定能力
+        // 为目标添加目标锁定能力
         GD.Print($"[AircraftCarrier] 为敌人 {target.Name} 添加目标锁定");
-        await PowerCmd.Apply<TargetLockedPower>(ctx, target, 1m, Owner.Creature, this);
+        await TargetLockedManager.ApplyTargetLocked(target, Owner.Creature, this);
 
         // 获得3架黄蜂舰载机
         GD.Print($"[AircraftCarrier] 获得3架黄蜂舰载机 - IsUpgraded={IsUpgraded}");
