@@ -47,7 +47,7 @@ public sealed class Eagle500kg : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.DesperateMeasure.CreateHoverTip()!,
-		ModCardKeywords.TargetLocked.CreateHoverTip()!,
+		HoverTipFactory.FromPower<TargetLockedPower>(),
 		ModCardKeywords.Splash.CreateHoverTip()!
 	];
 

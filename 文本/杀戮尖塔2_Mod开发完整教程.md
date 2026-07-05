@@ -799,6 +799,165 @@ protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 
 ---
 
+## 3.10 卡牌悬浮提示（HoverTip）
+
+### 3.10.1 核心原理
+
+卡牌上展示悬浮的其他卡牌和能力，是通过重写 `CardModel` 类的 **`ExtraHoverTips`** 属性实现的。游戏引擎会自动将这些提示显示在卡牌描述下方，当玩家将鼠标悬浮在卡牌上时，会显示对应的卡牌或能力的详细信息。
+
+### 3.10.2 HoverTipFactory 工具类
+
+游戏提供了 `MegaCrit.Sts2.Core.HoverTips.HoverTipFactory` 静态类来生成各种悬浮提示：
+
+| 方法 | 作用 | 示例 |
+|------|------|------|
+| `FromCard<T>(bool upgrade = false)` | 生成卡牌预览 | `HoverTipFactory.FromCard<Shiv>()` |
+| `FromCardWithCardHoverTips<T>()` | 生成卡牌预览 + 卡牌附带的所有悬浮提示 | `HoverTipFactory.FromCardWithCardHoverTips<SovereignBlade>()` |
+| `FromPower<T>(int? amount = null)` | 生成能力预览 | `HoverTipFactory.FromPower<PoisonPower>()` |
+| `FromPowerWithPowerHoverTips<T>()` | 生成能力预览 + 能力附带的所有悬浮提示 | - |
+| `FromOrb<T>()` | 生成球体预览 | `HoverTipFactory.FromOrb<LightningOrb>()` |
+| `FromRelic<T>()` | 生成遗物预览 | - |
+| `Static(StaticHoverTip tip, params DynamicVar[] vars)` | 生成静态文本提示 | - |
+
+### 3.10.3 游戏原版示例
+
+**Accuracy 卡牌**（展示 Shiv 卡牌预览）：
+
+```csharp
+using MegaCrit.Sts2.Core.HoverTips;
+
+public sealed class Accuracy : CardModel
+{
+    // ... 其他代码 ...
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => 
+        [HoverTipFactory.FromCard<Shiv>()];
+}
+```
+
+**Abrasive 卡牌**（展示多个能力预览）：
+
+```csharp
+using MegaCrit.Sts2.Core.HoverTips;
+
+public sealed class Abrasive : CardModel
+{
+    // ... 其他代码 ...
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => 
+    [
+        HoverTipFactory.FromPower<DexterityPower>(),
+        HoverTipFactory.FromPower<ThornsPower>()
+    ];
+}
+```
+
+**SovereignBlade 卡牌**（展示卡牌及其附带的所有提示）：
+
+```csharp
+using MegaCrit.Sts2.Core.HoverTips;
+
+public sealed class SovereignBlade : CardModel
+{
+    // ... 其他代码 ...
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+        HoverTipFactory.FromCardWithCardHoverTips<SovereignBlade>();
+}
+```
+
+### 3.10.4 自定义实现示例
+
+**示例1：展示升级后的卡牌预览**
+
+```csharp
+using MegaCrit.Sts2.Core.HoverTips;
+
+public sealed class MyCard : CardModel
+{
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        // 展示基础版卡牌
+        HoverTipFactory.FromCard<SovietEngineer>(),
+        // 展示升级后的卡牌（upgrade: true）
+        HoverTipFactory.FromCard<SovietEngineer>(upgrade: true)
+    ];
+}
+```
+
+**示例2：展示能力预览**
+
+```csharp
+using MegaCrit.Sts2.Core.HoverTips;
+
+public sealed class PoisonStab : CardModel
+{
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        // 展示毒药能力，指定层数
+        HoverTipFactory.FromPower<PoisonPower>(3)
+    ];
+}
+```
+
+**示例3：混合展示卡牌和能力**
+
+```csharp
+using MegaCrit.Sts2.Core.HoverTips;
+
+public sealed class BladeOfInk : CardModel
+{
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        // 展示卡牌预览
+        HoverTipFactory.FromCard<InkyShiv>(),
+        // 展示能力预览
+        HoverTipFactory.FromPower<WeakPower>()
+    ];
+}
+```
+
+### 3.10.5 能力中的悬浮提示
+
+能力类也可以通过重写 `ExtraHoverTips` 属性来展示其他能力或卡牌的预览：
+
+```csharp
+using MegaCrit.Sts2.Core.HoverTips;
+
+public sealed class MyBuff : PowerModel
+{
+    public override PowerType Type => PowerType.Buff;
+    public override PowerStackType StackType => PowerStackType.Counter;
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        HoverTipFactory.FromPower<DexterityPower>(),
+        HoverTipFactory.FromPower<ThornsPower>()
+    ];
+}
+```
+
+### 3.10.6 效果说明
+
+当玩家将鼠标悬浮在卡牌上时，这些悬浮提示会自动显示在卡牌描述的下方，展示对应的卡牌或能力的详细信息。以游戏中的 "Blade of Ink" 为例，它展示了 "Inky Shivs" 卡牌和 "Weak" 能力的悬浮提示，这相当于：
+
+```csharp
+protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+[
+    HoverTipFactory.FromCard<InkyShiv>(),
+    HoverTipFactory.FromPower<WeakPower>()
+];
+```
+
+### 3.10.7 注意事项
+
+1. **using 引用**：使用 `HoverTipFactory` 前需要添加 `using MegaCrit.Sts2.Core.HoverTips;`
+2. **泛型类型**：`FromCard<T>`、`FromPower<T>` 中的泛型参数必须是已注册的卡牌或能力类型
+3. **升级参数**：`FromCard<T>(upgrade: true)` 会生成升级后的卡牌预览
+4. **层数参数**：`FromPower<T>(amount)` 可以指定能力的层数显示
+
+---
+
 ## 4. 自定义药水
 
 ### 4.1 药水核心属性

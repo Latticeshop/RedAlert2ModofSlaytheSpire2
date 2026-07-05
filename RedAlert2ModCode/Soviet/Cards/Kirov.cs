@@ -33,9 +33,10 @@ public sealed class Kirov : CardModel
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-    [
-        ModCardKeywords.Aircraft.CreateHoverTip()
-    ];
+	[
+		ModCardKeywords.Aircraft.CreateHoverTip(),
+		HoverTipFactory.FromPower<KirovPower>()
+	];
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {

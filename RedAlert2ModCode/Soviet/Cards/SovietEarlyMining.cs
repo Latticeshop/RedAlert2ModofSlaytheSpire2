@@ -23,7 +23,10 @@ public sealed class SovietEarlyMining : CardModel
 
     public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/early_mining_soviet.png";
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => [];
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+	[
+		HoverTipFactory.FromCard<WarMiner>()
+	];
 
     protected override List<DynamicVar> CanonicalVars => new()
     {

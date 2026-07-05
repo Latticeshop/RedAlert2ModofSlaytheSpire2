@@ -33,11 +33,12 @@ public sealed class IronCurtainCard : CardModel
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-    [
-        ModCardKeywords.Building.CreateHoverTip(),
-        ModCardKeywords.SuperWeapon.CreateHoverTip(),
-        ModCardKeywords.BattleLab.CreateHoverTip()
-    ];
+	[
+		ModCardKeywords.Building.CreateHoverTip(),
+		ModCardKeywords.SuperWeapon.CreateHoverTip(),
+		HoverTipFactory.FromPower<IronCurtainPower>(),
+		HoverTipFactory.FromCard<IronCurtain>()
+	];
 
     protected override bool IsPlayable
     {

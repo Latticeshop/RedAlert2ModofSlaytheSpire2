@@ -37,7 +37,7 @@ public sealed class NuclearMissileSiloPower : PowerModel
         }
     }
 
-    private int _turnCounter;
+    private int _turnCounter = (int)SovietCardValues.NuclearMissileSiloCard.Repeat;
     private bool _initialized = false;
 
     private int GetInterval()
@@ -48,7 +48,6 @@ public sealed class NuclearMissileSiloPower : PowerModel
 
     public override Task AfterApplied(Creature? applier, CardModel? cardSource)
     {
-        _turnCounter = GetInterval();
         _initialized = true;
         GD.Print($"[NuclearMissileSiloPower] 能力应用，初始化倒计时: {_turnCounter}");
         return Task.CompletedTask;

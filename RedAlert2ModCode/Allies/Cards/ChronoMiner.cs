@@ -33,7 +33,8 @@ public sealed class ChronoMiner : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
-		ModCardKeywords.Vehicle.CreateHoverTip()
+		ModCardKeywords.Vehicle.CreateHoverTip(),
+		ModCardKeywords.Chrono.CreateHoverTip()
 	];
 
 	protected override List<DynamicVar> CanonicalVars => new()

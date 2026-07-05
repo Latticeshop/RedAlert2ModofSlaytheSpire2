@@ -32,11 +32,12 @@ public sealed class NuclearMissileSiloCard : CardModel
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-    [
-        ModCardKeywords.Building.CreateHoverTip(),
-        ModCardKeywords.SuperWeapon.CreateHoverTip(),
-        ModCardKeywords.BattleLab.CreateHoverTip()
-    ];
+	[
+		ModCardKeywords.Building.CreateHoverTip(),
+		ModCardKeywords.SuperWeapon.CreateHoverTip(),
+		HoverTipFactory.FromPower<NuclearMissileSiloPower>(),
+		HoverTipFactory.FromCard<NuclearAttack>()
+	];
 
     protected override bool IsPlayable
     {

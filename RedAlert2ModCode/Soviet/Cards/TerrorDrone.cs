@@ -34,10 +34,10 @@ public sealed class TerrorDrone : CardModel
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-    [
-        ModCardKeywords.TerrorDrone.CreateHoverTip(),
-        HoverTipFactory.FromPower<SlowPower>()
-    ];
+	[
+		HoverTipFactory.FromPower<SovietTerrorDronePower>(),
+		HoverTipFactory.FromPower<SlowPower>()
+	];
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {

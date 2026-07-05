@@ -190,12 +190,18 @@ public static class ModCardKeywords
     );
 
     public static readonly CustomKeyword SteelFlood = new(
-        "STEEL_FLOOD",
-        new LocString("card_keywords", "steel_flood.title"),
-        new LocString("card_keywords", "steel_flood.description")
-    );
+		"STEEL_FLOOD",
+		new LocString("card_keywords", "steel_flood.title"),
+		new LocString("card_keywords", "steel_flood.description")
+	);
 
-    public static void Initialize()
+	public static readonly CustomKeyword Chrono = new(
+		"CHRONO",
+		new LocString("card_keywords", "chrono.title"),
+		new LocString("card_keywords", "chrono.description")
+	);
+
+	public static void Initialize()
     {
         CustomKeywordManager.RegisterKeyword(Mcv);
         CustomKeywordManager.RegisterKeyword(Soldier);
@@ -220,5 +226,6 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(OrbitalReadiness);
         CustomKeywordManager.RegisterKeyword(TerrorDrone);
         CustomKeywordManager.RegisterKeyword(SteelFlood);
+        CustomKeywordManager.RegisterKeyword(Chrono);
     }
 }

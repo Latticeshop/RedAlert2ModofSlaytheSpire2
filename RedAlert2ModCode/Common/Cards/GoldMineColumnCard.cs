@@ -32,10 +32,10 @@ public class GoldMineColumnCard : CardModel
     public override CardPoolModel VisualCardPool => Pool;
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-    [
-        ModCardKeywords.GoldMine.CreateHoverTip(),
-        ModCardKeywords.GoldMineColumn.CreateHoverTip()
-    ];
+	[
+		ModCardKeywords.GoldMine.CreateHoverTip(),
+		HoverTipFactory.FromPower<GoldMineColumnPower>()
+	];
 
     protected override List<DynamicVar> CanonicalVars => new()
     {

@@ -45,6 +45,8 @@
     "orbital_readiness.description": "召唤轨道飞行器进行打击。",
     "terror_drone.title": "恐怖机器人",
     "terror_drone.description": "每回合受到层数数值的伤害。当目标回血时清除。",
+    "chrono.title": "超时空.",
+    "chrono.description": "打出后将此牌加入摸牌堆。",
     "engineer_choice.title": "选择一个指令",
     "engineer_choice.capture_oil_derrick.title": "占领油井",
     "engineer_choice.capture_oil_derrick.description": "将一张「油井」加入手牌",

@@ -27,7 +27,22 @@ public sealed class WeatherControllerPower : PowerModel
     /// <summary>
     /// 是否升级
     /// </summary>
-    public bool IsUpgraded { get; set; } = false;
+    private bool _isUpgraded;
+    public bool IsUpgraded
+    {
+        get => _isUpgraded;
+        set
+        {
+            if (value != _isUpgraded)
+            {
+                _isUpgraded = value;
+                if (value && _initialized)
+                {
+                    _turnCounter = GetInterval();
+                }
+            }
+        }
+    }
 
     public override LocString Description
     {
@@ -40,7 +55,7 @@ public sealed class WeatherControllerPower : PowerModel
         }
     }
 
-    private int _turnCounter;
+    private int _turnCounter = (int)AlliesCardValues.WeatherController.Repeat;
     private bool _initialized = false;
 
     private int GetInterval()
@@ -52,7 +67,6 @@ public sealed class WeatherControllerPower : PowerModel
     public override Task AfterApplied(Creature? applier, CardModel? cardSource)
     {
         // 立即初始化倒计时
-        _turnCounter = GetInterval();
         _initialized = true;
         GD.Print($"[WeatherControllerPower] 能力应用，初始化倒计时: {_turnCounter}");
         return Task.CompletedTask;

@@ -38,11 +38,12 @@ public sealed class ChronoSphere : CardModel
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-    [
-        ModCardKeywords.Building.CreateHoverTip(),
-        ModCardKeywords.SuperWeapon.CreateHoverTip(),
-        ModCardKeywords.BattleLab.CreateHoverTip()
-    ];
+	[
+		ModCardKeywords.Building.CreateHoverTip(),
+		ModCardKeywords.SuperWeapon.CreateHoverTip(),
+		HoverTipFactory.FromPower<ChronoSpherePower>(),
+		HoverTipFactory.FromCard<ChronoWarp>()
+	];
 
     protected override bool IsPlayable
     {

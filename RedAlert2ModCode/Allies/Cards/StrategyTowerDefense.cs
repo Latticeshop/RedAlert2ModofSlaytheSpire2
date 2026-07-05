@@ -33,12 +33,9 @@ public sealed class StrategyTowerDefense : CardModel
 		new IntVar("Cost", Values.Cost)
 	};
 
-	/// <summary>
-	/// 卡牌上显示策略：塔防和残影两个tip
-	/// </summary>
 	protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
 	{
-		ModCardKeywords.StrategyTowerDefense.CreateHoverTip(),
+		HoverTipFactory.FromPower<StrategyTowerDefensePower>(),
 		HoverTipFactory.Static(StaticHoverTip.Block)
 	};
 
@@ -68,6 +65,7 @@ public sealed class StrategyTowerDefense : CardModel
 
 	protected override void OnUpgrade()
 	{
-		// 升级效果：费用从2降低到1
+		EnergyCost.UpgradeBy((int)Values.CostUpgraded);
+		GD.Print($"[StrategyTowerDefense] 卡牌升级 - 费用降低 {Values.CostUpgraded}");
 	}
 }

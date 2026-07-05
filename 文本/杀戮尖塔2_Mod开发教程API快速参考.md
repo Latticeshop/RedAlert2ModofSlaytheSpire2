@@ -413,6 +413,72 @@ public sealed class AlliedMCV : CardModel
 
 ---
 
+## 🖱️ 卡牌悬浮提示（HoverTip）
+
+### 核心原理
+
+卡牌上展示悬浮的其他卡牌和能力，是通过重写 `CardModel` 类的 **`ExtraHoverTips`** 属性实现的。游戏引擎会自动将这些提示显示在卡牌描述下方。
+
+### HoverTipFactory 工具类
+
+```csharp
+using MegaCrit.Sts2.Core.HoverTips;
+
+// 生成卡牌预览
+HoverTipFactory.FromCard<Shiv>();
+
+// 生成升级后的卡牌预览
+HoverTipFactory.FromCard<Shiv>(upgrade: true);
+
+// 生成卡牌预览 + 卡牌附带的所有悬浮提示
+HoverTipFactory.FromCardWithCardHoverTips<SovereignBlade>();
+
+// 生成能力预览
+HoverTipFactory.FromPower<PoisonPower>();
+
+// 生成指定层数的能力预览
+HoverTipFactory.FromPower<PoisonPower>(3);
+
+// 生成球体预览
+HoverTipFactory.FromOrb<LightningOrb>();
+
+// 生成遗物预览
+HoverTipFactory.FromRelic<MyRelic>();
+```
+
+### 卡牌中使用
+
+```csharp
+public sealed class Accuracy : CardModel
+{
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => 
+        [HoverTipFactory.FromCard<Shiv>()];
+}
+
+public sealed class Abrasive : CardModel
+{
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => 
+    [
+        HoverTipFactory.FromPower<DexterityPower>(),
+        HoverTipFactory.FromPower<ThornsPower>()
+    ];
+}
+```
+
+### 能力中使用
+
+```csharp
+public sealed class MyBuff : PowerModel
+{
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        HoverTipFactory.FromPower<DexterityPower>()
+    ];
+}
+```
+
+---
+
 ## 💎 遗物（RelicModel）
 
 ### 基本结构

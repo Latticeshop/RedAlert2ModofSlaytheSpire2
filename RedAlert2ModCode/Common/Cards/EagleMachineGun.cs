@@ -38,10 +38,10 @@ public sealed class EagleMachineGun : CardModel
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-    [
-        ModCardKeywords.DesperateMeasure.CreateHoverTip()!,
-        ModCardKeywords.TargetLocked.CreateHoverTip()!
-    ];
+	[
+		ModCardKeywords.DesperateMeasure.CreateHoverTip()!,
+		HoverTipFactory.FromPower<TargetLockedPower>()
+	];
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {

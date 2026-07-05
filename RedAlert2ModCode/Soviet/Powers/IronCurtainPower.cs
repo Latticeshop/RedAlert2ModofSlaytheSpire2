@@ -25,7 +25,22 @@ public sealed class IronCurtainPower : PowerModel
 
     public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
 
-    public bool IsUpgraded { get; set; } = false;
+    private bool _isUpgraded;
+    public bool IsUpgraded
+    {
+        get => _isUpgraded;
+        set
+        {
+            if (value != _isUpgraded)
+            {
+                _isUpgraded = value;
+                if (value && _initialized)
+                {
+                    _turnCounter = GetInterval();
+                }
+            }
+        }
+    }
 
     public override LocString Description
     {
@@ -37,7 +52,7 @@ public sealed class IronCurtainPower : PowerModel
         }
     }
 
-    private int _turnCounter;
+    private int _turnCounter = (int)SovietCardValues.IronCurtainCard.Repeat;
     private bool _initialized = false;
 
     private int GetInterval()
@@ -48,7 +63,6 @@ public sealed class IronCurtainPower : PowerModel
 
     public override Task AfterApplied(Creature? applier, CardModel? cardSource)
     {
-        _turnCounter = GetInterval();
         _initialized = true;
         GD.Print($"[IronCurtainPower] 能力应用，初始化倒计时: {_turnCounter}");
         return Task.CompletedTask;

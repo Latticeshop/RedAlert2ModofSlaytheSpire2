@@ -38,11 +38,11 @@ public sealed class AircraftCarrier : CardModel
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-    [
-        ModCardKeywords.Navy.CreateHoverTip(),
-        ModCardKeywords.Hornet.CreateHoverTip(),
-        ModCardKeywords.TargetLocked.CreateHoverTip(),
-    ];
+	[
+		ModCardKeywords.Navy.CreateHoverTip(),
+		HoverTipFactory.FromPower<HornetPower>(),
+		HoverTipFactory.FromPower<TargetLockedPower>(),
+	];
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {

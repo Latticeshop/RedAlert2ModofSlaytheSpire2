@@ -31,11 +31,26 @@ public sealed class SovietTeslaTrooper : CardModel
 		new IntVar("DollarNumber", Values.DollarValue)
 	};
 
-	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-	[
-		ModCardKeywords.Deploy.CreateHoverTip(),
-		HoverTipFactory.FromOrb<LightningOrb>()
-	];
+	protected override IEnumerable<IHoverTip> ExtraHoverTips
+	{
+		get
+		{
+			var tips = new List<IHoverTip>();
+			tips.Add(HoverTipFactory.FromOrb<LightningOrb>());
+
+			if (Owner != null && Owner.Creature != null)
+			{
+				bool hasTeslaCoil = Owner.Creature.Powers.Any(p => p is SovietTeslaCoilPower);
+				if (hasTeslaCoil)
+				{
+					tips.Add(ModCardKeywords.Deploy.CreateHoverTip());
+					tips.Add(HoverTipFactory.FromCard<SovietTeslaCoilCard>());
+				}
+			}
+
+			return tips;
+		}
+	}
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
@@ -43,10 +58,13 @@ public sealed class SovietTeslaTrooper : CardModel
 
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
-		var dollarPower = Owner.Creature.Powers.OfType<DollarPower>().FirstOrDefault();
-		if (dollarPower != null)
+		bool hasTeslaCoil = Owner.Creature.Powers.Any(p => p is SovietTeslaCoilPower);
+
+		if (!hasTeslaCoil)
 		{
-			dollarPower.AddDollar(-(int)Values.DollarValue);
+			GD.Print("[SovietTeslaTrooper] 没有磁暴线圈能力，直接获得闪电球");
+			await OrbCmd.Channel<LightningOrb>(ctx, Owner);
+			return;
 		}
 
 		var options = new List<DeployChoiceScreen.ChoiceOption>

@@ -23,7 +23,10 @@ public sealed class AlliedEarlyMining : CardModel
 
     public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/early_mining.png";
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips => [];
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+	[
+		HoverTipFactory.FromCard<ChronoMiner>()
+	];
 
     protected override List<DynamicVar> CanonicalVars => new()
     {

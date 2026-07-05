@@ -45,6 +45,8 @@
     "orbital_readiness.description": "Summons orbital vehicles to strike.",
     "terror_drone.title": "Terror Drone",
     "terror_drone.description": "Takes damage equal to stack count each turn. Removed when the target heals.",
+    "chrono.title": "Chrono.",
+    "chrono.description": "Add this card to the draw pile after playing.",
     "engineer_choice.title": "Choose a Command",
     "engineer_choice.capture_oil_derrick.title": "Capture Oil Derrick",
     "engineer_choice.capture_oil_derrick.description": "Add an Oil Derrick card to hand",

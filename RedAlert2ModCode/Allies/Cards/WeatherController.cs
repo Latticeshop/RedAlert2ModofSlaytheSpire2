@@ -38,11 +38,12 @@ public sealed class WeatherController : CardModel
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-    [
-        ModCardKeywords.Building.CreateHoverTip(),
-        ModCardKeywords.SuperWeapon.CreateHoverTip(),
-        ModCardKeywords.BattleLab.CreateHoverTip()
-    ];
+	[
+		ModCardKeywords.Building.CreateHoverTip(),
+		ModCardKeywords.SuperWeapon.CreateHoverTip(),
+		HoverTipFactory.FromPower<WeatherControllerPower>(),
+		HoverTipFactory.FromCard<LightningStorm>()
+	];
 
     protected override bool IsPlayable
     {

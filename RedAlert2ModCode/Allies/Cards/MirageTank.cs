@@ -42,10 +42,10 @@ public sealed class MirageTank : CardModel
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
-    {
-        ModCardKeywords.Vehicle.CreateHoverTip()
-        // HoverTipFactory.FromPower<IntangiblePower>()  // 已移除无实体效果
-    };
+	{
+		ModCardKeywords.Vehicle.CreateHoverTip(),
+		HoverTipFactory.FromPower<MegaCrit.Sts2.Core.Models.Powers.BlurPower>()
+	};
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {

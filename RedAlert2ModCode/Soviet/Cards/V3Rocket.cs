@@ -33,10 +33,11 @@ public sealed class V3Rocket : CardModel
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-    [
-        ModCardKeywords.Vehicle.CreateHoverTip(),
-        ModCardKeywords.TargetLocked.CreateHoverTip()
-    ];
+	[
+		ModCardKeywords.Vehicle.CreateHoverTip(),
+		HoverTipFactory.FromPower<TargetLockedPower>(),
+		HoverTipFactory.FromPower<V3RocketPower>()
+	];
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {

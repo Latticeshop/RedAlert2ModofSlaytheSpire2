@@ -251,7 +251,7 @@ public static class AlliesCardValues
 	/// <summary>策略：塔防 - 2费能力卡，升级后1费</summary>
 	public static CardValueStore.CardValues StrategyTowerDefense => new()
 	{
-		Cost = 2,
+		Cost = 3,
 		CostUpgraded = -1          // 升级后费用降低1
 	};
 
