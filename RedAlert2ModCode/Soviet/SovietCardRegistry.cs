@@ -71,6 +71,7 @@ public static class SovietCardRegistry
         cards.Add(() => ModelDb.Card<SovietEarlyMining>());
         cards.Add(() => ModelDb.Card<IronCurtain>());
         cards.Add(() => ModelDb.Card<NuclearAttack>());
+        cards.Add(() => ModelDb.Card<KitingCard>());
         return cards;
     }
 

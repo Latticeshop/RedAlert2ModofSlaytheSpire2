@@ -97,5 +97,7 @@
     "SOVIET_SHIPYARD_POWER.title": "苏联船厂",
     "SOVIET_SHIPYARD_POWER.description": "已部署船厂。",
     "ALLIED_AIR_FORCE_COMMAND_POWER.title": "空指部",
-    "ALLIED_AIR_FORCE_COMMAND_POWER.description": "已部署空指部。"
+    "ALLIED_AIR_FORCE_COMMAND_POWER.description": "已部署空指部。",
+    "KITING_POWER.title": "走A",
+    "KITING_POWER.smartDescription": "本回合，每打出一张[gold]单位[/gold]牌，获得 {Amount} 点格挡。"
 }

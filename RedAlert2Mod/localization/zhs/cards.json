@@ -172,5 +172,7 @@
     "NUCLEAR_MISSILE_SILO_CARD.title": "核弹井",
     "NUCLEAR_MISSILE_SILO_CARD.description": "[gold]价格：${DollarNumber}[/gold]。\n获得[gold]核弹井[/gold]。\n{IfUpgraded:show:核弹伤害增加。|}",
     "NUCLEAR_ATTACK.title": "核弹攻击",
-    "NUCLEAR_ATTACK.description": "[gold]超级武器[/gold]。\n对全部敌人造成 {Damage} 点伤害，赋予 {Poison} 层中毒。"
+    "NUCLEAR_ATTACK.description": "[gold]超级武器[/gold]。\n对全部敌人造成 {Damage} 点伤害，赋予 {Poison} 层中毒。",
+    "KITING_CARD.title": "走A",
+    "KITING_CARD.description": "打出此牌后，你在这个回合每打出一张[gold]单位[/gold]牌，获得 {Power} 点格挡。"
 }

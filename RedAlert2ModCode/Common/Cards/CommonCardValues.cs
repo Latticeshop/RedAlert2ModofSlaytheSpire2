@@ -95,6 +95,13 @@ public static class CommonCardValues
 		Repeat = 1                  // 未升级时选择数量
 	};
 
+	public static CardValueStore.CardValues Kiting => new()
+	{
+		Cost = 0,
+		Damage = 3,                 // 基础格挡点数
+		DamageUpgraded = 2          // 升级后5 = 3 + 2
+	};
+
 	/// <summary>F2A钢铁洪流 - 1费能力卡（升级后0费），手牌中的单位卡将自动打出</summary>
 	public static CardValueStore.CardValues F2A => new()
 	{

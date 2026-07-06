@@ -97,5 +97,7 @@
     "SOVIET_SHIPYARD_POWER.title": "Soviet Shipyard",
     "SOVIET_SHIPYARD_POWER.description": "Shipyard deployed.",
     "ALLIED_AIR_FORCE_COMMAND_POWER.title": "Air Force Command",
-    "ALLIED_AIR_FORCE_COMMAND_POWER.description": "Air Force Command deployed."
+    "ALLIED_AIR_FORCE_COMMAND_POWER.description": "Air Force Command deployed.",
+    "KITING_POWER.title": "Kiting",
+    "KITING_POWER.smartDescription": "This turn, every time you play a [gold]Unit[/gold] card, gain {Amount} Block."
 }

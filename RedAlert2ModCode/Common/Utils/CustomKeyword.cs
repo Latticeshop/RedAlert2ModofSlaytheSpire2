@@ -101,8 +101,8 @@ public static class ModCardKeywords
 
     public static readonly CustomKeyword Unit = new(
         "UNIT",
-        new LocString("card_keywords", "unit.title"),
-        new LocString("card_keywords", "unit.description")
+        new LocString("card_keywords", "Ra2_unit.title"),
+        new LocString("card_keywords", "Ra2_unit.description")
     );
 
     public static readonly CustomKeyword StrategyTowerDefense = new(
