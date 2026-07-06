@@ -33,6 +33,8 @@
     "desperate_measure.description": "Replaces [gold]Aircraft[/gold]'s next attack.",
     "gold_mine.title": "Gold Mine",
     "gold_mine.description": "When you play a [gold]Miner[/gold], gain an additional [gold]$1000[/gold].",
+    "miner.title": "Miner",
+    "miner.description": "Refers to units that can obtain funds.",
     "gem_mine.title": "Gem Mine",
     "gem_mine.description": "When you play a [gold]Miner[/gold], gain an additional [gold]$2000[/gold].",
     "gold_mine_column.title": "Gold Mine Column",

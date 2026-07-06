@@ -45,18 +45,21 @@ public sealed class WeatherControllerPower : PowerModel
     }
 
     public override LocString Description
-    {
-        get
         {
-            var locString = new LocString("powers", base.Id.Entry + ".description");
-            int displayInterval = IsUpgraded ? (int)(AlliesCardValues.WeatherController.Repeat + AlliesCardValues.WeatherController.RepeatUpgraded) : _turnCounter;
-            locString.Add("TurnsRemaining", displayInterval);
-            locString.Add("Block", (int)AlliesCardValues.WeatherController.Block);
-            string lightningStormName = IsUpgraded ? "闪电风暴+" : "闪电风暴";
-            locString.Add("LightningStormName", lightningStormName);
-            return locString;
+            get
+            {
+                var locString = new LocString("powers", base.Id.Entry + ".description");
+                int displayInterval = IsUpgraded ? (int)(AlliesCardValues.WeatherController.Repeat + AlliesCardValues.WeatherController.RepeatUpgraded) : _turnCounter;
+                locString.Add("TurnsRemaining", displayInterval);
+                locString.Add("Block", (int)AlliesCardValues.WeatherController.Block);
+                
+                var lightningStormCard = ModelDb.Card<LightningStorm>();
+                string lightningStormName = IsUpgraded ? $"{lightningStormCard.Title.ToString()}+" : lightningStormCard.Title.ToString();
+                locString.Add("LightningStormName", lightningStormName);
+                
+                return locString;
+            }
         }
-    }
 
     private int _turnCounter = (int)AlliesCardValues.WeatherController.Repeat;
     private bool _initialized = false;

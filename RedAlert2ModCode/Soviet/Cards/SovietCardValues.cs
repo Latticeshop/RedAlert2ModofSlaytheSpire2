@@ -84,6 +84,21 @@ public static class SovietCardValues
 		DollarValue = 900
 	};
 	
+	/// <summary>天启坦克 - 2费9伤害2次5防御+2易伤，升级后12伤害2次7防御+3易伤，价格1750</summary>
+	public static CardValueStore.CardValues ApocalypseTank => new()
+	{
+		Cost = 2,
+		Damage = 9,
+		DamageUpgraded = 3,
+		Repeat = 2,
+		RepeatUpgraded = 0,
+		Block = 5,
+		BlockUpgraded = 2,
+		MagicNumber = 2,      // 易伤层数
+		MagicNumberUpgraded = 1,
+		DollarValue = 1750
+	};
+	
 	/// <summary>防空履带车 - 1费，抽1张牌(升级后2张)，5护盾(升级后7点)，部署：存储士兵单位，价格500</summary>
 	public static CardValueStore.CardValues FlakTrack => new()
 	{
@@ -346,6 +361,7 @@ public static class SovietCardValues
 		return new Dictionary<string, CardValueStore.CardValues>
 		{
 			{ "RHINOTANK", RhinoTank },
+			{ "APOCALYPSETANK", ApocalypseTank },
 			{ "FLAKTRACK", FlakTrack },
 			{ "TERRORDRONE", TerrorDrone },
 			{ "SOVIETMCV", SovietMCV },

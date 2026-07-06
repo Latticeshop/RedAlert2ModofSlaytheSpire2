@@ -43,17 +43,20 @@ public sealed class IronCurtainPower : PowerModel
     }
 
     public override LocString Description
-    {
-        get
         {
-            var locString = new LocString("powers", base.Id.Entry + ".description");
-            int displayInterval = IsUpgraded ? (int)(SovietCardValues.IronCurtainCard.Repeat + SovietCardValues.IronCurtainCard.RepeatUpgraded) : _turnCounter;
-            locString.Add("TurnsRemaining", displayInterval);
-            string ironCurtainName = IsUpgraded ? "铁幕+" : "铁幕";
-            locString.Add("IronCurtainName", ironCurtainName);
-            return locString;
+            get
+            {
+                var locString = new LocString("powers", base.Id.Entry + ".description");
+                int displayInterval = IsUpgraded ? (int)(SovietCardValues.IronCurtainCard.Repeat + SovietCardValues.IronCurtainCard.RepeatUpgraded) : _turnCounter;
+                locString.Add("TurnsRemaining", displayInterval);
+                
+                var ironCurtainCard = ModelDb.Card<IronCurtain>();
+                string ironCurtainName = IsUpgraded ? $"{ironCurtainCard.Title.ToString()}+" : ironCurtainCard.Title.ToString();
+                locString.Add("IronCurtainName", ironCurtainName);
+                
+                return locString;
+            }
         }
-    }
 
     private int _turnCounter = (int)SovietCardValues.IronCurtainCard.Repeat;
     private bool _initialized = false;

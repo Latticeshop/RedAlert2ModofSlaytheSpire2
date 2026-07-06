@@ -10,7 +10,7 @@
     "STOP_PRODUCTION_CARD.title": "停产",
     "STOP_PRODUCTION_CARD.description": "选择{IfUpgraded:show:[green]任意[/green]| {SelectCount} 个}[gold]生产序列[/gold]启动/停产，使其[gold]开始[/gold]/[gold]不再[/gold]生产单位。",
     "RA2_RALLY.title": "集结",
-    "RA2_RALLY.description": "从牌堆中召集 {MagicNumber} 张[gold]单位[/gold]卡牌到手牌中。",
+    "RA2_RALLY.description": "从牌堆中抽取 {MagicNumber} 张[gold]单位[/gold]卡牌到手牌中。",
     "GOLD_MINE_CARD.title": "金矿",
     "GOLD_MINE_CARD.description": "获得 {Reserve} 层[gold]金矿[/gold]储备。",
     "GEM_MINE_CARD.title": "宝石矿",
@@ -48,7 +48,7 @@
     "ALLIES_PILLBOX_CARD.title": "机枪碉堡",
     "ALLIES_PILLBOX_CARD.description": "[gold]价格：${DollarNumber}[/gold]。回合开始时对敌人造成 {Damage} 点伤害 2 次，获得 {Block} 点防御。",
     "CHRONO_MINER.title": "超时空矿车",
-    "CHRONO_MINER.description": "[gold]超时空[/gold]\n获得 [gold]${DollarValue}[/gold] 。",
+    "CHRONO_MINER.description": "[gold]超时空.[/gold]\n获得 [gold]${DollarValue}[/gold] 。",
     "INTRUDER.title": "入侵者战机",
     "INTRUDER.description": "造成 {Damage} 点伤害，赋予敌人 {Repeat} 层易伤。",
     "AIR_FORCE_COMMAND.title": "空指部",
@@ -95,6 +95,10 @@
     "MASS_PRODUCTION.description": "{IfUpgraded:show:每有一层[gold]生产序列[/gold]，其|}单位价格减少[gold]${Reduction}[/gold]。",
     "MASS_PRODUCTION_CARD.title": "大生产",
     "MASS_PRODUCTION_CARD.description": "获得[gold]大生产[/gold]。\n{IfUpgraded:show:每有一层[gold]生产序列[/gold]，其|}单位价格减少[gold]${Reduction}[/gold]。",
+    "MINE_RAID.title": "扰矿",
+    "MINE_RAID.description": "从牌堆中抽取{MagicNumber}张[gold]矿车[/gold]卡牌。",
+    "APOCALYPSE_TANK.title": "天启坦克",
+    "APOCALYPSE_TANK.description": "造成 {Damage} 点伤害 {Repeat} 次。获得 {Block} 点格挡。赋予 {VulnerableStacks} 层易伤。",
     "FORTIFIED_WALL.title": "坚固围墙",
     "FORTIFIED_WALL.description": "[gold]价格：${DollarNumber}[/gold]。获得 {Block} 点格挡。将此牌返回你的手牌。",
     "SOVIET_ENGINEER.title": "工程师",
@@ -178,7 +182,7 @@
     "KITING_CARD.title": "走A",
     "KITING_CARD.description": "打出此牌后，你在这个回合每打出一张[gold]单位[/gold]牌，获得 {Power} 点格挡。",
     "ORE_REFINERY_CARD.title": "矿石精炼器",
-    "ORE_REFINERY_CARD.description": "[gold]价格：${DollarNumber}[/gold]。\n获得[gold]矿石精炼器[/gold]。\n+{Bonus}%矿石价值。",
+    "ORE_REFINERY_CARD.description": "[gold]价格：${DollarNumber}[/gold]。\n+{Bonus}%矿石价值。",
     "INDUSTRIAL_PLANT_CARD.title": "工业工厂",
-    "INDUSTRIAL_PLANT_CARD.description": "[gold]价格：${DollarNumber}[/gold]。\n获得[gold]工业工厂[/gold]。\n-{Discount}%[gold]单位[/gold]造价。"
+    "INDUSTRIAL_PLANT_CARD.description": "[gold]价格：${DollarNumber}[/gold]。\n-{Discount}%[gold]单位[/gold]造价。"
 }

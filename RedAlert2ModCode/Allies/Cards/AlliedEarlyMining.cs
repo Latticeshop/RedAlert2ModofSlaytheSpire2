@@ -25,7 +25,8 @@ public sealed class AlliedEarlyMining : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
-		HoverTipFactory.FromCard<ChronoMiner>()
+		HoverTipFactory.FromCard<ChronoMiner>(),
+		ModCardKeywords.Miner.CreateHoverTip()
 	];
 
     protected override List<DynamicVar> CanonicalVars => new()

@@ -102,6 +102,14 @@ public static class CommonCardValues
 		DamageUpgraded = 2          // 升级后5 = 3 + 2
 	};
 
+	/// <summary>扰矿 - 1费技能卡，从牌堆中抽取1张矿车卡牌（升级后2张）</summary>
+	public static CardValueStore.CardValues MineRaid => new()
+	{
+		Cost = 1,
+		MagicNumber = 1,            // 基础抽取数量
+		MagicNumberUpgraded = 1     // 升级后增加1张（共2张）
+	};
+
 	/// <summary>大生产 - 3费能力卡，单位价格减少50（升级后每有一层生产序列减少50）</summary>
 	public static CardValueStore.CardValues MassProduction => new()
 	{

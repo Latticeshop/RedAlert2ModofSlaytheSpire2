@@ -63,9 +63,18 @@ public static class RelicPatches
 
     #region Leafy Poultice
 
-    [HarmonyPostfix]
+    [HarmonyPrefix]
     [HarmonyPatch(typeof(LeafyPoultice), "AfterObtained")]
-    public static void LeafyPoulticeAfterObtainedPostfix(LeafyPoultice __instance)
+    public static bool LeafyPoulticeAfterObtainedPrefix(LeafyPoultice __instance, ref System.Threading.Tasks.Task __result)
+    {
+        if (!IsAlliesCharacter(__instance.Owner.Character) && !IsSovietCharacter(__instance.Owner.Character))
+            return true;
+
+        __result = LeafyPoulticeTransformAsync(__instance);
+        return false;
+    }
+
+    private static async System.Threading.Tasks.Task LeafyPoulticeTransformAsync(LeafyPoultice __instance)
     {
         var deck = PileType.Deck.GetPile(__instance.Owner).Cards;
         var allUnitCards = GetAllModUnitCards();
@@ -81,7 +90,7 @@ public static class RelicPatches
                 if (targets.Any())
                 {
                     var replacement = __instance.Owner.RunState.CreateCard(rng.NextItem(targets), __instance.Owner);
-                    _ = CardCmd.Transform(soldier, replacement);
+                    await CardCmd.Transform(soldier, replacement);
                 }
             }
             if (tank != null)
@@ -90,7 +99,7 @@ public static class RelicPatches
                 if (targets.Any())
                 {
                     var replacement = __instance.Owner.RunState.CreateCard(rng.NextItem(targets), __instance.Owner);
-                    _ = CardCmd.Transform(tank, replacement);
+                    await CardCmd.Transform(tank, replacement);
                 }
             }
         }
@@ -104,7 +113,7 @@ public static class RelicPatches
                 if (targets.Any())
                 {
                     var replacement = __instance.Owner.RunState.CreateCard(rng.NextItem(targets), __instance.Owner);
-                    _ = CardCmd.Transform(conscript, replacement);
+                    await CardCmd.Transform(conscript, replacement);
                 }
             }
             if (tank != null)
@@ -113,7 +122,7 @@ public static class RelicPatches
                 if (targets.Any())
                 {
                     var replacement = __instance.Owner.RunState.CreateCard(rng.NextItem(targets), __instance.Owner);
-                    _ = CardCmd.Transform(tank, replacement);
+                    await CardCmd.Transform(tank, replacement);
                 }
             }
         }
@@ -162,6 +171,68 @@ public static class RelicPatches
             if (tank != null)
                 CardCmd.Upgrade(tank);
         }
+    }
+
+    #endregion
+
+    #region New Leaf
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(NewLeaf), "AfterObtained")]
+    public static bool NewLeafAfterObtainedPrefix(NewLeaf __instance, ref System.Threading.Tasks.Task __result)
+    {
+        __result = NewLeafTransformAsync(__instance);
+        return false;
+    }
+
+    private static async System.Threading.Tasks.Task NewLeafTransformAsync(NewLeaf __instance)
+    {
+        var prefs = new MegaCrit.Sts2.Core.CardSelection.CardSelectorPrefs(
+            MegaCrit.Sts2.Core.CardSelection.CardSelectorPrefs.TransformSelectionPrompt,
+            1,
+            1
+        );
+
+        var selectedCards = (await MegaCrit.Sts2.Core.Commands.CardSelectCmd.FromDeckGeneric(
+            player: __instance.Owner,
+            prefs: prefs,
+            filter: _ => true
+        )).ToList();
+
+        if (selectedCards.Any())
+        {
+            var selectedCard = selectedCards.First();
+
+            if (IsModUnitCard(selectedCard))
+            {
+                var allUnitCards = GetAllModUnitCards();
+                var rng = __instance.Owner.PlayerRng.Transformations;
+                var targets = allUnitCards.Where(t => t.Id.Entry != selectedCard.Id.Entry).ToList();
+
+                if (targets.Any())
+                {
+                    var replacement = __instance.Owner.RunState.CreateCard(rng.NextItem(targets), __instance.Owner);
+                    await MegaCrit.Sts2.Core.Commands.CardCmd.Transform(selectedCard, replacement);
+                }
+            }
+            else
+            {
+                await MegaCrit.Sts2.Core.Commands.CardCmd.TransformToRandom(selectedCard, __instance.Owner.RunState.Rng.Niche);
+            }
+        }
+    }
+
+    private static bool IsModUnitCard(CardModel card)
+    {
+        return card is AmericanSoldier || card is Conscript ||
+               card is GrizzlyTank || card is RhinoTank ||
+               card is SovietEngineer || card is SovietAttackDog ||
+               card is SovietFlakTrooper || card is SovietTeslaTrooper ||
+               card is FlakTrack || card is TerrorDrone ||
+               card is WarMiner || card is Kirov ||
+               card is ApocalypseTank || card is V3Rocket ||
+               card is SovietTransportShip || card is FlakSubmarine ||
+               card is TyphoonSubmarine || card is Paratrooper;
     }
 
     #endregion

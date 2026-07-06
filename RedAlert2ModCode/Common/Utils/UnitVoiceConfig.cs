@@ -352,6 +352,18 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/Kirov/Vkirsec.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/Kirov/Vkirsed.mp3",
         },
+        ["ApocalypseTank"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vapoatb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vapoatd.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vapoate.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vapomoa.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vaposea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vaposeb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vaposec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vaposed.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vaposee.mp3",
+        },
     };
 
     public static readonly Dictionary<string, List<string>> YuriUnits = new();

@@ -75,6 +75,7 @@ public static class AlliedCardRegistry
         cards.Add(() => ModelDb.Card<SellMCV>());
         cards.Add(() => ModelDb.Card<SellBuildingCard>());
         cards.Add(() => ModelDb.Card<Ra2Rally>());
+        cards.Add(() => ModelDb.Card<MineRaid>());
         cards.Add(() => ModelDb.Card<StopProductionCard>());
         cards.Add(() => ModelDb.Card<OilDerrickCard>());
         cards.Add(() => ModelDb.Card<GoldMineCard>());
@@ -111,6 +112,7 @@ public static class AlliedCardRegistry
             () => ModelDb.Card<SellMCV>(),
             () => ModelDb.Card<SellBuildingCard>(),
             () => ModelDb.Card<Ra2Rally>(),
+            () => ModelDb.Card<MineRaid>(),
             () => ModelDb.Card<StopProductionCard>(),
             () => ModelDb.Card<OilDerrickCard>(),
             () => ModelDb.Card<GoldMineCard>(),

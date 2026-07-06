@@ -28,17 +28,20 @@ public sealed class NuclearMissileSiloPower : PowerModel
     public bool IsUpgraded { get; set; } = false;
 
     public override LocString Description
-    {
-        get
         {
-            var locString = new LocString("powers", base.Id.Entry + ".description");
-            int displayInterval = IsUpgraded ? (int)(SovietCardValues.NuclearMissileSiloCard.Repeat + SovietCardValues.NuclearMissileSiloCard.RepeatUpgraded) : _turnCounter;
-            locString.Add("TurnsRemaining", displayInterval);
-            string nuclearAttackName = IsUpgraded ? "核弹攻击+" : "核弹攻击";
-            locString.Add("NuclearAttackName", nuclearAttackName);
-            return locString;
+            get
+            {
+                var locString = new LocString("powers", base.Id.Entry + ".description");
+                int displayInterval = IsUpgraded ? (int)(SovietCardValues.NuclearMissileSiloCard.Repeat + SovietCardValues.NuclearMissileSiloCard.RepeatUpgraded) : _turnCounter;
+                locString.Add("TurnsRemaining", displayInterval);
+                
+                var nuclearAttackCard = ModelDb.Card<NuclearAttack>();
+                string nuclearAttackName = IsUpgraded ? $"{nuclearAttackCard.Title.ToString()}+" : nuclearAttackCard.Title.ToString();
+                locString.Add("NuclearAttackName", nuclearAttackName);
+                
+                return locString;
+            }
         }
-    }
 
     private int _turnCounter = (int)SovietCardValues.NuclearMissileSiloCard.Repeat;
     private bool _initialized = false;

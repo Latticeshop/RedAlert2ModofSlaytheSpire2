@@ -23,18 +23,34 @@ public sealed class OreRefineryPower : PowerModel
 
     public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
 
+    private bool _isUpgraded;
+    public bool IsUpgraded
+    {
+        get => _isUpgraded;
+        set => _isUpgraded = value;
+    }
+
+    public OreRefineryPower()
+    {
+        GD.Print($"[OreRefineryPower] 构造函数被调用");
+    }
+
     public override LocString Description
     {
         get
         {
+            var values = AlliesCardValues.OreRefinery;
+            int bonus = IsUpgraded ? (int)(values.MagicNumber + values.MagicNumberUpgraded) : (int)values.MagicNumber;
             var locString = new LocString("powers", base.Id.Entry + ".smartDescription");
-            locString.Add("Bonus", (int)base.Amount);
+            locString.Add("Bonus", bonus);
             return locString;
         }
     }
 
     public float GetOreMultiplier()
     {
-        return 1.0f + (int)base.Amount / 100.0f;
+        var values = AlliesCardValues.OreRefinery;
+        int bonus = IsUpgraded ? (int)(values.MagicNumber + values.MagicNumberUpgraded) : (int)values.MagicNumber;
+        return 1.0f + bonus / 100.0f;
     }
 }

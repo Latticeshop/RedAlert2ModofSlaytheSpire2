@@ -60,7 +60,12 @@ public sealed class IndustrialPlantCard : CardModel
         await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         
         int discountPercentage = (int)base.DynamicVars["Discount"].BaseValue;
-        await PowerCmd.Apply<IndustrialPlantPower>(ctx, Owner.Creature, discountPercentage, Owner.Creature, this);
+        var industrialPlantPower = await PowerCmd.Apply<IndustrialPlantPower>(ctx, Owner.Creature, discountPercentage, Owner.Creature, this);
+        
+        if (industrialPlantPower != null)
+        {
+            industrialPlantPower.IsUpgraded = IsUpgraded;
+        }
         
         await Common.Powers.MassProductionPower.RecalculateAllTrainingQueuePrices(Owner.Creature);
     }

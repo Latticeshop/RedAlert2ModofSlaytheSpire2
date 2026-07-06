@@ -59,7 +59,12 @@ public sealed class OreRefineryCard : CardModel
         await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         
         int bonusPercentage = (int)base.DynamicVars["Bonus"].BaseValue;
-        await PowerCmd.Apply<OreRefineryPower>(ctx, Owner.Creature, bonusPercentage, Owner.Creature, this);
+        var oreRefineryPower = await PowerCmd.Apply<OreRefineryPower>(ctx, Owner.Creature, bonusPercentage, Owner.Creature, this);
+        
+        if (oreRefineryPower != null)
+        {
+            oreRefineryPower.IsUpgraded = IsUpgraded;
+        }
     }
 
     protected override void OnUpgrade()

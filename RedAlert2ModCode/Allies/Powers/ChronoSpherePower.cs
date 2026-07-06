@@ -45,17 +45,20 @@ public sealed class ChronoSpherePower : PowerModel
     }
 
     public override LocString Description
-    {
-        get
         {
-            var locString = new LocString("powers", base.Id.Entry + ".description");
-            int displayInterval = IsUpgraded ? (int)(AlliesCardValues.ChronoSphere.Repeat + AlliesCardValues.ChronoSphere.RepeatUpgraded) : _turnCounter;
-            locString.Add("TurnsRemaining", displayInterval);
-            string chronoWarpName = IsUpgraded ? "超时空传送+" : "超时空传送";
-            locString.Add("ChronoWarpName", chronoWarpName);
-            return locString;
+            get
+            {
+                var locString = new LocString("powers", base.Id.Entry + ".description");
+                int displayInterval = IsUpgraded ? (int)(AlliesCardValues.ChronoSphere.Repeat + AlliesCardValues.ChronoSphere.RepeatUpgraded) : _turnCounter;
+                locString.Add("TurnsRemaining", displayInterval);
+                
+                var chronoWarpCard = ModelDb.Card<ChronoWarp>();
+                string chronoWarpName = IsUpgraded ? $"{chronoWarpCard.Title.ToString()}+" : chronoWarpCard.Title.ToString();
+                locString.Add("ChronoWarpName", chronoWarpName);
+                
+                return locString;
+            }
         }
-    }
 
     private int _turnCounter = (int)AlliesCardValues.ChronoSphere.Repeat;
     private bool _initialized = false;

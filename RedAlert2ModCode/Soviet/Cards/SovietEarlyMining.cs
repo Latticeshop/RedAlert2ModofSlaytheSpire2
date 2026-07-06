@@ -25,7 +25,8 @@ public sealed class SovietEarlyMining : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
-		HoverTipFactory.FromCard<WarMiner>()
+		HoverTipFactory.FromCard<WarMiner>(),
+		ModCardKeywords.Miner.CreateHoverTip()
 	];
 
     protected override List<DynamicVar> CanonicalVars => new()
