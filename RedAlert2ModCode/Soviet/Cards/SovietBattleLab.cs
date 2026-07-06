@@ -38,7 +38,7 @@ public sealed class SovietBattleLab : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		ModCardKeywords.BattleLab.CreateHoverTip()
+		ModCardKeywords.SovietBattleLab.CreateHoverTip()
 	];
 
 	protected override bool IsPlayable

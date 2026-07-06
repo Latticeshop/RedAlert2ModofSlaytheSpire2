@@ -169,6 +169,15 @@ public static class AlliesCardValues
 		DollarValue = 2000
 		// 矿场主要是功能牌
 	};
+
+	/// <summary>矿石精炼器 - 0费能力卡，+25%矿石价值（升级后+50%），价格2500</summary>
+	public static CardValueStore.CardValues OreRefinery => new()
+	{
+		Cost = 0,
+		DollarValue = 2500,
+		MagicNumber = 25,           // 基础25%矿石价值加成
+		MagicNumberUpgraded = 25    // 升级后增加25%，总共50%
+	};
 	
 	// ==================== 防御建筑 ====================
 	

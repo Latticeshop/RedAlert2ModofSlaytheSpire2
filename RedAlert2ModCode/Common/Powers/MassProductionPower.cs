@@ -136,15 +136,6 @@ public class MassProductionPower : PowerModel
     {
         GD.Print($"[MassProductionPower] RecalculateAllTrainingQueuePrices 被调用");
         
-        var massProductionPower = owner.Powers.OfType<MassProductionPower>().FirstOrDefault();
-        if (massProductionPower == null)
-        {
-            GD.Print($"[MassProductionPower] 没有大生产能力，跳过计算");
-            return;
-        }
-        
-        GD.Print($"[MassProductionPower] 大生产能力 - 层数={massProductionPower.Amount}, IsUpgraded={massProductionPower.IsUpgraded}");
-        
         var trainingQueuePowers = owner.Powers.OfType<TrainingQueuePower>().ToList();
         
         foreach (var trainingPower in trainingQueuePowers)
@@ -156,11 +147,12 @@ public class MassProductionPower : PowerModel
                 originalPrice = trainingPower.UnitPrice;
             }
             
-            int newPrice = CalculateUnitPrice(owner, originalPrice, (int)trainingPower.Amount);
+            int massProductionPrice = CalculateUnitPrice(owner, originalPrice, (int)trainingPower.Amount);
+            int finalPrice = TrainingQueuePower.ApplyIndustrialPlantDiscount(owner, massProductionPrice);
             
-            GD.Print($"[MassProductionPower] 生产序列 {trainingPower.UnitName}: 原始价格={originalPrice}, 大生产层数={massProductionPower.Amount}, 生产序列层数={trainingPower.Amount}, IsUpgraded={massProductionPower.IsUpgraded}, 新价格={newPrice}");
+            GD.Print($"[MassProductionPower] 生产序列 {trainingPower.UnitName}: 原始价格={originalPrice}, 大生产后={massProductionPrice}, 工业工厂后={finalPrice}");
             
-            trainingPower.UnitPrice = newPrice;
+            trainingPower.UnitPrice = finalPrice;
         }
     }
 

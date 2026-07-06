@@ -138,6 +138,16 @@ public sealed class WarMiner : CardModel
 			}
 		}
 
+		// 3. 检查矿石精炼器加成（虽然苏联没有这个建筑，但为了代码完整性保留）
+		var oreRefineryPower = Owner.Creature.Powers.OfType<Allies.Powers.OreRefineryPower>().FirstOrDefault();
+		if (oreRefineryPower != null && totalBonus > 0)
+		{
+			float multiplier = oreRefineryPower.GetOreMultiplier();
+			int refinedBonus = Mathf.FloorToInt(totalBonus * multiplier);
+			GD.Print($"[WarMiner] 矿石精炼器加成 {multiplier}，挖矿收益从 {totalBonus} 变为 {refinedBonus}");
+			return refinedBonus;
+		}
+
 		return totalBonus;
 	}
 

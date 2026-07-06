@@ -217,6 +217,15 @@ public static class SovietCardValues
 		DollarValueUpgraded = 1000
 	};
 
+	/// <summary>工业工厂 - 0费能力卡，-25%单位造价（升级后-40%），价格1200</summary>
+	public static CardValueStore.CardValues IndustrialPlant => new()
+	{
+		Cost = 0,
+		DollarValue = 2500,
+		MagicNumber = 25,           // 基础-25%单位造价
+		MagicNumberUpgraded = 15    // 升级后增加15%，总共-40%
+	};
+
 	/// <summary>雷达 - 0费能力卡，价格1000，解锁苏联空军和轨道战备</summary>
 	public static CardValueStore.CardValues Radar => new()
 	{

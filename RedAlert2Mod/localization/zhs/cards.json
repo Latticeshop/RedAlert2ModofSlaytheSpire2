@@ -93,6 +93,8 @@
     "EAGLE_AIR_STRIKE.description": "[gold]飞鹰战备[/gold]。\n对全部敌人造成 {Damage} 点伤害。",
     "MASS_PRODUCTION.title": "大生产",
     "MASS_PRODUCTION.description": "{IfUpgraded:show:每有一层[gold]生产序列[/gold]，其|}单位价格减少[gold]${Reduction}[/gold]。",
+    "MASS_PRODUCTION_CARD.title": "大生产",
+    "MASS_PRODUCTION_CARD.description": "获得[gold]大生产[/gold]。\n{IfUpgraded:show:每有一层[gold]生产序列[/gold]，其|}单位价格减少[gold]${Reduction}[/gold]。",
     "FORTIFIED_WALL.title": "坚固围墙",
     "FORTIFIED_WALL.description": "[gold]价格：${DollarNumber}[/gold]。获得 {Block} 点格挡。将此牌返回你的手牌。",
     "SOVIET_ENGINEER.title": "工程师",
@@ -174,5 +176,9 @@
     "NUCLEAR_ATTACK.title": "核弹攻击",
     "NUCLEAR_ATTACK.description": "[gold]超级武器[/gold]。\n对全部敌人造成 {Damage} 点伤害，赋予 {Poison} 层中毒。",
     "KITING_CARD.title": "走A",
-    "KITING_CARD.description": "打出此牌后，你在这个回合每打出一张[gold]单位[/gold]牌，获得 {Power} 点格挡。"
+    "KITING_CARD.description": "打出此牌后，你在这个回合每打出一张[gold]单位[/gold]牌，获得 {Power} 点格挡。",
+    "ORE_REFINERY_CARD.title": "矿石精炼器",
+    "ORE_REFINERY_CARD.description": "[gold]价格：${DollarNumber}[/gold]。\n获得[gold]矿石精炼器[/gold]。\n+{Bonus}%矿石价值。",
+    "INDUSTRIAL_PLANT_CARD.title": "工业工厂",
+    "INDUSTRIAL_PLANT_CARD.description": "[gold]价格：${DollarNumber}[/gold]。\n获得[gold]工业工厂[/gold]。\n-{Discount}%[gold]单位[/gold]造价。"
 }

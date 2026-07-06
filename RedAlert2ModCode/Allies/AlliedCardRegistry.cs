@@ -89,6 +89,7 @@ public static class AlliedCardRegistry
         cards.Add(() => ModelDb.Card<LightningStorm>());
         cards.Add(() => ModelDb.Card<StrategyTowerDefense>());
         cards.Add(() => ModelDb.Card<KitingCard>());
+        cards.Add(() => ModelDb.Card<OreRefineryCard>());
         return cards;
     }
 

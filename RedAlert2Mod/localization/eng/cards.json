@@ -93,6 +93,8 @@
     "EAGLE_AIR_STRIKE.description": "[gold]Desperate Measures[/gold].\nDeals {Damage} damage to ALL enemies.",
     "MASS_PRODUCTION.title": "Mass Production",
     "MASS_PRODUCTION.description": "{IfUpgraded:show:For each [gold]Production Queue[/gold], |}Unit cost reduced by [gold]${Reduction}[/gold].",
+    "MASS_PRODUCTION_CARD.title": "Mass Production",
+    "MASS_PRODUCTION_CARD.description": "Gains [gold]Mass Production[/gold].\n{IfUpgraded:show:For each [gold]Production Queue[/gold], |}Unit cost reduced by [gold]${Reduction}[/gold].",
     "FORTIFIED_WALL.title": "Fortified Wall",
     "FORTIFIED_WALL.description": "[gold]Cost: ${DollarNumber}[/gold]. Gains {Block} Block. Return this card to your hand.",
     "SOVIET_ENGINEER.title": "Engineer",
@@ -174,5 +176,9 @@
     "NUCLEAR_ATTACK.title": "Nuclear Attack",
     "NUCLEAR_ATTACK.description": "[gold]Super Weapon[/gold].\nDeals {Damage} damage to all enemies and applies {Poison} Poison.",
     "KITING_CARD.title": "Kiting",
-    "KITING_CARD.description": "After playing this card, every time you play a [gold]Unit[/gold] card this turn, gain {Power} Block."
+    "KITING_CARD.description": "After playing this card, every time you play a [gold]Unit[/gold] card this turn, gain {Power} Block.",
+    "ORE_REFINERY_CARD.title": "Ore Refinery",
+    "ORE_REFINERY_CARD.description": "[gold]Cost: ${DollarNumber}[/gold].\nGains [gold]Ore Refinery[/gold].\n+{Bonus}% Ore Value.",
+    "INDUSTRIAL_PLANT_CARD.title": "Industrial Plant",
+    "INDUSTRIAL_PLANT_CARD.description": "[gold]Cost: ${DollarNumber}[/gold].\nGains [gold]Industrial Plant[/gold].\n-{Discount}% [gold]Unit[/gold] Cost."
 }

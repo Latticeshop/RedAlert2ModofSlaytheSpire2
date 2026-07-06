@@ -38,7 +38,7 @@ public sealed class AlliedBattleLab : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		ModCardKeywords.BattleLab.CreateHoverTip()
+		ModCardKeywords.AlliedBattleLab.CreateHoverTip()
 	];
 
 	protected override bool IsPlayable

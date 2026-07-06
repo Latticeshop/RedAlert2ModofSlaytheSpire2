@@ -27,6 +27,11 @@ public class KitingCard : CardModel
 
     public override CardPoolModel VisualCardPool => Pool;
 
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
+    {
+        ModCardKeywords.Unit.CreateHoverTip()
+    };
+
     protected override List<DynamicVar> CanonicalVars => new()
     {
         new IntVar("Power", Values.Damage),

@@ -99,5 +99,9 @@
     "ALLIED_AIR_FORCE_COMMAND_POWER.title": "Air Force Command",
     "ALLIED_AIR_FORCE_COMMAND_POWER.description": "Air Force Command deployed.",
     "KITING_POWER.title": "Kiting",
-    "KITING_POWER.smartDescription": "This turn, every time you play a [gold]Unit[/gold] card, gain {Amount} Block."
+    "KITING_POWER.smartDescription": "This turn, every time you play a [gold]Unit[/gold] card, gain {Amount} Block.",
+    "ORE_REFINERY_POWER.title": "Ore Refinery",
+    "ORE_REFINERY_POWER.smartDescription": "+{Bonus}% Ore Value.",
+    "INDUSTRIAL_PLANT_POWER.title": "Industrial Plant",
+    "INDUSTRIAL_PLANT_POWER.smartDescription": "-{Discount}% Unit Cost."
 }

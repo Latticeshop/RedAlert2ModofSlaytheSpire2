@@ -30,6 +30,8 @@ public sealed class SteelFloodPower : PowerModel
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.Counter;
 
+    public bool IsProcessingAutoPlay => GetInternalData<Data>().IsProcessingAutoPlay;
+
     protected override object InitInternalData() => new Data();
 
     private bool IsCardValidForAutoPlay(CardModel card)

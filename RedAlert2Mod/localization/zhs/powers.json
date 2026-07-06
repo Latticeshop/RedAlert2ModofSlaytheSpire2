@@ -99,5 +99,9 @@
     "ALLIED_AIR_FORCE_COMMAND_POWER.title": "空指部",
     "ALLIED_AIR_FORCE_COMMAND_POWER.description": "已部署空指部。",
     "KITING_POWER.title": "走A",
-    "KITING_POWER.smartDescription": "本回合，每打出一张[gold]单位[/gold]牌，获得 {Amount} 点格挡。"
+    "KITING_POWER.smartDescription": "本回合，每打出一张[gold]单位[/gold]牌，获得 {Amount} 点格挡。",
+    "ORE_REFINERY_POWER.title": "矿石精炼器",
+    "ORE_REFINERY_POWER.smartDescription": "+{Bonus}%矿石价值。",
+    "INDUSTRIAL_PLANT_POWER.title": "工业工厂",
+    "INDUSTRIAL_PLANT_POWER.smartDescription": "-{Discount}%单位造价。"
 }

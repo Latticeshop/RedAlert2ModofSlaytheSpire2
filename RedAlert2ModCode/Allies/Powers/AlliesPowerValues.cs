@@ -111,12 +111,6 @@ public static class AlliesPowerValues
 		DamageUpgraded = 4      // 升级后13 = 9 + 4
 	};
 
-	/// <summary>大生产能力 - 每有一层生产序列，其单位价格减少100</summary>
-	public static CardValueStore.CardValues MassProductionPower => new()
-	{
-		Stars = 100             // 每层生产序列减少的价格
-	};
-
 	/// <summary>黄金矿能力 - 存储黄金矿储备</summary>
 	public static CardValueStore.CardValues GoldMinePower => new()
 	{

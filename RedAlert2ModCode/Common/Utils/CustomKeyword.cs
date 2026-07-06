@@ -111,10 +111,16 @@ public static class ModCardKeywords
         new LocString("card_keywords", "strategy_tower_defense.description")
     );
 
-    public static readonly CustomKeyword BattleLab = new(
-        "BATTLE_LAB",
-        new LocString("card_keywords", "battle_lab.title"),
-        new LocString("card_keywords", "battle_lab.description")
+    public static readonly CustomKeyword AlliedBattleLab = new(
+        "ALLIED_BATTLE_LAB",
+        new LocString("card_keywords", "allied_battle_lab.title"),
+        new LocString("card_keywords", "allied_battle_lab.description")
+    );
+
+    public static readonly CustomKeyword SovietBattleLab = new(
+        "SOVIET_BATTLE_LAB",
+        new LocString("card_keywords", "soviet_battle_lab.title"),
+        new LocString("card_keywords", "soviet_battle_lab.description")
     );
 
     public static readonly CustomKeyword Splash = new(
@@ -225,7 +231,8 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(ProductionQueue);
         CustomKeywordManager.RegisterKeyword(Unit);
         CustomKeywordManager.RegisterKeyword(StrategyTowerDefense);
-        CustomKeywordManager.RegisterKeyword(BattleLab);
+        CustomKeywordManager.RegisterKeyword(AlliedBattleLab);
+        CustomKeywordManager.RegisterKeyword(SovietBattleLab);
         CustomKeywordManager.RegisterKeyword(Splash);
         CustomKeywordManager.RegisterKeyword(TargetLocked);
         CustomKeywordManager.RegisterKeyword(Hornet);

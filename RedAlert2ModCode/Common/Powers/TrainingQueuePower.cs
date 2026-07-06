@@ -84,9 +84,10 @@ public sealed class TrainingQueuePower : PowerModel
             await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), existingPower, 1m, owner, sourceCard);
             GD.Print($"[TrainingQueuePower] 增加后层数: {existingPower.Amount}");
             
-            int finalPrice = MassProductionPower.CalculateUnitPrice(owner, existingPower.OriginalUnitPrice, (int)existingPower.Amount);
+            int massProductionPrice = MassProductionPower.CalculateUnitPrice(owner, existingPower.OriginalUnitPrice, (int)existingPower.Amount);
+            int finalPrice = ApplyIndustrialPlantDiscount(owner, massProductionPrice);
             existingPower.UnitPrice = finalPrice;
-            GD.Print($"[TrainingQueuePower] 叠加后重新计算价格: 原始={existingPower.OriginalUnitPrice}, 大生产影响后={finalPrice}");
+            GD.Print($"[TrainingQueuePower] 叠加后重新计算价格: 原始={existingPower.OriginalUnitPrice}, 大生产影响后={massProductionPrice}, 工业工厂影响后={finalPrice}");
             
             return existingPower;
         }
@@ -108,10 +109,11 @@ public sealed class TrainingQueuePower : PowerModel
             trainingPower.IsStopped = isStopped;
             trainingPower.OriginalUnitPrice = unitPrice;
             
-            int finalPrice = MassProductionPower.CalculateUnitPrice(owner, unitPrice, 1);
+            int massProductionPrice = MassProductionPower.CalculateUnitPrice(owner, unitPrice, 1);
+            int finalPrice = ApplyIndustrialPlantDiscount(owner, massProductionPrice);
             trainingPower.UnitPrice = finalPrice;
             
-            GD.Print($"[TrainingQueuePower] 应用大生产效果后价格: 原始={unitPrice}, 最终={finalPrice}");
+            GD.Print($"[TrainingQueuePower] 应用大生产效果后价格: 原始={unitPrice}, 大生产影响后={massProductionPrice}, 工业工厂影响后={finalPrice}");
 
             PowerIconManager.SetIcon(trainingPower, iconPath);
 
@@ -363,5 +365,18 @@ public sealed class TrainingQueuePower : PowerModel
         }
         
         return null;
+    }
+
+    public static int ApplyIndustrialPlantDiscount(Creature owner, int price)
+    {
+        var industrialPlantPower = owner.Powers.OfType<RedAlert2ModCode.Soviet.Powers.IndustrialPlantPower>().FirstOrDefault();
+        if (industrialPlantPower != null)
+        {
+            float multiplier = industrialPlantPower.GetPriceMultiplier();
+            int discountedPrice = Mathf.FloorToInt(price * multiplier);
+            GD.Print($"[TrainingQueuePower] 工业工厂折扣 - 原价={price}, 折扣={(int)industrialPlantPower.Amount}%, 折扣后={discountedPrice}");
+            return discountedPrice;
+        }
+        return price;
     }
 }

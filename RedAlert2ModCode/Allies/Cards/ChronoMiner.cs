@@ -72,8 +72,17 @@ public sealed class ChronoMiner : CardModel
 			GD.Print($"[ChronoMiner] 总共获得 {totalAmount} 资金");
 		}
 
-		// 将此牌加入摸牌堆（而不是弃牌堆）
-		await CardPileCmd.Add(play.Card, PileType.Draw);
+		var steelFloodPower = Owner.Creature.Powers.OfType<SteelFloodPower>().FirstOrDefault();
+		if (steelFloodPower != null && steelFloodPower.IsProcessingAutoPlay)
+		{
+			await CardPileCmd.Add(play.Card, PileType.Discard);
+			GD.Print($"[ChronoMiner] 钢铁洪流自动打出，进入弃牌堆");
+		}
+		else
+		{
+			await CardPileCmd.Add(play.Card, PileType.Draw);
+			GD.Print($"[ChronoMiner] 手动打出，进入摸牌堆");
+		}
 	}
 
 	/// <summary>
@@ -110,6 +119,16 @@ public sealed class ChronoMiner : CardModel
 				remainingToMine -= goldToMine;
 				GD.Print($"[ChronoMiner] 挖黄金矿 {goldToMine}，获得 {goldToMine} 资金，剩余待挖 {remainingToMine}");
 			}
+		}
+
+		// 3. 检查矿石精炼器加成
+		var oreRefineryPower = Owner.Creature.Powers.OfType<OreRefineryPower>().FirstOrDefault();
+		if (oreRefineryPower != null && totalBonus > 0)
+		{
+			float multiplier = oreRefineryPower.GetOreMultiplier();
+			int refinedBonus = Mathf.FloorToInt(totalBonus * multiplier);
+			GD.Print($"[ChronoMiner] 矿石精炼器加成 {multiplier}，挖矿收益从 {totalBonus} 变为 {refinedBonus}");
+			return refinedBonus;
 		}
 
 		return totalBonus;
