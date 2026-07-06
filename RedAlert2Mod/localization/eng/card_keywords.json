@@ -35,8 +35,6 @@
     "gem_mine.description": "When you play a [gold]Miner[/gold], gain an additional [gold]$2000[/gold].",
     "gold_mine_column.title": "Gold Mine Column",
     "gold_mine_column.description": "Increases [gold]200[/gold] gold reserves each turn.",
-    "super_weapon.title": "Super Weapon",
-    "super_weapon.description": "Requires [gold]Battle Lab[/gold] as a prerequisite.\nThe pinnacle of technological achievement.",
     "allied_super_weapon.title": "Super Weapon",
     "allied_super_weapon.description": "Requires Allied [gold]Battle Lab[/gold] as a prerequisite.\nThe pinnacle of technological achievement.",
     "soviet_super_weapon.title": "Super Weapon",

@@ -8,8 +8,10 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Relics;
+using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Common.Cards;
+using RedAlert2ModCode.Soviet;
 using RedAlert2ModCode.Soviet.Cards;
 
 namespace RedAlert2ModCode.Common.Patches;
@@ -66,29 +68,63 @@ public static class RelicPatches
     public static void LeafyPoulticeAfterObtainedPostfix(LeafyPoultice __instance)
     {
         var deck = PileType.Deck.GetPile(__instance.Owner).Cards;
-        List<CardTransformation> transformations = new();
+        var allUnitCards = GetAllModUnitCards();
+        var rng = __instance.Owner.PlayerRng.Transformations;
 
         if (IsAlliesCharacter(__instance.Owner.Character))
         {
             var soldier = deck.FirstOrDefault(c => c is AmericanSoldier);
             var tank = deck.FirstOrDefault(c => c is GrizzlyTank);
             if (soldier != null)
-                transformations.Add(new CardTransformation(soldier));
+            {
+                var targets = allUnitCards.Where(t => t.Id.Entry != soldier.Id.Entry).ToList();
+                if (targets.Any())
+                {
+                    var replacement = __instance.Owner.RunState.CreateCard(rng.NextItem(targets), __instance.Owner);
+                    _ = CardCmd.Transform(soldier, replacement);
+                }
+            }
             if (tank != null)
-                transformations.Add(new CardTransformation(tank));
+            {
+                var targets = allUnitCards.Where(t => t.Id.Entry != tank.Id.Entry).ToList();
+                if (targets.Any())
+                {
+                    var replacement = __instance.Owner.RunState.CreateCard(rng.NextItem(targets), __instance.Owner);
+                    _ = CardCmd.Transform(tank, replacement);
+                }
+            }
         }
         else if (IsSovietCharacter(__instance.Owner.Character))
         {
             var conscript = deck.FirstOrDefault(c => c is Conscript);
             var tank = deck.FirstOrDefault(c => c is RhinoTank);
             if (conscript != null)
-                transformations.Add(new CardTransformation(conscript));
+            {
+                var targets = allUnitCards.Where(t => t.Id.Entry != conscript.Id.Entry).ToList();
+                if (targets.Any())
+                {
+                    var replacement = __instance.Owner.RunState.CreateCard(rng.NextItem(targets), __instance.Owner);
+                    _ = CardCmd.Transform(conscript, replacement);
+                }
+            }
             if (tank != null)
-                transformations.Add(new CardTransformation(tank));
+            {
+                var targets = allUnitCards.Where(t => t.Id.Entry != tank.Id.Entry).ToList();
+                if (targets.Any())
+                {
+                    var replacement = __instance.Owner.RunState.CreateCard(rng.NextItem(targets), __instance.Owner);
+                    _ = CardCmd.Transform(tank, replacement);
+                }
+            }
         }
+    }
 
-        if (transformations.Any())
-            _ = CardCmd.Transform(transformations, __instance.Owner.PlayerRng.Transformations);
+    private static List<CardModel> GetAllModUnitCards()
+    {
+        List<CardModel> allUnits = new();
+        allUnits.AddRange(AlliedCardRegistry.GetAllUnits());
+        allUnits.AddRange(SovietCardRegistry.GetAllUnits());
+        return allUnits.Where(c => !(c is AlliedWallCard || c is SovietWallCard || c is FortifiedWall || c is SovietFortifiedWall)).ToList();
     }
 
     #endregion
