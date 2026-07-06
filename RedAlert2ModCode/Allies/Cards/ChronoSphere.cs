@@ -40,7 +40,7 @@ public sealed class ChronoSphere : CardModel
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		ModCardKeywords.SuperWeapon.CreateHoverTip(),
+		ModCardKeywords.AlliedSuperWeapon.CreateHoverTip(),
 		HoverTipFactory.FromPower<ChronoSpherePower>(),
 		HoverTipFactory.FromCard<ChronoWarp>()
 	];

@@ -43,7 +43,7 @@ public sealed class NuclearAttack : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
-        ModCardKeywords.SuperWeapon.CreateHoverTip()
+        ModCardKeywords.SovietSuperWeapon.CreateHoverTip()
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)

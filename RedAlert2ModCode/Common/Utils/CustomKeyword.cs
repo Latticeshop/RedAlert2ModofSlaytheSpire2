@@ -165,6 +165,18 @@ public static class ModCardKeywords
         new LocString("card_keywords", "super_weapon.description")
     );
 
+    public static readonly CustomKeyword AlliedSuperWeapon = new(
+        "ALLIED_SUPER_WEAPON",
+        new LocString("card_keywords", "allied_super_weapon.title"),
+        new LocString("card_keywords", "allied_super_weapon.description")
+    );
+
+    public static readonly CustomKeyword SovietSuperWeapon = new(
+        "SOVIET_SUPER_WEAPON",
+        new LocString("card_keywords", "soviet_super_weapon.title"),
+        new LocString("card_keywords", "soviet_super_weapon.description")
+    );
+
     public static readonly CustomKeyword Deploy = new(
         "DEPLOY",
         new LocString("card_keywords", "Ra2_deploy.title"),
@@ -222,6 +234,8 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(GemMine);
         CustomKeywordManager.RegisterKeyword(GoldMineColumn);
         CustomKeywordManager.RegisterKeyword(SuperWeapon);
+        CustomKeywordManager.RegisterKeyword(AlliedSuperWeapon);
+        CustomKeywordManager.RegisterKeyword(SovietSuperWeapon);
         CustomKeywordManager.RegisterKeyword(BuildingTechTree);
         CustomKeywordManager.RegisterKeyword(OrbitalReadiness);
         CustomKeywordManager.RegisterKeyword(TerrorDrone);

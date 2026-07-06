@@ -49,8 +49,11 @@ public sealed class WeatherControllerPower : PowerModel
         get
         {
             var locString = new LocString("powers", base.Id.Entry + ".description");
-            locString.Add("TurnsRemaining", _turnCounter);
+            int displayInterval = IsUpgraded ? (int)(AlliesCardValues.WeatherController.Repeat + AlliesCardValues.WeatherController.RepeatUpgraded) : _turnCounter;
+            locString.Add("TurnsRemaining", displayInterval);
             locString.Add("Block", (int)AlliesCardValues.WeatherController.Block);
+            string lightningStormName = IsUpgraded ? "闪电风暴+" : "闪电风暴";
+            locString.Add("LightningStormName", lightningStormName);
             return locString;
         }
     }
@@ -104,6 +107,12 @@ public sealed class WeatherControllerPower : PowerModel
             
             if (lightningStormCard != null)
             {
+                if (IsUpgraded)
+                {
+                    CardCmd.Upgrade(lightningStormCard);
+                    GD.Print("[WeatherControllerPower] 闪电风暴已升级");
+                }
+                
                 // 设置为0费
                 lightningStormCard.EnergyCost.SetCustomBaseCost(0);
                 // 添加虚无和消耗词条

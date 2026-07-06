@@ -29,45 +29,46 @@ public class TargetLockedPower : PowerModel
         }
     }
 
-    public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature target, bool wasRemovalPrevented, float deathAnimLength)
-    {
-        if (wasRemovalPrevented) return;
-        
-        var combatState = Owner?.CombatState;
-        if (combatState == null) return;
-
-        var aliveEnemies = combatState.Enemies
-            .Where(e => e != Owner && e.IsAlive && e.Side == CombatSide.Enemy)
-            .ToList();
-
-        if (aliveEnemies.Count == 0)
-        {
-            GD.Print("[TargetLockedPower] 没有存活的敌人，目标锁定结束");
-            return;
-        }
-
-        var hasTargetLocked = aliveEnemies.Any(e => e.Powers.Any(p => p is TargetLockedPower));
-        if (hasTargetLocked)
-        {
-            GD.Print("[TargetLockedPower] 场上还有其他目标锁定的敌人，不转移");
-            return;
-        }
-
-        var rng = Owner?.Player?.RunState?.Rng?.CombatCardSelection;
-        int randomIndex = rng?.NextInt(aliveEnemies.Count) ?? GD.RandRange(0, aliveEnemies.Count - 1);
-        var newTarget = aliveEnemies[randomIndex];
-
-        int stacks = (int)Amount;
-        await PowerCmd.Remove(this);
-
-        var transferredPower = await PowerCmd.Apply<TargetLockedPower>(
-            new ThrowingPlayerChoiceContext(),
-            newTarget,
-            stacks,
-            null,
-            null
-        );
-
-        GD.Print($"[TargetLockedPower] 目标锁定已转移到 {newTarget.Name}，层数: {stacks}");
-    }
+    // 目标锁定能力应用后，目标死亡时，将目标锁定能力转移到随机敌人（先注释以备以后使用）
+    // public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature target, bool wasRemovalPrevented, float deathAnimLength)
+    // {
+    //     if (wasRemovalPrevented) return;
+    //     
+    //     var combatState = Owner?.CombatState;
+    //     if (combatState == null) return;
+    //
+    //     var aliveEnemies = combatState.Enemies
+    //         .Where(e => e != Owner && e.IsAlive && e.Side == CombatSide.Enemy)
+    //         .ToList();
+    //
+    //     if (aliveEnemies.Count == 0)
+    //     {
+    //         GD.Print("[TargetLockedPower] 没有存活的敌人，目标锁定结束");
+    //         return;
+    //     }
+    //
+    //     var hasTargetLocked = aliveEnemies.Any(e => e.Powers.Any(p => p is TargetLockedPower));
+    //     if (hasTargetLocked)
+    //     {
+    //         GD.Print("[TargetLockedPower] 场上还有其他目标锁定的敌人，不转移");
+    //         return;
+    //     }
+    //
+    //     var rng = Owner?.Player?.RunState?.Rng?.CombatCardSelection;
+    //     int randomIndex = rng?.NextInt(aliveEnemies.Count) ?? GD.RandRange(0, aliveEnemies.Count - 1);
+    //     var newTarget = aliveEnemies[randomIndex];
+    //
+    //     int stacks = (int)Amount;
+    //     await PowerCmd.Remove(this);
+    //
+    //     var transferredPower = await PowerCmd.Apply<TargetLockedPower>(
+    //         new ThrowingPlayerChoiceContext(),
+    //         newTarget,
+    //         stacks,
+    //         null,
+    //         null
+    //     );
+    //
+    //     GD.Print($"[TargetLockedPower] 目标锁定已转移到 {newTarget.Name}，层数: {stacks}");
+    // }
 }

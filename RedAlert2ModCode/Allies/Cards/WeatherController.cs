@@ -40,7 +40,7 @@ public sealed class WeatherController : CardModel
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		ModCardKeywords.SuperWeapon.CreateHoverTip(),
+		ModCardKeywords.AlliedSuperWeapon.CreateHoverTip(),
 		HoverTipFactory.FromPower<WeatherControllerPower>(),
 		HoverTipFactory.FromCard<LightningStorm>()
 	];

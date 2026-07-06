@@ -47,7 +47,10 @@ public sealed class IronCurtainPower : PowerModel
         get
         {
             var locString = new LocString("powers", base.Id.Entry + ".description");
-            locString.Add("TurnsRemaining", _turnCounter);
+            int displayInterval = IsUpgraded ? (int)(SovietCardValues.IronCurtainCard.Repeat + SovietCardValues.IronCurtainCard.RepeatUpgraded) : _turnCounter;
+            locString.Add("TurnsRemaining", displayInterval);
+            string ironCurtainName = IsUpgraded ? "铁幕+" : "铁幕";
+            locString.Add("IronCurtainName", ironCurtainName);
             return locString;
         }
     }
@@ -87,6 +90,12 @@ public sealed class IronCurtainPower : PowerModel
 
             if (ironCurtainCard != null)
             {
+                if (IsUpgraded)
+                {
+                    CardCmd.Upgrade(ironCurtainCard);
+                    GD.Print("[IronCurtainPower] 铁幕已升级");
+                }
+                
                 ironCurtainCard.EnergyCost.SetCustomBaseCost(0);
                 ironCurtainCard.AddKeyword(CardKeyword.Ethereal);
                 ironCurtainCard.AddKeyword(CardKeyword.Exhaust);

@@ -34,7 +34,7 @@ public sealed class NuclearMissileSiloCard : CardModel
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		ModCardKeywords.SuperWeapon.CreateHoverTip(),
+		ModCardKeywords.SovietSuperWeapon.CreateHoverTip(),
 		HoverTipFactory.FromPower<NuclearMissileSiloPower>(),
 		HoverTipFactory.FromCard<NuclearAttack>()
 	];

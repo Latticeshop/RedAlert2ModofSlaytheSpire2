@@ -43,7 +43,7 @@ public sealed class ChronoWarp : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
-        ModCardKeywords.SuperWeapon.CreateHoverTip()
+        ModCardKeywords.AlliedSuperWeapon.CreateHoverTip()
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)

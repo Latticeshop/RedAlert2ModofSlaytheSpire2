@@ -42,7 +42,7 @@ public sealed class LightningStorm : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
-        ModCardKeywords.SuperWeapon.CreateHoverTip(),
+        ModCardKeywords.AlliedSuperWeapon.CreateHoverTip(),
         HoverTipFactory.Static(StaticHoverTip.Channeling),
         HoverTipFactory.FromOrb<LightningOrb>()
     ];

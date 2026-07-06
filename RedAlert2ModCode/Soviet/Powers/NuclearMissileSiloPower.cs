@@ -32,7 +32,10 @@ public sealed class NuclearMissileSiloPower : PowerModel
         get
         {
             var locString = new LocString("powers", base.Id.Entry + ".description");
-            locString.Add("TurnsRemaining", _turnCounter);
+            int displayInterval = IsUpgraded ? (int)(SovietCardValues.NuclearMissileSiloCard.Repeat + SovietCardValues.NuclearMissileSiloCard.RepeatUpgraded) : _turnCounter;
+            locString.Add("TurnsRemaining", displayInterval);
+            string nuclearAttackName = IsUpgraded ? "核弹攻击+" : "核弹攻击";
+            locString.Add("NuclearAttackName", nuclearAttackName);
             return locString;
         }
     }
