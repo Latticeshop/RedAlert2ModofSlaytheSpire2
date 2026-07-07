@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Powers;
@@ -37,6 +38,11 @@ public class SellBuildingCard : CardModel
         : ModelDb.CardPool<TokenCardPool>();
 
     public override CardPoolModel VisualCardPool => Pool;
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        ModCardKeywords.Building.CreateHoverTip()
+    ];
 
     protected override List<DynamicVar> CanonicalVars => new()
     {

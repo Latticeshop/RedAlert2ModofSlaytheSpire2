@@ -77,6 +77,7 @@ public static class SovietCardRegistry
         cards.Add(() => ModelDb.Card<KitingCard>());
         cards.Add(() => ModelDb.Card<IndustrialPlantCard>());
         cards.Add(() => ModelDb.Card<MassProductionCard>());
+        cards.Add(() => ModelDb.Card<ForceField>());
         return cards;
     }
 

@@ -105,5 +105,7 @@
     "INDUSTRIAL_PLANT_POWER.title": "工业工厂",
     "INDUSTRIAL_PLANT_POWER.smartDescription": "-{Discount}%单位造价。",
     "DREADNOUGHT_POWER.title": "无畏级战舰",
-    "DREADNOUGHT_POWER.description": "回合开始时获得 {Repeat} 枚[gold]V3火箭[/gold]。"
+    "DREADNOUGHT_POWER.description": "回合开始时获得 {Repeat} 枚[gold]V3火箭[/gold]。",
+    "FORCE_FIELD_POWER.title": "力场护盾",
+    "FORCE_FIELD_POWER.smartDescription": "回合开始时，失去 {EnergyLoss} 点能量。"
 }

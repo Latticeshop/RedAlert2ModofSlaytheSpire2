@@ -32,7 +32,8 @@ public sealed class IronCurtain : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
-        ModCardKeywords.SovietSuperWeapon.CreateHoverTip()
+        ModCardKeywords.SovietSuperWeapon.CreateHoverTip(),
+        HoverTipFactory.FromPower<MegaCrit.Sts2.Core.Models.Powers.IntangiblePower>()
     ];
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)

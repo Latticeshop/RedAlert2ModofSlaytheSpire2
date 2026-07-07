@@ -49,4 +49,10 @@ public static class CommonPowerValues
 	{
 		Stars = 50              // 每层降低的价格
 	};
+
+	/// <summary>力场护盾能力 - 回合开始时失去能量</summary>
+	public static CardValueStore.CardValues ForceFieldPower => new()
+	{
+		Damage = 3              // 每层回合开始失去的能量
+	};
 }

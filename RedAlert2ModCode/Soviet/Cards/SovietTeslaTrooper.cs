@@ -31,27 +31,13 @@ public sealed class SovietTeslaTrooper : CardModel
 		new IntVar("DollarNumber", Values.DollarValue)
 	};
 
-	protected override IEnumerable<IHoverTip> ExtraHoverTips
-	{
-		get
-		{
-			var tips = new List<IHoverTip>();
-			tips.Add(ModCardKeywords.Soldier.CreateHoverTip());
-			tips.Add(HoverTipFactory.FromOrb<LightningOrb>());
-
-			if (Owner != null && Owner.Creature != null)
-			{
-				bool hasTeslaCoil = Owner.Creature.Powers.Any(p => p is SovietTeslaCoilPower);
-				if (hasTeslaCoil)
-				{
-					tips.Add(ModCardKeywords.Deploy.CreateHoverTip());
-					tips.Add(HoverTipHelper.FromCardWithUpgrade<SovietTeslaCoilCard>(() => IsUpgraded));
-				}
-			}
-
-			return tips;
-		}
-	}
+	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+	[
+		ModCardKeywords.Soldier.CreateHoverTip(),
+		HoverTipFactory.FromOrb<LightningOrb>(),
+		ModCardKeywords.Deploy.CreateHoverTip(),
+		HoverTipHelper.FromCardWithUpgrade<SovietTeslaCoilCard>(() => IsUpgraded)
+	];
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{

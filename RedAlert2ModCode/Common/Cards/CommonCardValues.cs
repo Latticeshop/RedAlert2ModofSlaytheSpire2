@@ -124,6 +124,13 @@ public static class CommonCardValues
 		CostUpgraded = -1           // 升级后费用减1
 	};
 
+	/// <summary>力场护盾 - 1费技能卡（升级后0费），获得1层无实体，下回合失去3点能量</summary>
+	public static CardValueStore.CardValues ForceField => new()
+	{
+		Cost = 1,
+		CostUpgraded = -1           // 升级后费用减1
+	};
+
 	/// <summary>出售 - 1费技能卡，出售0-3个建筑获得50%造价资金（升级后可出售更多）</summary>
 	public static CardValueStore.CardValues SellBuilding => new()
 	{

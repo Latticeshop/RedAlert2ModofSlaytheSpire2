@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 
@@ -80,6 +81,13 @@ public sealed class AlliedBattleLab : CardModel
 		await PowerCmd.Apply<BattleLabPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, 1m, Owner.Creature, this);
 		
 		GD.Print("[AlliedBattleLab] 已获得作战实验室能力");
+
+		// 添加一张带消耗效果的力场护盾到手牌
+		var forceFieldTemplate = ModelDb.Card<ForceField>();
+		var forceFieldCard = Owner.Creature.CombatState.CreateCard(forceFieldTemplate, Owner);
+		forceFieldCard.AddKeyword(CardKeyword.Exhaust);
+		await CardPileCmd.AddGeneratedCardToCombat(forceFieldCard, PileType.Hand, Owner);
+		GD.Print("[AlliedBattleLab] 已添加力场护盾到手牌");
 
 		// 打出后抽一张牌（与其他建筑卡保持一致）
 		await CardPileCmd.Draw(ctx, 1, Owner);

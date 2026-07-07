@@ -91,6 +91,7 @@ public static class AlliedCardRegistry
         cards.Add(() => ModelDb.Card<StrategyTowerDefense>());
         cards.Add(() => ModelDb.Card<KitingCard>());
         cards.Add(() => ModelDb.Card<OreRefineryCard>());
+        cards.Add(() => ModelDb.Card<ForceField>());
         return cards;
     }
 

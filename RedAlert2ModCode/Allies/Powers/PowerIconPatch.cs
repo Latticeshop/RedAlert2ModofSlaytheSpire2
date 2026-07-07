@@ -74,7 +74,8 @@ public static class PowerIconPatch
         { typeof(RedAlert2ModCode.Soviet.Powers.SovietBarracksPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/handicon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.SovietShipyardPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/yardicon.png" },
         { typeof(AlliedAirForceCommandPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/heliicon.png" },
-    };
+        { typeof(ForceFieldPower), "res://RedAlert2ModResources/images/packed/card_portraits/forcicon.png" },
+        };
 
     /// <summary>
     /// 缓存已加载的图标
