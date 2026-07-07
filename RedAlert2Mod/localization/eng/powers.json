@@ -105,5 +105,7 @@
     "INDUSTRIAL_PLANT_POWER.title": "Industrial Plant",
     "INDUSTRIAL_PLANT_POWER.smartDescription": "-{Discount}% Unit Cost.",
     "DREADNOUGHT_POWER.title": "Dreadnought",
-    "DREADNOUGHT_POWER.description": "At the start of turn, gain {Repeat} [gold]V3 Rockets[/gold]."
+    "DREADNOUGHT_POWER.description": "At the start of turn, gain {Repeat} [gold]V3 Rockets[/gold].",
+    "FORCE_FIELD_POWER.title": "Force Field",
+    "FORCE_FIELD_POWER.smartDescription": "At the start of your turn, lose {EnergyLoss} energy."
 }
