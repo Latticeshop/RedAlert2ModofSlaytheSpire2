@@ -34,6 +34,11 @@ public sealed class SteelFloodPower : PowerModel
 
     protected override object InitInternalData() => new Data();
 
+    private static readonly HashSet<System.Type> ChronoCardTypes = new()
+    {
+        typeof(RedAlert2ModCode.Allies.Cards.ChronoMiner)
+    };
+
     private bool IsCardValidForAutoPlay(CardModel card)
     {
         if (card.Rarity != CardRarity.Token)
@@ -43,6 +48,9 @@ public sealed class SteelFloodPower : PowerModel
             return false;
 
         if (card.GetType().Name.Contains("Wall"))
+            return false;
+
+        if (ChronoCardTypes.Contains(card.GetType()))
             return false;
 
         return true;

@@ -72,17 +72,8 @@ public sealed class ChronoMiner : CardModel
 			GD.Print($"[ChronoMiner] 总共获得 {totalAmount} 资金");
 		}
 
-		var steelFloodPower = Owner.Creature.Powers.OfType<SteelFloodPower>().FirstOrDefault();
-		if (steelFloodPower != null && steelFloodPower.IsProcessingAutoPlay)
-		{
-			await CardPileCmd.Add(play.Card, PileType.Discard);
-			GD.Print($"[ChronoMiner] 钢铁洪流自动打出，进入弃牌堆");
-		}
-		else
-		{
-			await CardPileCmd.Add(play.Card, PileType.Draw);
-			GD.Print($"[ChronoMiner] 手动打出，进入摸牌堆");
-		}
+		await CardPileCmd.Add(play.Card, PileType.Draw);
+		GD.Print($"[ChronoMiner] 手动打出，进入摸牌堆");
 	}
 
 	/// <summary>
