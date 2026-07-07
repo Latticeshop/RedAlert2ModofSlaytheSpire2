@@ -102,10 +102,10 @@ public static class CommonCardValues
 		DamageUpgraded = 2          // 升级后5 = 3 + 2
 	};
 
-	/// <summary>扰矿 - 1费技能卡，从牌堆中抽取1张矿车卡牌（升级后2张）</summary>
+	/// <summary>扰矿 - 0费技能卡，从牌堆中抽取1张矿车卡牌（升级后2张）</summary>
 	public static CardValueStore.CardValues MineRaid => new()
 	{
-		Cost = 1,
+		Cost = 0,
 		MagicNumber = 1,            // 基础抽取数量
 		MagicNumberUpgraded = 1     // 升级后增加1张（共2张）
 	};

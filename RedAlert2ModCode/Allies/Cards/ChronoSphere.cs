@@ -33,17 +33,22 @@ public sealed class ChronoSphere : CardModel
     protected override List<DynamicVar> CanonicalVars => new()
     {
         new IntVar("DollarNumber", Values.DollarValue),
-        new IntVar("Interval", Values.Repeat),           // 基础间隔回合
-        new IntVar("IntervalUpgraded", Values.RepeatUpgraded)  // 升级后间隔回合
+        new IntVar("TurnsRemaining", Values.Repeat),
+        new StringVar("ChronoWarpName", ModelDb.Card<ChronoWarp>().Title.ToString())
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
 		ModCardKeywords.AlliedSuperWeapon.CreateHoverTip(),
-		HoverTipFactory.FromPower<ChronoSpherePower>(),
-		HoverTipFactory.FromCard<ChronoWarp>()
+		HoverTipHelper.FromCardWithUpgrade<ChronoWarp>(() => IsUpgraded)
 	];
+
+    protected override void OnUpgrade()
+    {
+        DynamicVars["TurnsRemaining"].BaseValue = Values.RepeatUpgraded;
+        ((StringVar)DynamicVars["ChronoWarpName"]).StringValue = $"{ModelDb.Card<ChronoWarp>().Title.ToString()}+";
+    }
 
     protected override bool IsPlayable
     {
@@ -95,9 +100,4 @@ public sealed class ChronoSphere : CardModel
             // 打出后抽一张牌
             await CardPileCmd.Draw(ctx, 1, Owner);
         }
-
-    protected override void OnUpgrade()
-    {
-        // 升级效果：间隔回合从3变为2
-    }
 }

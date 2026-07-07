@@ -49,8 +49,7 @@ public sealed class ChronoSpherePower : PowerModel
             get
             {
                 var locString = new LocString("powers", base.Id.Entry + ".description");
-                int displayInterval = IsUpgraded ? (int)(AlliesCardValues.ChronoSphere.Repeat + AlliesCardValues.ChronoSphere.RepeatUpgraded) : _turnCounter;
-                locString.Add("TurnsRemaining", displayInterval);
+                locString.Add("TurnsRemaining", _turnCounter);
                 
                 var chronoWarpCard = ModelDb.Card<ChronoWarp>();
                 string chronoWarpName = IsUpgraded ? $"{chronoWarpCard.Title.ToString()}+" : chronoWarpCard.Title.ToString();
@@ -103,7 +102,6 @@ public sealed class ChronoSpherePower : PowerModel
                 }
                 
                 chronoWarpCard.EnergyCost.SetCustomBaseCost(0);
-                chronoWarpCard.AddKeyword(CardKeyword.Ethereal);
                 chronoWarpCard.AddKeyword(CardKeyword.Exhaust);
                 GD.Print("[ChronoSpherePower] 成功为超时空传送添加0费、虚无和消耗词条");
 

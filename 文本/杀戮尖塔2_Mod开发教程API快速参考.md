@@ -465,6 +465,49 @@ public sealed class Abrasive : CardModel
 }
 ```
 
+### 动态悬浮Tip升级机制（HoverTipHelper）
+
+当卡牌的衍生卡效果会随升级而变化时，使用 `HoverTipHelper` 可以根据源卡牌的升级状态动态显示对应版本的衍生卡牌。
+
+```csharp
+using RedAlert2ModCode.Common.Utils;
+
+public sealed class AlliedRefinery : CardModel
+{
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        ModCardKeywords.Building.CreateHoverTip(),
+        HoverTipHelper.FromCardWithUpgrade<ChronoMiner>(() => IsUpgraded)
+    ];
+}
+```
+
+**核心工具类**：
+
+```csharp
+// HoverTipHelper.cs
+public static class HoverTipHelper
+{
+    public static IHoverTip FromCardWithUpgrade<T>(Func<bool> isUpgradedFunc) where T : CardModel
+    {
+        var model = ModelDb.Card<T>();
+        var mutable = model.ToMutable();
+        
+        if (isUpgradedFunc())
+        {
+            mutable.UpgradeInternal();
+        }
+        
+        return HoverTipFactory.FromCard(mutable);
+    }
+}
+```
+
+**使用场景**：
+- 建筑卡生产的单位卡会随建筑升级而升级（如矿场→矿车）
+- 超级武器建筑产生的超级武器卡牌会随建筑升级而增强
+- 任何需要根据升级状态显示不同衍生卡牌效果的场景
+
 ### 能力中使用
 
 ```csharp

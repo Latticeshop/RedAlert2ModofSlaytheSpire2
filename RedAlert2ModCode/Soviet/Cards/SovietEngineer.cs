@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using RedAlert2ModCode.Common.Cards;
@@ -29,6 +30,11 @@ public sealed class SovietEngineer : CardModel
 	{
 		new IntVar("ChoiceCount", BASE_CHOICE_COUNT)
 	};
+
+	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+	[
+		ModCardKeywords.Soldier.CreateHoverTip()
+	];
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{

@@ -36,6 +36,7 @@ public sealed class SovietTeslaTrooper : CardModel
 		get
 		{
 			var tips = new List<IHoverTip>();
+			tips.Add(ModCardKeywords.Soldier.CreateHoverTip());
 			tips.Add(HoverTipFactory.FromOrb<LightningOrb>());
 
 			if (Owner != null && Owner.Creature != null)
@@ -44,7 +45,7 @@ public sealed class SovietTeslaTrooper : CardModel
 				if (hasTeslaCoil)
 				{
 					tips.Add(ModCardKeywords.Deploy.CreateHoverTip());
-					tips.Add(HoverTipFactory.FromCard<SovietTeslaCoilCard>());
+					tips.Add(HoverTipHelper.FromCardWithUpgrade<SovietTeslaCoilCard>(() => IsUpgraded));
 				}
 			}
 

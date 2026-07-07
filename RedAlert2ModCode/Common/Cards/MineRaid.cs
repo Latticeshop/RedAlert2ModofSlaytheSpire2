@@ -34,7 +34,8 @@ public class MineRaid : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
-		ModCardKeywords.Miner.CreateHoverTip()
+		ModCardKeywords.Miner.CreateHoverTip(),
+		HoverTipFactory.FromCard<RedAlert2ModCode.Soviet.Cards.WarMiner>()
 	];
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)

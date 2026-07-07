@@ -28,17 +28,22 @@ public sealed class IronCurtainCard : CardModel
     protected override List<DynamicVar> CanonicalVars => new()
     {
         new IntVar("DollarNumber", Values.DollarValue),
-        new IntVar("Interval", Values.Repeat),
-        new IntVar("IntervalUpgraded", Values.Repeat + Values.RepeatUpgraded)
+        new IntVar("TurnsRemaining", Values.Repeat),
+        new StringVar("IronCurtainName", ModelDb.Card<IronCurtain>().Title.ToString())
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
 		ModCardKeywords.SovietSuperWeapon.CreateHoverTip(),
-		HoverTipFactory.FromPower<IronCurtainPower>(),
-		HoverTipFactory.FromCard<IronCurtain>()
+		HoverTipHelper.FromCardWithUpgrade<IronCurtain>(() => IsUpgraded)
 	];
+
+    protected override void OnUpgrade()
+    {
+        DynamicVars["TurnsRemaining"].BaseValue = Values.RepeatUpgraded;
+        ((StringVar)DynamicVars["IronCurtainName"]).StringValue = $"{ModelDb.Card<IronCurtain>().Title.ToString()}+";
+    }
 
     protected override bool IsPlayable
     {
@@ -82,9 +87,5 @@ public sealed class IronCurtainCard : CardModel
         }
 
         await CardPileCmd.Draw(ctx, 1, Owner);
-    }
-
-    protected override void OnUpgrade()
-    {
     }
 }

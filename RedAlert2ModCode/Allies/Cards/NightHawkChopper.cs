@@ -58,6 +58,7 @@ public sealed partial class NightHawkChopper : CardModel
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
         ModCardKeywords.Aircraft.CreateHoverTip(),
+        ModCardKeywords.Soldier.CreateHoverTip(),
         ModCardKeywords.Deploy.CreateHoverTip()
     ];
 

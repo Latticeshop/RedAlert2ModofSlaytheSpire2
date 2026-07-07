@@ -47,8 +47,7 @@ public sealed class IronCurtainPower : PowerModel
             get
             {
                 var locString = new LocString("powers", base.Id.Entry + ".description");
-                int displayInterval = IsUpgraded ? (int)(SovietCardValues.IronCurtainCard.Repeat + SovietCardValues.IronCurtainCard.RepeatUpgraded) : _turnCounter;
-                locString.Add("TurnsRemaining", displayInterval);
+                locString.Add("TurnsRemaining", _turnCounter);
                 
                 var ironCurtainCard = ModelDb.Card<IronCurtain>();
                 string ironCurtainName = IsUpgraded ? $"{ironCurtainCard.Title.ToString()}+" : ironCurtainCard.Title.ToString();
@@ -64,7 +63,7 @@ public sealed class IronCurtainPower : PowerModel
     private int GetInterval()
     {
         var values = SovietCardValues.IronCurtainCard;
-        return IsUpgraded ? (int)values.Repeat + (int)values.RepeatUpgraded : (int)values.Repeat;
+        return IsUpgraded ? (int)values.RepeatUpgraded : (int)values.Repeat;
     }
 
     public override Task AfterApplied(Creature? applier, CardModel? cardSource)
@@ -100,7 +99,6 @@ public sealed class IronCurtainPower : PowerModel
                 }
                 
                 ironCurtainCard.EnergyCost.SetCustomBaseCost(0);
-                ironCurtainCard.AddKeyword(CardKeyword.Ethereal);
                 ironCurtainCard.AddKeyword(CardKeyword.Exhaust);
                 GD.Print("[IronCurtainPower] 成功为铁幕添加0费、虚无和消耗词条");
 

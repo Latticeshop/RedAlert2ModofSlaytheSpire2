@@ -32,8 +32,7 @@ public sealed class NuclearMissileSiloPower : PowerModel
             get
             {
                 var locString = new LocString("powers", base.Id.Entry + ".description");
-                int displayInterval = IsUpgraded ? (int)(SovietCardValues.NuclearMissileSiloCard.Repeat + SovietCardValues.NuclearMissileSiloCard.RepeatUpgraded) : _turnCounter;
-                locString.Add("TurnsRemaining", displayInterval);
+                locString.Add("TurnsRemaining", _turnCounter);
                 
                 var nuclearAttackCard = ModelDb.Card<NuclearAttack>();
                 string nuclearAttackName = IsUpgraded ? $"{nuclearAttackCard.Title.ToString()}+" : nuclearAttackCard.Title.ToString();
@@ -49,7 +48,7 @@ public sealed class NuclearMissileSiloPower : PowerModel
     private int GetInterval()
     {
         var values = SovietCardValues.NuclearMissileSiloCard;
-        return (int)values.Repeat;
+        return IsUpgraded ? (int)values.RepeatUpgraded : (int)values.Repeat;
     }
 
     public override Task AfterApplied(Creature? applier, CardModel? cardSource)
@@ -85,7 +84,6 @@ public sealed class NuclearMissileSiloPower : PowerModel
                 }
                 
                 nuclearAttackCard.EnergyCost.SetCustomBaseCost(0);
-                nuclearAttackCard.AddKeyword(CardKeyword.Ethereal);
                 nuclearAttackCard.AddKeyword(CardKeyword.Exhaust);
                 GD.Print("[NuclearMissileSiloPower] 成功为核弹攻击添加0费、虚无和消耗词条");
 

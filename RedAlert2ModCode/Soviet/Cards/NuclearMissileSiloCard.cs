@@ -28,16 +28,22 @@ public sealed class NuclearMissileSiloCard : CardModel
     protected override List<DynamicVar> CanonicalVars => new()
     {
         new IntVar("DollarNumber", Values.DollarValue),
-        new IntVar("Interval", Values.Repeat)
+        new IntVar("TurnsRemaining", Values.Repeat),
+        new StringVar("NuclearAttackName", ModelDb.Card<NuclearAttack>().Title.ToString())
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
 		ModCardKeywords.SovietSuperWeapon.CreateHoverTip(),
-		HoverTipFactory.FromPower<NuclearMissileSiloPower>(),
-		HoverTipFactory.FromCard<NuclearAttack>()
+		HoverTipHelper.FromCardWithUpgrade<NuclearAttack>(() => IsUpgraded)
 	];
+
+    protected override void OnUpgrade()
+    {
+        DynamicVars["TurnsRemaining"].BaseValue = Values.RepeatUpgraded;
+        ((StringVar)DynamicVars["NuclearAttackName"]).StringValue = $"{ModelDb.Card<NuclearAttack>().Title.ToString()}+";
+    }
 
     protected override bool IsPlayable
     {
@@ -81,9 +87,5 @@ public sealed class NuclearMissileSiloCard : CardModel
         }
 
         await CardPileCmd.Draw(ctx, 1, Owner);
-    }
-
-    protected override void OnUpgrade()
-    {
     }
 }

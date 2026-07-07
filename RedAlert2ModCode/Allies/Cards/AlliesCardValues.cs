@@ -106,10 +106,10 @@ public static class AlliesCardValues
 	
 	// ==================== 空军单位 ====================
 	
-	/// <summary>入侵者战机 - 2费10伤害2层易伤，升级后13伤害3层易伤，价格1200</summary>
+	/// <summary>入侵者战机 - 1费10伤害2层易伤，升级后13伤害3层易伤，价格1200</summary>
 	public static CardValueStore.CardValues Intruder => new()
 	{
-		Cost = 2,
+		Cost = 1,
 		Damage = 10,
 		DamageUpgraded = 3,
 		Repeat = 2,

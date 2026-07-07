@@ -949,12 +949,71 @@ protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 ];
 ```
 
-### 3.10.7 注意事项
+### 3.10.7 动态悬浮Tip升级机制（HoverTipHelper）
+
+当卡牌的衍生卡效果会随升级而变化时，使用 `HoverTipHelper` 可以根据源卡牌的升级状态动态显示对应版本的衍生卡牌。
+
+#### 核心原理
+
+传统的 `HoverTipFactory.FromCard<T>()` 只能显示固定版本的卡牌预览，无法根据源卡牌的升级状态动态调整。`HoverTipHelper` 通过传入一个 `Func<bool>` 委托来判断当前卡牌是否已升级，从而生成对应版本的悬浮提示。
+
+#### 使用示例
+
+```csharp
+using RedAlert2ModCode.Common.Utils;
+
+public sealed class AlliedRefinery : CardModel
+{
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        ModCardKeywords.Building.CreateHoverTip(),
+        HoverTipHelper.FromCardWithUpgrade<ChronoMiner>(() => IsUpgraded)
+    ];
+}
+```
+
+#### HoverTipHelper 工具类实现
+
+```csharp
+// RedAlert2ModCode/Common/Utils/HoverTipHelper.cs
+public static class HoverTipHelper
+{
+    public static IHoverTip FromCardWithUpgrade<T>(Func<bool> isUpgradedFunc) where T : CardModel
+    {
+        var model = ModelDb.Card<T>();
+        var mutable = model.ToMutable();
+        
+        if (isUpgradedFunc())
+        {
+            mutable.UpgradeInternal();
+        }
+        
+        return HoverTipFactory.FromCard(mutable);
+    }
+}
+```
+
+#### 使用场景
+
+| 场景 | 说明 |
+|------|------|
+| 建筑卡生产单位卡 | 矿场升级后，生产的矿车也会升级 |
+| 超级武器建筑 | 升级后冷却回合减少，产生的超级武器卡牌效果增强 |
+| 能力卡衍生效果 | 能力卡升级后，衍生卡牌的数值或效果发生变化 |
+
+#### 注意事项
+
+- 使用前需要添加引用：`using RedAlert2ModCode.Common.Utils;`
+- 泛型参数必须是已注册的卡牌类型
+- 委托 `() => IsUpgraded` 使用了卡牌的 `IsUpgraded` 属性，可以替换为自定义的升级判断逻辑
+
+### 3.10.8 注意事项
 
 1. **using 引用**：使用 `HoverTipFactory` 前需要添加 `using MegaCrit.Sts2.Core.HoverTips;`
 2. **泛型类型**：`FromCard<T>`、`FromPower<T>` 中的泛型参数必须是已注册的卡牌或能力类型
 3. **升级参数**：`FromCard<T>(upgrade: true)` 会生成升级后的卡牌预览
 4. **层数参数**：`FromPower<T>(amount)` 可以指定能力的层数显示
+5. **动态升级机制**：使用 `HoverTipHelper.FromCardWithUpgrade<T>()` 实现随升级状态变化的悬浮提示
 
 ---
 

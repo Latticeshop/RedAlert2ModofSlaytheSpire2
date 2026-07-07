@@ -33,17 +33,22 @@ public sealed class WeatherController : CardModel
     protected override List<DynamicVar> CanonicalVars => new()
     {
         new IntVar("DollarNumber", Values.DollarValue),
-        new IntVar("Interval", Values.Repeat),           // 基础间隔回合
-        new IntVar("IntervalUpgraded", Values.RepeatUpgraded)  // 升级后间隔回合
+        new IntVar("TurnsRemaining", Values.Repeat),
+        new StringVar("LightningStormName", ModelDb.Card<LightningStorm>().Title.ToString())
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
 		ModCardKeywords.AlliedSuperWeapon.CreateHoverTip(),
-		HoverTipFactory.FromPower<WeatherControllerPower>(),
-		HoverTipFactory.FromCard<LightningStorm>()
+		HoverTipHelper.FromCardWithUpgrade<LightningStorm>(() => IsUpgraded)
 	];
+
+    protected override void OnUpgrade()
+    {
+        DynamicVars["TurnsRemaining"].BaseValue = Values.RepeatUpgraded;
+        ((StringVar)DynamicVars["LightningStormName"]).StringValue = $"{ModelDb.Card<LightningStorm>().Title.ToString()}+";
+    }
 
     protected override bool IsPlayable
     {
@@ -94,10 +99,5 @@ public sealed class WeatherController : CardModel
 
         // 打出后抽一张牌
         await CardPileCmd.Draw(ctx, 1, Owner);
-    }
-
-    protected override void OnUpgrade()
-    {
-        // 升级效果：间隔回合从3变为2
     }
 }

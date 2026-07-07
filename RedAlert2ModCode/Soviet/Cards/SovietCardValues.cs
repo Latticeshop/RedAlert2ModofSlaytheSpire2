@@ -283,7 +283,7 @@ public static class SovietCardValues
 		Cost = 0,
 		DollarValue = 2500,
 		Repeat = 3,
-		RepeatUpgraded = -1
+		RepeatUpgraded = 2
 	};
 	
 	/// <summary>核弹井 - 0费能力卡，金卡，价格5000，每3回合获得一张虚无核弹攻击卡</summary>
@@ -291,7 +291,8 @@ public static class SovietCardValues
 	{
 		Cost = 0,
 		DollarValue = 5000,
-		Repeat = 3
+		Repeat = 3,
+		RepeatUpgraded = 3
 	};
 	
 	// ==================== 超级武器运转卡 ====================

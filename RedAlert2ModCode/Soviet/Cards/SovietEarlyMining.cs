@@ -19,13 +19,13 @@ public sealed class SovietEarlyMining : CardModel
 {
     private static readonly CardValueStore.CardValues Values = SovietCardValues.EarlyMining;
 
-    public SovietEarlyMining() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+    public SovietEarlyMining() : base((int)Values.Cost, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
 
     public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/early_mining_soviet.png";
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
-		HoverTipFactory.FromCard<WarMiner>(),
+		HoverTipHelper.FromCardWithUpgrade<WarMiner>(() => IsUpgraded),
 		ModCardKeywords.Miner.CreateHoverTip()
 	];
 

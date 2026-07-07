@@ -19,13 +19,13 @@ public sealed class AlliedEarlyMining : CardModel
 {
     private static readonly CardValueStore.CardValues Values = AlliesCardValues.EarlyMining;
 
-    public AlliedEarlyMining() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+    public AlliedEarlyMining() : base((int)Values.Cost, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
 
     public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/early_mining.png";
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
-		HoverTipFactory.FromCard<ChronoMiner>(),
+		HoverTipHelper.FromCardWithUpgrade<ChronoMiner>(() => IsUpgraded),
 		ModCardKeywords.Miner.CreateHoverTip()
 	];
 

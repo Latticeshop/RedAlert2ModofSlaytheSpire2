@@ -36,7 +36,7 @@ public sealed class SovietRefinery : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		HoverTipFactory.FromCard<WarMiner>()
+		HoverTipHelper.FromCardWithUpgrade<WarMiner>(() => IsUpgraded)
 	];
 
 	protected override bool IsPlayable

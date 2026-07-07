@@ -24,8 +24,7 @@ public sealed class IndustrialPlantCard : CardModel
     {
         ModCardKeywords.Building.CreateHoverTip(),
         ModCardKeywords.SovietBattleLab.CreateHoverTip(),
-        ModCardKeywords.Unit.CreateHoverTip(),
-        HoverTipFactory.FromPower<IndustrialPlantPower>()
+        ModCardKeywords.Unit.CreateHoverTip()
     };
 
     protected override List<DynamicVar> CanonicalVars => new()

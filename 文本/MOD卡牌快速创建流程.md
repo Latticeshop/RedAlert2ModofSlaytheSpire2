@@ -917,6 +917,56 @@ private static List<Func<CardModel>> CreatePowerCards()
 
 ---
 
+## 五、动态悬浮Tip升级机制（HoverTipHelper）
+
+当卡牌的衍生卡效果会随升级而变化时，应使用 `HoverTipHelper` 根据源卡牌的升级状态动态显示对应版本的衍生卡牌。
+
+### 使用示例
+
+```csharp
+using RedAlert2ModCode.Common.Utils;
+
+public sealed class AlliedRefinery : CardModel
+{
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        ModCardKeywords.Building.CreateHoverTip(),
+        HoverTipHelper.FromCardWithUpgrade<ChronoMiner>(() => IsUpgraded)
+    ];
+}
+```
+
+### 适用场景
+
+| 场景 | 说明 |
+|------|------|
+| 建筑卡生产单位卡 | 矿场升级后，生产的矿车也会升级 |
+| 超级武器建筑 | 升级后冷却回合减少，产生的超级武器卡牌效果增强 |
+| 能力卡衍生效果 | 能力卡升级后，衍生卡牌的数值或效果发生变化 |
+
+### 工具类定义
+
+```csharp
+// RedAlert2ModCode/Common/Utils/HoverTipHelper.cs
+public static class HoverTipHelper
+{
+    public static IHoverTip FromCardWithUpgrade<T>(Func<bool> isUpgradedFunc) where T : CardModel
+    {
+        var model = ModelDb.Card<T>();
+        var mutable = model.ToMutable();
+        
+        if (isUpgradedFunc())
+        {
+            mutable.UpgradeInternal();
+        }
+        
+        return HoverTipFactory.FromCard(mutable);
+    }
+}
+```
+
+---
+
 ## 六、路径规范总结
 
 ### 语音文件路径

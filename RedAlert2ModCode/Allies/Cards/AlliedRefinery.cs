@@ -34,7 +34,7 @@ public sealed class AlliedRefinery : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		HoverTipFactory.FromCard<ChronoMiner>()
+		HoverTipHelper.FromCardWithUpgrade<ChronoMiner>(() => IsUpgraded)
 	];
 
 	protected override bool IsPlayable

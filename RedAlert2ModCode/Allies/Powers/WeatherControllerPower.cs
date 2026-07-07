@@ -49,8 +49,7 @@ public sealed class WeatherControllerPower : PowerModel
             get
             {
                 var locString = new LocString("powers", base.Id.Entry + ".description");
-                int displayInterval = IsUpgraded ? (int)(AlliesCardValues.WeatherController.Repeat + AlliesCardValues.WeatherController.RepeatUpgraded) : _turnCounter;
-                locString.Add("TurnsRemaining", displayInterval);
+                locString.Add("TurnsRemaining", _turnCounter);
                 locString.Add("Block", (int)AlliesCardValues.WeatherController.Block);
                 
                 var lightningStormCard = ModelDb.Card<LightningStorm>();
@@ -118,8 +117,6 @@ public sealed class WeatherControllerPower : PowerModel
                 
                 // 设置为0费
                 lightningStormCard.EnergyCost.SetCustomBaseCost(0);
-                // 添加虚无和消耗词条
-                lightningStormCard.AddKeyword(CardKeyword.Ethereal);
                 lightningStormCard.AddKeyword(CardKeyword.Exhaust);
                 GD.Print("[WeatherControllerPower] 成功为闪电风暴添加0费、虚无和消耗词条");
                 
