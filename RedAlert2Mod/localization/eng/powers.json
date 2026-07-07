@@ -103,5 +103,7 @@
     "ORE_REFINERY_POWER.title": "Ore Refinery",
     "ORE_REFINERY_POWER.smartDescription": "+{Bonus}% Ore Value.",
     "INDUSTRIAL_PLANT_POWER.title": "Industrial Plant",
-    "INDUSTRIAL_PLANT_POWER.smartDescription": "-{Discount}% Unit Cost."
+    "INDUSTRIAL_PLANT_POWER.smartDescription": "-{Discount}% Unit Cost.",
+    "DREADNOUGHT_POWER.title": "Dreadnought",
+    "DREADNOUGHT_POWER.description": "At the start of turn, gain {Repeat} [gold]V3 Rockets[/gold]."
 }

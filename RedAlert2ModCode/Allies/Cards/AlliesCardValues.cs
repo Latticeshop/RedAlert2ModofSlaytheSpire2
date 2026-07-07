@@ -551,7 +551,11 @@ public static class AlliesCardValues
 			{ typeof(RedAlert2ModCode.Allies.Powers.AlliedShipyardPower), Shipyard.DollarValue },
 			{ typeof(RedAlert2ModCode.Allies.Powers.PrismTowerPower), PrismTower.DollarValue },
 			{ typeof(RedAlert2ModCode.Allies.Powers.PillboxPower), Pillbox.DollarValue },
-			{ typeof(RedAlert2ModCode.Allies.Powers.PatriotMissilePower), PatriotMissile.DollarValue }
+			{ typeof(RedAlert2ModCode.Allies.Powers.PatriotMissilePower), PatriotMissile.DollarValue },
+			{ typeof(RedAlert2ModCode.Allies.Powers.PowerPlantPower), PowerPlant.DollarValue },
+			{ typeof(RedAlert2ModCode.Allies.Powers.OreRefineryPower), OreRefinery.DollarValue },
+			{ typeof(RedAlert2ModCode.Allies.Powers.ChronoSpherePower), ChronoSphere.DollarValue },
+			{ typeof(RedAlert2ModCode.Allies.Powers.WeatherControllerPower), WeatherController.DollarValue }
 		};
 	}
 

@@ -83,4 +83,11 @@ public static class SovietPowerValues
 		Damage = 15,
 		DamageUpgraded = 3
 	};
+
+	public static CardValueStore.CardValues DreadnoughtPower => new()
+	{
+		Damage = 12,
+		DamageUpgraded = 3,
+		Repeat = 2
+	};
 }

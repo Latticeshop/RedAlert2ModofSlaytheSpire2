@@ -135,25 +135,7 @@ public class MassProductionPower : PowerModel
     public static async Task RecalculateAllTrainingQueuePrices(Creature owner)
     {
         GD.Print($"[MassProductionPower] RecalculateAllTrainingQueuePrices 被调用");
-        
-        var trainingQueuePowers = owner.Powers.OfType<TrainingQueuePower>().ToList();
-        
-        foreach (var trainingPower in trainingQueuePowers)
-        {
-            int originalPrice = trainingPower.OriginalUnitPrice;
-            
-            if (originalPrice == 0)
-            {
-                originalPrice = trainingPower.UnitPrice;
-            }
-            
-            int massProductionPrice = CalculateUnitPrice(owner, originalPrice, (int)trainingPower.Amount);
-            int finalPrice = TrainingQueuePower.ApplyIndustrialPlantDiscount(owner, massProductionPrice);
-            
-            GD.Print($"[MassProductionPower] 生产序列 {trainingPower.UnitName}: 原始价格={originalPrice}, 大生产后={massProductionPrice}, 工业工厂后={finalPrice}");
-            
-            trainingPower.UnitPrice = finalPrice;
-        }
+        await UnitPriceCalculator.RecalculateAllTrainingQueuePrices(owner);
     }
 
     private static int GetOriginalUnitPrice(TrainingQueuePower trainingPower)
@@ -175,27 +157,6 @@ public class MassProductionPower : PowerModel
 
     public static int CalculateUnitPrice(Creature owner, int originalPrice, int trainingQueueStacks = 1)
     {
-        var massProductionPower = owner.Powers.OfType<MassProductionPower>().FirstOrDefault();
-        
-        if (massProductionPower == null)
-        {
-            return originalPrice;
-        }
-        
-        int totalReduction;
-        
-        if (massProductionPower.IsUpgraded)
-        {
-            totalReduction = (int)massProductionPower.Amount * trainingQueueStacks * massProductionPower.PriceReductionPerStack;
-            GD.Print($"[MassProductionPower] CalculateUnitPrice (升级) - 原始价格={originalPrice}, 大生产层数={massProductionPower.Amount}, 生产序列层数={trainingQueueStacks}, 每层减少={massProductionPower.PriceReductionPerStack}, 总减少={totalReduction}");
-        }
-        else
-        {
-            totalReduction = (int)massProductionPower.Amount * massProductionPower.PriceReductionPerStack;
-            GD.Print($"[MassProductionPower] CalculateUnitPrice (未升级) - 原始价格={originalPrice}, 大生产层数={massProductionPower.Amount}, 每层减少={massProductionPower.PriceReductionPerStack}, 总减少={totalReduction}");
-        }
-        
-        int reducedPrice = originalPrice - totalReduction;
-        return Mathf.Max(0, reducedPrice);
+        return UnitPriceCalculator.ApplyMassProductionReduction(owner, originalPrice, trainingQueueStacks);
     }
 }

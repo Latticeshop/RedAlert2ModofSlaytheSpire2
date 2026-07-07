@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.HoverTips;
 using System.Collections.Generic;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Powers;
 
 namespace RedAlert2ModCode.Soviet.Cards;
@@ -58,12 +59,25 @@ public sealed class IndustrialPlantCard : CardModel
     {
         await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         
-        int discountPercentage = (int)base.DynamicVars["Discount"].BaseValue;
-        var industrialPlantPower = await PowerCmd.Apply<IndustrialPlantPower>(ctx, Owner.Creature, discountPercentage, Owner.Creature, this);
-        
-        if (industrialPlantPower != null)
+        var existingPower = Owner.Creature.Powers.OfType<IndustrialPlantPower>().FirstOrDefault();
+        if (existingPower != null)
         {
-            industrialPlantPower.IsUpgraded = IsUpgraded;
+            int newDiscount = IsUpgraded ? (int)(Values.MagicNumber + Values.MagicNumberUpgraded) : (int)Values.MagicNumber;
+            if (newDiscount > existingPower.CurrentDiscount)
+            {
+                existingPower.CurrentDiscount = newDiscount;
+                existingPower.IsUpgraded = IsUpgraded;
+            }
+            await PowerCmd.ModifyAmount(ctx, existingPower, 1m, Owner.Creature, this);
+        }
+        else
+        {
+            var industrialPlantPower = await PowerCmd.Apply<IndustrialPlantPower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
+            if (industrialPlantPower != null)
+            {
+                industrialPlantPower.CurrentDiscount = IsUpgraded ? (int)(Values.MagicNumber + Values.MagicNumberUpgraded) : (int)Values.MagicNumber;
+                industrialPlantPower.IsUpgraded = IsUpgraded;
+            }
         }
         
         await Common.Powers.MassProductionPower.RecalculateAllTrainingQueuePrices(Owner.Creature);

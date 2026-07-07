@@ -57,12 +57,25 @@ public sealed class OreRefineryCard : CardModel
     {
         await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
         
-        int bonusPercentage = (int)base.DynamicVars["Bonus"].BaseValue;
-        var oreRefineryPower = await PowerCmd.Apply<OreRefineryPower>(ctx, Owner.Creature, bonusPercentage, Owner.Creature, this);
-        
-        if (oreRefineryPower != null)
+        var existingPower = Owner.Creature.Powers.OfType<OreRefineryPower>().FirstOrDefault();
+        if (existingPower != null)
         {
-            oreRefineryPower.IsUpgraded = IsUpgraded;
+            int newBonus = IsUpgraded ? (int)(Values.MagicNumber + Values.MagicNumberUpgraded) : (int)Values.MagicNumber;
+            if (newBonus > existingPower.CurrentBonus)
+            {
+                existingPower.CurrentBonus = newBonus;
+                existingPower.IsUpgraded = IsUpgraded;
+            }
+            await PowerCmd.ModifyAmount(ctx, existingPower, 1m, Owner.Creature, this);
+        }
+        else
+        {
+            var oreRefineryPower = await PowerCmd.Apply<OreRefineryPower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
+            if (oreRefineryPower != null)
+            {
+                oreRefineryPower.CurrentBonus = IsUpgraded ? (int)(Values.MagicNumber + Values.MagicNumberUpgraded) : (int)Values.MagicNumber;
+                oreRefineryPower.IsUpgraded = IsUpgraded;
+            }
         }
     }
 

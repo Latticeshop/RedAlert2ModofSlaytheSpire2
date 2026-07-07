@@ -64,6 +64,7 @@ public static class PowerIconPatch
         { typeof(RedAlert2ModCode.Soviet.Powers.SovietPillboxPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/plticon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.KirovPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/zepicon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.V3RocketPower), "res://RedAlert2ModResources/images/packed/powers/v3.png" },
+        { typeof(RedAlert2ModCode.Soviet.Powers.DreadnoughtPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/dredicon.png" },
         { typeof(SteelFloodPower), "res://RedAlert2ModResources/images/packed/powers/SteelFloodPower.png" },
         { typeof(KitingPower), "res://RedAlert2ModResources/images/packed/powers/KitingPower.png" },
         { typeof(OreRefineryPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/gorepicon.png" },

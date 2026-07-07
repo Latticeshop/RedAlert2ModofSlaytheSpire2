@@ -1,8 +1,9 @@
+using System.Collections.Generic;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
-using RedAlert2ModCode.Soviet.Cards;
 
 namespace RedAlert2ModCode.Soviet.Powers;
 
@@ -21,27 +22,27 @@ public sealed class IndustrialPlantPower : PowerModel
         set => _isUpgraded = value;
     }
 
+    private int _currentDiscount;
+    public int CurrentDiscount
+    {
+        get => _currentDiscount;
+        set
+        {
+            _currentDiscount = value;
+            DynamicVars["Discount"].BaseValue = value;
+        }
+    }
+
     public IndustrialPlantPower()
     {
         GD.Print($"[IndustrialPlantPower] 构造函数被调用");
     }
 
-    public override LocString Description
-    {
-        get
-        {
-            var values = SovietCardValues.IndustrialPlant;
-            int discount = IsUpgraded ? (int)(values.MagicNumber + values.MagicNumberUpgraded) : (int)values.MagicNumber;
-            var locString = new LocString("powers", base.Id.Entry + ".smartDescription");
-            locString.Add("Discount", discount);
-            return locString;
-        }
-    }
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+        new DynamicVar[] { new IntVar("Discount", 0) };
 
     public float GetPriceMultiplier()
     {
-        var values = SovietCardValues.IndustrialPlant;
-        int discount = IsUpgraded ? (int)(values.MagicNumber + values.MagicNumberUpgraded) : (int)values.MagicNumber;
-        return 1.0f - discount / 100.0f;
+        return 1.0f - _currentDiscount / 100.0f;
     }
 }

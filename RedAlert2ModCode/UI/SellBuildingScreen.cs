@@ -340,28 +340,7 @@ public sealed partial class SellBuildingScreen : Control, IOverlayScreen
 
     private int GetPowerBuildCost(PowerModel power)
     {
-        Type powerType = power.GetType();
-        
-        if (powerType == typeof(AlliedRefineryPower))
-            return AlliesCardValues.AlliedRefinery.DollarValue;
-        if (powerType == typeof(SovietRefineryPower))
-            return SovietCardValues.SovietRefinery.DollarValue;
-        if (powerType == typeof(AlliedWarFactoryPower))
-            return AlliesCardValues.AlliedWarFactory.DollarValue;
-        if (powerType == typeof(SovietWarFactoryPower))
-            return SovietCardValues.SovietWarFactory.DollarValue;
-        if (powerType == typeof(BattleLabPower))
-            return AlliesCardValues.AlliedBattleLab.DollarValue;
-        if (powerType == typeof(SovietBattleLabPower))
-            return SovietCardValues.SovietBattleLab.DollarValue;
-        if (powerType == typeof(SovietRadarPower))
-            return SovietCardValues.Radar.DollarValue;
-        if (powerType == typeof(AlliedMCVPower))
-            return AlliesCardValues.AlliedMCV.DollarValue;
-        if (powerType == typeof(SovietMCVPower))
-            return SovietCardValues.SovietMCV.DollarValue;
-
-        return 500;
+        return RedAlert2ModCode.Common.Cards.CommonCardValues.GetSellablePowerDollarValue(power.GetType());
     }
 
     private Color GetBorderColor()

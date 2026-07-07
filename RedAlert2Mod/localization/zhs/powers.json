@@ -103,5 +103,7 @@
     "ORE_REFINERY_POWER.title": "矿石精炼器",
     "ORE_REFINERY_POWER.smartDescription": "+{Bonus}%矿石价值。",
     "INDUSTRIAL_PLANT_POWER.title": "工业工厂",
-    "INDUSTRIAL_PLANT_POWER.smartDescription": "-{Discount}%单位造价。"
+    "INDUSTRIAL_PLANT_POWER.smartDescription": "-{Discount}%单位造价。",
+    "DREADNOUGHT_POWER.title": "无畏级战舰",
+    "DREADNOUGHT_POWER.description": "回合开始时获得 {Repeat} 枚[gold]V3火箭[/gold]。"
 }

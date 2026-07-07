@@ -45,9 +45,17 @@ public sealed class V3RocketPower : PowerModel
         }
     }
 
-    public static async Task<V3RocketPower?> ApplyV3Rocket(Creature owner, bool isUpgraded = false)
+    public static async Task<V3RocketPower?> ApplyV3Rocket(Creature owner, bool isUpgraded = false, int? customDamage = null)
     {
-        int damage = isUpgraded ? (int)(Values.Damage + Values.DamageUpgraded) : (int)Values.Damage;
+        int damage;
+        if (customDamage.HasValue)
+        {
+            damage = customDamage.Value;
+        }
+        else
+        {
+            damage = isUpgraded ? (int)(Values.Damage + Values.DamageUpgraded) : (int)Values.Damage;
+        }
         
         var existingPower = owner.Powers.OfType<V3RocketPower>().FirstOrDefault(p => p.CurrentDamage == damage);
         
@@ -153,7 +161,7 @@ public sealed class V3RocketPower : PowerModel
             };
 
             var rng = Owner?.Player?.RunState?.Rng?.CombatCardSelection;
-            int randomIndex = rng?.NextInt(explosionFiles.Count) ?? new Random().Next(explosionFiles.Count);
+            int randomIndex = rng?.NextInt(explosionFiles.Count) ?? (int)GD.RandRange(0, explosionFiles.Count - 1);
             string randomFile = explosionFiles[randomIndex];
 
             EnsureExplosionAudioPlayer();

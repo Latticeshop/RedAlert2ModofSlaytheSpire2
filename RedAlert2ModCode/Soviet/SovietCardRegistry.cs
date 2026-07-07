@@ -51,6 +51,7 @@ public static class SovietCardRegistry
         () => ModelDb.Card<SovietTransportShip>(),
         () => ModelDb.Card<FlakSubmarine>(),
         () => ModelDb.Card<TyphoonSubmarine>(),
+        () => ModelDb.Card<Dreadnought>(),
     };
 
     public static List<Func<CardModel>> BuildingCards { get; } = SovietCardValues.CreateBuildingCardFactories();
@@ -231,7 +232,14 @@ public static class SovietCardRegistry
 
     public static List<CardModel> CreateShips(Player owner)
     {
-        return Ships.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+        List<CardModel> ships = Ships.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+        
+        if (!HasBattleLabPower(owner.Creature))
+        {
+            ships.RemoveAll(s => s.Id.Entry == "DREADNOUGHT");
+        }
+        
+        return ships;
     }
 
     public static List<CardModel> CreateAllUnits(Player owner)

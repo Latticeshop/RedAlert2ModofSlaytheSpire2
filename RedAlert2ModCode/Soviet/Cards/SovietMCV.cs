@@ -31,7 +31,7 @@ public sealed class SovietMCV : CardModel
 	public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[] { CardKeyword.Innate };
 
 	/// <summary>
-	/// 额外的悬停提示（包含MCV词条、战车词条和建筑科技线词条）
+	/// 额外的悬停提示（包含MCV词条、装甲词条和建筑科技线词条）
 	/// </summary>
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[

@@ -76,8 +76,6 @@ public class SellBuildingCard : CardModel
             return;
         }
 
-        PlaySellSound();
-
         foreach (var index in selectedIndices)
         {
             await ProcessSoldPower(buildingPowerItems[index].Power);
@@ -111,6 +109,8 @@ public class SellBuildingCard : CardModel
 
         await PowerCmd.Decrement(power);
 
+        BuildingSoundHelper.PlayBuildingSellSound();
+
         var dollarPower = Owner.Creature.Powers.OfType<DollarPower>().FirstOrDefault();
         if (dollarPower != null)
         {
@@ -119,6 +119,8 @@ public class SellBuildingCard : CardModel
         }
 
         await CheckAndStopProductionQueues();
+        
+        await UnitPriceCalculator.RecalculateAllTrainingQueuePrices(Owner.Creature);
     }
 
     private async Task CheckAndStopProductionQueues()
@@ -320,33 +322,4 @@ public class SellBuildingCard : CardModel
         return CommonCardValues.GetSellablePowerDollarValue(power.GetType());
     }
 
-    private void PlaySellSound()
-    {
-        try
-        {
-            AudioStreamPlayer audioPlayer = new();
-            audioPlayer.Name = "SellBuildingSoundPlayer";
-            var root = Engine.GetMainLoop() as SceneTree;
-            if (root != null)
-            {
-                root.Root.AddChild(audioPlayer);
-                var soundFile = GD.Load<AudioStream>("res://RedAlert2ModResources/audio/CommonSFX/sell_building.wav");
-                if (soundFile != null)
-                {
-                    audioPlayer.Stream = soundFile;
-                    audioPlayer.VolumeDb = -5;
-                    audioPlayer.Play();
-                    GD.Print("[SellBuildingCard] 播放出售音效");
-                }
-                else
-                {
-                    GD.PrintErr("[SellBuildingCard] 无法加载出售音效文件");
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr($"[SellBuildingCard] 播放音效失败: {ex.Message}");
-        }
     }
-}

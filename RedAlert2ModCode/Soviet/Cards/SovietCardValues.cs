@@ -147,13 +147,23 @@ public static class SovietCardValues
 		DollarValue = 2000
 	};
 
-	/// <summary>V3火箭 - 2费，赋予目标锁定和V3火箭能力，每回合造成15伤害（升级18），价格800</summary>
+	/// <summary>V3火箭 - 1费，赋予目标锁定和V3火箭能力，每回合造成12伤害（升级15），价格800</summary>
 	public static CardValueStore.CardValues V3Rocket => new()
 	{
-		Cost = 2,
-		Damage = 15,
+		Cost = 1,
+		Damage = 12,
 		DamageUpgraded = 3,
 		DollarValue = 800
+	};
+
+	/// <summary>无畏级战舰 - 2费攻击卡，赋予目标锁定和2层V3火箭能力（升级后伤害15），价格1200</summary>
+	public static CardValueStore.CardValues Dreadnought => new()
+	{
+		Cost = 2,
+		Damage = 12,
+		DamageUpgraded = 3,
+		Repeat = 2,
+		DollarValue = 1200
 	};
 	
 	// ==================== 建筑卡牌 ====================
@@ -385,7 +395,8 @@ public static class SovietCardValues
 		{
 			{ "SOVIETTRANSPORTSHIP", SovietTransportShip },
 			{ "FLAKSUBMARINE", FlakSubmarine },
-			{ "TYPHOONSUBMARINE", TyphoonSubmarine }
+			{ "TYPHOONSUBMARINE", TyphoonSubmarine },
+			{ "DREADNOUGHT", Dreadnought }
 		};
 	}
 	
@@ -423,7 +434,11 @@ public static class SovietCardValues
 			{ typeof(RedAlert2ModCode.Soviet.Powers.SovietShipyardPower), Shipyard.DollarValue },
 			{ typeof(RedAlert2ModCode.Soviet.Powers.SovietPillboxPower), SovietPillbox.DollarValue },
 			{ typeof(RedAlert2ModCode.Soviet.Powers.SovietTeslaCoilPower), TeslaCoilCard.DollarValue },
-			{ typeof(RedAlert2ModCode.Soviet.Powers.SovietFlakCannonPower), FlakCannon.DollarValue }
+			{ typeof(RedAlert2ModCode.Soviet.Powers.SovietFlakCannonPower), FlakCannon.DollarValue },
+			{ typeof(RedAlert2ModCode.Soviet.Powers.SovietPowerPlantPower), NuclearReactor.DollarValue },
+			{ typeof(RedAlert2ModCode.Soviet.Powers.IndustrialPlantPower), IndustrialPlant.DollarValue },
+			{ typeof(RedAlert2ModCode.Soviet.Powers.IronCurtainPower), IronCurtainCard.DollarValue },
+			{ typeof(RedAlert2ModCode.Soviet.Powers.NuclearMissileSiloPower), NuclearMissileSiloCard.DollarValue }
 		};
 	}
 
