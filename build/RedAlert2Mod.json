@@ -3,7 +3,7 @@
 	"name": "红警2mod",
 	"author": "小格子铺",
 	"description": "关于杀戮尖塔2的红色警戒2游戏mod，主要有盟军，苏军，尤里三个阵营。",
-	"version": "0.10.5",
+	"version": "0.10.6",
 	"min_game_version": "0.107.0",
 	"has_pck": true,
 	"has_dll": true,

@@ -1,0 +1,10 @@
+{
+    "DOLLAR_RELIC.title": "ドル",
+    "DOLLAR_RELIC.description": "戦闘開始時5000初期資金を獲得する。",
+    "DOLLAR_ANCIENT_RELIC.title": "大金の遺産",
+    "DOLLAR_ANCIENT_RELIC.description": "戦闘開始時10000初期資金を獲得する。",
+    "SEA_GLASS.REDALERT2MODCODE-ALLIES.title": "連合軍ガラス",
+    "SEA_GLASS.REDALERT2MODCODE-SOVIET.title": "ソ連ガラス",
+    "SEA_GLASS.description": "{Character.StringValue:cond:[gold]{}[/gold]|別のキャラクター}の[blue]{Cards}[/blue]枚のカードを確認する。任意の枚数を選択して[gold]デッキ[/gold]に加える。",
+    "SEA_GLASS.selectionScreenPrompt": "デッキに加えるカードを任意の枚数選択する。"
+}

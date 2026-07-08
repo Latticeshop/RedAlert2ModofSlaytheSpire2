@@ -1,0 +1,13 @@
+{
+    "ALLIES_ARCHITECT_EVENT.conclusion": "아키텍트: ...하! 이런 투지를 가진 자를 만난 건 오랜만이군. 네 결의는... 존중할 만하다. 어쩌면... 우리 사이에 합의점을 찾을 수 있을지도 모르지. 다시 만날 때는, 네 가치를 증명해 보이길 바란다.",
+    "ALLIES_ARCHITECT_EVENT.finish": "당신은 새로운 투지로 가슴을 채운 채 아키텍트의 차원을 떠납니다.",
+    "ALLIES_ARCHITECT_EVENT.intro": "아키텍트: ...재미있군. 다른 차원에서 온 전사라니, 게다가 푸른 옷을 걸치고 있다니. 네 등장은... 예상했지만, 예상 밖이기도 했다.",
+    "ALLIES_ARCHITECT_EVENT.options.ARCHITECT_END": "대화 종료",
+    "ALLIES_ARCHITECT_EVENT.options.ARCHITECT_INTRO": "계속",
+    "ALLIES_ARCHITECT_EVENT.options.ARCHITECT_LEAVE": "떠나기",
+    "ALLIES_ARCHITECT_EVENT.options.ARCHITECT_RETORT": "반박",
+    "ALLIES_ARCHITECT_EVENT.options.ARCHITECT_SILENCE": "침묵하기",
+    "ALLIES_ARCHITECT_EVENT.response": "타냐: 낡아빠졌다고?! 이 탑 안에 숨어서 화려한 장치나 만지작거리면 대단해 보이는 줄 아나? 난 네가 도면을 본 것보다 더 많은 전쟁을 치렀어! 소련의 아이언 커튼, 유리의 정신 조종, 다른 차원에서 온 위협까지... 다 정복했다고! 이 스파이어? 그냥 정복할 전장이 하나 더 늘었을 뿐이야!",
+    "ALLIES_ARCHITECT_EVENT.taunt": "아키텍트: 흥, 이른바 타냐 사령관이라. 낡아빠진 무기와 전술로 이 스파이어에서 살아남을 수 있다고 생각하나? 네 세계는 수많은 평행 우주 속의 먼지 한 톨일 뿐이다.",
+    "ALLIES_ARCHITECT_EVENT.title": "신비로운 아키텍트"
+}

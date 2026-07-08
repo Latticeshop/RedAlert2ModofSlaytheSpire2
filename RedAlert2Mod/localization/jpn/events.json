@@ -1,0 +1,13 @@
+{
+    "ALLIES_ARCHITECT_EVENT.title": "謎の建築家",
+    "ALLIES_ARCHITECT_EVENT.intro": "建築家: ...面白い。異次元から来た戦士、そして青い衣装を着た指揮官。あなたの到来...予想通りでもあり、予想外でもある。",
+    "ALLIES_ARCHITECT_EVENT.taunt": "建築家: ふん、いわゆる「タニヤ」指揮官か。古臭い銃器と戦術でこの塔で生き延びられると思うか？あなたの世界は無数の平行宇宙の中でも取るに足らない一粒の塵に過ぎない。",
+    "ALLIES_ARCHITECT_EVENT.response": "タニヤ: 古臭い？！この塔の中に隠れて派手な仕掛けを弄るだけで偉いと思っているのか？私の経験した戦争はあなたの見た図面よりも多い！ソ連の鉄のカーテン、ユーリの精神操作、異次元の脅威...全て乗り越えてきた！この塔？ただの別の征服すべき戦場に過ぎない！",
+    "ALLIES_ARCHITECT_EVENT.conclusion": "建築家: ...はは！あなたのような度胸のある者を見たのは久しぶりだ。あなたの闘志...尊敬に値する。もしかしたら...何らかの協定を結べるかもしれない。次に会う時、あなたの価値を証明してみろ。",
+    "ALLIES_ARCHITECT_EVENT.finish": "あなたは建築家の次元を離れ、新たな闘志に満ちた心を抱いている。",
+    "ALLIES_ARCHITECT_EVENT.options.ARCHITECT_INTRO": "続行",
+    "ALLIES_ARCHITECT_EVENT.options.ARCHITECT_RETORT": "反論",
+    "ALLIES_ARCHITECT_EVENT.options.ARCHITECT_SILENCE": "沈黙",
+    "ALLIES_ARCHITECT_EVENT.options.ARCHITECT_END": "会話終了",
+    "ALLIES_ARCHITECT_EVENT.options.ARCHITECT_LEAVE": "離脱"
+}
