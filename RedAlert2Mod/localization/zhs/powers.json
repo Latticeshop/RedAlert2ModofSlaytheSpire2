@@ -107,5 +107,7 @@
     "DREADNOUGHT_POWER.title": "无畏级战舰",
     "DREADNOUGHT_POWER.description": "回合开始时获得 {Repeat} 枚[gold]V3火箭[/gold]。",
     "FORCE_FIELD_POWER.title": "力场护盾",
-    "FORCE_FIELD_POWER.smartDescription": "回合开始时，失去 {EnergyLoss} 点能量。"
+    "FORCE_FIELD_POWER.smartDescription": "回合开始时，失去 {EnergyLoss} 点能量。",
+    "MINE_RAID_POWER.title": "扰矿",
+    "MINE_RAID_POWER.smartDescription": "打出单位卡时，抽取 {Amount} 张矿车。"
 }

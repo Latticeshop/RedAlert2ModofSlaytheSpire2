@@ -75,6 +75,7 @@ public static class PowerIconPatch
         { typeof(RedAlert2ModCode.Soviet.Powers.SovietShipyardPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/yardicon.png" },
         { typeof(AlliedAirForceCommandPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/heliicon.png" },
         { typeof(ForceFieldPower), "res://RedAlert2ModResources/images/packed/card_portraits/forcicon.png" },
+        { typeof(MineRaidPower), "res://RedAlert2ModResources/images/packed/powers/mine_raid_power.png" },
         };
 
     /// <summary>

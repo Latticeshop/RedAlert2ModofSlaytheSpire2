@@ -266,9 +266,15 @@ public static class RelicPatches
         return true;
     }
 
-    [HarmonyPostfix]
+    [HarmonyPrefix]
     [HarmonyPatch(typeof(ArchaicTooth), "AfterObtained")]
-    public static void ArchaicToothAfterObtainedPostfix(ArchaicTooth __instance)
+    public static bool ArchaicToothAfterObtainedPrefix(ArchaicTooth __instance, ref System.Threading.Tasks.Task __result)
+    {
+        __result = ArchaicToothAfterObtainedAsync(__instance);
+        return false;
+    }
+
+    private static async System.Threading.Tasks.Task ArchaicToothAfterObtainedAsync(ArchaicTooth __instance)
     {
         if (IsAlliesCharacter(__instance.Owner.Character))
         {
@@ -278,10 +284,12 @@ public static class RelicPatches
                 var fortifiedWall = __instance.Owner.RunState.CreateCard(ModelDb.Card<FortifiedWall>(), __instance.Owner);
                 if (wallCard.IsUpgraded)
                     CardCmd.Upgrade(fortifiedWall);
-                _ = CardCmd.Transform(wallCard, fortifiedWall);
+                await CardCmd.Transform(wallCard, fortifiedWall);
             }
+            return;
         }
-        else if (IsSovietCharacter(__instance.Owner.Character))
+
+        if (IsSovietCharacter(__instance.Owner.Character))
         {
             var wallCard = __instance.Owner.Deck.Cards.FirstOrDefault(c => c is SovietWallCard);
             if (wallCard != null)
@@ -289,8 +297,15 @@ public static class RelicPatches
                 var fortifiedWall = __instance.Owner.RunState.CreateCard(ModelDb.Card<SovietFortifiedWall>(), __instance.Owner);
                 if (wallCard.IsUpgraded)
                     CardCmd.Upgrade(fortifiedWall);
-                _ = CardCmd.Transform(wallCard, fortifiedWall);
+                await CardCmd.Transform(wallCard, fortifiedWall);
             }
+            return;
+        }
+
+        CardModel transcendenceStarterCard = __instance.Owner.Deck.Cards.FirstOrDefault(c => c.Id.Entry == "BASH" || c.Id.Entry == "NEUTRALIZE" || c.Id.Entry == "UNLEASH" || c.Id.Entry == "FALLING_STAR" || c.Id.Entry == "DUALCAST");
+        if (transcendenceStarterCard != null)
+        {
+            await CardCmd.Transform(transcendenceStarterCard, __instance.Owner.RunState.CreateCard<Doubt>(__instance.Owner));
         }
     }
 

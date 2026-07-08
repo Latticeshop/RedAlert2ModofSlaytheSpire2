@@ -96,7 +96,7 @@
     "MASS_PRODUCTION_CARD.title": "大生产",
     "MASS_PRODUCTION_CARD.description": "获得[gold]大生产[/gold]。\n{IfUpgraded:show:每有一层[gold]生产序列[/gold]，其|}单位价格减少[gold]${Reduction}[/gold]。",
     "MINE_RAID.title": "扰矿",
-    "MINE_RAID.description": "从牌堆中抽取{MagicNumber}张[gold]矿车[/gold]卡牌。",
+    "MINE_RAID.description": "本回合内，打出下1张[gold]单位[/gold]卡牌时，从牌堆中抽取{MagicNumber}张[gold]矿车[/gold]卡牌。",
     "APOCALYPSE_TANK.title": "天启坦克",
     "APOCALYPSE_TANK.description": "造成 {Damage} 点伤害 {Repeat} 次。获得 {Block} 点格挡。赋予 {VulnerableStacks} 层易伤。",
     "FORTIFIED_WALL.title": "坚固围墙",

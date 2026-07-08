@@ -55,4 +55,11 @@ public static class CommonPowerValues
 	{
 		Damage = 3              // 每层回合开始失去的能量
 	};
+
+	/// <summary>扰矿能力 - 打出单位卡时抽取矿车</summary>
+	public static CardValueStore.CardValues MineRaidPower => new()
+	{
+		Stars = 1,              // 每层抽取的矿车数量
+		StarsUpgraded = 1       // 升级后增加的层数（总共2层）
+	};
 }

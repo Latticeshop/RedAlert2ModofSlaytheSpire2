@@ -1,4 +1,3 @@
-using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -8,7 +7,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Cards;
 using System.Collections.Generic;
-using System.Linq;
+using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Common.Cards;
@@ -35,64 +34,21 @@ public class MineRaid : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Miner.CreateHoverTip(),
+		ModCardKeywords.Unit.CreateHoverTip(),
 		HoverTipFactory.FromCard<RedAlert2ModCode.Soviet.Cards.WarMiner>()
 	];
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
-		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+		int stacks = IsUpgraded
+			? (int)CommonPowerValues.MineRaidPower.Stars + (int)CommonPowerValues.MineRaidPower.StarsUpgraded
+			: (int)CommonPowerValues.MineRaidPower.Stars;
 
-		int cardsToDraw = IsUpgraded 
-			? (int)Values.MagicNumber + (int)Values.MagicNumberUpgraded 
-			: (int)Values.MagicNumber;
-		int cardsDrawn = 0;
-
-		GD.Print($"[MineRaid] 开始抽取 {cardsToDraw} 张矿车卡");
-
-		var drawPile = PileType.Draw.GetPile(Owner);
-		var discardPile = PileType.Discard.GetPile(Owner);
-
-		var discardPileMiners = discardPile.Cards
-			.Where(c => IsMinerCard(c))
-			.ToList();
-
-		GD.Print($"[MineRaid] 弃牌堆中有 {discardPileMiners.Count} 张矿车卡");
-
-		foreach (var card in discardPileMiners)
-		{
-			if (cardsDrawn >= cardsToDraw) break;
-			await CardPileCmd.Add(card, PileType.Hand);
-			cardsDrawn++;
-			GD.Print($"[MineRaid] 从弃牌堆找到矿车卡: {card.Id.Entry}");
-		}
-
-		if (cardsDrawn < cardsToDraw)
-		{
-			var drawPileMiners = drawPile.Cards
-				.Where(c => IsMinerCard(c))
-				.ToList();
-
-			GD.Print($"[MineRaid] 抽牌堆中有 {drawPileMiners.Count} 张矿车卡");
-
-			foreach (var card in drawPileMiners)
-			{
-				if (cardsDrawn >= cardsToDraw) break;
-				await CardPileCmd.Add(card, PileType.Hand);
-				cardsDrawn++;
-				GD.Print($"[MineRaid] 从抽牌堆找到矿车卡: {card.Id.Entry}");
-			}
-		}
-
-		GD.Print($"[MineRaid] 成功抽取 {cardsDrawn} 张矿车卡");
+		await PowerCmd.Apply<MineRaidPower>(ctx, Owner.Creature, stacks, Owner.Creature, play.Card);
 	}
 
 	protected override void OnUpgrade()
 	{
 		base.DynamicVars["MagicNumber"].UpgradeValueBy(Values.MagicNumberUpgraded);
-	}
-
-	private bool IsMinerCard(CardModel card)
-	{
-		return card is RedAlert2ModCode.Allies.Cards.ChronoMiner || card is RedAlert2ModCode.Soviet.Cards.WarMiner;
 	}
 }

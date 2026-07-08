@@ -1,6 +1,10 @@
 {
     "DOLLAR_RELIC.title": "Dollar",
     "DOLLAR_RELIC.description": "Gain 5000 starting funds at the start of combat.",
-    "DOLLAR_ANCIENT_RELIC.title": "Dollar Legacy",
-    "DOLLAR_ANCIENT_RELIC.description": "Gain 10000 starting funds at the start of combat."
+    "DOLLAR_ANCIENT_RELIC.title": "Large Legacy",
+    "DOLLAR_ANCIENT_RELIC.description": "Gain 10000 starting funds at the start of combat.",
+    "SEA_GLASS.REDALERT2MODCODE-ALLIES.title": "Allied Glass",
+    "SEA_GLASS.REDALERT2MODCODE-SOVIET.title": "Soviet Glass",
+    "SEA_GLASS.description": "See [blue]{Cards}[/blue] cards from {Character.StringValue:cond:[gold]{}[/gold]|another character}. Choose any number of them to add to your [gold]Deck[/gold].",
+    "SEA_GLASS.selectionScreenPrompt": "Select any number of cards to add to your Deck."
 }

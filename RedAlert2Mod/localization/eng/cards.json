@@ -96,7 +96,7 @@
     "MASS_PRODUCTION_CARD.title": "Mass Production",
     "MASS_PRODUCTION_CARD.description": "Gains [gold]Mass Production[/gold].\n{IfUpgraded:show:For each [gold]Production Queue[/gold], |}Unit cost reduced by [gold]${Reduction}[/gold].",
     "MINE_RAID.title": "Mine Raid",
-    "MINE_RAID.description": "Draw {MagicNumber} [gold]Miner[/gold] cards from your deck.",
+    "MINE_RAID.description": "For the next 1 [gold]Unit[/gold] cards played this turn, draw {MagicNumber} [gold]Miner[/gold] cards from your deck.",
     "APOCALYPSE_TANK.title": "Apocalypse Tank",
     "APOCALYPSE_TANK.description": "Deals {Damage} damage {Repeat} times. Gains {Block} Block. Applies {VulnerableStacks} Vulnerable.",
     "FORTIFIED_WALL.title": "Fortified Wall",
