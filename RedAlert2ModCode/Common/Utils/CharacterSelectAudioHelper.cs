@@ -19,6 +19,7 @@ public static class CharacterSelectAudioHelper
         "res://RedAlert2ModResources/audio/character_select/TanyaSelectVoice/itapcrd.mp3",
         "res://RedAlert2ModResources/audio/character_select/TanyaSelectVoice/itapmoa.mp3",
         "res://RedAlert2ModResources/audio/character_select/TanyaSelectVoice/itapsed.mp3",
+        "res://RedAlert2ModResources/audio/character_select/TanyaSelectVoice/Itapsea.mp3",
     };
 
     private static readonly List<string> _sovietSelectVoices = new()
@@ -33,6 +34,24 @@ public static class CharacterSelectAudioHelper
         "res://RedAlert2ModResources/audio/character_select/NatashaSelectVoice/RA3 SUNatas VoiSeld.mp3",
         "res://RedAlert2ModResources/audio/character_select/NatashaSelectVoice/RA3 SUNatas VoiSelf.mp3",
         "res://RedAlert2ModResources/audio/character_select/NatashaSelectVoice/RA3 SUNatas VoiSelh.mp3",
+    };
+
+    private static readonly List<string> _tanyaDamageVoices = new()
+    {
+        "res://RedAlert2ModResources/audio/character_select/TanyaDamageVoice/Itapdia.mp3",
+        "res://RedAlert2ModResources/audio/character_select/TanyaDamageVoice/Itapdib.mp3",
+        "res://RedAlert2ModResources/audio/character_select/TanyaDamageVoice/Itapdic.mp3",
+        "res://RedAlert2ModResources/audio/character_select/TanyaDamageVoice/Itapdid.mp3",
+        "res://RedAlert2ModResources/audio/character_select/TanyaDamageVoice/Itapdie.mp3",
+    };
+
+    private static readonly List<string> _natashaDamageVoices = new()
+    {
+        "res://RedAlert2ModResources/audio/character_select/NatashaDamageVoice/Icfadia.mp3",
+        "res://RedAlert2ModResources/audio/character_select/NatashaDamageVoice/Icfadib.mp3",
+        "res://RedAlert2ModResources/audio/character_select/NatashaDamageVoice/Icfadic.mp3",
+        "res://RedAlert2ModResources/audio/character_select/NatashaDamageVoice/Icfsdic.mp3",
+        "res://RedAlert2ModResources/audio/character_select/NatashaDamageVoice/Icfssea.mp3",
     };
 
     private static AudioStreamPlayer? _audioPlayer;
@@ -56,6 +75,16 @@ public static class CharacterSelectAudioHelper
     public static void PlaySovietSelectVoice()
     {
         PlayRandomVoice(_sovietSelectVoices, "苏军");
+    }
+
+    public static void PlayTanyaDamageVoice()
+    {
+        PlayRandomVoice(_tanyaDamageVoices, "盟军受伤");
+    }
+
+    public static void PlayNatashaDamageVoice()
+    {
+        PlayRandomVoice(_natashaDamageVoices, "苏军受伤");
     }
 
     private static void PlayRandomVoice(List<string> voicePaths, string factionName)
