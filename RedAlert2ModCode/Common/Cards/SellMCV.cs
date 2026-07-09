@@ -154,6 +154,7 @@ public class SellMCV : CardModel
 				await PowerCmd.Remove(alliedMcvPower);
 				GD.Print("[SellMCV] 已清除盟军基地车能力");
 			}
+			BuildingSoundHelper.PlayBuildingSellSound();
 		}
 
 		var sovietMcvPower = Owner.Creature.Powers.OfType<SovietMCVPower>().FirstOrDefault();
@@ -169,6 +170,7 @@ public class SellMCV : CardModel
 				await PowerCmd.Remove(sovietMcvPower);
 				GD.Print("[SellMCV] 已清除苏联基地车能力");
 			}
+			BuildingSoundHelper.PlayBuildingSellSound();
 		}
 
 		if (IsUpgraded)
