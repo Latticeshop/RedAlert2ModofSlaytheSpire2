@@ -6,7 +6,7 @@
     "DOLLAR_ANCIENT_RELIC.description": "戦闘開始時10000初期資金を獲得する。",
     "DOLLAR_ANCIENT_RELIC.flavor": "スタート時最高資金。",
     "LIBYA_RELIC.title": "リビア国旗",
-    "LIBYA_RELIC.description": "ユニット「デモリッショントラック」をアンロックする。",
+    "LIBYA_RELIC.description": "ユニット「[red]デモリッショントラック[/red]」をアンロックする。\nブロックできなかったダメージを受けた時、デッキにデモリッショントラックがあるか確認する。あれば自動的にプレイし、敵全体と味方全体にダメージを与える。",
     "LIBYA_RELIC.flavor": "Watch out for the bumps!",
     "SEA_GLASS.REDALERT2MODCODE-ALLIES.title": "連合軍ガラス",
     "SEA_GLASS.REDALERT2MODCODE-SOVIET.title": "ソ連ガラス",

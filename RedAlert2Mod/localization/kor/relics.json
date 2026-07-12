@@ -3,9 +3,13 @@
     "DOLLAR_ANCIENT_RELIC.title": "달러의 유산",
     "DOLLAR_ANCIENT_RELIC.flavor": "시작 시 최고 자금.",
     "LIBYA_RELIC.title": "리비아 국기",
-    "LIBYA_RELIC.description": "유닛 \"테러 트럭\"을 잠금 해제합니다.",
+    "LIBYA_RELIC.description": "유닛 \"[red]테러 트럭[/red]\"을 잠금 해제합니다.\n막지 못한 피해를 받을 때, 덱에 테러 트럭이 있는지 확인합니다. 있으면 자동으로 플레이하여 모든 적과 모든 아군에게 피해를 줍니다.",
     "LIBYA_RELIC.flavor": "Watch out for the bumps!",
     "DOLLAR_RELIC.description": "전투 시작 시 초기 자금 5000을 얻습니다.",
     "DOLLAR_RELIC.title": "달러",
-    "DOLLAR_RELIC.flavor": "시작 시 최소 자금."
+    "DOLLAR_RELIC.flavor": "시작 시 최소 자금.",
+    "SEA_GLASS.REDALERT2MODCODE-ALLIES.title": "연합군 유리",
+    "SEA_GLASS.REDALERT2MODCODE-SOVIET.title": "소련 유리",
+    "SEA_GLASS.description": "{Character.StringValue:cond:[gold]{}[/gold]|다른 캐릭터}의 [blue]{Cards}[/blue]장의 카드를 확인합니다. 원하는 만큼 선택하여 [gold]덱[/gold]에 추가합니다.",
+    "SEA_GLASS.selectionScreenPrompt": "덱에 추가할 카드를 원하는 만큼 선택하세요."
 }

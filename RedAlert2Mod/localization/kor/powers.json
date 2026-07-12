@@ -105,5 +105,11 @@
     "V3_ROCKET_POWER.description": "턴 시작 시 [gold]표적 고정[/gold]된 적에게 피해를 {Damage} 줍니다.",
     "V3_ROCKET_POWER.title": "V3 로켓",
     "WEATHER_CONTROLLER_POWER.description": "[gold]{TurnsRemaining}[/gold]턴 후, 전기를 [gold]{Block}[/gold]개 얻고, 손에 0코스트 휘발성 소멸 [gold]{LightningStormName}[/gold] 카드를 추가합니다.",
-    "WEATHER_CONTROLLER_POWER.title": "웨더 컨트롤러"
+    "WEATHER_CONTROLLER_POWER.title": "웨더 컨트롤러",
+    "DREADNOUGHT_POWER.title": "드레드노트 전함",
+    "DREADNOUGHT_POWER.description": "턴 시작 시 [gold]V3 로켓[/gold] {Repeat}개를 얻습니다.",
+    "FORCE_FIELD_POWER.title": "포스 필드",
+    "FORCE_FIELD_POWER.smartDescription": "턴 시작 시, 에너지 {EnergyLoss}를 잃습니다.",
+    "MINE_RAID_POWER.title": "광산 습격",
+    "MINE_RAID_POWER.smartDescription": "유닛 카드를 사용할 때, 채굴차 {Amount}장을 뽑습니다."
 }

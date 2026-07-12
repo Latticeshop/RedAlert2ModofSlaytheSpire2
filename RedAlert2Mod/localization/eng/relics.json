@@ -6,7 +6,7 @@
     "DOLLAR_ANCIENT_RELIC.description": "Gain 10000 starting funds at the start of combat.",
     "DOLLAR_ANCIENT_RELIC.flavor": "Maximum starting funds.",
     "LIBYA_RELIC.title": "Libyan Flag",
-    "LIBYA_RELIC.description": "Unlocks the unit \"Demolition Truck\".",
+    "LIBYA_RELIC.description": "Unlocks the unit \"[red]Demolition Truck[/red]\".\nWhen you take unblocked damage, check your deck for a Demolition Truck. If found, automatically play it, dealing damage to all enemies and all allies.",
     "LIBYA_RELIC.flavor": "Watch out for the bumps!",
     "SEA_GLASS.REDALERT2MODCODE-ALLIES.title": "Allied Glass",
     "SEA_GLASS.REDALERT2MODCODE-SOVIET.title": "Soviet Glass",
