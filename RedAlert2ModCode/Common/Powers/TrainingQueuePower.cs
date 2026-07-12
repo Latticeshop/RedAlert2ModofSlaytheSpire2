@@ -288,7 +288,7 @@ public sealed class TrainingQueuePower : PowerModel
                 PlayKirovDeploySound();
             }
 
-            await CardPileCmd.AddGeneratedCardToCombat(tempCard, PileType.Hand, Owner.Player, CardPilePosition.Top);
+            await CardPileCmd.AddGeneratedCardToCombat(tempCard, PileType.Hand, Owner.Player);
         }
     }
 

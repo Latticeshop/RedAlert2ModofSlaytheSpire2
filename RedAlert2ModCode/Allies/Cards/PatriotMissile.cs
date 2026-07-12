@@ -61,7 +61,8 @@ public sealed class PatriotMissile : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
-		// 扣除资金
+		BuildingSoundHelper.PlayBuildingPlaceSound();
+		
 		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
 		if (dollarPower != null)
 		{

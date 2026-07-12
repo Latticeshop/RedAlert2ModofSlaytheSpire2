@@ -188,5 +188,13 @@
     "INDUSTRIAL_PLANT_CARD.title": "Industrial Plant",
     "INDUSTRIAL_PLANT_CARD.description": "[gold]Cost: ${DollarNumber}[/gold].\n-{Discount}% [gold]Unit[/gold] Cost.",
     "FORCE_FIELD.title": "Force Field",
-    "FORCE_FIELD.description": "Gain 1 stack of [gold]Intangible[/gold]. Lose {EnergyLoss} energy next turn."
+    "FORCE_FIELD.description": "Gain 1 stack of [gold]Intangible[/gold]. Lose {EnergyLoss} energy next turn.",
+    "BATTLE_FORTRESS.title": "Battle Fortress",
+    "BATTLE_FORTRESS.description": "Gains {Block} Block. [gold]Deploy[/gold]: Store up to {StoreCount} [gold]Soldier[/gold] cards from your hand for [gold]Garrison[/gold].\nCurrently storing: {StoredCards}",
+    "BATTLE_FORTRESS.select_prompt": "Select {0}-{1} soldier units to store.",
+    "BATTLE_FORTRESS.action_prompt": "Select action",
+    "BATTLE_FORTRESS.attack_option": "Attack (trigger fused effects)",
+    "BATTLE_FORTRESS.deploy_option": "Deploy (store/retrieve)",
+    "BATTLE_BUNKER_CARD.title": "Battle Bunker",
+    "BATTLE_BUNKER_CARD.description": "[gold]Cost: ${DollarNumber}[/gold].\nSelect up to {StoreCount} [gold]Soldier[/gold] cards from your hand for [gold]Garrison[/gold].\nCurrently storing: {StoredCards}"
 }

@@ -196,6 +196,23 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/GuardianGI/Iggisee.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/GuardianGI/Iggisef.mp3",
         },
+        ["BattleFortress"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/BattleFortress/Vbatate.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BattleFortress/Vbatmoa.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BattleFortress/Vbatmob.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BattleFortress/Vbatmod.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BattleFortress/Vbatmoe.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BattleFortress/Vbatsea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BattleFortress/Vbatseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BattleFortress/Vbatsec.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BattleFortress/Vbatsed.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BattleFortress/Vbatsee.mp3",
+        },
+        ["BattleFortressDeploy"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/BattleFortress/Vbatsef_deploy.mp3",
+        },
     };
 
     public static readonly Dictionary<string, List<string>> SovietUnits = new()

@@ -73,6 +73,8 @@
     "SOVIET_MC_V_POWER.title": "소련 MCV",
     "SOVIET_PILLBOX_POWER.description": "매 턴 시작 시, 적에게 피해를 {Damage}만큼 2번 주고 방어도를 {Block} 얻습니다.",
     "SOVIET_PILLBOX_POWER.title": "플락 타워",
+    "BATTLE_BUNKER_POWER.title": "배틀 벙커",
+    "BATTLE_BUNKER_POWER.description": "매 턴 공격합니다.\n현재 저장: {StoredCards}",
     "SOVIET_POWER_PLANT_POWER.description": "카드를 {BaseCards}장 뽑을 때마다 에너지 1을 얻습니다.",
     "SOVIET_POWER_PLANT_POWER.smartDescription": "카드를 [blue]{Amount:energyIcons()}[/blue]장 뽑을 때마다 [blue]{BaseCards}[/blue] 에너지를 얻습니다.",
     "SOVIET_POWER_PLANT_POWER.title": "테슬라 원자로",

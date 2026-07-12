@@ -225,6 +225,12 @@ public static class ModCardKeywords
 		new LocString("card_keywords", "miner.description")
 	);
 
+	public static readonly CustomKeyword Garrison = new(
+		"GARRISON",
+		new LocString("card_keywords", "garrison.title"),
+		new LocString("card_keywords", "garrison.description")
+	);
+
 	public static void Initialize()
     {
         CustomKeywordManager.RegisterKeyword(Mcv);
@@ -255,5 +261,6 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(SteelFlood);
         CustomKeywordManager.RegisterKeyword(Chrono);
         CustomKeywordManager.RegisterKeyword(Miner);
+        CustomKeywordManager.RegisterKeyword(Garrison);
     }
 }

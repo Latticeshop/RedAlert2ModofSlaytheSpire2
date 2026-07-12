@@ -184,5 +184,13 @@
     "WAR_MINER.description": "[gold]${DollarValue}[/gold]를 얻습니다.\n{IfUpgraded:show:모든 적|적 1명}에게 피해를 {Damage} 줍니다.",
     "WAR_MINER.title": "전쟁 채굴차",
     "WEATHER_CONTROLLER.description": "[gold]비용: ${DollarNumber}[/gold].\n[gold]웨더 컨트롤러[/gold]를 얻습니다.\n{IfUpgraded:show:재사용 대기시간이 1턴 감소합니다.|}",
-    "WEATHER_CONTROLLER.title": "웨더 컨트롤러"
+    "WEATHER_CONTROLLER.title": "웨더 컨트롤러",
+    "BATTLE_FORTRESS.title": "배틀 포트레스",
+    "BATTLE_FORTRESS.description": "방어도를 {Block} 얻습니다. [gold]전개[/gold]: 손에 있는 [gold]보병[/gold] 카드를 최대 {StoreCount}개까지 저장하여 [gold]주둔[/gold]시킵니다.\n현재 저장: {StoredCards}",
+    "BATTLE_FORTRESS.select_prompt": "저장할 보병 유닛 {0}~{1}개를 선택하세요.",
+    "BATTLE_FORTRESS.action_prompt": "행동 선택",
+    "BATTLE_FORTRESS.attack_option": "공격 (융합 효과 발동)",
+    "BATTLE_FORTRESS.deploy_option": "전개 (저장/인출)",
+    "BATTLE_BUNKER_CARD.title": "배틀 벙커",
+    "BATTLE_BUNKER_CARD.description": "[gold]비용: ${DollarNumber}[/gold].\n손에 있는 [gold]보병[/gold] 카드를 최대 {StoreCount}개까지 저장하여 [gold]주둔[/gold]시킵니다.\n현재 저장: {StoredCards}"
 }

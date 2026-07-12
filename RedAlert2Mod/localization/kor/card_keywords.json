@@ -1,6 +1,8 @@
 {
   "Ra2_deploy.description": "전개하여 유닛의 대체 효과를 사용합니다.",
   "Ra2_deploy.title": "전개",
+  "garrison.title": "주둔",
+  "garrison.description": "내부의 카드는 자신의 효과를 발동합니다.",
   "Ra2_splash.description": "다른 적에게 50%의 피해를 입힙니다.",
   "Ra2_splash.title": "스플래시",
   "Ra2_unit.description": "보병, 차량, 항공기, 해군을 포함하는 카드 종류입니다.",

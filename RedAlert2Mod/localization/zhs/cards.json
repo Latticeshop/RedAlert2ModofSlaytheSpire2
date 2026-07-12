@@ -188,5 +188,13 @@
     "INDUSTRIAL_PLANT_CARD.title": "工业工厂",
     "INDUSTRIAL_PLANT_CARD.description": "[gold]价格：${DollarNumber}[/gold]。\n-{Discount}%[gold]单位[/gold]造价。",
     "FORCE_FIELD.title": "力场护盾",
-    "FORCE_FIELD.description": "获得 1 层[gold]无实体[/gold]。下回合失去 {EnergyLoss} 点能量。"
+    "FORCE_FIELD.description": "获得 1 层[gold]无实体[/gold]。下回合失去 {EnergyLoss} 点能量。",
+    "BATTLE_FORTRESS.title": "战斗要塞",
+    "BATTLE_FORTRESS.description": "获得 {Block} 点格挡。[gold]部署[/gold]：选择手牌中最多 {StoreCount} 张[gold]士兵[/gold]卡牌[gold]驻扎[/gold]。\n当前存储：{StoredCards}",
+    "BATTLE_FORTRESS.select_prompt": "选择 {0}-{1} 张士兵单位存储。",
+    "BATTLE_FORTRESS.action_prompt": "选择行动",
+    "BATTLE_FORTRESS.attack_option": "攻击（触发融合效果）",
+    "BATTLE_FORTRESS.deploy_option": "部署（存储/取出）",
+    "BATTLE_BUNKER_CARD.title": "战斗碉堡",
+    "BATTLE_BUNKER_CARD.description": "[gold]价格：${DollarNumber}[/gold]。\n选择手牌中最多 {StoreCount} 张[gold]士兵[/gold]卡牌[gold]驻扎[/gold]。\n当前存储：{StoredCards}"
 }

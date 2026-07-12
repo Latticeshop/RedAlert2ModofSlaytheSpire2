@@ -31,6 +31,8 @@
     "PILLBOX_POWER.description": "ターン開始時敵に{Damage}ダメージを2回与え、{Block}防御を獲得する。",
     "SOVIET_PILLBOX_POWER.title": "哨戒砲",
     "SOVIET_PILLBOX_POWER.description": "ターン開始時敵に{Damage}ダメージを2回与え、{Block}防御を獲得する。",
+    "BATTLE_BUNKER_POWER.title": "バトルバンカー",
+    "BATTLE_BUNKER_POWER.description": "毎ターン攻撃する。\n現在保存中: {StoredCards}",
     "STRATEGY_TOWER_DEFENSE_POWER.title": "タワーディフェンス",
     "STRATEGY_TOWER_DEFENSE_POWER.description": "[gold]壁[/gold]を使用した時、[gold]プリズムタワー[/gold]能力を持っていれば1ターン[gold]残影[/gold]を獲得する。",
     "ALLIED_TRANSPORT_SHIP_POWER.title": "連合軍輸送船",

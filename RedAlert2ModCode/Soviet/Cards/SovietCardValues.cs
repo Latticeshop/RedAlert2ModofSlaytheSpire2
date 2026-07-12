@@ -286,6 +286,15 @@ public static class SovietCardValues
 		Stars = 8,
 		DollarValue = 1500
 	};
+
+	/// <summary>战斗碉堡 - 2费技能卡，金卡，选择3张士兵卡牌驻扎（升级5张），价格500</summary>
+	public static CardValueStore.CardValues BattleBunker => new()
+	{
+		Cost = 2,
+		MagicNumber = 3,
+		MagicNumberUpgraded = 2,
+		DollarValue = 500
+	};
 	
 	/// <summary>铁幕装置 - 0费能力卡，金卡，价格2500，每3回合（升级后2回合）获得一张虚无铁幕卡</summary>
 	public static CardValueStore.CardValues IronCurtainCard => new()
@@ -413,6 +422,7 @@ public static class SovietCardValues
 			{ "SOVIETREFINERY", SovietRefinery },
 			{ "SOVIETBATTLELAB", SovietBattleLab },
 			{ "SOVIETTESLACOILCARD", TeslaCoilCard },
+			{ "BATTLEBUNKERCARD", BattleBunker },
 			{ "SOVIETWALLCARD", SovietWall },
 			{ "SOVIETFORTIFIEDWALL", SovietFortifiedWall },
 			{ "SOVIETRADAR", Radar },
@@ -435,6 +445,7 @@ public static class SovietCardValues
 			{ typeof(RedAlert2ModCode.Soviet.Powers.SovietPillboxPower), SovietPillbox.DollarValue },
 			{ typeof(RedAlert2ModCode.Soviet.Powers.SovietTeslaCoilPower), TeslaCoilCard.DollarValue },
 			{ typeof(RedAlert2ModCode.Soviet.Powers.SovietFlakCannonPower), FlakCannon.DollarValue },
+			{ typeof(RedAlert2ModCode.Soviet.Powers.BattleBunkerPower), BattleBunker.DollarValue },
 			{ typeof(RedAlert2ModCode.Soviet.Powers.SovietPowerPlantPower), NuclearReactor.DollarValue },
 			{ typeof(RedAlert2ModCode.Soviet.Powers.IndustrialPlantPower), IndustrialPlant.DollarValue },
 			{ typeof(RedAlert2ModCode.Soviet.Powers.IronCurtainPower), IronCurtainCard.DollarValue },
@@ -460,6 +471,7 @@ public static class SovietCardValues
 			() => ModelDb.Card<SovietBattleLab>(),
 			() => ModelDb.Card<SovietRadar>(),
 			() => ModelDb.Card<SovietTeslaCoilCard>(),
+			() => ModelDb.Card<BattleBunkerCard>(),
 			() => ModelDb.Card<IronCurtainCard>(),
 			() => ModelDb.Card<NuclearMissileSiloCard>()
 		};
@@ -471,7 +483,8 @@ public static class SovietCardValues
 		{
 			() => ModelDb.Card<SovietPillboxCard>(),
 			() => ModelDb.Card<SovietFlakCannon>(),
-			() => ModelDb.Card<SovietTeslaCoilCard>()
+			() => ModelDb.Card<SovietTeslaCoilCard>(),
+			() => ModelDb.Card<BattleBunkerCard>()
 		};
 	}
 	

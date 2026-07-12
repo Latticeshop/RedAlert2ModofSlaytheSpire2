@@ -45,6 +45,8 @@
     "soviet_super_weapon.description": "需要苏军[gold]作战实验室[/gold]前置科技。\n是科技巅峰的造物。",
     "Ra2_deploy.title": "部署",
     "Ra2_deploy.description": "部署后使用单位的另一种效果。",
+    "garrison.title": "驻扎",
+    "garrison.description": "在其中的卡牌会触发自身效果。",
     "building_tech_tree.title": "建筑科技线",
     "building_tech_tree.description": "科技线：基地车能力(解锁发电厂，兵营，矿场)->矿场能力(解锁重工，空军，海军)->重工能力(解锁作战实验室)。",
     "orbital_readiness.title": "轨道战备",

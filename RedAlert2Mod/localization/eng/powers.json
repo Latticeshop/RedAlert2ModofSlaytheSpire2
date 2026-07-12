@@ -31,6 +31,8 @@
     "PILLBOX_POWER.description": "At the start of each turn, deals {Damage} damage to an enemy 2 times and gains {Block} Block.",
     "SOVIET_PILLBOX_POWER.title": "Flak Tower",
     "SOVIET_PILLBOX_POWER.description": "At the start of each turn, deals {Damage} damage to an enemy 2 times and gains {Block} Block.",
+    "BATTLE_BUNKER_POWER.title": "Battle Bunker",
+    "BATTLE_BUNKER_POWER.description": "Attacks each turn.\nCurrently storing: {StoredCards}",
     "STRATEGY_TOWER_DEFENSE_POWER.title": "Tower Defense",
     "STRATEGY_TOWER_DEFENSE_POWER.description": "When you play a [gold]Wall[/gold], if you have the [gold]Prism Tower[/gold] ability, gain 1 turn of [gold]Blur[/gold].",
     "ALLIED_TRANSPORT_SHIP_POWER.title": "Allied Transport Ship",

@@ -31,6 +31,8 @@
     "PILLBOX_POWER.description": "回合开始时对敌人造成 {Damage} 点伤害 2 次，获得 {Block} 点防御。",
     "SOVIET_PILLBOX_POWER.title": "哨戒炮",
     "SOVIET_PILLBOX_POWER.description": "回合开始时对敌人造成 {Damage} 点伤害 2 次，获得 {Block} 点防御。",
+    "BATTLE_BUNKER_POWER.title": "战斗碉堡",
+    "BATTLE_BUNKER_POWER.description": "每回合进行攻击。\n当前存储：{StoredCards}",
     "STRATEGY_TOWER_DEFENSE_POWER.title": "塔防",
     "STRATEGY_TOWER_DEFENSE_POWER.description": "当你打出[gold]围墙[/gold]时，如果拥有[gold]光棱塔[/gold]能力，获得 1 回合[gold]残影[/gold]。",
     "ALLIED_TRANSPORT_SHIP_POWER.title": "盟军运输船",

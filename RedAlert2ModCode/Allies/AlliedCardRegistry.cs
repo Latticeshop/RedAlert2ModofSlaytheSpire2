@@ -34,7 +34,8 @@ public static class AlliedCardRegistry
     public static List<Func<CardModel>> HighTechVehicles { get; } = new()
     {
         () => ModelDb.Card<MirageTank>(),
-        () => ModelDb.Card<PrismTank>()
+        () => ModelDb.Card<PrismTank>(),
+        () => ModelDb.Card<BattleFortress>()
     };
 
     public static List<Func<CardModel>> Aircraft { get; } = new()
@@ -181,6 +182,14 @@ public static class AlliedCardRegistry
     }
 
     /// <summary>
+    /// 获取所有高科技海军单位
+    /// </summary>
+    public static List<CardModel> GetAllHighTechShips()
+    {
+        return HighTechShips.Select(s => s()).ToList();
+    }
+
+    /// <summary>
     /// 获取所有单位卡
     /// </summary>
     public static List<CardModel> GetAllUnits()
@@ -188,8 +197,10 @@ public static class AlliedCardRegistry
         List<CardModel> units = new();
         units.AddRange(GetAllSoldiers());
         units.AddRange(GetAllVehicles());
+        units.AddRange(GetAllHighTechVehicles());
         units.AddRange(GetAllAircraft());
         units.AddRange(GetAllShips());
+        units.AddRange(GetAllHighTechShips());
         return units;
     }
 

@@ -431,6 +431,15 @@ public static class AlliesCardValues
 		DollarValue = 1200
 	};
 
+	/// <summary>战斗要塞 - 2费攻击卡，高科技装甲单位，获得5格挡(升级8)，存储士兵单位并融合效果，价格2000，需要作战实验室</summary>
+	public static CardValueStore.CardValues BattleFortress => new()
+	{
+		Cost = 2,
+		Block = 5,
+		BlockUpgraded = 3,  // 升级后8 = 5 + 3
+		DollarValue = 2000
+	};
+
 	/// <summary>航空母舰 - 2费攻击卡，高科技海军单位，需要作战实验室，价格2000</summary>
 	public static CardValueStore.CardValues AircraftCarrier => new()
 	{
@@ -496,7 +505,8 @@ public static class AlliesCardValues
 			{ "GRIZZLYTANK", GrizzlyTank },
 			{ "IFV", Ifv },
 			{ "ALLIEDMCV", AlliedMCV },
-			{ "CHRONOMINER", ChronoMiner }
+			{ "CHRONOMINER", ChronoMiner },
+			{ "BATTLEFORTRESS", BattleFortress }
 		};
 	}
 	

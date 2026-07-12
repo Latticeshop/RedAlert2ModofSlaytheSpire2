@@ -45,6 +45,8 @@
     "soviet_super_weapon.description": "ソ連[gold]作戦実験室[/gold]が前提技術として必要。\n技術の頂点の創造物。",
     "Ra2_deploy.title": "展開",
     "Ra2_deploy.description": "展開後にユニットの別の効果を使用する。",
+    "garrison.title": "駐留",
+    "garrison.description": "内部のカードは自身の効果を発動します。",
     "building_tech_tree.title": "建物テクノロジーツリー",
     "building_tech_tree.description": "テクノロジーツリー：MCV能力（発電所、兵舎、精製所アンロック）→精製所能力（重工場、空軍、海軍アンロック）→重工場能力（作戦実験室アンロック）。",
     "orbital_readiness.title": "軌道戦備",

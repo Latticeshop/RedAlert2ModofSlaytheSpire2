@@ -188,5 +188,13 @@
     "INDUSTRIAL_PLANT_CARD.title": "工業工場",
     "INDUSTRIAL_PLANT_CARD.description": "[gold]価格：${DollarNumber}[/gold]。\n-{Discount}%[gold]ユニット[/gold]製造費。",
     "FORCE_FIELD.title": "フォースフィールド",
-    "FORCE_FIELD.description": "[gold]無実体[/gold]1層を獲得する。次のターン{EnergyLoss}エナジーを失う。"
+    "FORCE_FIELD.description": "[gold]無実体[/gold]1層を獲得する。次のターン{EnergyLoss}エナジーを失う。",
+    "BATTLE_FORTRESS.title": "バトルフォートレス",
+    "BATTLE_FORTRESS.description": "{Block}ブロックを獲得する。[gold]展開[/gold]：手札中の[gold]兵士[/gold]カードを最大{StoreCount}枚保存して[gold]駐留[/gold]させる。\n現在保存中: {StoredCards}",
+    "BATTLE_FORTRESS.select_prompt": "{0}-{1}枚の兵士ユニットを選択して保存する。",
+    "BATTLE_FORTRESS.action_prompt": "行動選択",
+    "BATTLE_FORTRESS.attack_option": "攻撃（融合効果発動）",
+    "BATTLE_FORTRESS.deploy_option": "展開（保存/取り出し）",
+    "BATTLE_BUNKER_CARD.title": "バトルバンカー",
+    "BATTLE_BUNKER_CARD.description": "[gold]価格：${DollarNumber}[/gold]。\n手札中の[gold]兵士[/gold]カードを最大{StoreCount}枚保存して[gold]駐留[/gold]させる。\n現在保存中: {StoredCards}"
 }
