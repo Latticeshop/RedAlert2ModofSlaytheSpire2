@@ -2,6 +2,9 @@
     "DOLLAR_ANCIENT_RELIC.description": "전투 시작 시 초기 자금 10000을 얻습니다.",
     "DOLLAR_ANCIENT_RELIC.title": "달러의 유산",
     "DOLLAR_ANCIENT_RELIC.flavor": "시작 시 최고 자금.",
+    "LIBYA_RELIC.title": "리비아 국기",
+    "LIBYA_RELIC.description": "유닛 \"테러 트럭\"을 잠금 해제합니다.",
+    "LIBYA_RELIC.flavor": "Watch out for the bumps!",
     "DOLLAR_RELIC.description": "전투 시작 시 초기 자금 5000을 얻습니다.",
     "DOLLAR_RELIC.title": "달러",
     "DOLLAR_RELIC.flavor": "시작 시 최소 자금."

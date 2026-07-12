@@ -303,6 +303,17 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/V3Rocket/Vv3lsed.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/V3Rocket/Vv3lsee.mp3",
         },
+        ["DemolitionTruck"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdemata.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdematb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdematd.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdemate.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdemmoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdemseb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdemsec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdemsed.mp3",
+        },
         ["TyphoonSubmarine"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/SovietUnits/TyphoonSubmarine/Vsubata.mp3",
@@ -380,6 +391,17 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vaposec.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vaposed.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vaposee.mp3",
+        },
+        ["DemolitionTruck"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdemata.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdematb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdematd.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdemate.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdemmoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdemseb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdemsec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdemsed.mp3",
         },
     };
 

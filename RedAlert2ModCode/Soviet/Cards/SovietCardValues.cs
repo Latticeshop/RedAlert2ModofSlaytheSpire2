@@ -295,6 +295,16 @@ public static class SovietCardValues
 		MagicNumberUpgraded = 2,
 		DollarValue = 500
 	};
+
+	/// <summary>自爆卡车 - 1费攻击卡，Token，对全体敌人造成5伤害和10层中毒（升级15层），价格1500</summary>
+	public static CardValueStore.CardValues DemolitionTruck => new()
+	{
+		Cost = 1,
+		Damage = 5,
+		MagicNumber = 10,
+		MagicNumberUpgraded = 5,
+		DollarValue = 1500
+	};
 	
 	/// <summary>铁幕装置 - 0费能力卡，金卡，价格2500，每3回合（升级后2回合）获得一张虚无铁幕卡</summary>
 	public static CardValueStore.CardValues IronCurtainCard => new()
@@ -386,7 +396,8 @@ public static class SovietCardValues
 			{ "TERRORDRONE", TerrorDrone },
 			{ "SOVIETMCV", SovietMCV },
 			{ "WARMINER", WarMiner },
-			{ "V3ROCKET", V3Rocket }
+			{ "V3ROCKET", V3Rocket },
+			{ "DEMOLITIONTRUCKCARD", DemolitionTruck }
 		};
 	}
 	

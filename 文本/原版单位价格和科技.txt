@@ -1,0 +1,161 @@
+🏗️ 盟军 (Allies)
+建筑 (Buildings)
+建筑名称	造价 ($)	电力	前置条件
+建造厂 (Construction Yard)	3000	0	开局自带 / MCV部署
+发电厂 (Power Plant)	800	+200	建造厂
+兵营 (Barracks)	500	-10	建造厂, 发电厂
+矿石精炼厂 (Ore Refinery)	2000	-50	建造厂, 发电厂
+空指部 (Air Force Command HQ)	1000	-50	矿石精炼厂
+战车工厂 (War Factory)	2000	-25	兵营, 矿石精炼厂
+造船厂 (Naval Shipyard)	1000	-25	建造厂, 发电厂, 矿石精炼厂
+维修厂 (Service Depot)	800	-25	战车工厂
+作战实验室 (Battle Lab)	2000	-100	空指部, 战车工厂
+矿石精炼器 (Ore Purifier)	2500	-200	作战实验室
+间谍卫星 (Spy Satellite Uplink)	1500	-100	作战实验室
+超时空传送仪 (Chronosphere)	2500	-200	作战实验室
+天气控制器 (Weather Control Device)	5000	-200	作战实验室
+裂缝产生器 (Gap Generator)	1000	-50	作战实验室
+控制中心 (Robot Control Center)	600	-50	空指部
+防御建筑 (Defenses)
+建筑名称	造价 ($)	电力	前置条件
+机枪碉堡 (Pillbox)	500	0	兵营
+爱国者导弹 (Patriot Missile)	1000	-50	空指部
+光棱塔 (Prism Tower)	1500	-75	作战实验室
+围墙 (Wall)	100	0	兵营
+巨炮 (Grand Cannon)	2000	-	法国专属，需作战实验室
+步兵 (Infantry)
+单位名称	造价 ($)	前置条件
+美国大兵 (G.I.)	200	兵营
+工程师 (Engineer)	500	兵营
+警犬 (Attack Dog)	200	兵营
+火箭飞行兵 (Rocketeer)	600	兵营, 空指部
+间谍 (Spy)	1000	兵营, 作战实验室
+谭雅 (Tanya)	1000	兵营, 作战实验室
+超时空军团兵 (Chrono Legionnaire)	1500	兵营, 作战实验室
+狙击手 (Sniper)	600	英国专属，需空指部
+载具 (Vehicles)
+单位名称	造价 ($)	前置条件
+超时空采矿车 (Chrono Miner)	1400	战车工厂
+灰熊坦克 (Grizzly Tank)	700	战车工厂
+多功能步兵车 (IFV)	600	战车工厂
+幻影坦克 (Mirage Tank)	1000	战车工厂, 作战实验室
+光棱坦克 (Prism Tank)	1200	战车工厂, 作战实验室
+盟军基地车 (MCV)	3000	战车工厂, 维修厂
+入侵者战机 (Harrier)	1200	空指部
+两栖运输艇 (Amphibious Transport)	900	造船厂
+坦克杀手 (Tank Destroyer)	900	德国专属，需战车工厂
+黑鹰战机 (Black Eagle)	1200	韩国专属，需空指部
+战斗要塞 (Battle Fortress)	2000	《尤里的复仇》新增，需战车工厂, 作战实验室
+海军 (Navy)
+单位名称	造价 ($)	前置条件
+驱逐舰 (Destroyer)	1000	造船厂
+海豚 (Dolphin)	500	造船厂
+神盾巡洋舰 (Aegis Cruiser)	1200	造船厂, 作战实验室
+航空母舰 (Aircraft Carrier)	2000	造船厂, 作战实验室
+
+☭ 苏联 (Soviets)
+建筑 (Buildings)
+建筑名称	造价 ($)	电力	前置条件
+建造厂 (Construction Yard)	3000	0	开局自带 / MCV部署
+磁能反应炉 (Tesla Reactor)	600	+150	建造厂
+兵营 (Barracks)	500	-10	建造厂, 磁能反应炉
+矿石精炼厂 (Ore Refinery)	2000	-50	建造厂, 磁能反应炉
+雷达 (Radar Tower)	1000	-50	矿石精炼厂
+战车工厂 (War Factory)	2000	-25	兵营, 矿石精炼厂
+造船厂 (Naval Shipyard)	1000	-25	建造厂, 磁能反应炉, 矿石精炼厂
+维修厂 (Service Depot)	800	-25	战车工厂
+作战实验室 (Battle Lab)	2000	-100	雷达, 战车工厂
+核子反应炉 (Nuclear Reactor)	1000	+200	作战实验室
+复制中心 (Cloning Vats)	2500	-200	作战实验室
+铁幕装置 (Iron Curtain)	2500	-200	作战实验室
+核弹发射井 (Nuclear Missile Silo)	5000	-200	作战实验室
+心灵探测器 (Psychic Sensor)	1000	-50	作战实验室
+工业工厂 (Industrial Plant)	2500	-200	《尤里的复仇》新增，需作战实验室
+防御建筑 (Defenses)
+建筑名称	造价 ($)	电力	前置条件
+哨戒炮 (Pillbox)	500	0	兵营
+防空炮 (Flak Cannon)	1000	-50	雷达
+磁暴线圈 (Tesla Coil)	1500	-75	作战实验室
+围墙 (Wall)	100	0	兵营
+战斗碉堡 (Battle Bunker)	500	0	《尤里的复仇》新增，需建造厂
+步兵 (Infantry)
+单位名称	造价 ($)	前置条件
+动员兵 (Conscript)	100	兵营
+工程师 (Engineer)	500	兵营
+警犬 (Attack Dog)	200	兵营
+防空步兵 (Flak Trooper)	300	兵营, 雷达
+磁暴步兵 (Tesla Trooper)	500	兵营, 雷达
+疯狂伊文 (Crazy Ivan)	600	兵营, 雷达
+尤里 (Yuri)	1200	兵营, 作战实验室
+恐怖分子 (Terrorist)	200	古巴专属，需兵营, 雷达
+辐射工兵 (Desolator)	600	伊拉克专属，需兵营, 雷达
+精英战斗兵 (Boris)	1500	《尤里的复仇》新增英雄单位，需兵营
+载具 (Vehicles)
+单位名称	造价 ($)	前置条件
+武装采矿车 (War Miner)	1400	战车工厂
+犀牛坦克 (Rhino Tank)	900	战车工厂
+防空履带车 (Flak Track)	500	战车工厂
+恐怖机器人 (Terror Drone)	500	战车工厂
+V3火箭发射车 (V3 Launcher)	800	战车工厂, 雷达
+磁能坦克 (Tesla Tank)	1200	战车工厂, 作战实验室
+天启坦克 (Apocalypse Tank)	1750	战车工厂, 作战实验室
+苏联基地车 (MCV)	3000	战车工厂
+基洛夫空艇 (Kirov Airship)	2000	战车工厂, 作战实验室
+自爆卡车 (Demolition Truck)	1500	利比亚专属，需战车工厂, 雷达
+武装直升机 (Attack Helicopter)	1100	《尤里的复仇》新增，需战车工厂, 作战实验室
+海军 (Navy)
+单位名称	造价 ($)	前置条件
+飓风级攻击潜艇 (Typhoon Sub)	1000	造船厂
+海蝎 (Sea Scorpion)	600	造船厂, 雷达
+巨型乌贼 (Giant Squid)	1000	造船厂, 作战实验室
+无畏级战舰 (Dreadnought)	2500	造船厂, 作战实验室
+装甲运兵船 (Amphibious Transport)	900	造船厂
+
+🧠 尤里 (Yuri) - 《尤里的复仇》专属
+建筑 (Buildings)
+建筑名称	造价 ($)	电力	前置条件
+建造厂 (Construction Yard)	3000	0	开局自带 / MCV部署
+生化反应炉 (Bio Reactor)	600	+150	建造厂
+兵营 (Barracks)	500	-10	建造厂, 生化反应炉
+矿石精炼厂 (Ore Refinery)	2000	-50	建造厂, 生化反应炉
+心灵探测器 (Psychic Radar)	1000	-50	矿石精炼厂
+战车工厂 (War Factory)	2000	-25	兵营, 矿石精炼厂
+造船厂 (Naval Shipyard)	1000	-25	建造厂, 生化反应炉, 矿石精炼厂
+维修厂 (Service Depot)	800	-25	战车工厂
+作战实验室 (Battle Lab)	2000	-100	心灵探测器, 战车工厂
+复制中心 (Cloning Vats)	2500	-200	作战实验室
+心灵控制增幅器 (Psychic Dominator)	5000	-200	作战实验室
+基因突变器 (Genetic Mutator)	2500	-200	作战实验室
+部队回收厂 (Grinder)	800	-50	战车工厂
+防御建筑 (Defenses)
+建筑名称	造价 ($)	电力	前置条件
+坦克碉堡 (Tank Bunker)	800	0	兵营
+盖特机炮 (Gattling Cannon)	1000	-50	心灵探测器
+心灵控制塔 (Psychic Tower)	1500	-75	作战实验室
+围墙 (Wall)	100	0	兵营
+步兵 (Infantry)
+单位名称	造价 ($)	前置条件
+尤里新兵 (Yuri Initiate)	200	兵营
+工程师 (Engineer)	500	兵营
+狂兽人 (Brute)	500	兵营
+病毒狙击手 (Virus Sniper)	700	兵营
+尤里复制人 (Yuri Clone)	800	兵营, 心灵探测器
+尤里X (Yuri Prime)	1500	兵营, 作战实验室
+载具 (Vehicles)
+单位名称	造价 ($)	前置条件
+奴隶矿车 (Slave Miner)	1400	战车工厂
+狂风坦克 (Lasher Tank)	700	战车工厂
+盖特坦克 (Gattling Tank)	600	战车工厂
+磁电坦克 (Magnetron)	1000	战车工厂, 作战实验室
+心灵控制车 (Mastermind)	1200	战车工厂, 作战实验室
+尤里基地车 (MCV)	3000	战车工厂
+雷射幽浮 (Floating Disc)	1750	战车工厂, 作战实验室
+海军 (Navy)
+单位名称	造价 ($)	前置条件
+雷鸣攻击潜艇 (Boomer Sub)	1200	造船厂, 作战实验室
+
+💎 特殊与隐藏单位
+单位名称	造价 ($)	获取方式
+超时空突击队	2000	间谍进入盟军作战实验室解锁
+心灵突击队	1000	间谍进入苏联或尤里作战实验室解锁
+尤里改	2000	间谍进入苏联作战实验室解锁（仅原版《红色警戒2》）

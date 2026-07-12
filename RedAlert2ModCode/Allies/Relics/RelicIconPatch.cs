@@ -4,6 +4,7 @@ using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Models;
 using RedAlert2ModCode.Common.Relics;
+using RedAlert2ModCode.Soviet.Relics;
 
 namespace RedAlert2ModCode.Allies.Relics;
 
@@ -20,6 +21,7 @@ public static class RelicIconPatch
     {
         { typeof(DollarRelic), "res://RedAlert2ModResources/images/relics/dollar_relic.png" },
         { typeof(DollarAncientRelic), "res://RedAlert2ModResources/images/relics/doller-ancient.png" },
+        { typeof(LibyaRelic), "res://RedAlert2ModResources/images/relics/flags/libya.png" },
     };
 
     /// <summary>

@@ -15,11 +15,11 @@ public static class SovietTechTreeConfig
             new(typeof(SovietBarracksCard), TechLevel.T1),
             new(typeof(SovietRefinery), TechLevel.T1, unlocksNextTech: true, powerType: typeof(SovietRefineryPower)),
             
-            new(typeof(SovietWarFactory), TechLevel.T2, unlocksNextTech: true, powerType: typeof(SovietWarFactoryPower)),
+            new(typeof(SovietWarFactory), TechLevel.T2, powerType: typeof(SovietWarFactoryPower)),
+            new(typeof(SovietShipyardCard), TechLevel.T2),
+            new(typeof(SovietRadar), TechLevel.T2, powerType: typeof(SovietRadarPower)),
             
-            new(typeof(SovietShipyardCard), TechLevel.T3),
-            new(typeof(SovietRadar), TechLevel.T3),
-            new(typeof(SovietBattleLab), TechLevel.T3),
+            new(typeof(SovietBattleLab), TechLevel.T2, requiredPowers: new[] { typeof(SovietWarFactoryPower), typeof(SovietRadarPower) }),
         };
 
         return new BuildingTechTree(buildings);

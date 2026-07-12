@@ -196,5 +196,7 @@
     "BATTLE_FORTRESS.attack_option": "Attack (trigger fused effects)",
     "BATTLE_FORTRESS.deploy_option": "Deploy (store/retrieve)",
     "BATTLE_BUNKER_CARD.title": "Battle Bunker",
-    "BATTLE_BUNKER_CARD.description": "[gold]Cost: ${DollarNumber}[/gold].\nSelect up to {StoreCount} [gold]Soldier[/gold] cards from your hand for [gold]Garrison[/gold].\nCurrently storing: {StoredCards}"
+    "BATTLE_BUNKER_CARD.description": "[gold]Cost: ${DollarNumber}[/gold].\nSelect up to {StoreCount} [gold]Soldier[/gold] cards from your hand for [gold]Garrison[/gold].\nCurrently storing: {StoredCards}",
+    "DEMOLITION_TRUCK_CARD.title": "Demolition Truck",
+    "DEMOLITION_TRUCK_CARD.description": "[gold]Cost: ${DollarNumber}[/gold]. Deal {Damage} damage to all enemies and apply {IfUpgraded:show:15|{Poison}} Poison. If taking unblocked damage or played when enemies have attack intent: Deal {Damage} damage to all players."
 }

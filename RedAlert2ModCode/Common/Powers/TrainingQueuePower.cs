@@ -283,9 +283,16 @@ public sealed class TrainingQueuePower : PowerModel
                 GD.Print($"[TrainingQueuePower] 单位消耗: 否 - UnitName={UnitName}");
             }
 
+            GD.Print($"[TrainingQueuePower] 检查语音播放 - TrainedCardId={TrainedCardId}");
+
             if (TrainedCardId == "KIROV")
             {
                 PlayKirovDeploySound();
+            }
+
+            if (TrainedCardId == "DEMOLITION_TRUCK_CARD")
+            {
+                PlayDemolitionTruckDeploySound();
             }
 
             await CardPileCmd.AddGeneratedCardToCombat(tempCard, PileType.Hand, Owner.Player);
@@ -293,6 +300,7 @@ public sealed class TrainingQueuePower : PowerModel
     }
 
     private static AudioStreamPlayer? _kirovDeployAudioPlayer;
+    private static AudioStreamPlayer? _demolitionTruckDeployAudioPlayer;
 
     private static void EnsureKirovDeployAudioPlayer()
     {
@@ -303,6 +311,17 @@ public sealed class TrainingQueuePower : PowerModel
         _kirovDeployAudioPlayer.Name = "KirovDeployAudioPlayer";
         var root = Engine.GetMainLoop() as SceneTree;
         root?.Root.AddChild(_kirovDeployAudioPlayer);
+    }
+
+    private static void EnsureDemolitionTruckDeployAudioPlayer()
+    {
+        if (_demolitionTruckDeployAudioPlayer != null && GodotObject.IsInstanceValid(_demolitionTruckDeployAudioPlayer))
+            return;
+
+        _demolitionTruckDeployAudioPlayer = new AudioStreamPlayer();
+        _demolitionTruckDeployAudioPlayer.Name = "DemolitionTruckDeployAudioPlayer";
+        var root = Engine.GetMainLoop() as SceneTree;
+        root?.Root.AddChild(_demolitionTruckDeployAudioPlayer);
     }
 
     private void PlayKirovDeploySound()
@@ -324,6 +343,28 @@ public sealed class TrainingQueuePower : PowerModel
         catch (Exception ex)
         {
             GD.PrintErr($"[TrainingQueuePower] 播放基洛夫出厂音效失败: {ex.Message}");
+        }
+    }
+
+    private void PlayDemolitionTruckDeploySound()
+    {
+        try
+        {
+            EnsureDemolitionTruckDeployAudioPlayer();
+            if (_demolitionTruckDeployAudioPlayer == null) return;
+
+            var soundFile = GD.Load<AudioStream>("res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdemsea_factory.mp3");
+            if (soundFile != null)
+            {
+                _demolitionTruckDeployAudioPlayer.Stream = soundFile;
+                _demolitionTruckDeployAudioPlayer.VolumeDb = -5;
+                _demolitionTruckDeployAudioPlayer.Play();
+                GD.Print("[TrainingQueuePower] 播放自爆卡车出厂音效");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[TrainingQueuePower] 播放自爆卡车出厂音效失败: {ex.Message}");
         }
     }
 

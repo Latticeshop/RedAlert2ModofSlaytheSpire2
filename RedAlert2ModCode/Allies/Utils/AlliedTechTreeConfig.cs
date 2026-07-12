@@ -15,11 +15,11 @@ public static class AlliedTechTreeConfig
             new(typeof(AlliesBarracksCard), TechLevel.T1),
             new(typeof(AlliedRefinery), TechLevel.T1, unlocksNextTech: true, powerType: typeof(AlliedRefineryPower)),
             
-            new(typeof(AlliedWarFactory), TechLevel.T2, unlocksNextTech: true, powerType: typeof(AlliedWarFactoryPower)),
+            new(typeof(AlliedWarFactory), TechLevel.T2, powerType: typeof(AlliedWarFactoryPower)),
+            new(typeof(AlliesShipyardCard), TechLevel.T2),
+            new(typeof(AirForceCommand), TechLevel.T2, powerType: typeof(AlliedAirForceCommandPower)),
             
-            new(typeof(AirForceCommand), TechLevel.T3),
-            new(typeof(AlliesShipyardCard), TechLevel.T3),
-            new(typeof(AlliedBattleLab), TechLevel.T3),
+            new(typeof(AlliedBattleLab), TechLevel.T2, requiredPowers: new[] { typeof(AlliedWarFactoryPower), typeof(AlliedAirForceCommandPower) }),
         };
 
         return new BuildingTechTree(buildings);

@@ -196,5 +196,7 @@
     "BATTLE_FORTRESS.attack_option": "攻击（触发融合效果）",
     "BATTLE_FORTRESS.deploy_option": "部署（存储/取出）",
     "BATTLE_BUNKER_CARD.title": "战斗碉堡",
-    "BATTLE_BUNKER_CARD.description": "[gold]价格：${DollarNumber}[/gold]。\n选择手牌中最多 {StoreCount} 张[gold]士兵[/gold]卡牌[gold]驻扎[/gold]。\n当前存储：{StoredCards}"
+    "BATTLE_BUNKER_CARD.description": "[gold]价格：${DollarNumber}[/gold]。\n选择手牌中最多 {StoreCount} 张[gold]士兵[/gold]卡牌[gold]驻扎[/gold]。\n当前存储：{StoredCards}",
+    "DEMOLITION_TRUCK_CARD.title": "自爆卡车",
+    "DEMOLITION_TRUCK_CARD.description": "[gold]价格：${DollarNumber}[/gold]。对敌方全体造成 {Damage} 点伤害和 {IfUpgraded:show:15|{Poison}} 层中毒。若受到没有格挡的伤害或打出时对面有攻击意图：对全体玩家也造成 {Damage} 点伤害。"
 }

@@ -21,7 +21,8 @@ public class SovietRelicPool : RelicPoolModel
         return new RelicModel[]
         {
             ModelDb.Relic<RedAlert2ModCode.Common.Relics.DollarRelic>(),
-            ModelDb.Relic<RedAlert2ModCode.Common.Relics.DollarAncientRelic>()
+            ModelDb.Relic<RedAlert2ModCode.Common.Relics.DollarAncientRelic>(),
+            ModelDb.Relic<RedAlert2ModCode.Soviet.Relics.LibyaRelic>()
         };
     }
 }

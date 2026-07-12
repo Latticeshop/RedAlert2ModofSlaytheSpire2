@@ -40,6 +40,7 @@ public static class SovietCardRegistry
     public static List<Func<CardModel>> RadarVehicles { get; } = new()
     {
         () => ModelDb.Card<V3Rocket>(),
+        () => ModelDb.Card<DemolitionTruckCard>(),
     };
 
     public static List<Func<CardModel>> Aircraft { get; } = new()

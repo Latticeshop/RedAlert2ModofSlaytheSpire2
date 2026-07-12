@@ -60,6 +60,16 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             }
         }
 
+        return GetLocStringRawText(locStringObj);
+    }
+
+    private static string GetLocStringRawText(object? locStringObj)
+    {
+        if (locStringObj == null) return string.Empty;
+        if (locStringObj is string str) return str;
+
+        Type locStringType = locStringObj.GetType();
+
         System.Reflection.MethodInfo? rawMethod = locStringType.GetMethod("GetRawText");
         if (rawMethod != null)
         {
@@ -524,7 +534,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
 
     private string GetCardDescription(CardModel card, bool isUpgraded)
     {
-        string desc = GetLocStringText(card.Description);
+        string desc = GetLocStringRawText(card.Description);
         if (string.IsNullOrEmpty(desc))
         {
             return string.Empty;

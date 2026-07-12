@@ -192,5 +192,7 @@
     "BATTLE_FORTRESS.attack_option": "공격 (융합 효과 발동)",
     "BATTLE_FORTRESS.deploy_option": "전개 (저장/인출)",
     "BATTLE_BUNKER_CARD.title": "배틀 벙커",
-    "BATTLE_BUNKER_CARD.description": "[gold]비용: ${DollarNumber}[/gold].\n손에 있는 [gold]보병[/gold] 카드를 최대 {StoreCount}개까지 저장하여 [gold]주둔[/gold]시킵니다.\n현재 저장: {StoredCards}"
+    "BATTLE_BUNKER_CARD.description": "[gold]비용: ${DollarNumber}[/gold].\n손에 있는 [gold]보병[/gold] 카드를 최대 {StoreCount}개까지 저장하여 [gold]주둔[/gold]시킵니다.\n현재 저장: {StoredCards}",
+    "DEMOLITION_TRUCK_CARD.title": "파괴 트럭",
+    "DEMOLITION_TRUCK_CARD.description": "[gold]비용: ${DollarNumber}[/gold]. 모든 적에게 {Damage}의 피해를 입히고 {IfUpgraded:show:15|{Poison}} 중독을 적용합니다. 막지 않은 피해를 입거나 적이 공격 의도를 가지고 있을 때 사용하면: 모든 플레이어에게 {Damage}의 피해를 입힙니다."
 }
