@@ -76,6 +76,8 @@
     "SOVIET_FLAK_CANNON_POWER.description": "ターン開始時、攻撃意図の敵が1人いるごとに{Block}ブロックを獲得する。",
     "SOVIET_TERROR_DRONE_POWER.title": "テロドローン",
     "SOVIET_TERROR_DRONE_POWER.description": "毎ターン{Count}ダメージを受ける。対象が回復した時に消去される。",
+    "SOVIET_GIANT_SQUID_POWER.title": "巨大イカ",
+    "SOVIET_GIANT_SQUID_POWER.description": "巻き付き叩き、{Count}ダメージを与える。",
     "SOVIET_TESLA_COIL_POWER.title": "テスラコイル",
     "SOVIET_TESLA_COIL_POWER.description": "ターン開始時敵に{Damage}ダメージを与える。",
     "SOVIET_TESLA_COIL_CHARGE_POWER.title": "コイル充電",

@@ -86,6 +86,8 @@
     "SOVIET_SHIPYARD_POWER.title": "소련 조선소",
     "SOVIET_TERROR_DRONE_POWER.description": "매 턴 {Count}의 피해를 입습니다. 대상이 회복하면 제거됩니다.",
     "SOVIET_TERROR_DRONE_POWER.title": "테러 드론",
+    "SOVIET_GIANT_SQUID_POWER.description": "감싸고 때리며, {Count}의 피해를 입힙니다.",
+    "SOVIET_GIANT_SQUID_POWER.title": "거대 오징어",
     "SOVIET_TESLA_COIL_CHARGE_POWER.description": "중첩마다 테슬라 코일의 다음 피해가 50%씩 증가합니다. 최대 3중첩.",
     "SOVIET_TESLA_COIL_CHARGE_POWER.title": "테슬라 코일 충전",
     "SOVIET_TESLA_COIL_POWER.description": "매 턴 시작 시, 적에게 피해를 {Damage} 줍니다.",

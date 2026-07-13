@@ -127,6 +127,15 @@ public static class SovietCardValues
 		MagicNumberUpgraded = 1,   // 升级后2 = 1 + 1
 		DollarValue = 500
 	};
+
+	/// <summary>巨型乌贼 - 1费攻击卡，赋予1(升级2)层虚弱，赋予3(升级5)层巨型乌贼，价格1000</summary>
+	public static CardValueStore.CardValues GiantSquid => new()
+	{
+		Cost = 1,
+		MagicNumber = 3,           // 巨型乌贼层数
+		MagicNumberUpgraded = 2,   // 升级后5 = 3 + 2
+		DollarValue = 1000
+	};
 	
 	/// <summary>苏军基地车 - 0费，价格3000</summary>
 	public static CardValueStore.CardValues SovietMCV => new()
@@ -416,7 +425,8 @@ public static class SovietCardValues
 			{ "SOVIETTRANSPORTSHIP", SovietTransportShip },
 			{ "FLAKSUBMARINE", FlakSubmarine },
 			{ "TYPHOONSUBMARINE", TyphoonSubmarine },
-			{ "DREADNOUGHT", Dreadnought }
+			{ "DREADNOUGHT", Dreadnought },
+			{ "GIANTSQUID", GiantSquid }
 		};
 	}
 	

@@ -327,6 +327,12 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/TyphoonSubmarine/Vsubsec.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/TyphoonSubmarine/Vsubsee.mp3",
         },
+        ["GiantSquid"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/GiantSquid/Vsqumova.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/GiantSquid/Vsqumovb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/GiantSquid/Vsqusela.mp3",
+        },
         ["SovietAttackDog"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/SovietUnits/DogSoldier/Idogatca.mp3",

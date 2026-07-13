@@ -29,7 +29,6 @@ public sealed class TerrorDrone : CardModel
     protected override List<DynamicVar> CanonicalVars => new()
     {
         new IntVar("TerrorDroneStacks", Values.MagicNumber),
-        new IntVar("TerrorDroneStacksUpgraded", Values.MagicNumber + Values.MagicNumberUpgraded),
         new IntVar("SlowStacks", 1)
     };
 
@@ -44,11 +43,8 @@ public sealed class TerrorDrone : CardModel
     {
         UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Soviet");
         
-        int terrorDroneStacks = Values.MagicNumber;
-        if (IsUpgraded)
-            terrorDroneStacks += Values.MagicNumberUpgraded;
+        int terrorDroneStacks = DynamicVars["TerrorDroneStacks"].IntValue;
 
-        // 赋予恐怖机器人
         await PowerCmd.Apply<SovietTerrorDronePower>(
             new ThrowingPlayerChoiceContext(),
             play.Target,
@@ -57,7 +53,6 @@ public sealed class TerrorDrone : CardModel
             this
         );
 
-        // 赋予缓慢
         await PowerCmd.Apply<SlowPower>(
             new ThrowingPlayerChoiceContext(),
             play.Target,
@@ -69,6 +64,6 @@ public sealed class TerrorDrone : CardModel
 
     protected override void OnUpgrade()
     {
-        // 升级后恐怖机器人层数增加
+        DynamicVars["TerrorDroneStacks"].UpgradeValueBy(Values.MagicNumberUpgraded);
     }
 }

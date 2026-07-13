@@ -53,6 +53,7 @@ public static class SovietCardRegistry
         () => ModelDb.Card<FlakSubmarine>(),
         () => ModelDb.Card<TyphoonSubmarine>(),
         () => ModelDb.Card<Dreadnought>(),
+        () => ModelDb.Card<GiantSquid>(),
     };
 
     public static List<Func<CardModel>> BuildingCards { get; } = SovietCardValues.CreateBuildingCardFactories();

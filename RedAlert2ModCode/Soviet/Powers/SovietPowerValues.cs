@@ -80,7 +80,7 @@ public static class SovietPowerValues
 
 	public static CardValueStore.CardValues V3RocketPower => new()
 	{
-		Damage = 15,
+		Damage = 12,
 		DamageUpgraded = 3
 	};
 
