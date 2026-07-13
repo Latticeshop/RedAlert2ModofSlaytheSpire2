@@ -58,7 +58,7 @@
   "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.1-0r.next": "응답",
   "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.1-1r.char": "기술은 우리의 도구일 뿐, 목발이 아니다. 그리고 우린 그걸 쓰는 법을 안다.",
   "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.1-1r.next": "계속",
-  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.1-2r.ancient": "그럼 증명해봐. 그 '도구'가 뭘 할 수 있는지 보여줘.",
+  "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.1-2r.ancient": "그럼 증명해봐. 그 \u0027도구\u0027가 뭘 할 수 있는지 보여줘.",
   "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.2-0r.ancient": "[red]연합군[/red], 네 끈기는... 예상 밖이군.",
   "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.2-0r.next": "응답",
   "THE_ARCHITECT.talk.REDALERT2MODCODE-ALLIES.2-1r.char": "예상 밖이라고? 이게 바로 연합군이 하는 일이다. 우린 적응하고, 극복하고, 승리한다.",
@@ -83,5 +83,6 @@
   "THE_ARCHITECT.talk.REDALERT2MODCODE-SOVIET.2-2r.ancient": "그럼 올라가라. 이 탑의 정상에서 네 가치를 증명해봐.",
   "THE_ARCHITECT.title": "아키텍트",
   "VAKUU.epithet": "최초의 악마",
-  "VAKUU.title": "바쿠"
+  "VAKUU.title": "바쿠",
+  "THE_ARCHITECT.epithet": ""
 }
