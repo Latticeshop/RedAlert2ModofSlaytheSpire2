@@ -183,6 +183,8 @@
     "NUCLEAR_MISSILE_SILO_CARD.description": "[gold]価格：${DollarNumber}[/gold]。\n[gold]{TurnsRemaining}[/gold]ターンごとに、0費用の[gold]{NuclearAttackName}[/gold]カードを手札に加える。",
     "NUCLEAR_ATTACK.title": "核攻撃",
     "NUCLEAR_ATTACK.description": "[gold]スーパーウェポン[/gold]。\n全ての敵に{Damage}ダメージを与え、{Poison}層の毒を与える。",
+    "NUCLEAR_PLANT_CARD.title": "原子力発電所",
+    "NUCLEAR_PLANT_CARD.description": "[gold]ハイテク建物[/gold]。\n[gold]ソ連作戦実験室[/gold]が必要。\n[gold]価格：${DollarNumber}[/gold]。\n毎ターン{Energy}エネルギーを獲得する。{Damage}ダメージの無防備ダメージを受けると爆発し、全ての敵に{Poison}層の毒を与える。",
     "KITING_CARD.title": "カイティング",
     "KITING_CARD.description": "このカードを使用した後、このターンに[gold]ユニット[/gold]カードを使用するごとに{Power}ブロックを獲得する。",
     "ORE_REFINERY_CARD.title": "鉱石精製器",

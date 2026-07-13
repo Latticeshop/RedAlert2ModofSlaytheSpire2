@@ -264,18 +264,44 @@ new(typeof(SovietRadar), TechLevel.T3),
 
 ---
 
-### 7. 播放建筑音效
+### 7. 播放建筑音效（强制规则：全部建筑一律使用通用建筑部署语音）
 
-#### 在 OnPlay() 中调用
+> **⚠️ 强制规定**：所有建筑卡牌（苏军/盟军/公共）**必须统一调用** `BuildingSoundHelper.PlayBuildingPlaceSound()` 播放通用建筑部署音效（资源：`CommonSFX/building_place.wav`），**禁止为单个建筑定义或尝试加载专属部署音效**。
+>
+> **理由（核电站踩坑教训）**：
+> - 如果尝试加载不存在的专属音效（如 `nuclear_plant_deploy.mp3`），Godot 会在控制台打印 `Error loading resource: ... Condition "err != OK" is true. Returning: ret` 以及一长串 C# backtrace，污染日志且可能影响其他资源加载稳定性。
+> - 建筑部署音效在红警系列中本身就是统一听觉标识，通用音效符合玩家预期。
+> - 减少音频资源目录碎片化，降低 Godot `.import` 文件数量和 PCK 包体积。
+
+#### 在 OnPlay() 中调用（唯一正确写法）
+
 ```csharp
 protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 {
+    // ↓ 第一行就调用，必须写在任何 await 之前
     BuildingSoundHelper.PlayBuildingPlaceSound();
-    // ... 建筑逻辑
+
+    // ... 扣除资金、申请对应 Power 等建筑逻辑
 }
 ```
 
-> **例外情况**：资源类卡牌（金矿、宝石矿）和围墙卡牌不需要播放建筑音效
+#### 错误写法（不要这样写）
+
+```csharp
+// ❌ 错误1：尝试 GD.Load 不存在的专属音效
+var sound = GD.Load<AudioStream>("res://.../nuclear_plant_deploy.mp3"); // Godot会报错！
+if (sound != null) { ... } else { BuildingSoundHelper.PlayBuildingPlaceSound(); }
+
+// ❌ 错误2：每次 OnPlay new AudioStreamPlayer，不使用单例导致对象泄漏
+var audioPlayer = new AudioStreamPlayer();
+root.Root.AddChild(audioPlayer);
+audioPlayer.Stream = sound; audioPlayer.Play();
+```
+
+> **例外情况（不播放音效）**：
+> - 资源类卡牌（黄金矿 GoldMineCard、宝石矿 GemMineCard、黄金矿柱、油井 OilDerrickCard）——已有资金/储备相关音效或反馈
+> - 围墙类卡牌（Wall / Fence / Barricade 等轻量级防御）
+> - 出售建筑类卡牌（SellBuildingCard 等）→ 使用 `BuildingSoundHelper.PlayBuildingSellSound()`
 
 ---
 
@@ -913,7 +939,7 @@ private static List<Func<CardModel>> CreatePowerCards()
 | 能力图标补丁 | ❌ | ✅ | ✅ | ✅（共用） |
 | 科技解锁配置 | ✅ | ✅ | ❌ | ❌ |
 | 本地化 | ✅ | ✅ | ✅ | ✅（双份） |
-| 音效播放 | ✅ | ✅ | ❌ | ❌（资源卡） |
+| 音效播放 | ✅ UnitVoiceHelper | ✅ **强制统一：BuildingSoundHelper.PlayBuildingPlaceSound()，禁止专属音效** | ❌ | ❌（资源卡免播放） |
 
 ---
 
@@ -1208,6 +1234,49 @@ protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 | 数据副本创建 | ✅ | 在同步方法中创建数据副本 |
 | 索引传递 | ✅ | 通过索引而非对象引用传递选择结果 |
 | 使用 ShowSelectionWithSync 调用 | ✅ | 在卡牌逻辑中使用同步方法 |
+
+---
+
+## 十一、能力创建：叠层 vs 独立实例 快速决策
+
+创建建筑/战备/资源类 Power 时，第一时间决定 `InstanceType`，否则后续返工成本极高。
+
+### 三步速选法
+
+| 步骤 | 问题 | 选 Yes | 选 No |
+|-----|------|--------|-------|
+| ① | 这个能力是否含有**自定义实例字段**？<br>（例：CurrentHealth、CurrentReserve、CustomCounter、per-building timer 等） | → 进入步骤② | → **InstanceType = None**（叠 Amount） |
+| ② | 再打一张同类卡牌，新字段的值是否可以**和现有实例的字段值不同**？<br>（例：升级卡 vs 非升级卡血量不同；不同宝石矿的独立储备不同） | → **InstanceType = Instanced**（独立实例，不叠 Amount） | → **InstanceType = None**（叠 Amount，共享一套字段） |
+| ③ | 多人联机下，效果是否要按施放者(Player)分别计算？ | → **InstanceType = InstancedPerApplier** | → 回到步骤②即可 |
+
+> **什么是"自定义实例字段"？** 除了 `PowerModel.Amount` 框架自带层数外，你自己在 Power 类里 `public int Xxx { get; set; }` 加的任何字段都是。只要有，99% 场景应该选 `Instanced`。
+
+### 一句话口诀
+
+- **有自定义字段 → Instanced（每次都新建）**
+- **全靠 Amount 过日子 → None（让框架自动叠加）**
+
+### 快速对照：红警Mod常见场景正确答案
+
+| 卡牌 / 能力 | 正确 InstanceType | 为什么 |
+|------------|-------------------|-------|
+| 核电站 → NuclearReactorCorePower | `Instanced` | 每个核电站有独立 `CurrentHealth`，爆炸/受伤互不干扰 |
+| 宝石矿 → GemMinePower | `Instanced` | 代码里已写 `public int CurrentReserve`，每座矿独立储备 |
+| 黄金矿 → GoldMinePower | `Instanced` | 同上，有独立 `CurrentReserve` |
+| 雷达 → SovietRadarPower / AlliedRadarPower | `Instanced` / `None` 均可 | 如果只做解锁标志，建议选 `None` + Amount 叠层；如果后续要加每雷达独立扫描计数，选 `Instanced` |
+| 作战实验室 → SovietBattleLabPower | `Instanced` | 出售时需要逐个确认，且可能加独立科技点字段 |
+| 碉堡 / 磁暴线圈 / 光棱塔 | `Instanced` | 每座建筑独立战斗状态、独立伤害计数 |
+| 资金 → DollarPower / RaidDollarPower | `None` | 只有 Amount 一个数值，所有来源合并 |
+| 飞鹰500kg / 闪电风暴 战备 | `Instanced` | 多战备独立触发、独立倒计时 |
+| 力量 / 敏捷 / 中毒 / 虚弱 / 易伤（原版） | `None` | 纯数值 Amount |
+
+### 常见坑速查
+
+| 现象 | 根因 | 修复 |
+|-----|------|------|
+| 配置了 `InstanceType = Instanced`，但打了 N 张卡只显示 1 个图标，右下角数字是 N | OnPlay 里手写了 `OfType<Xxx>().FirstOrDefault() → ModifyAmount`，绕过了 Instanced 机制 | 删掉这段手动叠层，**直接 `PowerCmd.Apply<T>(amount: 1, …)`** |
+| `InstanceType = None`，打第二张卡抛异常 "Trying to add multiple instances of a non-instanced power" | Creature.AddPower 做了校验。说明你确实需要多实例，但参数写错了 | 改为 `InstanceType = Instanced` |
+| 宝石矿/核电站的 `CurrentXxx` 字段值，在打第二张卡时会被第一张卡的逻辑串改 | 第一张卡实例被 Find 到然后手动 ModifyAmount，但自定义字段没同步。根源还是"不该手动叠层却叠了" | 同上，让 Instanced 自己工作 |
 
 ---
 

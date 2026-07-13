@@ -89,7 +89,6 @@ public sealed class V3RocketPower : PowerModel
     }
 
     private static AudioStreamPlayer? _launchAudioPlayer;
-    private static AudioStreamPlayer? _explosionAudioPlayer;
 
     private static void EnsureLaunchAudioPlayer()
     {
@@ -101,18 +100,6 @@ public sealed class V3RocketPower : PowerModel
         var root = Engine.GetMainLoop() as SceneTree;
         root?.Root.AddChild(_launchAudioPlayer);
         GD.Print("[V3RocketPower] 创建发射音效播放器");
-    }
-
-    private static void EnsureExplosionAudioPlayer()
-    {
-        if (_explosionAudioPlayer != null && GodotObject.IsInstanceValid(_explosionAudioPlayer))
-            return;
-
-        _explosionAudioPlayer = new AudioStreamPlayer();
-        _explosionAudioPlayer.Name = "V3ExplosionAudioPlayer";
-        var root = Engine.GetMainLoop() as SceneTree;
-        root?.Root.AddChild(_explosionAudioPlayer);
-        GD.Print("[V3RocketPower] 创建爆炸音效播放器");
     }
 
     private void PlayV3LaunchSound()
@@ -142,47 +129,7 @@ public sealed class V3RocketPower : PowerModel
 
     private void PlayRandomExplosionSound()
     {
-        try
-        {
-            var explosionFiles = new List<string>
-            {
-                "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_01.wav",
-                "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_02.wav",
-                "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_03.wav",
-                "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_04.wav",
-                "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_05.wav",
-                "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_06.wav",
-                "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_07.wav",
-                "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_08.wav",
-                "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_09.wav",
-                "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_10.wav",
-                "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_11.wav",
-                "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_12.wav",
-            };
-
-            var rng = Owner?.Player?.RunState?.Rng?.CombatCardSelection;
-            int randomIndex = rng?.NextInt(explosionFiles.Count) ?? (int)GD.RandRange(0, explosionFiles.Count - 1);
-            string randomFile = explosionFiles[randomIndex];
-
-            EnsureExplosionAudioPlayer();
-            if (_explosionAudioPlayer == null) return;
-
-            var soundFile = GD.Load<AudioStream>(randomFile);
-            if (soundFile != null)
-            {
-                _explosionAudioPlayer.Stream = soundFile;
-                _explosionAudioPlayer.Play();
-                GD.Print($"[V3RocketPower] 播放随机爆炸音效: {randomFile}");
-            }
-            else
-            {
-                GD.PrintErr($"[V3RocketPower] 无法加载爆炸音效: {randomFile}");
-            }
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr($"[V3RocketPower] 播放爆炸音效失败: {ex.Message}");
-        }
+        AudioHelper.PlayRandomExplosionSound();
     }
 
     public override async Task AfterSideTurnStart(CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)

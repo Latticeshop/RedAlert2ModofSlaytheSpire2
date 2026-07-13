@@ -90,6 +90,8 @@
     "KIROV_POWER.description": "毎ターン{Count}ダメージを受ける。対象が死亡した時、他の敵に移動する。",
     "V3_ROCKET_POWER.title": "V3ロケット",
     "V3_ROCKET_POWER.description": "ターン開始時[gold]ターゲットロック[/gold]した敵に{Damage}ダメージを与える。",
+    "NUCLEAR_REACTOR_CORE_POWER.title": "原子炉コア",
+    "NUCLEAR_REACTOR_CORE_POWER.description": "毎ターン[blue]{Energy}[/blue]エネルギーを獲得する。{Health}ダメージの無防備ダメージを受けると爆発し、全ての敵とプレイヤーに{Poison}層の毒を与える。\n現在の耐久値：[red]{CurrentHealth}[/red]",
     "STEEL_FLOOD_POWER.title": "鉄の洪水",
     "STEEL_FLOOD_POWER.description": "ユニットカードが手札に入る時、即座に自動的に使用される。",
     "ALLIED_BARRACKS_POWER.title": "連合軍兵舎",

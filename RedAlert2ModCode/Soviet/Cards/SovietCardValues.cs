@@ -251,6 +251,18 @@ public static class SovietCardValues
 		DollarValueUpgraded = 1000
 	};
 
+	/// <summary>核电站 - 0费能力卡，每回合获得3能量（升级5），受到10点（升级15点）未格挡伤害爆炸，价格1000</summary>
+	public static CardValueStore.CardValues NuclearPlant => new()
+	{
+		Cost = 0,
+		MagicNumber = 3,           // 基础能量获取
+		MagicNumberUpgraded = 2,   // 升级后+2，总共5
+		Damage = 10,               // 基础爆炸阈值
+		DamageUpgraded = 5,        // 升级后+5，总共15
+		Repeat = 5,                // 爆炸时赋予中毒层数
+		DollarValue = 1000
+	};
+
 	/// <summary>工业工厂 - 0费能力卡，-25%单位造价（升级后-40%），价格1200</summary>
 	public static CardValueStore.CardValues IndustrialPlant => new()
 	{

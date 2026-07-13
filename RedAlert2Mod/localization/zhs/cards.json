@@ -183,6 +183,8 @@
     "NUCLEAR_MISSILE_SILO_CARD.description": "[gold]价格：${DollarNumber}[/gold]。\n每过 [gold]{TurnsRemaining}[/gold] 回合，将一张0费消耗的[gold]{NuclearAttackName}[/gold]加入手牌。",
     "NUCLEAR_ATTACK.title": "核弹攻击",
     "NUCLEAR_ATTACK.description": "[gold]超级武器[/gold]。\n对全部敌人造成 {Damage} 点伤害，赋予 {Poison} 层中毒。",
+    "NUCLEAR_PLANT_CARD.title": "核电站",
+    "NUCLEAR_PLANT_CARD.description": "[gold]价格：${DollarNumber}[/gold]。每回合获得 {Energy} 点能量。受到 {Damage} 点未格挡伤害时爆炸，对全部敌人和全部玩家赋予 {Poison} 层中毒。",
     "KITING_CARD.title": "走A",
     "KITING_CARD.description": "打出此牌后，你在这个回合每打出一张[gold]单位[/gold]牌，获得 {Power} 点格挡。",
     "ORE_REFINERY_CARD.title": "矿石精炼器",
@@ -198,7 +200,7 @@
     "BATTLE_FORTRESS.attack_option": "攻击（触发融合效果）",
     "BATTLE_FORTRESS.deploy_option": "部署（存储/取出）",
     "BATTLE_BUNKER_CARD.title": "战斗碉堡",
-    "BATTLE_BUNKER_CARD.description": "[gold]价格：${DollarNumber}[/gold]。\n选择手牌中最多 {StoreCount} 张[gold]士兵[/gold]卡牌[gold]驻扎[/gold]。\n当前存储：{StoredCards}",
+    "BATTLE_BUNKER_CARD.description": "[gold]价格：${DollarNumber}[/gold]。选择手牌中最多 {StoreCount} 张[gold]士兵[/gold]卡牌[gold]驻扎[/gold]。\n当前存储：{StoredCards}",
     "DEMOLITION_TRUCK_CARD.title": "自爆卡车",
-    "DEMOLITION_TRUCK_CARD.description": "[gold]价格：${DollarNumber}[/gold]。对敌方全体造成 {Damage} 点伤害和 {IfUpgraded:show:15|{Poison}} 层中毒。若受到没有格挡的伤害或打出时对面有攻击意图：对全体玩家也造成 {Damage} 点伤害。"
+    "DEMOLITION_TRUCK_CARD.description": "对敌方全体造成 {Damage} 点伤害和 {IfUpgraded:show:15|{Poison}} 层中毒。若受到没有格挡的伤害或打出时对面有攻击意图：对全体玩家也造成 {Damage} 点伤害。"
 }

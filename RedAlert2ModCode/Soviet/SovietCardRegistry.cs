@@ -80,6 +80,7 @@ public static class SovietCardRegistry
         cards.Add(() => ModelDb.Card<IndustrialPlantCard>());
         cards.Add(() => ModelDb.Card<MassProductionCard>());
         cards.Add(() => ModelDb.Card<ForceField>());
+        cards.Add(() => ModelDb.Card<NuclearPlantCard>());
         return cards;
     }
 

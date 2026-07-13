@@ -102,6 +102,8 @@
     "NIGHT_HAWK_CHOPPER.title": "나이트호크 초퍼",
     "NUCLEAR_ATTACK.description": "[gold]슈퍼 웨폰[/gold].\n모든 적에게 피해를 {Damage} 주고 중독을 {Poison} 부여합니다.",
     "NUCLEAR_ATTACK.title": "핵공격",
+    "NUCLEAR_PLANT_CARD.title": "원자력 발전소",
+    "NUCLEAR_PLANT_CARD.description": "[gold]하이텍 건물[/gold].\n[gold]소련 작전 실험실[/gold]이 필요합니다.\n[gold]가격: ${DollarNumber}[/gold].\n매 턴 {Energy} 에너지를 얻습니다. {Damage} 의 무방비 피해를 받으면 폭발하여 모든 적에게 {Poison} 중독을 부여합니다.",
     "NUCLEAR_MISSILE_SILO_CARD.description": "[gold]비용: ${DollarNumber}[/gold].\n[gold]핵미사일 사일로[/gold]를 얻습니다.\n{IfUpgraded:show:핵 피해가 증가합니다.|}",
     "NUCLEAR_MISSILE_SILO_CARD.title": "핵미사일 사일로",
     "NUCLEAR_REACTOR.description": "[gold]비용: ${DollarNumber}[/gold]. 카드를 {IfUpgraded:show:7|10}장 뽑을 때마다 에너지 1을 얻습니다.",

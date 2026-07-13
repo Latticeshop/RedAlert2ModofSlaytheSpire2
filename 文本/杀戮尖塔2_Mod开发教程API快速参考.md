@@ -683,6 +683,304 @@ public class MyBuff : PowerModel
 }
 ```
 
+### 叠层与实例化策略（PowerInstanceType + PowerStackType）
+
+#### PowerInstanceType（枚举：实例化方式）
+控制 `PowerCmd.Apply` 时是"叠加Amount到已有实例"还是"新建独立实例"。通过解包 `sts2.dll` 的 `PowerCmd.cs:167-173` 确认行为：
+
+| 值 | PowerCmd.Apply 行为 | 适用场景 | 官方示例 / 红警Mod示例 |
+|---|---|---|---|
+| `None`（默认） | 用 `target.GetPower(Id)` 查找同ID实例 → 找到就 `ModifyAmount` 叠加Amount，找不到才新建。Creature.AddPower 会校验，非Instanced类型禁止重复添加多个实例。 | 纯数值Buff/Debuff，不需要每个实例独立状态 | Strength、Dexterity、Vulnerable、RaidDollarPower（资金） |
+| `Instanced` | **查找existing直接返回null → 每次都新建独立实例**，互不干扰 | 每个实例需要独立的自定义状态/倒计时 | TheBombPower（炸弹倒计时）、GemMinePower（独立储备）、NuclearReactorCorePower（独立血量） |
+| `InstancedPerApplier` | 按 `Applier`（施放者）匹配实例 → 同施放者叠加Amount，不同施放者新建实例 | 多人联机场景，需要按玩家区分效果来源 | OblivionPower |
+
+> **⚠️ 常见坑**：配置了 `InstanceType = Instanced` 后，又在 `ApplyPower()` 里手写 `OfType<YourPower>().FirstOrDefault() → ModifyAmount`，会完全绕过 Instanced 语义导致无法多实例！
+
+#### PowerStackType（枚举：层数显示方式）
+控制UI中层数的可视化样式，与 InstanceType 正交可自由组合：
+
+| 值 | 说明 | 典型搭配 |
+|---|---|---|
+| `Counter` | 右下角显示Amount数值（例："力量 2"） | 纯数值叠层 + None，或 Instanced 但每个实例有Amount |
+| `Single` | 不显示层数，只显示图标 | 状态类能力：Weak、Frail、Spirit |
+
+#### 场景速选："要叠层/不要叠层"怎么选？
+
+| 你的需求 | InstanceType | StackType | 卡牌侧OnPlay写法 |
+|---------|-------------|-----------|----------------|
+| 再打一张会增加效果数值（例：两张力量卡=力量+2） | `None` | `Counter` | 直接 `PowerCmd.Apply<T>(amount, ...)`，框架自动叠加 |
+| 再打一张是"新的独立效果单元"（例：两张炸弹=两个独立倒计时；两个核电站=两套独立血量） | `Instanced` | `Counter` / `Single` | 直接 `PowerCmd.Apply<T>(amount: 1, ...)`，每次新建实例 |
+| 多人联机时同一个效果按玩家区分（例：玩家A放的Oblivion和玩家B放的各算各的） | `InstancedPerApplier` | `Counter` | 直接 `PowerCmd.Apply<T>(amount, ..., applier)` |
+
+> **红警Mod常见选择速查**
+> - 建筑类能力（核电站、矿场、雷达、宝石矿、作战实验室等）→ 每个建筑独立状态 → **`Instanced`**
+> - 资金/能量/科技点（DollarPower、TechPointPower等）→ 所有来源合并数值 → **`None`**
+> - 中毒、易伤、虚弱、力量等Debuff/Buff → 纯数值合并 → **`None`**
+> - 战备卡类（飞鹰500kg、闪电风暴等回合触发器）→ 多个战备独立触发 → **`Instanced`**
+
+---
+
+### Power 高级模式（推荐）：自监听「未格挡伤害」+ 动态状态描述注入
+
+> **为什么需要这个模式？** 自爆卡车（DemolitionTruckCard）的传统实现是把监听逻辑写在一个配套的「遗物」里，玩家必须先获得遗物才能生效 → 耦合严重、每个需要监听伤害的能力都得配一个遗物。核电站（NuclearReactorCorePower）提供了一种更通用的新思路：**不借助任何遗物实例，Harmony 直接挂框架广播点把「未格挡伤害」推送给目标上的 Power，再通过 Description getter 的 LocString 动态注入把自定义状态字段（如 CurrentHealth）实时显示到悬浮 tip 上。** 这是以后最常遇到的「带独立状态 + 受击触发」类能力的标准写法。
+
+---
+
+#### 一、整体链路（不创建任何遗物）
+
+```
+ CreatureCmd.Damage（解包内部结算完格挡）
+       ↓
+  框架对所有 HookListener 广播 RelicModel.AfterDamageReceived
+   （N 个 Relic/Power/Card 监听器各自触发一次）
+       ↓
+  ★ Harmony Postfix：挂「方法」不挂「遗物实例」→ 偷听广播
+    ├─ 过滤：UnblockedDamage > 0 且 target 身上有目标 Power
+    ├─ 外层去重：_processedGlobalEvents（引用hash，N 次广播只放行 1 次）
+    └─ 遍历：target.Powers.OfType<YourPower>() → 逐个调用你的 Power.ReceiveUnblockedDamage()
+       ↓
+  ★ Power 内部处理（每个实例独立）
+    ├─ 防重入：_isExploding 连锁触发标志
+    ├─ 内层去重：_processedDamageEventIds（再保险，确保同一事件不重复扣血）
+    ├─ 更新自定义状态：CurrentHealth -= UnblockedDamage
+    └─ 触发阈值：CurrentHealth <= 0 → 爆炸/自爆/其他效果
+       ↓
+  ★ Description getter 动态注入（每次悬浮tip才计算，不用手动刷新）
+    new LocString(...).Add("CurrentHealth", CurrentHealth).Add(...)
+```
+
+---
+
+#### 二、为什么挂 `RelicModel.AfterDamageReceived` 而不是 `PowerModel.AfterTakeDamage`？
+
+| Hook 点 | 参数里是否有 `DamageResult`（含 UnblockedDamage） | 需要遗物实例存在 | 推荐 |
+|---------|---------------------------------------------------|----------------|------|
+| `RelicModel.AfterDamageReceived(..., DamageResult result, ...)` | ✅ 有（`result.BlockedDamage` + `result.UnblockedDamage`，**格挡已完全算完**） | ❌ **不需要**（我们 Patch 的是方法签名，挂在广播链出口偷听完就走；不需要玩家/怪物身上有任何遗物） | ⭐⭐⭐ **唯一推荐** |
+| `PowerModel.AfterTakeDamage(DamageResult result)` | ⚠️ 部分版本有，但 PowerModel 事件链在 CreatureCmd 中是单独广播，**顺序与 Relic 不同步**，且部分版本没有 DamageResult 重载 | ✅ Power 实例本身需要存在（当然有，因为是 Power 自监听），但**事件广播不稳定**（解包源码中 Power 事件可能被战斗结束守卫跳过） | ❌ 不推荐 |
+| 直接 Patch `CreatureCmd.Damage` Postfix | ❌ 方法内部的 local 变量拿不到，且 `DamageResult` 还在栈上没构造完 | - | ❌ 极易 DLL 初始化失败（async 状态机 + 迭代链） |
+| 传统模式：写一个配套 Relic 类实现 AfterDamageReceived | ✅ 有 | ✅ **必须创建遗物实例 + 注册遗物池 + 玩家获得遗物** | ❌ 耦合重（例：自爆卡车旧实现） |
+
+---
+
+#### 三、完整可复制模板
+
+##### 模板 Part 1：Harmony 广播补丁（放在 `{阵营}/Patches/` 目录）
+
+```csharp
+using Godot;
+using HarmonyLib;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.ValueProps;
+using YourModCode.YourFaction.Powers;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+
+namespace YourModCode.YourFaction.Patches;
+
+[HarmonyPatch]
+public static class YourPowerDamagePatch
+{
+    private static MethodBase TargetMethod()
+    {
+        // ★ 精准定位带 DamageResult 的重载，避免匹配到其他重载
+        return typeof(RelicModel).GetMethod("AfterDamageReceived",
+            BindingFlags.Public | BindingFlags.Instance,
+            null,
+            new[]
+            {
+                typeof(PlayerChoiceContext),
+                typeof(Creature),       // target：受伤者
+                typeof(DamageResult),   // result：★含 Blocked/Unblocked
+                typeof(ValueProp),
+                typeof(Creature),       // dealer：攻击者（可空）
+                typeof(CardModel)       // cardSource：来源卡（可空）
+            },
+            null);
+    }
+
+    // ★ 外层去重：同一次伤害被 N 个 Relic 回调 N 次 -> 只放行一次
+    private static readonly HashSet<int> _processedGlobalEvents = new();
+
+    private static async void Postfix(
+        PlayerChoiceContext choiceContext,
+        Creature target, DamageResult result, ValueProp props,
+        Creature? dealer, CardModel? cardSource)
+    {
+        // 快速失败 4 层过滤（95% 调用在这里 return，性能极低开销）
+        if (target == null || !target.IsAlive || result == null || result.UnblockedDamage <= 0)
+            return;
+
+        var powers = target.Powers?.OfType<YourStatefulPower>().ToList();
+        if (powers == null || powers.Count == 0)
+            return;
+
+        // 引用地址哈希（值类型 DamageResult 取 boxed 引用地址稳定）
+        int eventHashCode = target.GetHashCode()
+                            ^ RuntimeHelpers.GetHashCode(result)
+                            ^ (dealer != null ? RuntimeHelpers.GetHashCode(dealer) : 0)
+                            ^ (cardSource != null ? RuntimeHelpers.GetHashCode(cardSource) : 0);
+
+        if (!_processedGlobalEvents.Add(eventHashCode))
+            return;
+
+        // 防止超长战斗内存膨胀，超过阈值自动清空
+        const int maxEvents = 4096;
+        if (_processedGlobalEvents.Count > maxEvents)
+            _processedGlobalEvents.Clear();
+
+        // InstanceType=Instanced 时同一 Creature 上可能有多个独立实例 -> 逐个推送
+        foreach (var power in powers)
+        {
+            power.ReceiveUnblockedDamage((int)result.UnblockedDamage, eventHashCode);
+        }
+    }
+}
+```
+
+##### 模板 Part 2：Power 自接收 + 动态描述注入（放在 `{阵营}/Powers/` 目录）
+
+```csharp
+using Godot;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Models;
+using System.Collections.Generic;
+
+namespace YourModCode.YourFaction.Powers;
+
+public class YourStatefulPower : PowerModel
+{
+    private static readonly PowerValueStore.PowerValues Values = YourFactionPowerValues.YourStatefulPower;
+
+    public override PowerType Type => PowerType.Buff;
+    public override PowerStackType StackType => PowerStackType.Counter;
+    public override PowerInstanceType InstanceType => PowerInstanceType.Instanced; // ★独立状态用 Instanced
+
+    // ★ 自定义独立状态字段（决定了必须用 Instanced）
+    public int CurrentHealth { get; set; } = (int)Values.Damage;
+    public int CurrentEnergy { get; set; } = (int)Values.MagicNumber;
+    public bool IsUpgraded { get; set; } = false;
+
+    // 防重入 + 内层去重
+    private bool _isExploding = false;
+    private readonly HashSet<int> _processedDamageEventIds = new();
+
+    public new string PackedIconPath => "res://YourModResources/images/packed/powers/your_power.png";
+
+    // ★★★ 动态描述：每次悬浮 tip 时才 new，注入实时状态（不需要手动刷新）
+    public override LocString Description
+    {
+        get
+        {
+            var locString = new LocString("powers", base.Id.Entry + ".description");
+            // 常量类注入（升级态/基础态覆盖）
+            locString.Add("Energy", IsUpgraded ? (int)(Values.MagicNumber + Values.MagicNumberUpgraded) : CurrentEnergy);
+            locString.Add("Health", IsUpgraded ? (int)(Values.Damage + Values.DamageUpgraded) : (int)Values.Damage);
+            locString.Add("Poison", (int)Values.Repeat);
+            // ★ 实时变化的自定义字段直接注入（CurrentHealth 扣了就立刻显示新值）
+            locString.Add("CurrentHealth", CurrentHealth);
+            return locString;
+        }
+    }
+
+    // ★ 静态 Apply 方法（卡牌 OnPlay 调用这个，不要手写 OfType→ModifyAmount，会破坏 Instanced 语义）
+    public static async Task<YourStatefulPower?> ApplyToCreature(Creature owner, bool isUpgraded = false)
+    {
+        var power = await PowerCmd.Apply<YourStatefulPower>(
+            new ThrowingPlayerChoiceContext(), owner, 1m, owner, null);
+        if (power != null)
+        {
+            power.CurrentEnergy = isUpgraded ? (int)(Values.MagicNumber + Values.MagicNumberUpgraded) : (int)Values.MagicNumber;
+            power.CurrentHealth = isUpgraded ? (int)(Values.Damage + Values.DamageUpgraded) : (int)Values.Damage;
+            power.IsUpgraded = isUpgraded;
+        }
+        return power;
+    }
+
+    // ★ 接收补丁推送来的未格挡伤害（由 Part 1 的 Postfix 逐个调用）
+    public void ReceiveUnblockedDamage(int unblockedDamage, int eventHashCode)
+    {
+        if (Owner == null || !Owner.IsAlive || unblockedDamage <= 0) return;
+
+        // 1. 防重入：爆炸/效果过程中产生的新伤害（例如 Poison 扣血）直接忽略，防止连锁
+        if (_isExploding)
+        {
+            GD.Print($"[YourStatefulPower] 效果进行中，忽略连锁伤害 {unblockedDamage}");
+            return;
+        }
+
+        // 2. 内层去重：再保险（如果外层 hash 因极端情况冲突，这里兜底）
+        if (!_processedDamageEventIds.Add(eventHashCode))
+        {
+            GD.Print($"[YourStatefulPower] 同事件已处理，跳过 {eventHashCode:X8}");
+            return;
+        }
+
+        // 3. 更新独立状态字段
+        CurrentHealth -= unblockedDamage;
+        GD.Print($"[YourStatefulPower] 受 {unblockedDamage} 点未格挡伤害，剩余 {CurrentHealth}");
+
+        // 4. 阈值触发（示例：血量<=0 爆炸，可替换为其他阈值）
+        if (CurrentHealth <= 0)
+        {
+            _ = TriggerEffectAsync();
+        }
+    }
+
+    private async Task TriggerEffectAsync()
+    {
+        _isExploding = true;
+        try
+        {
+            // ... 你的效果：播放音效、造成伤害、施加 Poison、清场等
+            // 注意：使用 PowerCmd.Apply 施加的 Poison/其他 可能再次触发伤害，
+            //       但 _isExploding=true 已在 ReceiveUnblockedDamage 开头拦截，不会再连锁
+
+            // 最后处理：Instanced 每个实例独立，一般直接 Remove 整个实例
+            // 若你用 Amount 叠层（InstanceType=None），则改为 ModifyAmount -1 重置状态
+            await PowerCmd.Remove(this);
+        }
+        finally
+        {
+            // 防御性代码：如果 Remove 成功（Owner不再包含this），永久锁死
+            if (Owner == null || !Owner.Powers.Contains(this))
+                _isExploding = true;
+        }
+    }
+}
+```
+
+---
+
+#### 四、动态描述注入原理（为什么不需要手动刷新 UI？）
+
+| 传统方式（不推荐） | 动态 getter 方式（核电站用的，推荐） |
+|-------------------|------------------------------------|
+| 把 Description 当缓存字段，在事件触发后手动修改或赋值 `this.description = ...` | **Description 是一个 `override LocString get` 属性，每次访问（鼠标悬浮）才 new 一个新 LocString 并注入当前字段值** |
+| 问题：修改完容易漏掉某些入口，或框架内部缓存不刷新导致玩家看到旧数值 | **零手动刷新**：玩家鼠标悬浮的那个瞬间，拿到的永远是 CurrentHealth/CurrentEnergy 最新值 |
+
+---
+
+#### 五、常见坑速查
+
+| 现象 | 根因 | 修复 |
+|-----|------|------|
+| 一刀伤害扣了 N 次血（N = 怪物身上 Relic 数 + 玩家 Relic 数） | 只写了内层去重没写外层 `_processedGlobalEvents` | Part 1 补丁加全局 `HashSet<int>` 按引用 hash 去重 |
+| 爆炸触发后，Poison 扣血又触发第二次爆炸 → 连锁死亡 | 没加 `_isExploding` 防重入标志 | `ReceiveUnblockedDamage` 开头 `if (_isExploding) return;`，TriggerEffectAsync 第一行 `_isExploding = true;` |
+| CurrentHealth 描述显示和战斗日志对不上 | `Description.get` 里用了 `Values.Damage` 常量而不是注入字段值 | 必须 `locString.Add("CurrentHealth", CurrentHealth)` 注入**字段**，不是注入常量 |
+| InstanceType=Instanced 但打了两张卡只看到一个图标 Amount=2 | `ApplyToCreature` 里写了 `OfType().FirstOrDefault() → ModifyAmount` 手动叠层 | 删掉手动叠层，直接 `PowerCmd.Apply<T>(amount: 1, ...)` 让框架按 Instanced 语义每次新建 |
+| CurrentHealth 在 `ReceiveUnblockedDamage` 修改后没显示变化 → 显示的总是初始值 | 用了字段缓存（`private LocString _desc;` 或在构造函数里 new LocString 保存） | LocString 必须写在 Description getter 里，每次 get 重新 new |
+
 ### 能力图标配置
 
 由于 `PowerModel.Icon` 属性不是 `virtual` 的，无法通过重写来设置自定义图标。需要使用 `PowerIconPatch` 来拦截图标获取：

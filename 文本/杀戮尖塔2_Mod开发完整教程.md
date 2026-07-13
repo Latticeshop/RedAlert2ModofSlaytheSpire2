@@ -1214,12 +1214,44 @@ public sealed class MyBlockOnPlayBuff : PowerModel
 
 ### 6.2 能力属性
 
-| 属性 | 说明 |
-|------|------|
-| `Type` | Buff / Debuff |
-| `StackType` | Counter(有层数) / Single(无层数) |
-| `IsInstanced` | 重复施加时是否创建独立实例 |
-| `AllowNegative` | 是否允许层数为负数 |
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `Type` | `PowerType` | Buff（增益）/ Debuff（减益） |
+| `StackType` | `PowerStackType` | Counter（右下角显示层数数值，如力量）/ Single（无层数只显示图标，如虚弱） |
+| `InstanceType` | `PowerInstanceType`（枚举，推荐使用） | 重复施加时的实例策略，见下表详解 |
+| `AllowNegative` | `bool` | 是否允许 Amount 为负数 |
+| `IsInstanced`（旧） | `bool` | 过时API，等效于 `InstanceType = Instanced` / `None`，建议改用枚举版 |
+
+#### PowerInstanceType 枚举详解（解包 `sts2.dll` 源码确认）
+
+控制 `PowerCmd.Apply` 时是"叠加 Amount 到已有实例"还是"新建独立实例"，直接决定能力"会不会叠层"。
+
+| 枚举值 | PowerCmd.Apply 内部行为（PowerCmd.cs:167-173） | 含义与适用场景 | 红警Mod示例 |
+|--------|-----------------------------------------------|---------------|------------|
+| `None`（默认） | 用 `target.GetPower(Id)` 查找同ID实例 → 找到就 ModifyAmount 叠加 Amount，找不到才新建。Creature.AddPower 还会校验非 Instanced 类型不许重复添加。 | 再打一张 = 在同一份效果上"加数值"，**不需要每个实例独立状态**。 | DollarPower（资金）、TechPointPower（科技点）、Strength/Dexterity/Vulnerable 等纯数值 Buff/Debuff |
+| `Instanced` | **查找 existing 直接返回 null → 每次 Apply 都新建独立实例**，每个实例 Amount 独立。 | 再打一张 = "又多了一个独立单元"，每个实例需要**独立的自定义字段/状态/倒计时**。 | 核电站（独立血量）、宝石矿/黄金矿（独立储备）、飞鹰500kg/闪电风暴（独立战备触发计数）、作战实验室（独立生产序列）、自爆卡车（独立爆炸触发器） |
+| `InstancedPerApplier` | 按 `Applier`（施放者）匹配实例 → 同一施放者叠加 Amount，不同施放者新建实例。 | 多人联机场景下按玩家区分效果。 | 联机模式下不同玩家分别施加的削弱类效果。 |
+
+> **⚠️ 最常见的坑**：`InstanceType` 已经设为 `Instanced`（要独立实例），但在卡牌 OnPlay 里又手写 `owner.Powers.OfType<YourPower>().FirstOrDefault() → ModifyAmount`，这段手动查找和叠加会完全绕过框架的 InstanceType 机制，导致永远叠不上独立实例。正确做法：**`Instanced` + 直接 Apply，让框架自己每次新建。**
+
+#### 场景速选："我这能力到底要叠层（Amount）还是不叠层（独立实例）？"
+
+| 场景问题 | 选择 | 参数配置 |
+|---------|------|---------|
+| 再打一张力量卡，是"力量+2"，还是又多了一个"力量图标"？ | 数值相加，**叠层** | `InstanceType = None` + `StackType = Counter` |
+| 再打一张核电站卡，是"核电站血量更厚"，还是又多了一座独立的核电站？ | 多一座独立建筑，**不叠层（独立实例）** | `InstanceType = Instanced` + `StackType = Counter/Single` |
+| 再打一张宝石矿卡，是"合并到同一个储备值"，还是"每座矿独立记储备"？ | 每座矿独立 → **Instanced**（当前红警Mod实现）<br>合并储备 → **None** + 手动 AddReserve | 根据玩法选 |
+| 战备类技能：再打一张飞鹰500kg，是"伤害加倍"还是"每回合多触发一次空袭"？ | 独立触发 → **Instanced**<br>数值加倍 → **None** | 根据玩法选 |
+
+#### 红警Mod全能力默认配置速查表
+
+| 能力类型 | InstanceType | 理由 |
+|---------|-------------|------|
+| 建筑类（核电站、矿场、雷达、作战实验室、重工、兵营、碉堡、线圈、光棱塔等） | `Instanced` | 每座建筑独立，出售时需要逐个确认 |
+| 资源计数（资金 DollarPower、能量、科技点） | `None` | 所有来源合并一个数值 |
+| 单位计数（单位血量、单位面板实例） | 对应单位实例独立管理 | 不走 Power 叠层 |
+| 战斗状态（中毒 Poison、虚弱 Weak、力量 Strength、格挡 Block） | `None` | 原版机制，纯数值 |
+| 战备/回合触发（飞鹰500kg、闪电风暴、核弹冷却等） | `Instanced` | 多战备独立触发，互不干扰 |
 
 ### 6.3 常用事件钩子
 
@@ -1244,7 +1276,136 @@ await PowerCmd.Apply<MyBlockOnPlayBuff>(target, amount, source, sourceCard);
 await PowerCmd.Remove(powerInstance);
 ```
 
-### 6.5 能力图标配置
+---
+
+### 6.5 Power 高级模式（推荐）：不借助遗物，Power 自监听「未格挡伤害」+ 动态状态描述注入
+
+#### 旧模式（自爆卡车）vs 新模式（核电站）对比
+
+这是以后"带独立状态 + 受击触发"类能力（地雷、炮塔、自爆单位、护盾装置、可破坏建筑等）**一定会反复遇到**的设计选择。先把两种方案的差异一次性讲透，避免走弯路。
+
+| 维度 | 旧模式：遗物中写监听（如自爆卡车） | **新模式：Harmony 广播补丁 + Power 自监听（如核电站） ⭐ 推荐** |
+|------|----------------------------------|-------------------------------------------------------------|
+| **耦合结构** | 能力逻辑 + 遗物逻辑两个类，必须先有遗物才能触发监听 | **只有 Power 一个类**，Harmony 补丁充当"事件总线"，不产生任何游戏内实体 |
+| **遗物实例必须存在？** | ✅ 是。玩家没有该遗物 → 能力根本无法响应伤害事件 | ❌ **不需要**。Postfix 挂的是 `RelicModel.AfterDamageReceived` 的「方法签名」→ 所有 HookListener 经过的广播出口，不要求任何遗物存在 |
+| **UnblockedDamage 精度** | ✅ 同精度（都是同一个 Hook 点） | ✅ 同精度（都是同一个 Hook 点） |
+| **多个同类能力（多座核电站 / 多辆自爆卡车）** | 需要遗物内部遍历 `OfType<YourPower>()` 逐个处理，还要处理"多遗物叠加 + 多实例"的双重去重 | **天然解耦**：补丁统一做一次外层去重，然后遍历 powers.ForEach(p.Receive())，每个 Power 独立去重 |
+| **触发者身份** | 怪物/中立生物受击时遗物不监听（遗物只在玩家身上）→ 怪物带能力（如 Boss 身上有核装置）无法触发 | **任何 Creature 受击都能触发**（Postfix 参数 target 是受伤者，不区分玩家/怪物），对 Boss 战设计非常友好 |
+| **代码复用性** | 每个需要监听伤害的能力要配一个遗物类 + 遗物注册 + 遗物获取条件（卡牌 OnPlay 中给玩家加遗物） | **一个补丁支持 N 种 Power**：只需在 Postfix 的 OfType 行里 `switch` 或调用多个 `DispatchToPower<T>()` 即可 |
+| **反模式风险** | 玩家身上会有大量"看不见但实际存在的监听遗物"，战斗结束时如果没正确清理，可能泄漏状态 | 零额外游戏实体。补丁只做转发，不持有任何玩家状态 |
+
+#### 新模式五步实现（完整工程落地）
+
+和 API 快速参考中的完整模板一致，这里再按"完整教程"节奏拆解知识点：
+
+##### 第 1 步：理解「为什么 RelicModel.AfterDamageReceived 不需要遗物存在」
+
+sts2.dll 的 CreatureCmd.Damage 结算完格挡后，会执行一段固定的广播链：
+
+```csharp
+// 伪代码： CreatureCmd.Damage 内部
+foreach (var listener in combatState.IterateCombatHookListeners())
+{
+    if (listener is RelicModel relic)
+        relic.AfterDamageReceived(ctx, target, result, props, dealer, cardSource);  // ★我们 Postfix 这个
+    else if (listener is PowerModel power)
+        power.AfterTakeDamage(ctx, dealer, target, result, props, cardSource);       // 不稳定，不推荐
+    else if (listener is CardModel card)
+        card.AfterDamageReceived(ctx, target, result, props, dealer, cardSource);
+}
+```
+
+`Harmony Postfix` 的本质是：**在 RelicModel.AfterDamageReceived 这个方法「每次被调用完」之后，插入我们自己的代码**。
+
+- 它不关心调用者是 Relic1 还是 Relic5，也不关心玩家身上有没有 Relic
+- 只要框架"准备/正在"广播（即任何 Relic 实例将要/已经执行 AfterDamageReceived 方法体）→ 我们的 Postfix 就能偷听到参数
+- 所以 Postfix 被触发 N 次 = 本次战斗有 N 个 Relic/其他 HookListener 在接收广播 = 需要外层 `_processedGlobalEvents` 去重 N→1
+
+##### 第 2 步：补丁只做三件事（单一职责）
+
+不要在补丁里写具体业务逻辑（比如爆炸、施加 Poison）。补丁只负责：
+
+```
+过滤（95% 快速失败 return） → 去重（N次广播变1次） → 分发 target.Powers.OfType<YourPower>().Each(p.Receive())
+```
+
+##### 第 3 步：Power 自接收 — 每个实例独立处理自己的状态
+
+`ReceiveUnblockedDamage(int unblockedDamage, int eventHashCode)` 是 Power 自己的 public 方法，做三件事：
+
+```
+_isExploding 防连锁 → _processedDamageEventIds 内层去重 → CurrentHealth -= unblocked → 阈值判断
+```
+
+去重为什么要两层？用表格讲透：
+
+| 层次 | 发生时机 | 解决什么问题 |
+|------|---------|-------------|
+| 外层 `_processedGlobalEvents`（补丁静态字段） | 补丁 Postfix 入口（**所有 Power 共用同一个 hashset**） | 5 个 Relic 收到同一次伤害 → Postfix 触发 5 次 → 外层 hash 命中 4 次 return，1 次继续分发 |
+| 内层 `_processedDamageEventIds`（Power 实例字段） | Power.Receive() 内部（**每个 Power 实例各有自己的 hashset**） | 极端情况：前一次 hash 刚好和新一次碰撞 + 怪物恰好有 2 座核电站实例 A/B → 外层 hash 碰撞认为是同一次只发 1 次 → 内层每个实例自己记录，A 命中跳过 B 也命中跳过 = 零概率错漏 + 也兜住"前一次没清干净 4096 重置边界"bug |
+
+##### 第 4 步：Description getter 动态注入（状态显示 = 零手动刷新）
+
+这一步的原理和"为什么 `{CurrentHealth}` 能实时显示"是同一个知识点：
+
+- SlayTheSpire 2 的 `LocString` 不是"存了值的字符串"，是"值绑定方案 + 访问时求值"
+- 框架每次需要渲染能力悬浮 tip（鼠标移上去、战斗结束结算、过场动画展示等）都会调一次 `power.Description` → **触发 getter**
+- 所以在 getter 里写 `locString.Add("CurrentHealth", CurrentHealth)` → 注入的是那个瞬间字段的当前值 → 玩家看到的永远是最新的
+
+```csharp
+// 正确写法（每次 get 重新 new + 注入当前字段值）
+public override LocString Description
+{
+    get
+    {
+        var locString = new LocString("powers", Id.Entry + ".description");
+        locString.Add("CurrentHealth", CurrentHealth);  // 字段，不是常量
+        return locString;
+    }
+}
+
+// 错误写法 1：构造函数里 new 一次存字段，后续永远显示初始值
+private LocString _cachedDesc;  // ← 字段缓存，永远不刷新
+public MyPower() { _cachedDesc = new LocString(...).Add("CurrentHealth", Values.Damage); }
+public override LocString Description => _cachedDesc;  // ← 永远是初始值
+
+// 错误写法 2：Description.get 里注入常量，虽然每次 new 但显示旧值
+locString.Add("CurrentHealth", Values.Damage);  // ← Values 是常量，不是 CurrentHealth 字段
+```
+
+##### 第 5 步：防重入（爆炸引起的 Poison 再触发爆炸必须拦住）
+
+这是"带副作用的伤害型效果"最容易炸的点。用状态机理解：
+
+```
+正常状态: _isExploding = false
+   ↓ 受击
+触发爆炸: _isExploding = true;  // 先设标志，再做任何副作用
+   ↓ 施加 Poison（PowerCmd.Apply<PoisonPower>）
+   ↓ Poison 立即结算回合内 tick（CreatureCmd.Damage）
+   ↓ CreatureCmd.Damage 又广播 RelicModel.AfterDamageReceived
+   ↓ 补丁又 Postfix，又遍历 OfType<NuclearReactorCorePower>，又调 Receive()
+   ↓ Receive() 第一行：
+     if (_isExploding) { GD.Print("爆炸进行中，忽略"); return; }  // ★就拦在这里！
+   ↓ 不会再扣血，不会连锁触发第二次、第三次爆炸
+   ↓ 施加完 Poison，回到 TriggerEffectAsync 尾部
+   ↓ PowerCmd.Remove(this) 移除能力实例
+```
+
+如果没这个标志，典型日志会这样（本次调试早期真的出现过）：
+
+```
+受 11 点未格挡伤害，血量 -7 → 爆炸音效 → 受 11 点（再次扣血）→ 爆炸音效 → 受 11 点
+（连锁 30+ 次，最后才打印"赋予中毒"，因为 Poison 一直在结算里排队）
+```
+
+---
+
+#### 何时用旧模式（遗物监听）？
+
+只有一种情况可以接受遗物模式：**监听逻辑天然和玩家身份绑定，且需要在多次战斗间持续生效**（比如"所有建筑获得 +2 血量上限"这种遗物效果）。除此之外，所有"战斗内、能力本身需要响应伤害"的情况，一律用核电站模式——代码更少、耦合更低、精度更高、不污染遗物池。
+
+### 6.6 能力图标配置（原 6.5，序号顺延）
 
 由于 `PowerModel.Icon` 属性不是 `virtual` 的，无法通过重写来设置自定义图标。需要使用 `PowerIconPatch` 来拦截图标获取：
 

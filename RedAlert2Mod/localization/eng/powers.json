@@ -90,6 +90,8 @@
     "KIROV_POWER.description": "Takes {Count} damage each turn. Transfers to another enemy when the target dies.",
     "V3_ROCKET_POWER.title": "V3 Rocket",
     "V3_ROCKET_POWER.description": "Deal {Damage} damage to the [gold]Target Locked[/gold] enemy at the start of turn.",
+    "NUCLEAR_REACTOR_CORE_POWER.title": "Nuclear Reactor Core",
+    "NUCLEAR_REACTOR_CORE_POWER.description": "Gain [blue]{Energy}[/blue] Energy each turn. Explodes when taking {Health} unblocked damage, applying {Poison} Poison to ALL enemies and players.\nCurrent Health: [red]{CurrentHealth}[/red]",
     "STEEL_FLOOD_POWER.title": "Steel Flood",
     "STEEL_FLOOD_POWER.description": "When a unit card enters your hand, it is automatically played.",
     "ALLIED_BARRACKS_POWER.title": "Allied Barracks",

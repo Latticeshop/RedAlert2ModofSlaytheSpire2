@@ -183,6 +183,8 @@
     "NUCLEAR_MISSILE_SILO_CARD.description": "[gold]Cost: ${DollarNumber}[/gold].\nEvery [gold]{TurnsRemaining}[/gold] turns, add a 0-cost [gold]{NuclearAttackName}[/gold] to your hand.",
     "NUCLEAR_ATTACK.title": "Nuclear Attack",
     "NUCLEAR_ATTACK.description": "[gold]Super Weapon[/gold].\nDeals {Damage} damage to all enemies and applies {Poison} Poison.",
+    "NUCLEAR_PLANT_CARD.title": "Nuclear Plant",
+    "NUCLEAR_PLANT_CARD.description": "[gold]High Tech Building[/gold].\nRequires [gold]Soviet Battle Lab[/gold] to play.\n[gold]Cost: ${DollarNumber}[/gold].\nGain {Energy} Energy each turn. Explodes when taking {Damage} unblocked damage, applying {Poison} Poison to all enemies.",
     "KITING_CARD.title": "Kiting",
     "KITING_CARD.description": "After playing this card, every time you play a [gold]Unit[/gold] card this turn, gain {Power} Block.",
     "ORE_REFINERY_CARD.title": "Ore Refinery",

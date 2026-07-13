@@ -48,7 +48,7 @@
     "garrison.title": "驻扎",
     "garrison.description": "在其中的卡牌会触发自身效果。",
     "building_tech_tree.title": "建筑科技线",
-    "building_tech_tree.description": "科技线：基地车能力(解锁发电厂，兵营，矿场)->矿场能力(解锁重工，空军，海军)->重工能力(解锁作战实验室)。",
+    "building_tech_tree.description": "科技线：基地车能力(解锁发电厂，兵营，矿场)->矿场能力(解锁重工，空军，海军)->重工+雷达能力(解锁作战实验室)。",
     "orbital_readiness.title": "轨道战备",
     "orbital_readiness.description": "召唤轨道飞行器进行打击。",
     "terror_drone.title": "恐怖机器人",

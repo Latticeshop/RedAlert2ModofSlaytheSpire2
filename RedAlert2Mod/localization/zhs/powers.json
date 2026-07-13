@@ -90,6 +90,8 @@
     "KIROV_POWER.description": "每回合受到 {Count} 点伤害。当目标死亡时，转移到其他敌人。",
     "V3_ROCKET_POWER.title": "V3火箭",
     "V3_ROCKET_POWER.description": "回合开始对[gold]目标锁定[/gold]敌人造成 {Damage} 点伤害。",
+    "NUCLEAR_REACTOR_CORE_POWER.title": "核子反应炉",
+    "NUCLEAR_REACTOR_CORE_POWER.description": "每回合获得 [blue]{Energy}[/blue] 点能量。受到 {Health} 点未格挡伤害时爆炸，对全体敌人和玩家赋予 {Poison} 层中毒。\n当前血量：[red]{CurrentHealth}[/red]",
     "STEEL_FLOOD_POWER.title": "钢铁洪流",
     "STEEL_FLOOD_POWER.description": "当单位卡进入手牌时立即自动打出。",
     "ALLIED_BARRACKS_POWER.title": "盟军兵营",

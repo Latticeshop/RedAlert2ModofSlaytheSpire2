@@ -90,4 +90,13 @@ public static class SovietPowerValues
 		DamageUpgraded = 3,
 		Repeat = 2
 	};
+
+	public static CardValueStore.CardValues NuclearReactorCorePower => new()
+	{
+		MagicNumber = 3,           // 基础能量获取
+		MagicNumberUpgraded = 2,   // 升级后+2，总共5
+		Damage = 10,               // 基础爆炸阈值
+		DamageUpgraded = 5,        // 升级后+5，总共15
+		Repeat = 4                // 爆炸时赋予中毒层数
+	};
 }

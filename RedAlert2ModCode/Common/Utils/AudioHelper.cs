@@ -185,4 +185,49 @@ public static class AudioHelper
             GD.PrintErr($"[AudioHelper] 播放音效失败: {ex.Message}");
         }
     }
+
+    private static readonly string[] _explosionFiles = new[]
+    {
+        "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_01.wav",
+        "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_02.wav",
+        "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_03.wav",
+        "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_04.wav",
+        "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_05.wav",
+        "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_06.wav",
+        "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_07.wav",
+        "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_08.wav",
+        "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_09.wav",
+        "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_10.wav",
+        "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_11.wav",
+        "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_12.wav",
+    };
+
+    public static void PlayRandomExplosionSound()
+    {
+        try
+        {
+            EnsureEffectPlayer();
+            if (_effectPlayer == null) return;
+
+            int randomIndex = (int)GD.RandRange(0, _explosionFiles.Length - 1);
+            string soundPath = _explosionFiles[randomIndex];
+
+            var sound = GD.Load<AudioStream>(soundPath);
+            if (sound != null)
+            {
+                _effectPlayer.Stream = sound;
+                _effectPlayer.VolumeDb = -5;
+                _effectPlayer.Play();
+                GD.Print($"[AudioHelper] 播放随机爆炸音效: {soundPath}");
+            }
+            else
+            {
+                GD.PrintErr($"[AudioHelper] 无法加载爆炸音效: {soundPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[AudioHelper] 播放爆炸音效失败: {ex.Message}");
+        }
+    }
 }
