@@ -181,6 +181,9 @@ public static class RelicPatches
     [HarmonyPatch(typeof(NewLeaf), "AfterObtained")]
     public static bool NewLeafAfterObtainedPrefix(NewLeaf __instance, ref System.Threading.Tasks.Task __result)
     {
+        if (!IsAlliesCharacter(__instance.Owner.Character) && !IsSovietCharacter(__instance.Owner.Character))
+            return true;
+
         __result = NewLeafTransformAsync(__instance);
         return false;
     }
@@ -270,6 +273,9 @@ public static class RelicPatches
     [HarmonyPatch(typeof(ArchaicTooth), "AfterObtained")]
     public static bool ArchaicToothAfterObtainedPrefix(ArchaicTooth __instance, ref System.Threading.Tasks.Task __result)
     {
+        if (!IsAlliesCharacter(__instance.Owner.Character) && !IsSovietCharacter(__instance.Owner.Character))
+            return true;
+
         __result = ArchaicToothAfterObtainedAsync(__instance);
         return false;
     }
@@ -300,12 +306,6 @@ public static class RelicPatches
                 await CardCmd.Transform(wallCard, fortifiedWall);
             }
             return;
-        }
-
-        CardModel transcendenceStarterCard = __instance.Owner.Deck.Cards.FirstOrDefault(c => c.Id.Entry == "BASH" || c.Id.Entry == "NEUTRALIZE" || c.Id.Entry == "UNLEASH" || c.Id.Entry == "FALLING_STAR" || c.Id.Entry == "DUALCAST");
-        if (transcendenceStarterCard != null)
-        {
-            await CardCmd.Transform(transcendenceStarterCard, __instance.Owner.RunState.CreateCard<Doubt>(__instance.Owner));
         }
     }
 
