@@ -259,7 +259,7 @@ public static class SovietCardValues
 		MagicNumberUpgraded = 2,   // 升级后+2，总共5
 		Damage = 10,               // 基础爆炸阈值
 		DamageUpgraded = 5,        // 升级后+5，总共15
-		Repeat = 5,                // 爆炸时赋予中毒层数
+		Repeat = 4,                // 爆炸时赋予中毒层数
 		DollarValue = 1000
 	};
 
