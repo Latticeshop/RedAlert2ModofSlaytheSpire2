@@ -63,6 +63,15 @@ public static class AlliesCardValues
 		RepeatUpgraded = 1,  // 升级后额外增加1个选项（共3个）
 		DollarValue = 500
 	};
+
+	/// <summary>超时空军团兵 - 1费攻击卡，赋予敌人血量10%(升级20%)层数的抹除，首次眩晕敌人，价格1200，需要作战实验室</summary>
+	public static CardValueStore.CardValues ChronoLegionnaire => new()
+	{
+		Cost = 1,
+		MagicNumber = 10,           // 抹除层数百分比（基础10%）
+		MagicNumberUpgraded = 10,   // 升级后20% = 10 + 10
+		DollarValue = 1500
+	};
 	
 	/// <summary>伞兵 - 1费攻击卡，升级后0费，将6张美国大兵加入手牌，消耗</summary>
 	public static CardValueStore.CardValues Paratrooper => new()
@@ -504,7 +513,8 @@ public static class AlliesCardValues
 			{ "ALLIESDOGSOLDIER", DogSoldier },
 			{ "GUARDIANGI", GuardianGI },
 			{ "ROCKETSOLDIER", RocketSoldier },
-			{ "ALLIESENGINEER", Engineer }
+			{ "ALLIESENGINEER", Engineer },
+			{ "CHRONOLEGIONNAIRE", ChronoLegionnaire }
 		};
 	}
 	

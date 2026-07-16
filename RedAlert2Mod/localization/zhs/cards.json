@@ -35,6 +35,8 @@
     "GUARDIAN_GI.description": "获得 {Block} 点格挡。[gold]部署[/gold]：造成 {Damage} 点伤害，赋予 {VulnerableStacks} 层易伤。",
     "ROCKET_SOLDIER.title": "火箭飞行兵",
     "ROCKET_SOLDIER.description": "{IfUpgraded:show:对所有敌人|}造成 {Damage} 点伤害 {Repeat} 次。本回合获得 2 点敏捷。",
+    "CHRONO_LEGIONNAIRE.title": "超时空军团兵",
+    "CHRONO_LEGIONNAIRE.description": "赋予敌人血量{ErasePercent}%层数的[gold]抹除[/gold]。首次眩晕敌人。",
     "IFV.title": "IFV",
     "IFV.description": "抽 {DrawCount} 张牌，获得 {Block} 点格挡。",
     "TANK_DESTROYER.title": "坦克杀手",

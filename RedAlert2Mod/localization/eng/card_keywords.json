@@ -108,6 +108,8 @@
     "ui.card_select.price_label": "Price",
     "steel_flood.title": "Steel Flood",
     "steel_flood.description": "When a unit card enters your hand, it is automatically played.",
+    "erase.title": "Erase",
+    "erase.description": "When stacks exceed enemy HP, immediately [red]execute[/red] them. Max 50 stacks per application.",
     "exhaust_text": "and Exhaust",
     "ui.sell_building.title": "Select buildings to sell",
     "ui.sell_building.cancel": "Cancel",

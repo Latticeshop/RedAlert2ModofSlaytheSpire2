@@ -6,21 +6,7 @@ namespace RedAlert2ModCode.Common.Utils;
 
 public static class UnitVoiceHelper
 {
-    private static AudioStreamPlayer? _audioPlayer;
-    
     private static readonly Random _random = new();
-
-    private static void EnsureAudioPlayer()
-    {
-        if (_audioPlayer != null && GodotObject.IsInstanceValid(_audioPlayer))
-            return;
-
-        _audioPlayer = new AudioStreamPlayer();
-        _audioPlayer.Name = "UnitVoicePlayer";
-        var root = Engine.GetMainLoop() as SceneTree;
-        root?.Root.AddChild(_audioPlayer);
-        GD.Print("[UnitVoiceHelper] 创建单位语音播放器");
-    }
 
     public static void PlayUnitVoice(Type unitType, string faction = "Allied")
     {
@@ -36,9 +22,6 @@ public static class UnitVoiceHelper
     {
         try
         {
-            EnsureAudioPlayer();
-            if (_audioPlayer == null) return;
-
             List<string> voices = UnitVoiceConfig.GetUnitVoices(unitName, faction);
             
             if (voices == null || voices.Count == 0)
@@ -48,23 +31,41 @@ public static class UnitVoiceHelper
             }
 
             string selectedPath = voices[_random.Next(voices.Count)];
-            var sound = GD.Load<AudioStream>(selectedPath);
-            if (sound != null)
-            {
-                if (_audioPlayer.Playing) _audioPlayer.Stop();
-                _audioPlayer.Stream = sound;
-                _audioPlayer.VolumeDb = -5;
-                _audioPlayer.Play();
-                GD.Print($"[UnitVoiceHelper] 播放: {selectedPath}");
-            }
-            else
-            {
-                GD.PrintErr($"[UnitVoiceHelper] 无法加载: {selectedPath}");
-            }
+            PlaySound(selectedPath);
         }
         catch (Exception ex)
         {
             GD.PrintErr($"[UnitVoiceHelper] 播放失败: {ex.Message}");
+        }
+    }
+
+    private static void PlaySound(string path)
+    {
+        var sound = GD.Load<AudioStream>(path);
+        if (sound != null)
+        {
+            var audioPlayer = new AudioStreamPlayer();
+            audioPlayer.Name = $"UnitVoicePlayer_{Guid.NewGuid()}";
+            audioPlayer.Stream = sound;
+            audioPlayer.VolumeDb = -5;
+            
+            var root = Engine.GetMainLoop() as SceneTree;
+            root?.Root.AddChild(audioPlayer);
+            
+            audioPlayer.Play();
+            GD.Print($"[UnitVoiceHelper] 播放: {path}");
+
+            audioPlayer.Finished += () =>
+            {
+                if (GodotObject.IsInstanceValid(audioPlayer))
+                {
+                    audioPlayer.QueueFree();
+                }
+            };
+        }
+        else
+        {
+            GD.PrintErr($"[UnitVoiceHelper] 无法加载: {path}");
         }
     }
 

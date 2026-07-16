@@ -23,6 +23,12 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<AlliesEngineer>(),
     };
 
+    /// <summary>高科技(T3)士兵单位 - 需要作战实验室解锁</summary>
+    public static List<Func<CardModel>> HighTechSoldiers { get; } = new()
+    {
+        () => ModelDb.Card<ChronoLegionnaire>()
+    };
+
     public static List<Func<CardModel>> Vehicles { get; } = new()
     {
         () => ModelDb.Card<GrizzlyTank>(),
@@ -152,7 +158,17 @@ public static class AlliedCardRegistry
     /// </summary>
     public static List<CardModel> GetAllSoldiers()
     {
-        return Soldiers.Select(s => s()).ToList();
+        List<CardModel> soldiers = Soldiers.Select(s => s()).ToList();
+        soldiers.AddRange(GetAllHighTechSoldiers());
+        return soldiers;
+    }
+
+    /// <summary>
+    /// 获取所有高科技(T3)士兵单位 - 需要作战实验室解锁
+    /// </summary>
+    public static List<CardModel> GetAllHighTechSoldiers()
+    {
+        return HighTechSoldiers.Select(s => s()).ToList();
     }
 
     /// <summary>
@@ -270,7 +286,22 @@ public static class AlliedCardRegistry
     /// </summary>
     public static List<CardModel> CreateSoldiers(Player owner)
     {
-        return Soldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+        List<CardModel> soldiers = Soldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+        
+        if (HasBattleLabPower(owner.Creature))
+        {
+            soldiers.AddRange(CreateHighTechSoldiers(owner));
+        }
+        
+        return soldiers;
+    }
+
+    /// <summary>
+    /// 创建高科技(T3)士兵单位卡牌列表
+    /// </summary>
+    public static List<CardModel> CreateHighTechSoldiers(Player owner)
+    {
+        return HighTechSoldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
     }
 
     public static List<CardModel> CreateVehicles(Player owner)

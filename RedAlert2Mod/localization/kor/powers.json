@@ -115,5 +115,7 @@
     "FORCE_FIELD_POWER.title": "포스 필드",
     "FORCE_FIELD_POWER.smartDescription": "턴 시작 시, 에너지 {EnergyLoss}를 잃습니다.",
     "MINE_RAID_POWER.title": "광산 습격",
-    "MINE_RAID_POWER.smartDescription": "유닛 카드를 사용할 때, 채굴차 {Amount}장을 뽑습니다."
+    "MINE_RAID_POWER.smartDescription": "유닛 카드를 사용할 때, 채굴차 {Amount}장을 뽑습니다.",
+    "ERASING_POWER.title": "지우는 중...",
+    "ERASING_POWER.description": "중첩 수가 적의 HP를 초과하면 즉시 [red]처형[/red]합니다."
 }

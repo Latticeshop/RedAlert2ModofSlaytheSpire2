@@ -115,5 +115,7 @@
     "FORCE_FIELD_POWER.title": "フォースフィールド",
     "FORCE_FIELD_POWER.smartDescription": "ターン開始時、{EnergyLoss}エナジーを失う。",
     "MINE_RAID_POWER.title": "鉱山襲撃",
-    "MINE_RAID_POWER.smartDescription": "ユニットカードを使用した時、{Amount}枚のマイナーを引く。"
+    "MINE_RAID_POWER.smartDescription": "ユニットカードを使用した時、{Amount}枚のマイナーを引く。",
+    "ERASING_POWER.title": "消去中...",
+    "ERASING_POWER.description": "層数が敵のHPを超えた時、即座に[red]処刑[/red]する。"
 }

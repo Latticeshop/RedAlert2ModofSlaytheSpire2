@@ -231,6 +231,12 @@ public static class ModCardKeywords
 		new LocString("card_keywords", "garrison.description")
 	);
 
+	public static readonly CustomKeyword Erase = new(
+		"ERASE",
+		new LocString("card_keywords", "erase.title"),
+		new LocString("card_keywords", "erase.description")
+	);
+
 	public static void Initialize()
     {
         CustomKeywordManager.RegisterKeyword(Mcv);
@@ -262,5 +268,6 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(Chrono);
         CustomKeywordManager.RegisterKeyword(Miner);
         CustomKeywordManager.RegisterKeyword(Garrison);
+        CustomKeywordManager.RegisterKeyword(Erase);
     }
 }

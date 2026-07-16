@@ -78,6 +78,8 @@
     "SOVIET_TERROR_DRONE_POWER.description": "每回合受到 {Count} 点伤害。当目标回血时清除。",
     "SOVIET_GIANT_SQUID_POWER.title": "巨型乌贼",
     "SOVIET_GIANT_SQUID_POWER.description": "缠绕拍打，回合结束造成 {Count} 点伤害。回合开始若层数大于生命值则斩杀。",
+    "ERASING_POWER.title": "抹除中...",
+    "ERASING_POWER.description": "当能力层数大于敌人血量时立刻[red]斩杀[/red]。",
     "SOVIET_TESLA_COIL_POWER.title": "磁暴线圈",
     "SOVIET_TESLA_COIL_POWER.description": "回合开始时对敌人造成 {Damage} 点伤害。",
     "SOVIET_TESLA_COIL_CHARGE_POWER.title": "线圈充能",

@@ -65,6 +65,8 @@
   "soviet_super_weapon.title": "슈퍼 웨폰",
   "steel_flood.description": "유닛 카드가 손에 들어오면 자동으로 사용됩니다.",
   "steel_flood.title": "강철의 물결",
+  "erase.title": "지우기",
+  "erase.description": "중첩 수가 적의 HP를 초과하면 즉시 [red]처형[/red]합니다. 한 번 적용 시 최대 50 중첩까지.",
   "strategy_tower_defense.description": "[gold]장벽[/gold]을 사용할 때 [gold]프리즘 타워[/gold] 능력이 있다면 [gold]흐릿함[/gold] 1턴을 얻습니다.",
   "strategy_tower_defense.title": "전략: 타워 디펜스",
   "target_locked.description": "공격의 대상입니다.",

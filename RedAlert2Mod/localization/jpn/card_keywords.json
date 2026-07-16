@@ -108,6 +108,8 @@
     "ui.card_select.price_label": "価格",
     "steel_flood.title": "鉄の洪水",
     "steel_flood.description": "ユニットカードが手札に入る時、即座に自動的に使用される。",
+    "erase.title": "イレイズ",
+    "erase.description": "層数が敵のHPを超えた時、即座に[red]処刑[/red]する。1回の適用で最大50層まで。",
     "exhaust_text": "消費",
     "ui.sell_building.title": "売却する建物を選択してください",
     "ui.sell_building.cancel": "キャンセル",

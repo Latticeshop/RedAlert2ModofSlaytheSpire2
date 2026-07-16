@@ -115,5 +115,7 @@
     "FORCE_FIELD_POWER.title": "Force Field",
     "FORCE_FIELD_POWER.smartDescription": "At the start of your turn, lose {EnergyLoss} energy.",
     "MINE_RAID_POWER.title": "Mine Raid",
-    "MINE_RAID_POWER.smartDescription": "When you play a Unit card, draw {Amount} Miner cards."
+    "MINE_RAID_POWER.smartDescription": "When you play a Unit card, draw {Amount} Miner cards.",
+    "ERASING_POWER.title": "Erasing...",
+    "ERASING_POWER.description": "When stacks exceed enemy HP, immediately [red]execute[/red] them."
 }

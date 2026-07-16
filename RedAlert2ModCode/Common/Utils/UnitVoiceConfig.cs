@@ -225,6 +225,25 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/TankDestroyer/Vtansed.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/TankDestroyer/Vtansee.mp3",
         },
+        ["ChronoLegionnaire"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoLegionnaire/Ichratb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoLegionnaire/Ichratc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoLegionnaire/Ichratd.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoLegionnaire/Ichrfeb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoLegionnaire/Ichrsea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoLegionnaire/Ichrseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoLegionnaire/Ichrsec.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoLegionnaire/Ichrsed.mp3",
+        },
+        ["ChronoLegionnaireAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoLegionnaire/Ichratta_attack.mp3",
+        },
+        ["ChronoLegionnaireKill"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoLegionnaire/Ichrkill_kill.mp3",
+        },
     };
 
     public static readonly Dictionary<string, List<string>> SovietUnits = new()
