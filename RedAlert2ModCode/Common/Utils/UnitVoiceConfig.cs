@@ -213,6 +213,18 @@ public static class UnitVoiceConfig
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/BattleFortress/Vbatsef_deploy.mp3",
         },
+        ["TankDestroyer"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/TankDestroyer/Vtanatb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/TankDestroyer/Vtanatc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/TankDestroyer/Vtanate.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/TankDestroyer/Vtanmoa.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/TankDestroyer/Vtanmoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/TankDestroyer/Vtansea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/TankDestroyer/Vtanseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/TankDestroyer/Vtansed.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/TankDestroyer/Vtansee.mp3",
+        },
     };
 
     public static readonly Dictionary<string, List<string>> SovietUnits = new()

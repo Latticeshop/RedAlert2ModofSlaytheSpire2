@@ -37,6 +37,8 @@
     "ROCKET_SOLDIER.description": "{IfUpgraded:show:全ての敵に|}{Damage}ダメージを{Repeat}回与える。このターン2敏捷を獲得する。",
     "IFV.title": "IFV",
     "IFV.description": "{DrawCount}枚のカードを引き、{Block}ブロックを獲得する。",
+    "TANK_DESTROYER.title": "戦車駆逐",
+    "TANK_DESTROYER.description": "自分に1層の虚弱を与え、{Damage}ダメージを与える。",
     "ALLIED_WAR_FACTORY.title": "連合軍重工場",
     "ALLIED_WAR_FACTORY.description": "[gold]価格：${DollarNumber}[/gold]。装甲ユニットを選択し、対応する[gold]生産シーケンス[/gold]を作成する。{IfUpgraded:show:ユニットシーケンスアップグレード。|}",
     "ALLIED_REFINERY.title": "精製所",

@@ -104,6 +104,16 @@ public static class AlliesCardValues
 		DollarValue = 600
 	};
 	
+	/// <summary>坦克杀手 - 1费攻击卡，赋予自身1层虚弱，造成16(升级20)点伤害，价格900，需要空指部/雷达解锁</summary>
+	public static CardValueStore.CardValues TankDestroyer => new()
+	{
+		Cost = 1,
+		Damage = 16,
+		DamageUpgraded = 4,        // 升级后20 = 16 + 4
+		Repeat = 1,                // 虚弱层数
+		DollarValue = 900
+	};
+	
 	// ==================== 空军单位 ====================
 	
 	/// <summary>入侵者战机 - 1费10伤害2层易伤，升级后13伤害3层易伤，价格1200</summary>
@@ -506,7 +516,8 @@ public static class AlliesCardValues
 			{ "IFV", Ifv },
 			{ "ALLIEDMCV", AlliedMCV },
 			{ "CHRONOMINER", ChronoMiner },
-			{ "BATTLEFORTRESS", BattleFortress }
+			{ "BATTLEFORTRESS", BattleFortress },
+			{ "TANKDESTROYER", TankDestroyer }
 		};
 	}
 	

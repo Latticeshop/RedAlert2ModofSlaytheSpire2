@@ -37,6 +37,8 @@
     "ROCKET_SOLDIER.description": "{IfUpgraded:show:To all enemies |}Deals {Damage} damage {Repeat} times. Gains 2 Dexterity this turn.",
     "IFV.title": "IFV",
     "IFV.description": "Draw {DrawCount} cards and gain {Block} Block.",
+    "TANK_DESTROYER.title": "Tank Destroyer",
+    "TANK_DESTROYER.description": "Apply 1 Weak to self, deal {Damage} damage.",
     "ALLIED_WAR_FACTORY.title": "War Factory",
     "ALLIED_WAR_FACTORY.description": "[gold]Cost: ${DollarNumber}[/gold]. Choose a vehicle unit to create a [gold]Production Queue[/gold].{IfUpgraded:show:Queue upgraded.|}",
     "ALLIED_REFINERY.title": "Ore Refinery",

@@ -30,6 +30,12 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<ChronoMiner>()
     };
 
+    /// <summary>雷达解锁装甲单位 - 需要空指部/雷达解锁</summary>
+    public static List<Func<CardModel>> RadarVehicles { get; } = new()
+    {
+        () => ModelDb.Card<TankDestroyer>()
+    };
+
     /// <summary>高科技(T3)装甲单位 - 需要作战实验室解锁</summary>
     public static List<Func<CardModel>> HighTechVehicles { get; } = new()
     {
@@ -166,6 +172,14 @@ public static class AlliedCardRegistry
     }
 
     /// <summary>
+    /// 获取所有雷达解锁装甲单位 - 需要空指部解锁
+    /// </summary>
+    public static List<CardModel> GetAllRadarVehicles()
+    {
+        return RadarVehicles.Select(s => s()).ToList();
+    }
+
+    /// <summary>
     /// 获取所有单位卡（飞机）
     /// </summary>
     public static List<CardModel> GetAllAircraft()
@@ -197,6 +211,7 @@ public static class AlliedCardRegistry
         List<CardModel> units = new();
         units.AddRange(GetAllSoldiers());
         units.AddRange(GetAllVehicles());
+        units.AddRange(GetAllRadarVehicles());
         units.AddRange(GetAllHighTechVehicles());
         units.AddRange(GetAllAircraft());
         units.AddRange(GetAllShips());
@@ -262,6 +277,12 @@ public static class AlliedCardRegistry
     {
         List<CardModel> vehicles = Vehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
         
+        // 检查是否有空指部能力，如果有则添加雷达解锁单位
+        if (HasAirForceCommandPower(owner.Creature))
+        {
+            vehicles.AddRange(CreateRadarVehicles(owner));
+        }
+        
         // 检查是否有作战实验室能力，如果有则添加高科技单位
         if (HasBattleLabPower(owner.Creature))
         {
@@ -269,6 +290,14 @@ public static class AlliedCardRegistry
         }
         
         return vehicles;
+    }
+
+    /// <summary>
+    /// 创建雷达解锁装甲单位卡牌列表
+    /// </summary>
+    public static List<CardModel> CreateRadarVehicles(Player owner)
+    {
+        return RadarVehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
     }
 
     /// <summary>
@@ -285,6 +314,14 @@ public static class AlliedCardRegistry
     public static bool HasBattleLabPower(Creature creature)
     {
         return creature.Powers.Any(p => p is BattleLabPower);
+    }
+
+    /// <summary>
+    /// 检查是否有空指部能力
+    /// </summary>
+    public static bool HasAirForceCommandPower(Creature creature)
+    {
+        return creature.Powers.Any(p => p is AlliedAirForceCommandPower);
     }
 
     public static List<CardModel> CreateAircraft(Player owner)

@@ -37,6 +37,8 @@
     "ROCKET_SOLDIER.description": "{IfUpgraded:show:对所有敌人|}造成 {Damage} 点伤害 {Repeat} 次。本回合获得 2 点敏捷。",
     "IFV.title": "IFV",
     "IFV.description": "抽 {DrawCount} 张牌，获得 {Block} 点格挡。",
+    "TANK_DESTROYER.title": "坦克杀手",
+    "TANK_DESTROYER.description": "赋予自身1层虚弱，造成 {Damage} 点伤害。",
     "ALLIED_WAR_FACTORY.title": "盟军重工",
     "ALLIED_WAR_FACTORY.description": "[gold]价格：${DollarNumber}[/gold]。选择一张装甲单位，创建对应的[gold]生产序列[/gold]。{IfUpgraded:show:单位序列升级。|}",
     "ALLIED_REFINERY.title": "矿场",
