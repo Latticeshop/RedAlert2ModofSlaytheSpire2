@@ -31,6 +31,7 @@ public sealed class ChronoLegionnaire : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
+        ModCardKeywords.TechLevelT3.CreateHoverTip(),
         ModCardKeywords.Soldier.CreateHoverTip(),
         ModCardKeywords.Erase.CreateHoverTip(),
         HoverTipFactory.FromPower<ErasingPower>()

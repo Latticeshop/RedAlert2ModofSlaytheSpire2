@@ -413,6 +413,80 @@ public sealed class AlliedMCV : CardModel
 
 ---
 
+## 🏗️ 科技树系统（Tech Tree）
+
+### 科技线架构
+
+本Mod实现了类似红警2的科技树系统，单位卡牌需要按科技等级逐步解锁：
+
+```
+科技线：基地车能力(解锁发电厂，兵营，矿场)->T1:矿场(解锁重工，空军，海军)->T2:重工+空指部/雷达(解锁作战实验室)->T3:作战实验室(解锁高级兵种和超级武器等)。
+```
+
+### T1/T2/T3 科技等级规则
+
+| 等级 | 解锁条件 | 解锁内容 | 示例单位 |
+|------|----------|----------|----------|
+| **T1** | 建造[gold]矿场[/gold]解锁 | 基础单位 | 美国大兵、警犬、工程师、灰熊坦克、IFV |
+| **T2** | 建造[gold]空指部/雷达/心灵探测仪[/gold]解锁 | 进阶单位 | 火箭飞行兵、重装大兵、夜莺直升机、坦克杀手、巨炮 |
+| **T3** | 建造[gold]作战实验室[/gold]解锁 | 高级单位和超级武器 | 超时空军团兵、幻影坦克、光棱坦克、战斗要塞、航空母舰 |
+
+### 科技等级关键字
+
+在 `CustomKeyword.cs` 中定义了三个科技等级关键字：
+
+```csharp
+public static class ModCardKeywords
+{
+    public static readonly CustomKeyword TechLevelT1 = new(
+        "TECH_LEVEL_T1",
+        new LocString("card_keywords", "tech_level_t1.title"),
+        new LocString("card_keywords", "tech_level_t1.description")
+    );
+
+    public static readonly CustomKeyword TechLevelT2 = new(
+        "TECH_LEVEL_T2",
+        new LocString("card_keywords", "tech_level_t2.title"),
+        new LocString("card_keywords", "tech_level_t2.description")
+    );
+
+    public static readonly CustomKeyword TechLevelT3 = new(
+        "TECH_LEVEL_T3",
+        new LocString("card_keywords", "tech_level_t3.title"),
+        new LocString("card_keywords", "tech_level_t3.description")
+    );
+}
+```
+
+### 单位卡牌添加科技等级Tip
+
+所有 **Token类型** 的单位卡牌（除围墙外）必须在 `ExtraHoverTips` 的**第一位**添加对应的科技等级关键字：
+
+```csharp
+protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+[
+    ModCardKeywords.TechLevelT2.CreateHoverTip(),  // 科技等级Tip放在第一位
+    ModCardKeywords.Vehicle.CreateHoverTip()       // 其他词条放在后面
+];
+```
+
+### 本地化配置
+
+在 `card_keywords.json` 中添加科技等级词条的本地化：
+
+```json
+{
+    "tech_level_t1.title": "T1",
+    "tech_level_t1.description": "建造[gold]矿场[/gold]解锁。",
+    "tech_level_t2.title": "T2",
+    "tech_level_t2.description": "建造[gold]空指部/雷达/心灵探测仪[/gold]解锁。",
+    "tech_level_t3.title": "T3",
+    "tech_level_t3.description": "建造[gold]作战实验室[/gold]解锁。"
+}
+```
+
+---
+
 ## 🖱️ 卡牌悬浮提示（HoverTip）
 
 ### 核心原理

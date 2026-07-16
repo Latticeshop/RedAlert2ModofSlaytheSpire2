@@ -35,6 +35,7 @@ public sealed class Dreadnought : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT3.CreateHoverTip(),
 		ModCardKeywords.Vehicle.CreateHoverTip(),
 		HoverTipFactory.FromPower<TargetLockedPower>(),
 		HoverTipFactory.FromPower<V3RocketPower>()

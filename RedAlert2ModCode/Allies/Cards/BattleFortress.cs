@@ -58,6 +58,7 @@ public sealed class BattleFortress : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT3.CreateHoverTip(),
 		ModCardKeywords.Deploy.CreateHoverTip(),
 		ModCardKeywords.Soldier.CreateHoverTip(),
 		ModCardKeywords.Garrison.CreateHoverTip()

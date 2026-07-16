@@ -58,6 +58,7 @@ public sealed class BattleBunkerCard : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT1.CreateHoverTip(),
 		ModCardKeywords.DefenseTower.CreateHoverTip(),
 		ModCardKeywords.Soldier.CreateHoverTip(),
 		ModCardKeywords.Garrison.CreateHoverTip()

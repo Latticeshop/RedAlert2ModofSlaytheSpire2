@@ -53,6 +53,7 @@ public sealed class SovietTransportShip : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
+        ModCardKeywords.TechLevelT1.CreateHoverTip(),
         ModCardKeywords.Navy.CreateHoverTip()
     ];
 

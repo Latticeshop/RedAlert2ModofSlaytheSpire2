@@ -32,6 +32,7 @@ public sealed class PrismTowerCard : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT2.CreateHoverTip(),
 		ModCardKeywords.DefenseTower.CreateHoverTip()
 	];
 

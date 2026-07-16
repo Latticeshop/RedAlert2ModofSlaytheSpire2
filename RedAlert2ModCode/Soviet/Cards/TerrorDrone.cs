@@ -34,6 +34,7 @@ public sealed class TerrorDrone : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT1.CreateHoverTip(),
 		ModCardKeywords.Vehicle.CreateHoverTip(),
 		HoverTipFactory.FromPower<SovietTerrorDronePower>(),
 		HoverTipFactory.FromPower<SlowPower>()

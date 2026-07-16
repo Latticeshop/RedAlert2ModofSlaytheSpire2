@@ -38,6 +38,7 @@ public sealed class RocketSoldier : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT2.CreateHoverTip(),
 		ModCardKeywords.Soldier.CreateHoverTip()
 	];
 

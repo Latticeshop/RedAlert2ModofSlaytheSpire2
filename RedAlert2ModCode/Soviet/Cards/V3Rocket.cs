@@ -34,6 +34,7 @@ public sealed class V3Rocket : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT2.CreateHoverTip(),
 		ModCardKeywords.Vehicle.CreateHoverTip(),
 		HoverTipFactory.FromPower<TargetLockedPower>(),
 		HoverTipFactory.FromPower<V3RocketPower>()

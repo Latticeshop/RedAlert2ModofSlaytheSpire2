@@ -35,6 +35,7 @@ public sealed class Agisicon : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT2.CreateHoverTip(),
 		ModCardKeywords.Navy.CreateHoverTip()
 	];
 

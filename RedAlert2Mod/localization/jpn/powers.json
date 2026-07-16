@@ -117,5 +117,7 @@
     "MINE_RAID_POWER.title": "鉱山襲撃",
     "MINE_RAID_POWER.smartDescription": "ユニットカードを使用した時、{Amount}枚のマイナーを引く。",
     "ERASING_POWER.title": "消去中...",
-    "ERASING_POWER.description": "層数が敵のHPを超えた時、即座に[red]処刑[/red]する。"
+    "ERASING_POWER.description": "層数が敵のHPを超えた時、即座に[red]処刑[/red]する。",
+    "GRAND_CANNON_POWER.title": "グランドキャノン",
+    "GRAND_CANNON_POWER.description": "ターン開始時に敵に{Damage}ダメージを与える。"
 }

@@ -30,6 +30,7 @@ public sealed class SovietPillboxCard : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT1.CreateHoverTip(),
 		ModCardKeywords.DefenseTower.CreateHoverTip()
 	];
 

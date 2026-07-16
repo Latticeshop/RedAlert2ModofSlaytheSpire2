@@ -33,6 +33,7 @@ public sealed class FlakSubmarine : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
+        ModCardKeywords.TechLevelT2.CreateHoverTip(),
         ModCardKeywords.Navy.CreateHoverTip()
     ];
 

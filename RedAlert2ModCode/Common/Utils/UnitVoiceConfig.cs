@@ -244,6 +244,17 @@ public static class UnitVoiceConfig
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/ChronoLegionnaire/Ichrkill_kill.mp3",
         },
+        ["GrandCannonRotate"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrandCannon/rotate_1.wav",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrandCannon/rotate_2.wav",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrandCannon/rotate_3.wav",
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrandCannon/rotate_4.wav",
+        },
+        ["GrandCannonAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/GrandCannon/attack.wav",
+        },
     };
 
     public static readonly Dictionary<string, List<string>> SovietUnits = new()

@@ -36,6 +36,7 @@ public sealed class AlliesDogSoldier : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT1.CreateHoverTip(),
 		ModCardKeywords.Soldier.CreateHoverTip()
 	];
 

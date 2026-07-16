@@ -31,6 +31,7 @@ public sealed class AlliesPillboxCard : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT1.CreateHoverTip(),
 		ModCardKeywords.DefenseTower.CreateHoverTip()
 	];
 

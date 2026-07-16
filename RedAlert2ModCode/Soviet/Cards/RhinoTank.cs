@@ -38,6 +38,7 @@ public sealed class RhinoTank : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT1.CreateHoverTip(),
 		ModCardKeywords.Vehicle.CreateHoverTip()
 	];
 

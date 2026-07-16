@@ -206,5 +206,7 @@
     "DEMOLITION_TRUCK_CARD.title": "Demolition Truck",
     "DEMOLITION_TRUCK_CARD.description": "[gold]Cost: ${DollarNumber}[/gold]. Deal {Damage} damage to all enemies and apply {IfUpgraded:show:15|{Poison}} Poison. If taking unblocked damage or played when enemies have attack intent: Deal {Damage} damage to all players.",
     "CHRONO_LEGIONNAIRE.title": "Chrono Legionnaire",
-    "CHRONO_LEGIONNAIRE.description": "Apply [gold]Erase[/gold] equal to {ErasePercent}% of enemy's max HP. Stun the enemy on first application."
+    "CHRONO_LEGIONNAIRE.description": "Apply [gold]Erase[/gold] equal to {ErasePercent}% of enemy's max HP. Stun the enemy on first application.",
+    "GRAND_CANNON.title": "Grand Cannon",
+    "GRAND_CANNON.description": "[gold]Cost: ${DollarNumber}[/gold]. At the start of turn, deal {Damage}(upgraded {DamageUpgraded}) damage to an enemy."
 }

@@ -35,6 +35,7 @@ public sealed class AlliesEngineer : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT1.CreateHoverTip(),
 		ModCardKeywords.Soldier.CreateHoverTip()
 	];
 

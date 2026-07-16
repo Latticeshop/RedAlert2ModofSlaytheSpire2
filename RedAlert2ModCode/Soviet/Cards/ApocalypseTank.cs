@@ -35,6 +35,7 @@ public sealed class ApocalypseTank : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT3.CreateHoverTip(),
 		ModCardKeywords.Vehicle.CreateHoverTip()
 	];
 

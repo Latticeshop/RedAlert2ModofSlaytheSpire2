@@ -24,7 +24,7 @@ public sealed class IndustrialPlantCard : CardModel
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
         ModCardKeywords.Building.CreateHoverTip(),
-        ModCardKeywords.SovietBattleLab.CreateHoverTip(),
+        ModCardKeywords.TechLevelT3.CreateHoverTip(),
         ModCardKeywords.Unit.CreateHoverTip()
     };
 

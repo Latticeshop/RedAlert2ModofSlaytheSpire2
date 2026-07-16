@@ -23,7 +23,7 @@ public sealed class OreRefineryCard : CardModel
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
         ModCardKeywords.Building.CreateHoverTip(),
-        ModCardKeywords.AlliedBattleLab.CreateHoverTip()
+        ModCardKeywords.TechLevelT3.CreateHoverTip()
     };
 
     protected override List<DynamicVar> CanonicalVars => new()

@@ -33,6 +33,7 @@ public sealed class SovietTeslaTrooper : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT2.CreateHoverTip(),
 		ModCardKeywords.Soldier.CreateHoverTip(),
 		HoverTipFactory.FromOrb<LightningOrb>(),
 		ModCardKeywords.Deploy.CreateHoverTip(),

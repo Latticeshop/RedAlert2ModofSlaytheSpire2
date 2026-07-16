@@ -57,6 +57,7 @@ public sealed partial class FlakTrack : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
+        ModCardKeywords.TechLevelT1.CreateHoverTip(),
         ModCardKeywords.Vehicle.CreateHoverTip(),
         ModCardKeywords.Soldier.CreateHoverTip(),
         ModCardKeywords.Deploy.CreateHoverTip()

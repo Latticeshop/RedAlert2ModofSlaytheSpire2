@@ -214,5 +214,7 @@
     "DREADNOUGHT.title": "드레드노트 전함",
     "DREADNOUGHT.description": "적 1명을 선택하여 [gold]표적 고정[/gold]을 부여합니다.\n{V3Count}기의 [gold]V3 로켓[/gold]을 얻습니다：턴 시작 시 [gold]표적 고정[/gold]된 적에게 {Damage}의 피해를 입힙니다.\n다음 턴에 한 차례 더 발사합니다.",
     "CHRONO_LEGIONNAIRE.title": "크로노 레기온어",
-    "CHRONO_LEGIONNAIRE.description": "적의 최대 HP의 {ErasePercent}%에 해당하는 [gold]지우기[/gold]를 적용합니다. 최초 적용 시 적을 기절시킵니다."
+    "CHRONO_LEGIONNAIRE.description": "적의 최대 HP의 {ErasePercent}%에 해당하는 [gold]지우기[/gold]를 적용합니다. 최초 적용 시 적을 기절시킵니다.",
+    "GRAND_CANNON.title": "그랜드 캐논",
+    "GRAND_CANNON.description": "[gold]비용: ${DollarNumber}[/gold]. 턴 시작 시 적에게 {Damage}(업그레이드 시{DamageUpgraded})의 피해를 입힙니다."
 }

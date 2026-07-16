@@ -34,6 +34,7 @@ public sealed class GiantSquid : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
+        ModCardKeywords.TechLevelT1.CreateHoverTip(),
         ModCardKeywords.Navy.CreateHoverTip(),
         HoverTipFactory.FromPower<SovietGiantSquidPower>(),
         HoverTipFactory.FromPower<WeakPower>()

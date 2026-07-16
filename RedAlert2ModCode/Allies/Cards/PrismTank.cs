@@ -40,6 +40,7 @@ public sealed class PrismTank : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
     {
+        ModCardKeywords.TechLevelT3.CreateHoverTip(),
         ModCardKeywords.Vehicle.CreateHoverTip(),
         ModCardKeywords.Splash.CreateHoverTip()!
     };

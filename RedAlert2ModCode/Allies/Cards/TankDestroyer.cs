@@ -28,6 +28,7 @@ public sealed class TankDestroyer : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT2.CreateHoverTip(),
 		ModCardKeywords.Vehicle.CreateHoverTip()
 	];
 

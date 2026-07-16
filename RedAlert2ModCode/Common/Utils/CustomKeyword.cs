@@ -111,16 +111,22 @@ public static class ModCardKeywords
         new LocString("card_keywords", "strategy_tower_defense.description")
     );
 
-    public static readonly CustomKeyword AlliedBattleLab = new(
-        "ALLIED_BATTLE_LAB",
-        new LocString("card_keywords", "allied_battle_lab.title"),
-        new LocString("card_keywords", "allied_battle_lab.description")
+    public static readonly CustomKeyword TechLevelT1 = new(
+        "TECH_LEVEL_T1",
+        new LocString("card_keywords", "tech_level_t1.title"),
+        new LocString("card_keywords", "tech_level_t1.description")
     );
 
-    public static readonly CustomKeyword SovietBattleLab = new(
-        "SOVIET_BATTLE_LAB",
-        new LocString("card_keywords", "soviet_battle_lab.title"),
-        new LocString("card_keywords", "soviet_battle_lab.description")
+    public static readonly CustomKeyword TechLevelT2 = new(
+        "TECH_LEVEL_T2",
+        new LocString("card_keywords", "tech_level_t2.title"),
+        new LocString("card_keywords", "tech_level_t2.description")
+    );
+
+    public static readonly CustomKeyword TechLevelT3 = new(
+        "TECH_LEVEL_T3",
+        new LocString("card_keywords", "tech_level_t3.title"),
+        new LocString("card_keywords", "tech_level_t3.description")
     );
 
     public static readonly CustomKeyword Splash = new(
@@ -249,8 +255,9 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(ProductionQueue);
         CustomKeywordManager.RegisterKeyword(Unit);
         CustomKeywordManager.RegisterKeyword(StrategyTowerDefense);
-        CustomKeywordManager.RegisterKeyword(AlliedBattleLab);
-        CustomKeywordManager.RegisterKeyword(SovietBattleLab);
+        CustomKeywordManager.RegisterKeyword(TechLevelT1);
+        CustomKeywordManager.RegisterKeyword(TechLevelT2);
+        CustomKeywordManager.RegisterKeyword(TechLevelT3);
         CustomKeywordManager.RegisterKeyword(Splash);
         CustomKeywordManager.RegisterKeyword(TargetLocked);
         CustomKeywordManager.RegisterKeyword(Hornet);

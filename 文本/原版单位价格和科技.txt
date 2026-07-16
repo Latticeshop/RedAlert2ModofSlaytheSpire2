@@ -22,7 +22,7 @@
 爱国者导弹 (Patriot Missile)	1000	-50	空指部
 光棱塔 (Prism Tower)	1500	-75	作战实验室
 围墙 (Wall)	100	0	兵营
-巨炮 (Grand Cannon)	2000	-	法国专属，需作战实验室
+巨炮 (Grand Cannon)	2000	-	法国专属，需空指部
 步兵 (Infantry)
 单位名称	造价 ($)	前置条件
 美国大兵 (G.I.)	200	兵营

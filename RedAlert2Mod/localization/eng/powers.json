@@ -117,5 +117,7 @@
     "MINE_RAID_POWER.title": "Mine Raid",
     "MINE_RAID_POWER.smartDescription": "When you play a Unit card, draw {Amount} Miner cards.",
     "ERASING_POWER.title": "Erasing...",
-    "ERASING_POWER.description": "When stacks exceed enemy HP, immediately [red]execute[/red] them."
+    "ERASING_POWER.description": "When stacks exceed enemy HP, immediately [red]execute[/red] them.",
+    "GRAND_CANNON_POWER.title": "Grand Cannon",
+    "GRAND_CANNON_POWER.description": "At the start of turn, deal {Damage} damage to an enemy."
 }

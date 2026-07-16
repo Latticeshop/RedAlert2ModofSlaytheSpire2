@@ -34,6 +34,7 @@ public sealed class Kirov : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT3.CreateHoverTip(),
 		ModCardKeywords.Aircraft.CreateHoverTip(),
 		HoverTipFactory.FromPower<KirovPower>()
 	];

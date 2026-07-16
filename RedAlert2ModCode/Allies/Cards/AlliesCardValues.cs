@@ -247,6 +247,15 @@ public static class AlliesCardValues
 		BlockUpgraded = 3,  // 升级后8 = 5 + 3
 		DollarValue = 1000
 	};
+
+	/// <summary>巨炮 - 2费攻击卡，金卡，回合开始时对敌人造成20(升级30)点伤害，需要空指部/雷达解锁，价格2000</summary>
+	public static CardValueStore.CardValues GrandCannon => new()
+	{
+		Cost = 2,
+		Damage = 20,
+		DamageUpgraded = 10,  // 升级后30 = 20 + 10
+		DollarValue = 2000
+	};
 	
 	// ==================== 经济单位 ====================
 	
@@ -565,7 +574,8 @@ public static class AlliesCardValues
 			{ "ALLIEDWALLCARD", AlliedWall },
 			{ "ALLIESPILLBOXCARD", Pillbox },
 			{ "PATRIOTMISSILE", PatriotMissile },
-			{ "ALLIEDBATTLELAB", AlliedBattleLab }
+			{ "ALLIEDBATTLELAB", AlliedBattleLab },
+			{ "GRANDCANNON", GrandCannon }
 		};
 	}
 
@@ -615,7 +625,8 @@ public static class AlliesCardValues
 		{
 			() => ModelDb.Card<PrismTowerCard>(),
 			() => ModelDb.Card<AlliesPillboxCard>(),
-			() => ModelDb.Card<PatriotMissile>()
+			() => ModelDb.Card<PatriotMissile>(),
+			() => ModelDb.Card<GrandCannon>()
 		};
 	}
 

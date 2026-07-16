@@ -151,7 +151,7 @@ public sealed class AlliedMCV : CardModel
 	private bool IsBuildingCardType(System.Type cardType)
 	{
 		var typeName = cardType.Name;
-		return typeName.Contains("Repair") || typeName.Contains("Defense") || typeName.Contains("Bunker") || typeName.Contains("Wall");
+		return typeName.Contains("Repair") || typeName.Contains("Defense") || typeName.Contains("Bunker") || typeName.Contains("Wall") || typeName.Contains("Cannon");
 	}
 
 	/// <summary>

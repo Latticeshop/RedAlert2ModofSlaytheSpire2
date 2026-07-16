@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -40,6 +41,12 @@ public sealed class DemolitionTruckCard : CardModel
 		new IntVar("Poison", (int)Values.MagicNumber),
 		new IntVar("DollarNumber", (int)Values.DollarValue)
 	};
+
+	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+	[
+		ModCardKeywords.TechLevelT2.CreateHoverTip(),
+		ModCardKeywords.Vehicle.CreateHoverTip()
+	];
 
 	protected override void DeepCloneFields()
 	{

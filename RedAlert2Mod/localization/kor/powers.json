@@ -117,5 +117,7 @@
     "MINE_RAID_POWER.title": "광산 습격",
     "MINE_RAID_POWER.smartDescription": "유닛 카드를 사용할 때, 채굴차 {Amount}장을 뽑습니다.",
     "ERASING_POWER.title": "지우는 중...",
-    "ERASING_POWER.description": "중첩 수가 적의 HP를 초과하면 즉시 [red]처형[/red]합니다."
+    "ERASING_POWER.description": "중첩 수가 적의 HP를 초과하면 즉시 [red]처형[/red]합니다.",
+    "GRAND_CANNON_POWER.title": "그랜드 캐논",
+    "GRAND_CANNON_POWER.description": "턴 시작 시 적에게 {Damage}의 피해를 입힙니다."
 }

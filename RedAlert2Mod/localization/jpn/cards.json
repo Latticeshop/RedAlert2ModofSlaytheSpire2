@@ -206,5 +206,7 @@
     "DEMOLITION_TRUCK_CARD.title": "デモリショントラック",
     "DEMOLITION_TRUCK_CARD.description": "[gold]価格：${DollarNumber}[/gold]。全ての敵に{Damage}ダメージを与え、{IfUpgraded:show:15|{Poison}}ポイズンを付与する。ブロックされていないダメージを受けた場合、または敵に攻撃意図がある時に使用した場合：全てのプレイヤーに{Damage}ダメージを与える。",
     "CHRONO_LEGIONNAIRE.title": "クロノレジョナー",
-    "CHRONO_LEGIONNAIRE.description": "敵の最大HPの{ErasePercent}%の[gold]イレイズ[/gold]を与える。初回適用時に敵を眩暈させる。"
+    "CHRONO_LEGIONNAIRE.description": "敵の最大HPの{ErasePercent}%の[gold]イレイズ[/gold]を与える。初回適用時に敵を眩暈させる。",
+    "GRAND_CANNON.title": "グランドキャノン",
+    "GRAND_CANNON.description": "[gold]価格：${DollarNumber}[/gold]。ターン開始時に敵に{Damage}(アップグレード時{DamageUpgraded})ダメージを与える。"
 }

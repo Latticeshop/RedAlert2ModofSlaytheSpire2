@@ -39,6 +39,7 @@ public sealed class AircraftCarrier : CardModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT3.CreateHoverTip(),
 		ModCardKeywords.Navy.CreateHoverTip(),
 		HoverTipFactory.FromPower<HornetPower>(),
 		HoverTipFactory.FromPower<TargetLockedPower>(),

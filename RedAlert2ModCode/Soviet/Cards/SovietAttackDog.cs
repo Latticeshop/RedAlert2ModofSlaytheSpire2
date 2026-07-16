@@ -35,6 +35,7 @@ public sealed class SovietAttackDog : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
+		ModCardKeywords.TechLevelT1.CreateHoverTip(),
 		ModCardKeywords.Soldier.CreateHoverTip()
 	];
 

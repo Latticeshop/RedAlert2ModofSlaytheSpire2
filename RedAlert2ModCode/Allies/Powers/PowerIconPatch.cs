@@ -80,6 +80,7 @@ public static class PowerIconPatch
         { typeof(ForceFieldPower), "res://RedAlert2ModResources/images/packed/card_portraits/forcicon.png" },
         { typeof(MineRaidPower), "res://RedAlert2ModResources/images/packed/powers/mine_raid_power.png" },
         { typeof(ErasingPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/clegicon.png" },
+        { typeof(GrandCannonPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/gcanicon.png" },
         };
 
     /// <summary>
