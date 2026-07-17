@@ -127,6 +127,8 @@
     "TESLA_TANK.description": "Gain {Block} Block. Gain 1 Orb Slot. Gain {LightningOrb} Lightning Orb.",
     "TERROR_DRONE.title": "Terror Drone",
     "TERROR_DRONE.description": "Applies {TerrorDroneStacks} stacks of [gold]Terror Drone[/gold] and [gold]Slow[/gold] to the enemy.",
+    "TERROR_MAN.title": "Terrorist",
+    "TERROR_MAN.description": "Deals {Damage} damage. [gold]Splash[/gold].",
     "GIANT_SQUID.title": "Giant Squid",
     "GIANT_SQUID.description": "Apply {WeakStacks} stacks of [gold]Weak[/gold], apply {GiantSquidStacks} stacks of [gold]Giant Squid[/gold].",
     "KIROV.title": "Kirov",

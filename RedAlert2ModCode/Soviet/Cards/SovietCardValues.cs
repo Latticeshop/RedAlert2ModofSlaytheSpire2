@@ -71,6 +71,15 @@ public static class SovietCardValues
 		DollarValue = 600
 	};
 	
+	/// <summary>恐怖分子 - 1费攻击卡，造成6(升级9)伤害+溅射，价格200，需要雷达(T2)</summary>
+	public static CardValueStore.CardValues Terrorist => new()
+	{
+		Cost = 1,
+		Damage = 6,
+		DamageUpgraded = 3,
+		DollarValue = 200
+	};
+	
 	/// <summary>工程师 - 1费技能卡，从选项中选择指令，价格500</summary>
 	public static CardValueStore.CardValues Engineer => new()
 	{
@@ -435,7 +444,8 @@ public static class SovietCardValues
 			{ "SOVIETFLAKTROOPER", FlakTrooper },
 			{ "SOVIETTESLATROOPER", TeslaTrooper },
 			{ "DESOLATOR", Desolator },
-			{ "SOVIETENGINEER", Engineer }
+			{ "SOVIETENGINEER", Engineer },
+			{ "TERROR_MAN", Terrorist }
 		};
 	}
 	

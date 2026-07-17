@@ -199,6 +199,8 @@
     "STRATEGY_TOWER_DEFENSE.title": "타워 디펜스",
     "TERROR_DRONE.description": "적에게 [gold]테러 드론[/gold] {TerrorDroneStacks}중첩과 [gold]둔화[/gold]를 부여합니다.",
     "TERROR_DRONE.title": "테러 드론",
+    "TERROR_MAN.description": "{Damage}의 피해를 입힙니다. [gold]스플래시[/gold].",
+    "TERROR_MAN.title": "테러리스트",
     "GIANT_SQUID.description": "[gold]취약[/gold] {WeakStacks} 중첩을 부여합니다. [gold]거대 오징어[/gold] {GiantSquidStacks} 중첩을 부여합니다.",
     "GIANT_SQUID.title": "거대 오징어",
     "TYPHOON_SUBMARINE.description": "취약을 1 부여합니다. 피해를 {Damage}만큼 2번 줍니다.",

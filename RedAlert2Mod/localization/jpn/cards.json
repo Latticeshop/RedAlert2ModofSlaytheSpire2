@@ -127,6 +127,8 @@
     "TESLA_TANK.description": "{Block}ブロックを獲得する。オーブスロットを1つ獲得する。{LightningOrb}のライトニングオーブを獲得する。",
     "TERROR_DRONE.title": "テロドローン",
     "TERROR_DRONE.description": "敵に{TerrorDroneStacks}層の[gold]テロドローン[/gold]と[gold]緩慢[/gold]効果を与える。",
+    "TERROR_MAN.title": "テロリスト",
+    "TERROR_MAN.description": "{Damage}ダメージを与える。[gold]スプラッシュ[/gold]。",
     "GIANT_SQUID.title": "巨大イカ",
     "GIANT_SQUID.description": "{WeakStacks}層の[gold]虚弱[/gold]を与え、{GiantSquidStacks}層の[gold]巨大イカ[/gold]を与える。",
     "KIROV.title": "キーロフ",

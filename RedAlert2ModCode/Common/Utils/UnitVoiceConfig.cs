@@ -458,6 +458,18 @@ public static class UnitVoiceConfig
         {
             "res://RedAlert2ModResources/audio/SovietUnits/Desolator/Idesat2a_deploy.mp3",
         },
+        ["TerrorMan"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/TerrorMan/Iterata.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TerrorMan/Iteratb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TerrorMan/Iteratc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TerrorMan/Itermoa.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TerrorMan/Itermob.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TerrorMan/Itermoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TerrorMan/Itersea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TerrorMan/Iterseb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TerrorMan/Itersec.mp3",
+        },
         ["SovietTransportShip"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/SovietUnits/SovietTransportShip/Vhosmoa.mp3",

@@ -129,6 +129,8 @@
     "TESLA_TANK.description": "获得 {Block} 点格挡。获得 1 充能球槽。获得 {LightningOrb} 个闪电球。",
     "TERROR_DRONE.title": "恐怖机器人",
     "TERROR_DRONE.description": "赋予敌人 {TerrorDroneStacks} 层[gold]恐怖机器人[/gold]和[gold]缓慢[/gold]效果。",
+    "TERROR_MAN.title": "恐怖分子",
+    "TERROR_MAN.description": "造成 {Damage} 点伤害。[gold]溅射[/gold]。",
     "GIANT_SQUID.title": "巨型乌贼",
     "GIANT_SQUID.description": "赋予 {WeakStacks} 层[gold]虚弱[/gold]，赋予 {GiantSquidStacks} 层[gold]巨型乌贼[/gold]。",
     "KIROV.title": "基洛夫",

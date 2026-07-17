@@ -22,6 +22,7 @@ public static class SovietCardRegistry
         () => ModelDb.Card<SovietFlakTrooper>(),
         () => ModelDb.Card<SovietTeslaTrooper>(),
         () => ModelDb.Card<Desolator>(),
+        () => ModelDb.Card<TerrorMan>(),
     };
 
     public static List<Func<CardModel>> RadarSoldiers { get; } = new()
@@ -29,6 +30,7 @@ public static class SovietCardRegistry
         () => ModelDb.Card<SovietFlakTrooper>(),
         () => ModelDb.Card<SovietTeslaTrooper>(),
         () => ModelDb.Card<Desolator>(),
+        () => ModelDb.Card<TerrorMan>(),
     };
 
     public static List<Func<CardModel>> Vehicles { get; } = new()
