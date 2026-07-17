@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.ValueProps;
 using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Soviet.Cards;
@@ -24,7 +25,7 @@ public sealed class TeslaTank : CardModel
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new IntVar("Block", Values.Block),
+		new BlockVar(Values.Block, ValueProp.Move),
 		new IntVar("LightningOrb", Values.MagicNumber)
 	};
 

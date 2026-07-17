@@ -19,7 +19,7 @@ public sealed class SpyPlane : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.SpyPlane;
 
-	public SpyPlane() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.Self) { }
+	public SpyPlane() : base((int)Values.Cost, CardType.Skill, CardRarity.Token, TargetType.Self) { }
 
 	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/soviet/spypicon.png";
 
