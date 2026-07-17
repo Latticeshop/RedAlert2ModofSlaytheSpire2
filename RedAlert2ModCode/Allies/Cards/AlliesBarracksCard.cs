@@ -87,6 +87,13 @@ public sealed class AlliesBarracksCard : CardModel
 			GD.Print($"[AlliesBarracksCard] 移除火箭飞行兵选项，剩余卡牌数量: {availableCards.Count}");
 		}
 		
+		// 如果没有空指部/雷达，移除狙击手选项（T2科技）
+		if (!hasAirForceCommand)
+		{
+			availableCards = availableCards.Where(c => c.GetType() != typeof(Sniper)).ToList();
+			GD.Print($"[AlliesBarracksCard] 移除狙击手选项，剩余卡牌数量: {availableCards.Count}");
+		}
+		
 		GD.Print($"[AlliesBarracksCard] 可用卡牌数量: {availableCards.Count}");
 
 		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
@@ -142,12 +149,17 @@ public sealed class AlliesBarracksCard : CardModel
 			if (Owner?.Creature?.Powers == null)
 				return false;
 			
-			// 检查是否有来自空指部的 TrainingQueuePower
+			// 检查是否有空指部能力
+			if (Owner.Creature.Powers.Any(p => p is AlliedAirForceCommandPower))
+			{
+				return true;
+			}
+			
+			// 兼容旧逻辑：检查是否有来自空指部的 TrainingQueuePower
 			foreach (var power in Owner.Creature.Powers)
 			{
 				if (power is TrainingQueuePower trainingPower)
 				{
-					// 检查能力的源卡牌是否是空指部
 					if (trainingPower.TrainedCardId == "INTRUDER")
 					{
 						return true;

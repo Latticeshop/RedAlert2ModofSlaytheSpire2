@@ -21,6 +21,8 @@
     "F2_A.description": "Gain [gold]Steel Flood[/gold] power.",
     "ALLIES_ENGINEER.title": "Engineer",
     "ALLIES_ENGINEER.description": "Choose 1 command from {IfUpgraded:show:3|2} options.",
+    "SNIPER.title": "Sniper",
+    "SNIPER.description": "[gold]Unblockable[/gold]. Deal {Damage} damage.",
     "AMERICAN_SOLDIER.title": "G.I.",
     "AMERICAN_SOLDIER.description": "Deals {Damage} damage {Repeat} times.",
     "GRIZZLY_TANK.title": "Grizzly Tank",

@@ -26,6 +26,8 @@
     "ALLIES_DOG_SOLDIER.title": "군견",
     "ALLIES_ENGINEER.description": "{IfUpgraded:show:3|2}개의 선택지 중 명령 1개를 고릅니다.",
     "ALLIES_ENGINEER.title": "엔지니어",
+    "SNIPER.title": "스나이퍼",
+    "SNIPER.description": "[gold]무적[/gold]. {Damage}의 피해를 입힙니다.",
     "ALLIES_PILLBOX_CARD.description": "[gold]비용: ${DollarNumber}[/gold]. 매 턴 시작 시, 적에게 피해를 {Damage}만큼 2번 주고 방어도를 {Block} 얻습니다.",
     "ALLIES_PILLBOX_CARD.title": "기관총 포대",
     "ALLIES_REPAIR_DEPOT.description": "[gold]비용: ${DollarNumber}[/gold]. 소멸된 카드 더미에서 카드 1장을 선택해 손에 추가합니다.",

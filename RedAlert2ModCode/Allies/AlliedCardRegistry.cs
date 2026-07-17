@@ -21,6 +21,13 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<GuardianGi>(),
         () => ModelDb.Card<RocketSoldier>(),
         () => ModelDb.Card<AlliesEngineer>(),
+        () => ModelDb.Card<Sniper>(),
+    };
+
+    /// <summary>雷达解锁士兵单位 - 需要空指部/雷达解锁</summary>
+    public static List<Func<CardModel>> RadarSoldiers { get; } = new()
+    {
+        () => ModelDb.Card<Sniper>()
     };
 
     /// <summary>高科技(T3)士兵单位 - 需要作战实验室解锁</summary>

@@ -21,6 +21,8 @@
     "F2_A.description": "[gold]鉄の洪水[/gold]能力を獲得する。",
     "ALLIES_ENGINEER.title": "エンジニア",
     "ALLIES_ENGINEER.description": "{IfUpgraded:show:3|2}つの選択肢から1つの命令を選ぶ。",
+    "SNIPER.title": "スナイパー",
+    "SNIPER.description": "[gold]無敵[/gold]。{Damage}のダメージを与える。",
     "AMERICAN_SOLDIER.title": "アメリカ兵",
     "AMERICAN_SOLDIER.description": "{Damage}ダメージを{Repeat}回与える。",
     "GRIZZLY_TANK.title": "グリズリー戦車",

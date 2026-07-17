@@ -64,6 +64,15 @@ public static class AlliesCardValues
 		DollarValue = 500
 	};
 
+	/// <summary>狙击手 - 1费攻击卡，无视格挡造成9(升级12)伤害，价格600，需要空指部/雷达(T2)</summary>
+	public static CardValueStore.CardValues Sniper => new()
+	{
+		Cost = 1,
+		Damage = 9,
+		DamageUpgraded = 3,
+		DollarValue = 600
+	};
+
 	/// <summary>超时空军团兵 - 1费攻击卡，赋予敌人血量10%(升级20%)层数的抹除，首次眩晕敌人，价格1200，需要作战实验室</summary>
 	public static CardValueStore.CardValues ChronoLegionnaire => new()
 	{

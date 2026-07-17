@@ -21,6 +21,8 @@
     "F2_A.description": "获得[gold]钢铁洪流[/gold]能力。",
     "ALLIES_ENGINEER.title": "工程师",
     "ALLIES_ENGINEER.description": "从 {IfUpgraded:show:3|2} 个选项中选择一个指令。",
+    "SNIPER.title": "狙击手",
+    "SNIPER.description": "[gold]无视格挡[/gold]。造成 {Damage} 点伤害。",
     "AMERICAN_SOLDIER.title": "美国大兵",
     "AMERICAN_SOLDIER.description": "造成 {Damage} 点伤害 {Repeat} 次。",
     "GRIZZLY_TANK.title": "灰熊坦克",

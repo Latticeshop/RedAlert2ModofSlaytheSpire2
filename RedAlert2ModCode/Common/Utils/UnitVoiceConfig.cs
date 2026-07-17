@@ -67,6 +67,21 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/BlackHawk/Vblesed.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/BlackHawk/Vblesef.mp3",
         },
+        ["Sniper"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/Sniper/Isniata.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Sniper/Isniatc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Sniper/Isnimob.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Sniper/Isnimoe.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Sniper/Isnisea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Sniper/Isniseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Sniper/Isnisec.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Sniper/Isnised.mp3",
+        },
+        ["SniperAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/Sniper/Isniatta_attack.mp3",
+        },
         ["MirageTank"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/MirageTank/Vmirata.mp3",
