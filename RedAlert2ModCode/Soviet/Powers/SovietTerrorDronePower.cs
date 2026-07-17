@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using HarmonyLib;
 using System.Reflection;
@@ -139,6 +140,13 @@ public sealed class SovietTerrorDronePower : PowerModel
         if (Owner == null) return;
         
         PlayHealRemoveSound();
+        
+        var slowPower = Owner.Powers?.FirstOrDefault(p => p is SlowPower) as SlowPower;
+        if (slowPower != null)
+        {
+            await PowerCmd.Remove(slowPower);
+            GD.Print("[SovietTerrorDronePower] 移除缓慢debuff");
+        }
         
         await PowerCmd.Remove(this);
     }
