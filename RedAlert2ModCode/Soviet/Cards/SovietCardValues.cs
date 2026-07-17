@@ -79,6 +79,15 @@ public static class SovietCardValues
 		BlockUpgraded = 3,
 		DollarValue = 500
 	};
+
+	/// <summary>侦察机 - 0费攻击卡，获得临时敏捷，价格0（特殊单位，无法生产）</summary>
+	public static CardValueStore.CardValues SpyPlane => new()
+	{
+		Cost = 0,
+		MagicNumber = 2,
+		MagicNumberUpgraded = 1,
+		DollarValue = 0
+	};
 	
 	// ==================== 装甲单位 ====================
 	
@@ -93,6 +102,17 @@ public static class SovietCardValues
 		MagicNumber = 1,      // 易伤层数
 		MagicNumberUpgraded = 0,  // 升级后不增加易伤层数
 		DollarValue = 900
+	};
+
+	/// <summary>磁能坦克 - 1费攻击卡，获得5(升级8)格挡+1充能球槽+1(升级2)闪电球，价格1200</summary>
+	public static CardValueStore.CardValues TeslaTank => new()
+	{
+		Cost = 1,
+		Block = 5,
+		BlockUpgraded = 3,
+		MagicNumber = 1,      // 闪电球数量
+		MagicNumberUpgraded = 1,  // 升级后+1闪电球
+		DollarValue = 1200
 	};
 	
 	/// <summary>天启坦克 - 2费9伤害2次5防御+2易伤，升级后12伤害2次7防御+3易伤，价格1750</summary>
@@ -438,7 +458,8 @@ public static class SovietCardValues
 	{
 		return new Dictionary<string, CardValueStore.CardValues>
 		{
-			{ "KIROV", Kirov }
+			{ "KIROV", Kirov },
+			{ "SPY_PLANE", SpyPlane }
 		};
 	}
 	

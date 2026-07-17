@@ -97,7 +97,7 @@
 防空履带车 (Flak Track)	500	战车工厂
 恐怖机器人 (Terror Drone)	500	战车工厂
 V3火箭发射车 (V3 Launcher)	800	战车工厂, 雷达
-磁能坦克 (Tesla Tank)	1200	战车工厂, 作战实验室
+磁能坦克 (Tesla Tank)	1200	战车工厂, 雷达
 天启坦克 (Apocalypse Tank)	1750	战车工厂, 作战实验室
 苏联基地车 (MCV)	3000	战车工厂
 基洛夫空艇 (Kirov Airship)	2000	战车工厂, 作战实验室

@@ -49,10 +49,12 @@ public static class SovietCardRegistry
     {
         () => ModelDb.Card<V3Rocket>(),
         () => ModelDb.Card<DemolitionTruckCard>(),
+        () => ModelDb.Card<TeslaTank>(),
     };
 
     public static List<Func<CardModel>> Aircraft { get; } = new()
     {
+        () => ModelDb.Card<SpyPlane>(),
     };
 
     public static List<Func<CardModel>> Ships { get; } = new()

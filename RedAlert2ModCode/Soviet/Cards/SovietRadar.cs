@@ -31,7 +31,8 @@ public sealed class SovietRadar : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		ModCardKeywords.OrbitalReadiness.CreateHoverTip()
+		ModCardKeywords.OrbitalReadiness.CreateHoverTip(),
+		HoverTipFactory.FromCard<SpyPlane>()
 	];
 
 	protected override bool IsPlayable
@@ -68,6 +69,12 @@ public sealed class SovietRadar : CardModel
 		// 添加雷达能力（用于科技线检查），每次打出都增加层数
 		await PowerCmd.Apply<SovietRadarPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
 		GD.Print("[SovietRadar] 添加雷达能力");
+
+		// 获得一张侦察机卡牌到手牌
+		var spyPlaneModel = ModelDb.Card<SpyPlane>();
+		var spyPlaneCard = Owner.Creature.CombatState.CreateCard(spyPlaneModel, Owner);
+		await CardPileCmd.Add(spyPlaneCard, PileType.Hand, CardPilePosition.Bottom, this);
+		GD.Print("[SovietRadar] 添加侦察机卡牌到手牌");
 
 		await CardPileCmd.Draw(ctx, 1, Owner);
 	}

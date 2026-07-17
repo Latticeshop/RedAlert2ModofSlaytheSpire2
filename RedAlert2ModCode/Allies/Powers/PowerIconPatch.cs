@@ -65,6 +65,7 @@ public static class PowerIconPatch
         { typeof(RedAlert2ModCode.Soviet.Powers.SovietPillboxPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/plticon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.BattleBunkerPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/bnkricon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.KirovPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/zepicon.png" },
+        { typeof(RedAlert2ModCode.Soviet.Powers.SpyPlaneTemporaryDexterityPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/spypicon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.V3RocketPower), "res://RedAlert2ModResources/images/packed/powers/v3.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.DreadnoughtPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/dredicon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.NuclearReactorCorePower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/nrcticon.png" },

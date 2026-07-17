@@ -478,6 +478,14 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/Kirov/Vkirsec.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/Kirov/Vkirsed.mp3",
         },
+        ["SpyPlaneEngine"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/SpyPlane/Vspylo3a_engine.mp3",
+        },
+        ["SpyPlaneSnap"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/SpyPlane/Vspysnap_snap.mp3",
+        },
         ["ApocalypseTank"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vapoatb.mp3",
@@ -489,6 +497,22 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vaposec.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vaposed.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vaposee.mp3",
+        },
+        ["TeslaTank"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/TeslaTank/Vtesata.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TeslaTank/Vtesatb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TeslaTank/Vtesate.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TeslaTank/Vtesmoa.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TeslaTank/Vtesmoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TeslaTank/Vtessea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TeslaTank/Vtesseb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TeslaTank/Vtessec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/TeslaTank/Vtessed.mp3",
+        },
+        ["TeslaTankAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/TeslaTank/Vtesatta_attack.mp3",
         },
         ["DemolitionTruck"] = new List<string>
         {
