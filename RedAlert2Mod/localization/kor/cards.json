@@ -89,6 +89,8 @@
     "INDUSTRIAL_PLANT_CARD.title": "공업 단지",
     "INTRUDER.description": "피해를 {Damage} 주고 적에게 취약을 {Repeat} 부여합니다.",
     "INTRUDER.title": "해리어",
+    "BLACK_HAWK.title": "블랙 호크",
+    "BLACK_HAWK.description": "피해를 {Damage} 주고 적에게 취약을 {Repeat} 부여합니다.\n[gold]필사의 수단[/gold]을 1층 추가로 획득합니다.",
     "IRON_CURTAIN.description": "[gold]슈퍼 웨폰[/gold].\n[gold]불가침[/gold]을 1 얻습니다.",
     "IRON_CURTAIN.title": "철의 장막",
     "IRON_CURTAIN_CARD.description": "[gold]비용: ${DollarNumber}[/gold].\n[gold]철의 장막[/gold]을 얻습니다.\n{IfUpgraded:show:재사용 대기시간이 1턴 감소합니다.|}",

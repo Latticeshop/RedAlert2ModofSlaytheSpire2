@@ -55,6 +55,18 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/Intruder/Vintsec.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/Intruder/Vintsed.mp3",
         },
+        ["BlackHawk"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/BlackHawk/Vbleata.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BlackHawk/Vblemoa.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BlackHawk/Vblemob.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BlackHawk/Vblemoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BlackHawk/Vblesea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BlackHawk/Vbleseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BlackHawk/Vblesec.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BlackHawk/Vblesed.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/BlackHawk/Vblesef.mp3",
+        },
         ["MirageTank"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/MirageTank/Vmirata.mp3",

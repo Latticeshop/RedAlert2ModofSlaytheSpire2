@@ -53,6 +53,8 @@
     "CHRONO_MINER.description": "[gold]Chrono. [/gold]\nGains [gold]${DollarValue}[/gold].",
     "INTRUDER.title": "Harrier",
     "INTRUDER.description": "Deals {Damage} damage and applies {Repeat} Vulnerable to the enemy.",
+    "BLACK_HAWK.title": "Black Hawk",
+    "BLACK_HAWK.description": "Deals {Damage} damage and applies {Repeat} Vulnerable to the enemy.\nCarries an additional [gold]Desperate Measures[/gold] charge.",
     "AIR_FORCE_COMMAND.title": "Air Force Command",
     "AIR_FORCE_COMMAND.description": "[gold]Cost: ${DollarNumber}[/gold]. Choose an air unit to create a [gold]Production Queue[/gold].{IfUpgraded:show:Queue upgraded.|}",
     "PRISM_TOWER_CARD.title": "Prism Tower",

@@ -125,11 +125,22 @@ public static class AlliesCardValues
 	
 	// ==================== 空军单位 ====================
 	
-	/// <summary>入侵者战机 - 1费10伤害2层易伤，升级后13伤害3层易伤，价格1200</summary>
+	/// <summary>入侵者战机 - 1费12伤害1层易伤，升级后15伤害2层易伤，价格1200</summary>
 	public static CardValueStore.CardValues Intruder => new()
 	{
 		Cost = 1,
-		Damage = 10,
+		Damage = 12,
+		DamageUpgraded = 3,
+		Repeat = 1,
+		RepeatUpgraded = 1,
+		DollarValue = 1200
+	};
+
+	/// <summary>黑鹰战机 - 1费14伤害2层易伤，升级后17伤害3层易伤，额外携带一层飞鹰战备，价格1200</summary>
+	public static CardValueStore.CardValues BlackHawk => new()
+	{
+		Cost = 1,
+		Damage = 14,
 		DamageUpgraded = 3,
 		Repeat = 2,
 		RepeatUpgraded = 1,
@@ -545,6 +556,7 @@ public static class AlliesCardValues
 		return new System.Collections.Generic.Dictionary<string, CardValueStore.CardValues>
 		{
 			{ "INTRUDER", Intruder },
+			{ "BLACKHAWK", BlackHawk },
 			{ "NIGHTHAWKCHOPPER", NightHawkChopper }
 		};
 	}

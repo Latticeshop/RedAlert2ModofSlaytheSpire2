@@ -55,6 +55,8 @@
     "CHRONO_MINER.description": "[gold]超时空.[/gold]\n获得 [gold]${DollarValue}[/gold] 。",
     "INTRUDER.title": "入侵者战机",
     "INTRUDER.description": "造成 {Damage} 点伤害，赋予敌人 {Repeat} 层易伤。",
+    "BLACK_HAWK.title": "黑鹰战机",
+    "BLACK_HAWK.description": "造成 {Damage} 点伤害，赋予敌人 {Repeat} 层易伤。\n额外携带一层[gold]飞鹰战备[/gold]。",
     "AIR_FORCE_COMMAND.title": "空指部",
     "AIR_FORCE_COMMAND.description": "[gold]价格：${DollarNumber}[/gold]。选择一张空军单位，创建对应的[gold]生产序列[/gold]。{IfUpgraded:show:单位序列升级。|}",
     "PRISM_TOWER_CARD.title": "光棱塔",

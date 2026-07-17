@@ -53,6 +53,8 @@
     "CHRONO_MINER.description": "[gold]クロノ.[/gold]\n[gold]${DollarValue}[/gold]を獲得する。",
     "INTRUDER.title": "イントルーダー戦闘機",
     "INTRUDER.description": "{Damage}ダメージを与え、敵に{Repeat}層の脆弱を与える。",
+    "BLACK_HAWK.title": "ブラックホーク戦闘機",
+    "BLACK_HAWK.description": "{Damage}ダメージを与え、敵に{Repeat}層の脆弱を与える。\n追加で[gold]イーグル戦備[/gold]を1層獲得する。",
     "AIR_FORCE_COMMAND.title": "空軍司令部",
     "AIR_FORCE_COMMAND.description": "[gold]価格：${DollarNumber}[/gold]。空軍ユニットを選択し、対応する[gold]生産シーケンス[/gold]を作成する。{IfUpgraded:show:ユニットシーケンスアップグレード。|}",
     "PRISM_TOWER_CARD.title": "プリズムタワー",

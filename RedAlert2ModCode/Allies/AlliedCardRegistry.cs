@@ -53,6 +53,7 @@ public static class AlliedCardRegistry
     public static List<Func<CardModel>> Aircraft { get; } = new()
     {
         () => ModelDb.Card<Intruder>(),
+        () => ModelDb.Card<BlackHawk>(),
         () => ModelDb.Card<NightHawkChopper>()
     };
 

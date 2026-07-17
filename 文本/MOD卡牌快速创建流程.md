@@ -95,7 +95,29 @@ public static List<Func<CardModel>> Vehicles { get; } = new()
 
 ---
 
-### 5. 科技解锁（如需要）
+### 5. 科技等级悬浮Tip（必须）
+
+#### 在卡牌类中添加科技等级Tip（放在第一位）
+所有单位卡必须添加T1/T2/T3科技等级悬浮Tip，放在第一位：
+
+```csharp
+protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+[
+    ModCardKeywords.TechLevelT1.CreateHoverTip(),  // 必须放在第一位
+    ModCardKeywords.Vehicle.CreateHoverTip()
+];
+```
+
+#### 科技等级规则
+| 等级 | 解锁条件 | 适用单位 |
+|------|----------|----------|
+| **T1** | 初始科技 | 基础单位（美国大兵、警犬、工程师等） |
+| **T2** | 建造[gold]空指部/雷达/心灵探测仪[/gold]解锁 | 中级单位（入侵者战机、光棱塔、磁暴线圈等） |
+| **T3** | 建造[gold]作战实验室[/gold]解锁 | 高级单位（超时空军团兵、超级武器等） |
+
+---
+
+### 6. 科技解锁（如需要）
 
 #### 在 *TechTreeConfig.cs 中配置解锁条件
 ```csharp
@@ -122,7 +144,7 @@ public static List<CardModel> CreateVehicles(Player owner)
 
 ---
 
-### 6. 动态数值配置
+### 7. 动态数值配置
 
 #### 在卡牌类中注册动态变量
 ```csharp
@@ -148,7 +170,7 @@ protected override void OnUpgrade()
 
 ---
 
-### 7. 本地化
+### 8. 本地化
 
 #### cards.json（中文）
 ```json
