@@ -59,6 +59,17 @@ public static class SovietCardValues
 		Cost = 1,
 		DollarValue = 500
 	};
+
+	/// <summary>辐射工兵 - 1费攻击卡，对一名敌人赋予8(升级10)层中毒，部署对全体敌人赋予4(升级5)层中毒，价格600</summary>
+	public static CardValueStore.CardValues Desolator => new()
+	{
+		Cost = 1,
+		Damage = 8,
+		DamageUpgraded = 2,
+		Repeat = 4,
+		RepeatUpgraded = 1,
+		DollarValue = 600
+	};
 	
 	/// <summary>工程师 - 1费技能卡，从选项中选择指令，价格500</summary>
 	public static CardValueStore.CardValues Engineer => new()
@@ -403,6 +414,7 @@ public static class SovietCardValues
 			{ "SOVIETATTACKDOG", AttackDog },
 			{ "SOVIETFLAKTROOPER", FlakTrooper },
 			{ "SOVIETTESLATROOPER", TeslaTrooper },
+			{ "DESOLATOR", Desolator },
 			{ "SOVIETENGINEER", Engineer }
 		};
 	}

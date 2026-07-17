@@ -435,6 +435,29 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/TeslaTrooper/Itessed.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/TeslaTrooper/Itessee.mp3",
         },
+        ["Desolator"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/Desolator/Idesata.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Desolator/Idesatb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Desolator/Idesatd.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Desolator/Idesate.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Desolator/Idesatf.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Desolator/Idesmoa.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Desolator/Idesmoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Desolator/Idesmod.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Desolator/Idesmoe.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Desolator/Idessea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Desolator/Idesseb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Desolator/Idessee.mp3",
+        },
+        ["DesolatorAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/Desolator/Idesat1a_radiation.mp3",
+        },
+        ["DesolatorDeploy"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/Desolator/Idesat2a_deploy.mp3",
+        },
         ["SovietTransportShip"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/SovietUnits/SovietTransportShip/Vhosmoa.mp3",

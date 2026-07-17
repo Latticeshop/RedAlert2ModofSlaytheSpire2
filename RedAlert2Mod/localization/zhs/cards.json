@@ -118,6 +118,8 @@
     "SOVIET_TESLA_TROOPER.title": "磁暴步兵",
     "SOVIET_TESLA_TROOPER.description": "生成一个闪电球。[gold]部署[/gold]：给[gold]磁暴线圈[/gold]充能。",
     "SOVIET_TESLA_TROOPER.deploy_title": "线圈充能",
+    "DESOLATOR.title": "辐射工兵",
+    "DESOLATOR.description": "对一名敌人赋予 {Poison} 层[gold]中毒[/gold]。[gold]部署[/gold]：对全体敌人赋予 {DeployPoison} 层中毒。",
     "SOVIET_TESLA_TROOPER.deploy_description": "给磁暴线圈充能，下次伤害提升50%",
     "SOVIET_ATTACK_DOG.title": "军犬",
     "SOVIET_ATTACK_DOG.description": "造成 {Damage} 点伤害，赋予 {Repeat} 层虚弱。",

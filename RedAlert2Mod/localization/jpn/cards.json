@@ -116,6 +116,8 @@
     "SOVIET_TESLA_TROOPER.title": "テスラ兵",
     "SOVIET_TESLA_TROOPER.description": "ライトニングオーブを生成する。[gold]展開[/gold]：[gold]テスラコイル[/gold]に充電する。",
     "SOVIET_TESLA_TROOPER.deploy_title": "コイル充電",
+    "DESOLATOR.title": "デソレーター",
+    "DESOLATOR.description": "敵1体に{Poison}[gold]毒[/gold]を付与する。[gold]展開[/gold]：全ての敵に{DeployPoison}毒を付与する。",
     "SOVIET_TESLA_TROOPER.deploy_description": "テスラコイルに充電し、次のダメージを50%アップ",
     "SOVIET_ATTACK_DOG.title": "軍犬",
     "SOVIET_ATTACK_DOG.description": "{Damage}ダメージを与え、{Repeat}層の虚弱を与える。",

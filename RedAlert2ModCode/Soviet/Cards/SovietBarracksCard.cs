@@ -76,12 +76,16 @@ public sealed class SovietBarracksCard : CardModel
 		List<CardModel> availableCards = SovietCardRegistry.CreateSoldiers(Owner);
 		GD.Print($"[SovietBarracksCard] 可用卡牌数量: {availableCards.Count}");
 
-		// 检查是否有雷达能力，如果没有则移除防空步兵
+		// 检查是否有雷达能力，如果没有则移除T2科技士兵（防空步兵、磁暴步兵、辐射工兵）
 		bool hasRadarPower = Owner.Creature.Powers.Any(p => p is SovietRadarPower);
 		if (!hasRadarPower)
 		{
-			availableCards = availableCards.Where(c => c is not SovietFlakTrooper).ToList();
-			GD.Print($"[SovietBarracksCard] 无雷达能力，移除防空步兵，剩余卡牌数量: {availableCards.Count}");
+			availableCards = availableCards.Where(c => 
+				c is not SovietFlakTrooper && 
+				c is not SovietTeslaTrooper &&
+				c is not Desolator
+			).ToList();
+			GD.Print($"[SovietBarracksCard] 无雷达能力，移除T2士兵，剩余卡牌数量: {availableCards.Count}");
 		}
 
 		var cardValuesMap = SovietCardValues.CreateSoldierValuesMap();
