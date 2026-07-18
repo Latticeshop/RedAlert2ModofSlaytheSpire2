@@ -7,7 +7,7 @@
 [node name="Visuals" type="Sprite2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(0, -145)
-scale = Vector2(0.33, 0.33)
+scale = Vector2(0.25, 0.25)
 texture = ExtResource("1_lugwd")
 
 [node name="Bounds" type="Control" parent="."]

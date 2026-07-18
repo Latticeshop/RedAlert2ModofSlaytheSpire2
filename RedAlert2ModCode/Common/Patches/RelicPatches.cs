@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -123,6 +124,47 @@ public static class RelicPatches
                 {
                     var replacement = __instance.Owner.RunState.CreateCard(rng.NextItem(targets), __instance.Owner);
                     await CardCmd.Transform(tank, replacement);
+                }
+            }
+        }
+
+        var playerCreature = __instance.Owner.Creature;
+        if (playerCreature != null)
+        {
+            int newMaxHp = 0;
+            var maxHpProperty = playerCreature.GetType().GetProperty("MaxHp");
+            if (maxHpProperty != null && maxHpProperty.CanWrite)
+            {
+                int currentMaxHp = (int)maxHpProperty.GetValue(playerCreature);
+                newMaxHp = Math.Max(1, currentMaxHp - 12);
+                maxHpProperty.SetValue(playerCreature, newMaxHp);
+            }
+            else
+            {
+                var maxHpField = playerCreature.GetType().GetField("_maxHp", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (maxHpField != null)
+                {
+                    int currentMaxHp = (int)maxHpField.GetValue(playerCreature);
+                    newMaxHp = Math.Max(1, currentMaxHp - 12);
+                    maxHpField.SetValue(playerCreature, newMaxHp);
+                }
+            }
+
+            var hpProperty = playerCreature.GetType().GetProperty("Hp");
+            if (hpProperty != null && hpProperty.CanWrite)
+            {
+                int currentHp = (int)hpProperty.GetValue(playerCreature);
+                int newHp = Math.Max(1, Math.Min(currentHp - 12, newMaxHp));
+                hpProperty.SetValue(playerCreature, newHp);
+            }
+            else
+            {
+                var hpField = playerCreature.GetType().GetField("_hp", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (hpField != null)
+                {
+                    int currentHp = (int)hpField.GetValue(playerCreature);
+                    int newHp = Math.Max(1, Math.Min(currentHp - 12, newMaxHp));
+                    hpField.SetValue(playerCreature, newHp);
                 }
             }
         }

@@ -24,10 +24,10 @@ public static class ModInitializer
         harmony.PatchAll();
         
         // 注册盟军角色立绘补丁
-        AssetHooks.Install(harmony);
+        Allies.AssetHooks.Install(harmony);
         
         // 注册苏军角色立绘补丁
-        SovietAssetHooks.Install(harmony);
+        Soviet.AssetHooks.Install(harmony);
         
         // 注册角色选择语音补丁
         CharacterSelectPatch.Install(harmony);
