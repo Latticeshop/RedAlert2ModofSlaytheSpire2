@@ -87,6 +87,12 @@ public sealed class IronCurtainCard : CardModel
             GD.Print($"[IronCurtainCard] 已获得铁幕装置能力，升级状态: {ironCurtainPower.IsUpgraded}");
         }
 
+        var ironCurtainTemplate = ModelDb.Card<IronCurtain>();
+        var ironCurtainCard = Owner.Creature.CombatState.CreateCard(ironCurtainTemplate, Owner);
+        ironCurtainCard.AddKeyword(CardKeyword.Exhaust);
+        await CardPileCmd.AddGeneratedCardToCombat(ironCurtainCard, PileType.Hand, Owner);
+        GD.Print("[IronCurtainCard] 已添加铁幕卡牌到手牌");
+
         await CardPileCmd.Draw(ctx, 1, Owner);
     }
 }

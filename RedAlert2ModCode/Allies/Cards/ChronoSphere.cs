@@ -98,6 +98,12 @@ public sealed class ChronoSphere : CardModel
                 GD.Print($"[ChronoSphere] 已获得超时空传送仪能力，升级状态: {chronoSpherePower.IsUpgraded}");
             }
 
+            var chronoWarpTemplate = ModelDb.Card<ChronoWarp>();
+            var chronoWarpCard = Owner.Creature.CombatState.CreateCard(chronoWarpTemplate, Owner);
+            chronoWarpCard.AddKeyword(CardKeyword.Exhaust);
+            await CardPileCmd.AddGeneratedCardToCombat(chronoWarpCard, PileType.Hand, Owner);
+            GD.Print("[ChronoSphere] 已添加超时空传送卡牌到手牌");
+
             // 打出后抽一张牌
             await CardPileCmd.Draw(ctx, 1, Owner);
         }

@@ -20,7 +20,7 @@ public static class AlliedTechTreeConfig
             new(typeof(AirForceCommand), TechLevel.T2, powerType: typeof(AlliedAirForceCommandPower)),
             new(typeof(GrandCannon), TechLevel.T2, requiredPowers: new[] { typeof(AlliedAirForceCommandPower) }),
             
-            new(typeof(AlliedBattleLab), TechLevel.T2, requiredPowers: new[] { typeof(AlliedWarFactoryPower), typeof(AlliedAirForceCommandPower) }),
+            new(typeof(AlliedBattleLab), TechLevel.T2, requiredPowers: new[] { typeof(AlliedAirForceCommandPower) }),
         };
 
         return new BuildingTechTree(buildings);

@@ -87,6 +87,12 @@ public sealed class NuclearMissileSiloCard : CardModel
             GD.Print($"[NuclearMissileSiloCard] 已获得核弹井能力，升级状态: {nuclearMissileSiloPower.IsUpgraded}");
         }
 
+        var nuclearAttackTemplate = ModelDb.Card<NuclearAttack>();
+        var nuclearAttackCard = Owner.Creature.CombatState.CreateCard(nuclearAttackTemplate, Owner);
+        nuclearAttackCard.AddKeyword(CardKeyword.Exhaust);
+        await CardPileCmd.AddGeneratedCardToCombat(nuclearAttackCard, PileType.Hand, Owner);
+        GD.Print("[NuclearMissileSiloCard] 已添加核弹攻击卡牌到手牌");
+
         await CardPileCmd.Draw(ctx, 1, Owner);
     }
 }

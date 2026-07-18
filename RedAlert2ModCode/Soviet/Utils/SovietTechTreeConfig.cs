@@ -19,7 +19,7 @@ public static class SovietTechTreeConfig
             new(typeof(SovietShipyardCard), TechLevel.T2),
             new(typeof(SovietRadar), TechLevel.T2, powerType: typeof(SovietRadarPower)),
             
-            new(typeof(SovietBattleLab), TechLevel.T2, requiredPowers: new[] { typeof(SovietWarFactoryPower), typeof(SovietRadarPower) }),
+            new(typeof(SovietBattleLab), TechLevel.T2, requiredPowers: new[] { typeof(SovietRadarPower) }),
         };
 
         return new BuildingTechTree(buildings);
