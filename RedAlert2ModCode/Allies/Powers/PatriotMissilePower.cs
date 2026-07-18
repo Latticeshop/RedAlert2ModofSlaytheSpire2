@@ -104,6 +104,7 @@ public class PatriotMissilePower : PowerModel
 		{
 			if (base.Owner != null)
 			{
+				UnitVoiceHelper.PlayUnitVoice("PatriotMissile", "Allied");
 				GD.Print($"[PatriotMissilePower] 第{i+1}层 - 获得 {CurrentBlock} 点格挡");
 				await CreatureCmd.GainBlock(base.Owner, (decimal)CurrentBlock, ValueProp.Unpowered, null);
 			}

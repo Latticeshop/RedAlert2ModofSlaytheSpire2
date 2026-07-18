@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Common.Powers;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Common.Cards;
 
@@ -52,6 +53,9 @@ public sealed class ForceField : CardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         GD.Print("[ForceField] OnPlay 被调用");
+
+        UnitVoiceHelper.PlayUnitVoice("ForceShieldOn", "Allied");
+        UnitVoiceHelper.PlayUnitVoice("PowerOutage", "Allied");
 
         await PowerCmd.Apply<ForceFieldPower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
 

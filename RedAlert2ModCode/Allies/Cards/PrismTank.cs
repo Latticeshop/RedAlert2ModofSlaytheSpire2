@@ -48,6 +48,7 @@ public sealed class PrismTank : CardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         UnitVoiceHelper.PlayUnitVoice(this.GetType());
+        UnitVoiceHelper.PlayUnitVoice("PrismTankAttack", "Allied");
         GD.Print("[PrismTank] OnPlay 被调用");
 
         Creature? target = play.Target as Creature;

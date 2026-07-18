@@ -46,6 +46,7 @@ public sealed class WarMiner : CardModel
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Soviet");
+		UnitVoiceHelper.PlayUnitVoice("WarMinerAttack", "Soviet");
 		
 		// 攻击效果：造成2点伤害（升级后对全体敌人）
 		if (base.IsUpgraded)

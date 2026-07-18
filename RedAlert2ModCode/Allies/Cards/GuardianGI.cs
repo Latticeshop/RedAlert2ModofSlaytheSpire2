@@ -44,6 +44,7 @@ public sealed class GuardianGi : CardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Allies");
+        UnitVoiceHelper.PlayUnitVoice("GuardianGiAttack", "Allies");
 
         var deployDesc = new LocString("card_keywords", "ui.guardian_gi.deploy_desc");
             deployDesc.Add("Damage", DynamicVars.Damage.BaseValue);
@@ -70,6 +71,7 @@ public sealed class GuardianGi : CardModel
 
         if (selectedIndex == 0)
         {
+            UnitVoiceHelper.PlayUnitVoice("GuardianGiDeploy", "Allies");
             await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
                 .FromCard(this)
                 .Targeting(play.Target)

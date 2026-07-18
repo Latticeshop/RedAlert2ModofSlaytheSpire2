@@ -43,6 +43,7 @@ public sealed class Conscript : CardModel
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Soviet");
+		UnitVoiceHelper.PlayUnitVoice("ConscriptAttack", "Soviet");
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this)
 			.Targeting(play.Target)

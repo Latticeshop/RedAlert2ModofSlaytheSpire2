@@ -97,6 +97,7 @@ public sealed class SovietPillboxPower : PowerModel
 			{
 				if (enemies.Count > 0)
 				{
+					UnitVoiceHelper.PlayUnitVoice("SovietPillbox", "Soviet");
 					var randomIndex = rng?.NextInt(enemies.Count) ?? GD.RandRange(0, enemies.Count - 1);
 					var randomEnemy = enemies[randomIndex];
 					GD.Print($"[SovietPillboxPower] 第{i+1}层第{j+1}次攻击 - 对敌人 {randomEnemy.Name} 造成 {CurrentDamage} 点伤害");

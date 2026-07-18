@@ -45,6 +45,7 @@ public sealed class RhinoTank : CardModel
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Soviet");
+		UnitVoiceHelper.PlayUnitVoice("RhinoTankAttack", "Soviet");
 		
 		// 造成伤害
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)

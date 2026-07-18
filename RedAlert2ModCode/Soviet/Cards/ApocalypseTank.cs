@@ -56,6 +56,7 @@ public sealed class ApocalypseTank : CardModel
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Soviet");
+		UnitVoiceHelper.PlayUnitVoice("ApocalypseTankAttack", "Soviet");
 		
 		int repeat = Values.Repeat;
 		for (int i = 0; i < repeat; i++)

@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Common.Powers;
 
@@ -30,6 +31,8 @@ public sealed class ForceFieldPower : PowerModel
         GD.Print($"[ForceFieldPower] 回合开始，失去 {totalLoss} 点能量（{Amount}层 x {energyLoss}）");
 
         await PlayerCmd.LoseEnergy(totalLoss, Owner.Player);
+
+        UnitVoiceHelper.PlayUnitVoice("ForceShieldOff", "Allied");
 
         await PowerCmd.Remove(this);
     }

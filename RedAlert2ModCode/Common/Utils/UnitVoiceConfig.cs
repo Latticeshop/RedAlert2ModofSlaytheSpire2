@@ -20,6 +20,10 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/Igisee.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/Igisef.mp3",
         },
+        ["AmericanSoldierAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/AmericanSoldier/Ig_attack.wav",
+        },
         ["GrizzlyTank"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/GrizzlyTank/Vgraatb.mp3",
@@ -116,6 +120,10 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/PrismTank/Vprisea.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/PrismTank/Vpriseb.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/PrismTank/Vprisee.mp3",
+        },
+        ["PrismTankAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/PrismTank/Vpriata_attack.wav",
         },
         ["RocketSoldier"] = new List<string>
         {
@@ -223,6 +231,14 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/GuardianGI/Iggisee.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/GuardianGI/Iggisef.mp3",
         },
+        ["GuardianGiAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/GuardianGI/Iggisef_attack.wav",
+        },
+        ["GuardianGiDeploy"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/GuardianGI/Iggisef_deploy.wav",
+        },
         ["BattleFortress"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/BattleFortress/Vbatate.mp3",
@@ -281,6 +297,33 @@ public static class UnitVoiceConfig
         ["GrandCannonAttack"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/GrandCannon/attack.wav",
+        },
+        ["Pillbox"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/Pillbox/allied_pillbox_1.wav",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Pillbox/allied_pillbox_2.wav",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Pillbox/allied_pillbox_3.wav",
+            "res://RedAlert2ModResources/audio/AlliedUnits/Pillbox/allied_pillbox_4.wav",
+        },
+        ["PatriotMissile"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/PatriotMissile/patriot_missile.wav",
+        },
+        ["ChronoMiner"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoMiner/miner_return.wav",
+        },
+        ["ForceShieldOn"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/CommonSFX/ForceShield/force_shield_on.wav",
+        },
+        ["ForceShieldOff"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/CommonSFX/ForceShield/force_shield_off.wav",
+        },
+        ["PowerOutage"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/CommonSFX/power_outage.wav",
         },
     };
 
@@ -536,6 +579,29 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdemseb.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdemsec.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/DemolitionTruck/Vdemsed.mp3",
+        },
+        ["ConscriptAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconsea_attack.wav",
+        },
+        ["RhinoTankAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/RhinoTank/Vgrsata_attack.wav",
+        },
+        ["ApocalypseTankAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/ApocalypseTank/Vapoatb_attack.wav",
+        },
+        ["WarMinerAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/WarMiner/Vwaratb_attack.wav",
+        },
+        ["SovietPillbox"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietPillbox/soviet_pillbox_1.wav",
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietPillbox/soviet_pillbox_2.wav",
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietPillbox/soviet_pillbox_3.wav",
+            "res://RedAlert2ModResources/audio/SovietUnits/SovietPillbox/soviet_pillbox_4.wav",
         },
     };
 
