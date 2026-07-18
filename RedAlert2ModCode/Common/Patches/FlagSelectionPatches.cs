@@ -7,6 +7,8 @@ using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
@@ -25,6 +27,8 @@ namespace RedAlert2ModCode.Common.Patches;
 public static class FlagSelectionPatches
 {
 	private static bool _selectionInProgress;
+
+	private readonly record struct PendingFlagSelection(Player Player, List<RelicModel> Options, uint ChoiceId, bool IsLocal);
 
 	private static MethodInfo RequireMethod(Type type, string name, BindingFlags flags, params Type[] parameters)
 	{
@@ -126,8 +130,30 @@ public static class FlagSelectionPatches
 
 	private static async Task<bool> EnsureFlagsSelectedMultiplayer(IReadOnlyList<Player> players)
 	{
+		RunManager runManager = RunManager.Instance;
+
+		// 按 NetId 排序，确保所有客户端顺序一致
+		IReadOnlyList<Player> orderedPlayers = players
+			.OrderBy(static player => player.NetId)
+			.ToList();
+
 		bool changed = false;
-		foreach (Player player in players)
+
+		// 等待 PlayerChoiceSynchronizer 就绪
+		PlayerChoiceSynchronizer? synchronizer = await WaitForPlayerChoiceSynchronizerAsync(runManager);
+		if (synchronizer == null)
+		{
+			// 如果没有同步器，退回到单机逻辑
+			foreach (Player player in orderedPlayers)
+			{
+				changed |= await EnsureFlagSelected(player);
+			}
+			return changed;
+		}
+
+		// 收集所有需要选择的玩家
+		List<PendingFlagSelection> pendingSelections = new();
+		foreach (Player player in orderedPlayers)
 		{
 			if (FlagManager.PlayerHasAnyFlag(player))
 			{
@@ -136,6 +162,7 @@ public static class FlagSelectionPatches
 
 			FlagManager.Faction faction = FlagManager.GetPlayerFaction(player);
 
+			// 尤里阵营自动获得尤里国旗
 			if (faction == FlagManager.Faction.Yuri)
 			{
 				RelicModel yuriFlag = FlagManager.GetAllFlags(FlagManager.Faction.Yuri)[0];
@@ -144,25 +171,102 @@ public static class FlagSelectionPatches
 				continue;
 			}
 
-			List<RelicModel> allFlags = FlagManager.GetAllFlags(faction);
+			List<RelicModel> options = FlagManager.GetAllFlags(faction);
+			uint choiceId = synchronizer.ReserveChoiceId(player);
+			bool isLocal = IsLocalPlayer(runManager, player);
+			pendingSelections.Add(new PendingFlagSelection(player, options, choiceId, isLocal));
+		}
 
-			int? selectedIndex = await RedAlert2ModCode.UI.MultiplayerSyncHelper.ExecuteSyncChoice(
-				player,
-				async () =>
-				{
-					RelicModel? selected = await SelectFlagWithLocalScreen(faction);
-					return selected != null ? allFlags.FindIndex(f => f.Id == selected.Id) : null;
-				});
+		if (pendingSelections.Count == 0)
+		{
+			return changed;
+		}
 
-			if (selectedIndex.HasValue && selectedIndex.Value >= 0 && selectedIndex.Value < allFlags.Count)
+		// 同时启动所有选择任务
+		List<FlagSelectionScreen> localScreens = new();
+		try
+		{
+			Task<RelicModel?>[] selectionTasks = pendingSelections
+				.Select(selection => SelectFlagMultiplayer(selection, synchronizer, localScreens))
+				.ToArray();
+
+			// 等待所有玩家选择完成
+			RelicModel?[] selectedFlags = await Task.WhenAll(selectionTasks);
+
+			for (int i = 0; i < pendingSelections.Count; i++)
 			{
-				RelicModel selectedFlag = allFlags[selectedIndex.Value];
-				await RelicCmd.Obtain(selectedFlag.ToMutable(), player);
-				changed = true;
+				PendingFlagSelection selection = pendingSelections[i];
+				RelicModel? selectedFlag = selectedFlags[i];
+
+				if (selectedFlag != null)
+				{
+					await RelicCmd.Obtain(selectedFlag.ToMutable(), selection.Player);
+					changed = true;
+					GD.Print($"[RedAlert2Mod] Multiplayer flag obtained: player={selection.Player.NetId} flag={selectedFlag.Title.GetFormattedText()}");
+				}
+				else
+				{
+					GD.Print($"[RedAlert2Mod] Multiplayer flag selection skipped: player={selection.Player.NetId}");
+				}
+			}
+		}
+		finally
+		{
+			foreach (FlagSelectionScreen screen in localScreens)
+			{
+				screen.CloseSelectionScreen();
 			}
 		}
 
 		return changed;
+	}
+
+	private static async Task<RelicModel?> SelectFlagMultiplayer(
+		PendingFlagSelection selection,
+		PlayerChoiceSynchronizer synchronizer,
+		ICollection<FlagSelectionScreen> localScreens)
+	{
+		if (selection.IsLocal)
+		{
+			// 本地玩家：显示选择UI
+			FlagManager.Faction faction = FlagManager.GetPlayerFaction(selection.Player);
+			FlagSelectionScreen screen = await CreateFlagSelectionScreenAsync(faction);
+			localScreens.Add(screen);
+
+			RelicModel? selectedFlag = await screen.FlagSelected();
+			int selectedIndex = selectedFlag != null
+				? selection.Options.FindIndex(f => f.Id == selectedFlag.Id)
+				: -1;
+
+			// 同步选择结果
+			synchronizer.SyncLocalChoice(selection.Player, selection.ChoiceId, PlayerChoiceResult.FromIndex(selectedIndex));
+			return selectedFlag;
+		}
+		else
+		{
+			// 远程玩家：等待同步
+			PlayerChoiceResult remoteChoice = await synchronizer.WaitForRemoteChoice(selection.Player, selection.ChoiceId);
+			int index = remoteChoice.AsIndex();
+			return index >= 0 && index < selection.Options.Count ? selection.Options[index] : null;
+		}
+	}
+
+	private static async Task<PlayerChoiceSynchronizer?> WaitForPlayerChoiceSynchronizerAsync(RunManager runManager)
+	{
+		for (int i = 0; i < 60; i++)
+		{
+			if (runManager.PlayerChoiceSynchronizer != null)
+			{
+				return runManager.PlayerChoiceSynchronizer;
+			}
+			await Task.Yield();
+		}
+		return runManager.PlayerChoiceSynchronizer;
+	}
+
+	private static bool IsLocalPlayer(RunManager runManager, Player player)
+	{
+		return player.NetId != 0UL && player.NetId == runManager.NetService.NetId;
 	}
 
 	private static async Task<RelicModel?> SelectFlagWithLocalScreen(FlagManager.Faction faction)

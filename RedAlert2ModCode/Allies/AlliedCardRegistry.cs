@@ -122,7 +122,6 @@ public static class AlliedCardRegistry
         {
             () => ModelDb.Card<Paratrooper>(),
             () => ModelDb.Card<AirborneDivision>(),
-            () => ModelDb.Card<YuriCard>(),
         };
     }
 
