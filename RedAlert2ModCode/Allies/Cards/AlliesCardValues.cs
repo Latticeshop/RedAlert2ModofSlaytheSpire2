@@ -90,6 +90,14 @@ public static class AlliesCardValues
 		Repeat = 6,          // 添加的美国大兵数量
 		DollarValue = 300
 	};
+
+	/// <summary>空降部队 - 1费运转卡，升级后0费，获得4张美国大兵和1张重装大兵（带消耗）</summary>
+	public static CardValueStore.CardValues AirborneDivision => new()
+	{
+		Cost = 1,
+		CostUpgraded = -1,   // 升级后费用变为 0
+		DollarValue = 0
+	};
 	
 	// ==================== 装甲单位 ====================
 	/// <summary>盟军基地车 - 0费，价格3000</summary>

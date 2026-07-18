@@ -121,6 +121,7 @@ public static class AlliedCardRegistry
         return new List<Func<CardModel>>
         {
             () => ModelDb.Card<Paratrooper>(),
+            () => ModelDb.Card<AirborneDivision>(),
         };
     }
 

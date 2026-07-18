@@ -325,6 +325,14 @@ public static class UnitVoiceConfig
         {
             "res://RedAlert2ModResources/audio/CommonSFX/power_outage.wav",
         },
+        ["ParatrooperPlane"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/CommonSFX/paratrooper/paratrooper_plane_move.wav",
+        },
+        ["Paratrooper"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/CommonSFX/paratrooper/paratrooper.wav",
+        },
     };
 
     public static readonly Dictionary<string, List<string>> SovietUnits = new()

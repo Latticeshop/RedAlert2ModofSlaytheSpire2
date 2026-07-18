@@ -75,6 +75,10 @@ public sealed class SovietRadar : CardModel
 		// 获得一张侦察机卡牌到手牌
 		var spyPlaneModel = ModelDb.Card<SpyPlane>();
 		var spyPlaneCard = Owner.Creature.CombatState.CreateCard(spyPlaneModel, Owner);
+		if (base.IsUpgraded && !spyPlaneCard.IsUpgraded)
+		{
+			CardCmd.Upgrade(spyPlaneCard);
+		}
 		await CardPileCmd.Add(spyPlaneCard, PileType.Hand, CardPilePosition.Bottom, this);
 		GD.Print("[SovietRadar] 添加侦察机卡牌到手牌");
 

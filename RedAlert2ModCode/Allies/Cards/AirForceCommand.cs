@@ -115,6 +115,16 @@ public sealed class AirForceCommand : CardModel
 				sourceCard: this
 			);
 
+			// 添加一张空降部队到手牌
+			var airborneTemplate = ModelDb.Card<AirborneDivision>();
+			var airborneCard = Owner.Creature.CombatState.CreateCard(airborneTemplate, Owner);
+			if (base.IsUpgraded && !airborneCard.IsUpgraded)
+			{
+				CardCmd.Upgrade(airborneCard);
+			}
+			await CardPileCmd.AddGeneratedCardToCombat(airborneCard, PileType.Hand, Owner);
+			GD.Print("[AirForceCommand] 添加空降部队到手牌");
+
 			// 打出后抽一张牌
 			await CardPileCmd.Draw(ctx, 1, Owner);
 		}

@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.CardPools;
+using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Soviet.Cards;
 using RedAlert2ModCode.Common.Utils;
@@ -32,7 +33,12 @@ public class Paratrooper : CardModel
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? Array.Empty<CardKeyword>() : new CardKeyword[] { CardKeyword.Exhaust };
 
 	protected override List<DynamicVar> CanonicalVars => new() { };
-	
+
+	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+	[
+		HoverTipFactory.FromKeyword(CardKeyword.Ethereal)
+	];
+
 	private int GetSoldierCount()
 	{
 		if (Owner == null || Owner.Character == null || Owner.Character.Id == null)
@@ -44,6 +50,8 @@ public class Paratrooper : CardModel
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
+		UnitVoiceHelper.PlayUnitVoice("ParatrooperPlane", "Allies");
+		UnitVoiceHelper.PlayUnitVoice("Paratrooper", "Allies");
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Attack", Owner.Character.CastAnimDelay);
 
 		bool isSoviet = Owner.Character?.Id?.Entry?.Contains("SOVIET") ?? false;

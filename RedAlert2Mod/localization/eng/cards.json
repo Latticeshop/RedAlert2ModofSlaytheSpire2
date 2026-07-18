@@ -1,6 +1,8 @@
 {
     "PARATROOPER.title": "Paratrooper",
     "PARATROOPER.description": "Add a few [gold]Ethereal[/gold] units to your hand.",
+    "AIRBORNE_DIVISION.title": "Airborne Division",
+    "AIRBORNE_DIVISION.description": "Gain 4 [gold]American Soldiers[/gold] and 1 [gold]Guardian GI[/gold] with [gold]Exhaust[/gold].",
     "SELL_MC_V.title": "Sell MCV",
     "SELL_MC_V.description": "Sell the [gold]Construction Yard[/gold] for 2400 funds.{IfUpgraded:show:Gain an Engineer.|}",
     "SELL_BUILDING_CARD.title": "Sell Building",
