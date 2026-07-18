@@ -75,6 +75,20 @@ public sealed class SovietWarFactory : CardModel
 		List<CardModel> availableCards = SovietCardRegistry.CreateVehicles(Owner);
 		GD.Print($"[SovietWarFactory] 可用卡牌数量: {availableCards.Count}");
 
+		// 如果没有苏联国旗，移除磁能坦克选项
+		if (!FlagManager.HasUSSR(Owner))
+		{
+			availableCards = availableCards.Where(c => c is not TeslaTank).ToList();
+			GD.Print($"[SovietWarFactory] 无苏联国旗，移除磁能坦克选项，剩余卡牌数量: {availableCards.Count}");
+		}
+
+		// 如果没有利比亚国旗，移除自爆卡车选项
+		if (!FlagManager.HasLibya(Owner))
+		{
+			availableCards = availableCards.Where(c => c is not DemolitionTruckCard).ToList();
+			GD.Print($"[SovietWarFactory] 无利比亚国旗，移除自爆卡车选项，剩余卡牌数量: {availableCards.Count}");
+		}
+
 		var cardValuesMap = SovietCardValues.CreateVehicleValuesMap();
 		CardModel? selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(availableCards, Owner, cardValuesMap, FactionType.Soviet);
 

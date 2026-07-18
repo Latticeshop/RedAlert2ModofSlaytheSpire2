@@ -88,6 +88,20 @@ public sealed class SovietBarracksCard : CardModel
 			GD.Print($"[SovietBarracksCard] 无雷达能力，移除T2士兵，剩余卡牌数量: {availableCards.Count}");
 		}
 
+		// 如果没有伊拉克国旗，移除辐射工兵选项
+		if (!FlagManager.HasIraq(Owner))
+		{
+			availableCards = availableCards.Where(c => c is not Desolator).ToList();
+			GD.Print($"[SovietBarracksCard] 无伊拉克国旗，移除辐射工兵选项，剩余卡牌数量: {availableCards.Count}");
+		}
+
+		// 如果没有古巴国旗，移除恐怖人选项
+		if (!FlagManager.HasCuba(Owner))
+		{
+			availableCards = availableCards.Where(c => c is not TerrorMan).ToList();
+			GD.Print($"[SovietBarracksCard] 无古巴国旗，移除恐怖人选项，剩余卡牌数量: {availableCards.Count}");
+		}
+
 		var cardValuesMap = SovietCardValues.CreateSoldierValuesMap();
 		CardModel? selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(availableCards, Owner, cardValuesMap, FactionType.Soviet);
 

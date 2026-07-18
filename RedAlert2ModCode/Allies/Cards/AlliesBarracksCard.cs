@@ -93,6 +93,13 @@ public sealed class AlliesBarracksCard : CardModel
 			availableCards = availableCards.Where(c => c.GetType() != typeof(Sniper)).ToList();
 			GD.Print($"[AlliesBarracksCard] 移除狙击手选项，剩余卡牌数量: {availableCards.Count}");
 		}
+
+		// 如果没有英国国旗，移除狙击手选项
+		if (!FlagManager.HasUK(Owner))
+		{
+			availableCards = availableCards.Where(c => c.GetType() != typeof(Sniper)).ToList();
+			GD.Print($"[AlliesBarracksCard] 无英国国旗，移除狙击手选项，剩余卡牌数量: {availableCards.Count}");
+		}
 		
 		GD.Print($"[AlliesBarracksCard] 可用卡牌数量: {availableCards.Count}");
 

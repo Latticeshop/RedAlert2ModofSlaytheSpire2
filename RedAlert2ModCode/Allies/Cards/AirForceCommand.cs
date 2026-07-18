@@ -76,6 +76,13 @@ public sealed class AirForceCommand : CardModel
 		// 使用盟军卡牌注册管理器获取所有空军单位卡
 		List<CardModel> availableCards = AlliedCardRegistry.CreateAirUnits(Owner);
 		GD.Print($"[AirForceCommand] 可用卡牌数量: {availableCards.Count}");
+
+		// 如果没有韩国国旗，移除黑鹰战机选项
+		if (!FlagManager.HasSouthKorea(Owner))
+		{
+			availableCards = availableCards.Where(c => c.GetType() != typeof(BlackHawk)).ToList();
+			GD.Print($"[AirForceCommand] 无韩国国旗，移除黑鹰战机选项，剩余卡牌数量: {availableCards.Count}");
+		}
 		
 		// 如果空指部是升级过的，创建的卡牌也显示为升级版本
 		if (base.IsUpgraded)
@@ -115,15 +122,22 @@ public sealed class AirForceCommand : CardModel
 				sourceCard: this
 			);
 
-			// 添加一张空降部队到手牌
-			var airborneTemplate = ModelDb.Card<AirborneDivision>();
-			var airborneCard = Owner.Creature.CombatState.CreateCard(airborneTemplate, Owner);
-			if (base.IsUpgraded && !airborneCard.IsUpgraded)
+			// 添加一张空降部队到手牌（需要美国国旗）
+			if (FlagManager.HasUSA(Owner))
 			{
-				CardCmd.Upgrade(airborneCard);
+				var airborneTemplate = ModelDb.Card<AirborneDivision>();
+				var airborneCard = Owner.Creature.CombatState.CreateCard(airborneTemplate, Owner);
+				if (base.IsUpgraded && !airborneCard.IsUpgraded)
+				{
+					CardCmd.Upgrade(airborneCard);
+				}
+				await CardPileCmd.AddGeneratedCardToCombat(airborneCard, PileType.Hand, Owner);
+				GD.Print("[AirForceCommand] 添加空降部队到手牌");
 			}
-			await CardPileCmd.AddGeneratedCardToCombat(airborneCard, PileType.Hand, Owner);
-			GD.Print("[AirForceCommand] 添加空降部队到手牌");
+			else
+			{
+				GD.Print("[AirForceCommand] 无美国国旗，跳过添加空降部队");
+			}
 
 			// 打出后抽一张牌
 			await CardPileCmd.Draw(ctx, 1, Owner);

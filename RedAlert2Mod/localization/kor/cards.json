@@ -3,6 +3,8 @@
     "AGISICON.title": "이지스 순양함",
     "AIRCRAFT_CARRIER.description": "적에게 [gold]표적 고정[/gold]을 부여하고 [gold]호넷[/gold] 3기를 얻습니다.{IfUpgraded:show:호넷이 강화됩니다.|}",
     "AIRCRAFT_CARRIER.title": "항공모함",
+    "AIRBORNE_DIVISION.title": "공수부대",
+    "AIRBORNE_DIVISION.description": "[gold]소진[/gold]이 붙은 [gold]미국군[/gold] 4장과 [gold]가디언 GI[/gold] 1장을 얻습니다.",
     "AIR_FORCE_COMMAND.description": "[gold]비용: ${DollarNumber}[/gold]. 항공 유닛을 선택해 [gold]생산 대기열[/gold]을 만듭니다.{IfUpgraded:show:대기열이 강화됩니다.|}",
     "AIR_FORCE_COMMAND.title": "공군 사령부",
     "ALLIED_BATTLE_LAB.description": "[gold]비용: ${DollarNumber}[/gold]. 고급 건물과 유닛을 해금합니다.\n[gold]전투 연구소[/gold] 능력을 얻습니다.",

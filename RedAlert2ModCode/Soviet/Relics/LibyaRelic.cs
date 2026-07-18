@@ -21,7 +21,7 @@ namespace RedAlert2ModCode.Soviet.Relics;
 
 public sealed class LibyaRelic : RelicModel
 {
-	public override RelicRarity Rarity => RelicRarity.Starter;
+	public override RelicRarity Rarity => RelicRarity.Common;
 
 	public override bool HasUponPickupEffect => false;
 

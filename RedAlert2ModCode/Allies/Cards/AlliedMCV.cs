@@ -76,6 +76,13 @@ public sealed class AlliedMCV : CardModel
 
 		GD.Print($"[AlliedMCV] 可用建筑卡牌数量: {availableCards.Count} (当前科技等级: {techTree.CurrentTechLevel})");
 
+		// 如果没有法国国旗，移除巨炮选项
+		if (!FlagManager.HasFrance(Owner))
+		{
+			availableCards = availableCards.Where(c => c is not GrandCannon).ToList();
+			GD.Print($"[AlliedMCV] 无法国国旗，移除巨炮选项，剩余卡牌数量: {availableCards.Count}");
+		}
+
 		var buildingValuesMap = AlliesCardValues.CreateBuildingValuesMap();
 		CardModel? selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(availableCards, Owner, buildingValuesMap, FactionType.Allied);
 

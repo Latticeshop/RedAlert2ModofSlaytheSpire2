@@ -78,6 +78,13 @@ public sealed class AlliedWarFactory : CardModel
 		// 使用盟军卡牌注册管理器获取所有装甲单位卡
 		List<CardModel> availableCards = AlliedCardRegistry.CreateVehicles(Owner);
 		GD.Print($"[AlliedWarFactory] 可用卡牌数量: {availableCards.Count}");
+
+		// 如果没有德国国旗，移除坦克杀手选项
+		if (!FlagManager.HasGermany(Owner))
+		{
+			availableCards = availableCards.Where(c => c.GetType() != typeof(TankDestroyer)).ToList();
+			GD.Print($"[AlliedWarFactory] 无德国国旗，移除坦克杀手选项，剩余卡牌数量: {availableCards.Count}");
+		}
 		
 		// 如果盟军重工是升级过的，创建的卡牌也显示为升级版本
 		if (base.IsUpgraded)

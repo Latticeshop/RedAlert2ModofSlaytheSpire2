@@ -3,6 +3,9 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.RelicPools;
 using MegaCrit.Sts2.Core.Models.Relics;
 using System.Collections.Generic;
+using RedAlert2ModCode.Soviet.Relics;
+using RedAlert2ModCode.Common.Relics;
+using RedAlert2ModCode.Allies.Relics;
 
 namespace RedAlert2ModCode.Soviet;
 
@@ -20,9 +23,17 @@ public class SovietRelicPool : RelicPoolModel
     {
         return new RelicModel[]
         {
-            ModelDb.Relic<RedAlert2ModCode.Common.Relics.DollarRelic>(),
-            ModelDb.Relic<RedAlert2ModCode.Common.Relics.DollarAncientRelic>(),
-            ModelDb.Relic<RedAlert2ModCode.Soviet.Relics.LibyaRelic>()
+            ModelDb.Relic<DollarRelic>(),
+            ModelDb.Relic<DollarAncientRelic>(),
+            ModelDb.Relic<USSRRelic>(),
+            ModelDb.Relic<CubaRelic>(),
+            ModelDb.Relic<IraqRelic>(),
+            ModelDb.Relic<LibyaRelic>(),
+            ModelDb.Relic<USARelic>(),
+            ModelDb.Relic<UKRelic>(),
+            ModelDb.Relic<FranceRelic>(),
+            ModelDb.Relic<GermanyRelic>(),
+            ModelDb.Relic<SouthKoreaRelic>(),
         };
     }
 }

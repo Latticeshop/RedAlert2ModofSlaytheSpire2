@@ -1,0 +1,137 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Godot;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Relics;
+using RedAlert2ModCode.Allies.Relics;
+using RedAlert2ModCode.Common.Relics;
+using RedAlert2ModCode.Soviet.Relics;
+
+namespace RedAlert2ModCode.Common.Utils;
+
+public static class FlagManager
+{
+	public enum Faction
+	{
+		Allies,
+		Soviet,
+		Yuri
+	}
+
+	public static readonly List<Type> AlliedFlags = new()
+	{
+		typeof(USARelic),
+		typeof(UKRelic),
+		typeof(FranceRelic),
+		typeof(GermanyRelic),
+		typeof(SouthKoreaRelic),
+	};
+
+	public static readonly List<Type> SovietFlags = new()
+	{
+		typeof(USSRRelic),
+		typeof(CubaRelic),
+		typeof(IraqRelic),
+		typeof(LibyaRelic),
+	};
+
+	public static readonly List<Type> YuriFlags = new()
+	{
+		typeof(YuriRelic),
+	};
+
+	public static Faction GetPlayerFaction(Player player)
+	{
+		string? charId = player.Character?.Id?.Entry;
+		GD.Print($"[RedAlert2Mod] GetPlayerFaction: charId={charId}");
+		if (charId == null) return Faction.Allies;
+
+		if (charId.Contains("SOVIET", StringComparison.OrdinalIgnoreCase))
+		{
+			GD.Print($"[RedAlert2Mod] GetPlayerFaction: detected SOVIET");
+			return Faction.Soviet;
+		}
+
+		if (charId.Contains("YURI", StringComparison.OrdinalIgnoreCase))
+			return Faction.Yuri;
+
+		GD.Print($"[RedAlert2Mod] GetPlayerFaction: default ALLIES");
+		return Faction.Allies;
+	}
+
+	public static List<Type> GetFlagsForFaction(Faction faction)
+	{
+		return faction switch
+		{
+			Faction.Allies => AlliedFlags,
+			Faction.Soviet => SovietFlags,
+			Faction.Yuri => YuriFlags,
+			_ => AlliedFlags,
+		};
+	}
+
+	public static List<RelicModel> GetRandomFlags(Faction faction, int count)
+	{
+		List<Type> allFlags = GetFlagsForFaction(faction);
+		List<Type> shuffled = allFlags.OrderBy(_ => Guid.NewGuid()).ToList();
+		List<Type> selected = shuffled.Take(Math.Min(count, shuffled.Count)).ToList();
+
+		List<RelicModel> result = new();
+		foreach (Type flagType in selected)
+		{
+			result.Add(GetFlagRelic(flagType));
+		}
+		return result;
+	}
+
+	public static List<RelicModel> GetAllFlags(Faction faction)
+	{
+		List<Type> allFlags = GetFlagsForFaction(faction);
+		List<RelicModel> result = new();
+		foreach (Type flagType in allFlags)
+		{
+			result.Add(GetFlagRelic(flagType));
+		}
+		return result;
+	}
+
+	public static bool PlayerHasAnyFlag(Player player)
+	{
+		var allFlags = AlliedFlags.Concat(SovietFlags).Concat(YuriFlags);
+		return player.Relics.Any(r => allFlags.Contains(r.GetType()));
+	}
+
+	public static bool HasFlag(Player player, Type flagType)
+	{
+		return player.Relics.Any(r => r.GetType() == flagType);
+	}
+
+	public static bool HasUSA(Player player) => HasFlag(player, typeof(USARelic));
+	public static bool HasUK(Player player) => HasFlag(player, typeof(UKRelic));
+	public static bool HasFrance(Player player) => HasFlag(player, typeof(FranceRelic));
+	public static bool HasGermany(Player player) => HasFlag(player, typeof(GermanyRelic));
+	public static bool HasSouthKorea(Player player) => HasFlag(player, typeof(SouthKoreaRelic));
+	public static bool HasUSSR(Player player) => HasFlag(player, typeof(USSRRelic));
+	public static bool HasCuba(Player player) => HasFlag(player, typeof(CubaRelic));
+	public static bool HasIraq(Player player) => HasFlag(player, typeof(IraqRelic));
+	public static bool HasLibya(Player player) => HasFlag(player, typeof(LibyaRelic));
+	public static bool HasYuri(Player player) => HasFlag(player, typeof(YuriRelic));
+
+	public static bool IsFlagRelic(RelicModel relic)
+	{
+		var type = relic.GetType();
+		return AlliedFlags.Contains(type) || SovietFlags.Contains(type) || YuriFlags.Contains(type);
+	}
+
+	private static readonly MethodInfo _modelDbRelicMethod = typeof(ModelDb).GetMethod("Relic", 1, Type.EmptyTypes)
+		?? throw new InvalidOperationException("Could not find ModelDb.Relic<T>() method.");
+
+	public static RelicModel GetFlagRelic(Type flagType)
+	{
+		MethodInfo generic = _modelDbRelicMethod.MakeGenericMethod(flagType);
+		return (RelicModel)generic.Invoke(null, null)!;
+	}
+}
