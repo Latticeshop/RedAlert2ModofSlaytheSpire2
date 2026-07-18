@@ -126,12 +126,15 @@ public static class FlagSelectionPatches
 
 	private static async Task<bool> EnsureFlagsSelectedMultiplayer(IReadOnlyList<Player> players)
 	{
-		RunManager runManager = RunManager.Instance;
-
 		bool changed = false;
 		foreach (Player player in players)
 		{
 			if (FlagManager.PlayerHasAnyFlag(player))
+			{
+				continue;
+			}
+
+			if (!RedAlert2ModCode.UI.MultiplayerSyncHelper.IsLocalPlayer(player))
 			{
 				continue;
 			}
