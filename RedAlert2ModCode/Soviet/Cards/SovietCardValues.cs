@@ -74,7 +74,7 @@ public static class SovietCardValues
 	/// <summary>恐怖分子 - 1费攻击卡，造成6(升级9)伤害+溅射，价格200，需要雷达(T2)</summary>
 	public static CardValueStore.CardValues Terrorist => new()
 	{
-		Cost = 1,
+		Cost = 0,
 		Damage = 6,
 		DamageUpgraded = 3,
 		DollarValue = 200
@@ -361,7 +361,7 @@ public static class SovietCardValues
 	/// <summary>自爆卡车 - 1费攻击卡，Token，对全体敌人造成5伤害和10层中毒（升级15层），价格1500</summary>
 	public static CardValueStore.CardValues DemolitionTruck => new()
 	{
-		Cost = 1,
+		Cost = 0,
 		Damage = 5,
 		MagicNumber = 10,
 		MagicNumberUpgraded = 5,
@@ -461,7 +461,8 @@ public static class SovietCardValues
 			{ "SOVIETMCV", SovietMCV },
 			{ "WARMINER", WarMiner },
 			{ "V3ROCKET", V3Rocket },
-			{ "DEMOLITIONTRUCKCARD", DemolitionTruck }
+			{ "DEMOLITIONTRUCKCARD", DemolitionTruck },
+			{ "TESLATANK", TeslaTank }
 		};
 	}
 	

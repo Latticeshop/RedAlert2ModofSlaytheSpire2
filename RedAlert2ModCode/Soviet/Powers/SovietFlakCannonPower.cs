@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.MonsterMoves.Intents;
 using System.Linq;
 using System.Threading.Tasks;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Soviet.Cards;
 
 namespace RedAlert2ModCode.Soviet.Powers;
 
@@ -20,7 +21,7 @@ namespace RedAlert2ModCode.Soviet.Powers;
 /// </summary>
 public class SovietFlakCannonPower : PowerModel
 {
-	private static readonly CardValueStore.CardValues Values = SovietPowerValues.FlakCannonPower;
+	private static readonly CardValueStore.CardValues Values = SovietCardValues.FlakCannon;
 
 	public override PowerType Type => PowerType.Buff;
 
@@ -83,16 +84,17 @@ public class SovietFlakCannonPower : PowerModel
 		}
 	}
 
-	public override async Task AfterSideTurnStart(CombatSide side, System.Collections.Generic.IReadOnlyList<Creature> participants, MegaCrit.Sts2.Core.Combat.ICombatState combatState)
+	public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
 	{
 		if (side != CombatSide.Player)
 			return;
 
-		// 获取当前层数
 		int stacks = (int)base.Amount;
-		GD.Print($"[SovietFlakCannonPower] 回合开始触发 - 层数={stacks}");
+		GD.Print($"[SovietFlakCannonPower] 回合结束触发 - 层数={stacks}");
 
-		// 计算攻击意图的敌人数量
+		if (base.Owner == null)
+			return;
+
 		int attackIntentCount = 0;
 		foreach (var enemy in base.Owner.CombatState.Enemies.Where(e => e.IsAlive))
 		{
@@ -112,7 +114,6 @@ public class SovietFlakCannonPower : PowerModel
 
 		GD.Print($"[SovietFlakCannonPower] 攻击意图敌人总数: {attackIntentCount}");
 
-		// 每一层能力，对每个攻击意图敌人获得一遍格挡
 		for (int stack = 0; stack < stacks; stack++)
 		{
 			for (int i = 0; i < attackIntentCount; i++)

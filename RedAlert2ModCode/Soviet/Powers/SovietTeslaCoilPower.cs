@@ -13,12 +13,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Soviet.Cards;
 
 namespace RedAlert2ModCode.Soviet.Powers;
 
 public class SovietTeslaCoilPower : PowerModel
 {
-	private static readonly CardValueStore.CardValues Values = SovietPowerValues.TeslaCoilPower;
+	private static readonly CardValueStore.CardValues Values = SovietCardValues.TeslaCoilCard;
 
 	public override PowerType Type => PowerType.Buff;
 
@@ -67,9 +68,13 @@ public class SovietTeslaCoilPower : PowerModel
 		}
 	}
 
-	public override async Task AfterSideTurnStart(CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
+	public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
 	{
 		if (side != CombatSide.Player)
+			return;
+
+		var combatState = Owner?.CombatState;
+		if (combatState == null)
 			return;
 
 		var enemies = combatState.Enemies.Where(e => e.Side == CombatSide.Enemy && e.IsAlive).ToList();
@@ -82,7 +87,7 @@ public class SovietTeslaCoilPower : PowerModel
 		float damageMultiplier = 1.0f + (chargeLevel * 0.5f);
 		int finalDamage = (int)(TotalDamage * damageMultiplier);
 
-		GD.Print($"[TeslaCoilPower] 回合开始触发 - BaseDamage={TotalDamage}, ChargeLevel={chargeLevel}, Multiplier={damageMultiplier}, FinalDamage={finalDamage}");
+		GD.Print($"[TeslaCoilPower] 回合结束触发 - BaseDamage={TotalDamage}, ChargeLevel={chargeLevel}, Multiplier={damageMultiplier}, FinalDamage={finalDamage}");
 
 		if (chargeLevel > 0 && chargePower != null)
 		{

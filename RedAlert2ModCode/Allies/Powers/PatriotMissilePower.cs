@@ -16,11 +16,11 @@ namespace RedAlert2ModCode.Allies.Powers;
 
 /// <summary>
 /// 爱国者导弹能力 - 盟军防御建筑能力
-/// 效果：回合开始时，获得9点格挡（升级后12点）
+/// 效果：回合结束时，获得9点格挡（升级后12点）
 /// </summary>
 public class PatriotMissilePower : PowerModel
 {
-	private static readonly CardValueStore.CardValues Values = AlliesPowerValues.PatriotMissilePower;
+	private static readonly CardValueStore.CardValues Values = AlliesCardValues.PatriotMissile;
 
 	public override PowerType Type => PowerType.Buff;
 
@@ -92,16 +92,14 @@ public class PatriotMissilePower : PowerModel
 		}
 	}
 
-	public override async Task AfterSideTurnStart(CombatSide side, System.Collections.Generic.IReadOnlyList<Creature> participants, MegaCrit.Sts2.Core.Combat.ICombatState combatState)
+	public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
 	{
 		if (side != CombatSide.Player)
 			return;
 
-		// 获取当前层数
 		int stacks = (int)base.Amount;
-		GD.Print($"[PatriotMissilePower] 回合开始触发 - 层数={stacks}, Block={CurrentBlock}");
+		GD.Print($"[PatriotMissilePower] 回合结束触发 - 层数={stacks}, Block={CurrentBlock}");
 
-		// 每一层获得固定格挡，不再根据攻击意图数量翻倍
 		for (int i = 0; i < stacks; i++)
 		{
 			if (base.Owner != null)

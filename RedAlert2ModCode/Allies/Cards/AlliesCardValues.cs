@@ -244,6 +244,8 @@ public static class AlliesCardValues
 		Cost = 2,
 		Damage = 5,
 		Repeat = 1,
+		Stars = 2,             // 未升级时每次叠加增加的伤害
+		StarsUpgraded = 3,      // 升级后每次叠加增加的伤害 (5 = 2 + 3)
 		DollarValue = 1500
 	};
 	
@@ -528,8 +530,8 @@ public static class AlliesCardValues
 		Cost = 3,                      // 基础费用
 		CostUpgraded = 0,              // 升级后费用不变
 		DollarValue = 0,               // 运转卡无价格
-		Block = 2,                     // 电球数量（升级后翻倍）
-		BlockUpgraded = 2              // 升级后电球数量增加2（2+2=4）
+		Block = 1,                     // 电球数量（升级后翻倍）
+		BlockUpgraded = 1              // 升级后电球数量增加1（1+1=2）
 	};
 
 	// ==================== 数值映射创建方法 ====================

@@ -75,7 +75,7 @@ public sealed class TrainingQueuePower : PowerModel
         {
             existingPower = owner.Powers
                 .OfType<TrainingQueuePower>()
-                .FirstOrDefault(p => p.TrainedCardId == cardId && p.IsUpgraded == isUpgraded);
+                .FirstOrDefault(p => p.TrainedCardId == cardId && p.IsUpgraded == isUpgraded && p.IsStopped == isStopped);
         }
 
         if (existingPower != null)

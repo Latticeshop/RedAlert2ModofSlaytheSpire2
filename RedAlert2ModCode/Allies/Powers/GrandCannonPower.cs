@@ -62,56 +62,60 @@ public sealed class GrandCannonPower : PowerModel
         }
     }
 
-    public override async Task AfterSideTurnStart(CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
-    {
-        if (side != CombatSide.Player)
-            return;
-
-        if (Owner == null) return;
-
-        int stacks = (int)base.Amount;
-        GD.Print($"[GrandCannonPower] 回合开始触发 - 层数={stacks}, Damage={CurrentDamage}");
-
-        for (int i = 0; i < stacks; i++)
+    public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
         {
-            var targetLockedEnemies = combatState.Enemies
-                .Where(enemy => enemy.Side == CombatSide.Enemy && enemy.IsAlive &&
-                               enemy.Powers.Any(p => p is TargetLockedPower))
-                .ToList();
+            if (side != CombatSide.Player)
+                return;
 
-            GD.Print($"[GrandCannonPower] 第{i+1}次攻击 - 发现 {targetLockedEnemies.Count} 个目标锁定敌人");
+            if (Owner == null) return;
 
-            if (targetLockedEnemies.Count == 0)
+            int stacks = (int)base.Amount;
+            GD.Print($"[GrandCannonPower] 回合结束触发 - 层数={stacks}, Damage={CurrentDamage}");
+
+            var combatState = Owner.CombatState;
+            if (combatState == null)
+                return;
+
+            for (int i = 0; i < stacks; i++)
             {
-                GD.Print("[GrandCannonPower] 没有目标锁定的敌人，随机选择一个敌人");
-                var aliveEnemies = combatState.Enemies
-                    .Where(enemy => enemy.Side == CombatSide.Enemy && enemy.IsAlive)
+                var targetLockedEnemies = combatState.Enemies
+                    .Where(enemy => enemy.Side == CombatSide.Enemy && enemy.IsAlive &&
+                                   enemy.Powers.Any(p => p is TargetLockedPower))
                     .ToList();
 
-                if (aliveEnemies.Count > 0)
-                {
-                    var rng = Owner.Player?.RunState?.Rng?.CombatCardSelection;
-                    var randomIndex = rng?.NextInt(aliveEnemies.Count) ?? GD.RandRange(0, aliveEnemies.Count - 1);
-                    var randomEnemy = aliveEnemies[randomIndex];
+                GD.Print($"[GrandCannonPower] 第{i+1}次攻击 - 发现 {targetLockedEnemies.Count} 个目标锁定敌人");
 
-                    await TargetLockedManager.ApplyTargetLocked(randomEnemy, Owner, null);
-                    UnitVoiceHelper.PlayUnitVoice("GrandCannonRotate", "Allied");
-                    GD.Print($"[GrandCannonPower] 已为 {randomEnemy.Name} 赋予目标锁定，播放转向音效");
+                if (targetLockedEnemies.Count == 0)
+                {
+                    GD.Print("[GrandCannonPower] 没有目标锁定的敌人，随机选择一个敌人");
+                    var aliveEnemies = combatState.Enemies
+                        .Where(enemy => enemy.Side == CombatSide.Enemy && enemy.IsAlive)
+                        .ToList();
+
+                    if (aliveEnemies.Count > 0)
+                    {
+                        var rng = Owner.Player?.RunState?.Rng?.CombatCardSelection;
+                        var randomIndex = rng?.NextInt(aliveEnemies.Count) ?? GD.RandRange(0, aliveEnemies.Count - 1);
+                        var randomEnemy = aliveEnemies[randomIndex];
+
+                        await TargetLockedManager.ApplyTargetLocked(randomEnemy, Owner, null);
+                        UnitVoiceHelper.PlayUnitVoice("GrandCannonRotate", "Allied");
+                        GD.Print($"[GrandCannonPower] 已为 {randomEnemy.Name} 赋予目标锁定，播放转向音效");
+                    }
+                }
+                else
+                {
+                    var target = targetLockedEnemies.First();
+                    UnitVoiceHelper.PlayUnitVoice("GrandCannonAttack", "Allied");
+                    GD.Print($"[GrandCannonPower] 向 {target.Name} 开火，造成 {CurrentDamage} 点伤害");
+
+                    await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(),
+                        new List<Creature> { target },
+                        (decimal)CurrentDamage,
+                        MegaCrit.Sts2.Core.ValueProps.ValueProp.Move,
+                        Owner,
+                        null);
                 }
             }
-            else
-            {
-                var target = targetLockedEnemies.First();
-                UnitVoiceHelper.PlayUnitVoice("GrandCannonAttack", "Allied");
-                GD.Print($"[GrandCannonPower] 向 {target.Name} 开火，造成 {CurrentDamage} 点伤害");
-
-                await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(),
-                    new List<Creature> { target },
-                    (decimal)CurrentDamage,
-                    MegaCrit.Sts2.Core.ValueProps.ValueProp.Move,
-                    Owner,
-                    null);
-            }
         }
-    }
 }

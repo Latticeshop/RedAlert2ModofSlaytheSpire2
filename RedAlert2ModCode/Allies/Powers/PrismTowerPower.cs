@@ -12,12 +12,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Allies.Cards;
 
 namespace RedAlert2ModCode.Allies.Powers;
 
 public class PrismTowerPower : PowerModel
 {
-	private static readonly CardValueStore.CardValues Values = AlliesPowerValues.PrismTowerPower;
+	private static readonly CardValueStore.CardValues Values = AlliesCardValues.PrismTower;
 	
 	public override PowerType Type => PowerType.Buff;
     
@@ -78,15 +79,15 @@ public class PrismTowerPower : PowerModel
 		}
 	}
 
-	public override async Task AfterSideTurnStart(CombatSide side, System.Collections.Generic.IReadOnlyList<Creature> participants, MegaCrit.Sts2.Core.Combat.ICombatState combatState)
+	public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
 	{
 		if (side != CombatSide.Player)
 			return;
 
-		GD.Print($"[PrismTowerPower] 回合开始触发 - Level={PrismTowerLevel}, Damage={CurrentDamage}, Hits={CurrentHits}");
+		GD.Print($"[PrismTowerPower] 回合结束触发 - Level={PrismTowerLevel}, Damage={CurrentDamage}, Hits={CurrentHits}");
 
-		var enemies = combatState.Enemies.Where(static enemy => enemy.Side == CombatSide.Enemy && enemy.IsAlive).ToList();
-		if (enemies.Count == 0)
+		var enemies = Owner?.CombatState?.Enemies.Where(static enemy => enemy.Side == CombatSide.Enemy && enemy.IsAlive).ToList();
+		if (enemies == null || enemies.Count == 0)
 			return;
 
 		var rng = Owner?.Player?.RunState?.Rng?.CombatCardSelection;

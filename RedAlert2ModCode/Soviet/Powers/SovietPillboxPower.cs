@@ -76,13 +76,17 @@ public sealed class SovietPillboxPower : PowerModel
 		}
 	}
 
-	public override async Task AfterSideTurnStart(CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
+	public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
 	{
 		if (side != CombatSide.Player)
 			return;
 
 		int stacks = (int)base.Amount;
-		GD.Print($"[SovietPillboxPower] 回合开始触发 - 层数={stacks}, Damage={CurrentDamage}, Block={CurrentBlock}, Repeat={Values.Repeat}");
+		GD.Print($"[SovietPillboxPower] 回合结束触发 - 层数={stacks}, Damage={CurrentDamage}, Block={CurrentBlock}, Repeat={Values.Repeat}");
+
+		var combatState = Owner?.CombatState;
+		if (combatState == null)
+			return;
 
 		var enemies = combatState.Enemies.Where(static enemy => enemy.Side == CombatSide.Enemy && enemy.IsAlive).ToList();
 		

@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.ValueProps;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -88,21 +89,23 @@ public class PillboxPower : PowerModel
 		}
 	}
 
-	public override async Task AfterSideTurnStart(CombatSide side, System.Collections.Generic.IReadOnlyList<Creature> participants, MegaCrit.Sts2.Core.Combat.ICombatState combatState)
+	public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
 	{
 		if (side != CombatSide.Player)
 			return;
 
-		// 获取当前层数，按层数循环触发
 		int stacks = (int)base.Amount;
-		GD.Print($"[PillboxPower] 回合开始触发 - 层数={stacks}, Damage={CurrentDamage}, Block={CurrentBlock}, Repeat={Values.Repeat}");
+		GD.Print($"[PillboxPower] 回合结束触发 - 层数={stacks}, Damage={CurrentDamage}, Block={CurrentBlock}, Repeat={Values.Repeat}");
+
+		var combatState = Owner?.CombatState;
+		if (combatState == null)
+			return;
 
 		var enemies = combatState.Enemies.Where(static enemy => enemy.Side == CombatSide.Enemy && enemy.IsAlive).ToList();
 		
 		var rng = Owner?.Player?.RunState?.Rng?.CombatCardSelection;
 		for (int i = 0; i < stacks; i++)
 		{
-			// 按 Repeat 次数对敌人造成伤害
 			for (int j = 0; j < Values.Repeat; j++)
 			{
 				if (enemies.Count > 0)
@@ -111,10 +114,10 @@ public class PillboxPower : PowerModel
 					var randomEnemy = enemies[randomIndex];
 					GD.Print($"[PillboxPower] 第{i+1}层第{j+1}次攻击 - 对敌人 {randomEnemy.Name} 造成 {CurrentDamage} 点伤害");
 					
-					await CreatureCmd.Damage(new MegaCrit.Sts2.Core.GameActions.Multiplayer.ThrowingPlayerChoiceContext(), 
+					await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(), 
 						new List<Creature> { randomEnemy }, 
 						(decimal)CurrentDamage, 
-						MegaCrit.Sts2.Core.ValueProps.ValueProp.Unpowered, 
+						ValueProp.Unpowered, 
 						base.Owner, 
 						null);
 				}
@@ -123,7 +126,7 @@ public class PillboxPower : PowerModel
 			if (base.Owner != null)
 			{
 				GD.Print($"[PillboxPower] 第{i+1}次触发 - 获得 {CurrentBlock} 点护盾");
-				await CreatureCmd.GainBlock(base.Owner, (decimal)CurrentBlock, MegaCrit.Sts2.Core.ValueProps.ValueProp.Unpowered, null);
+				await CreatureCmd.GainBlock(base.Owner, (decimal)CurrentBlock, ValueProp.Unpowered, null);
 			}
 		}
 	}

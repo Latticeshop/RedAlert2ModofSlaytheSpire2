@@ -29,6 +29,7 @@
 工程师 (Engineer)	500	兵营
 警犬 (Attack Dog)	200	兵营
 火箭飞行兵 (Rocketeer)	600	兵营, 空指部
+重装大兵(Guardian G.I.)    250  兵营
 间谍 (Spy)	1000	兵营, 作战实验室
 谭雅 (Tanya)	1000	兵营, 作战实验室
 超时空军团兵 (Chrono Legionnaire)	1500	兵营, 作战实验室
@@ -83,7 +84,7 @@
 动员兵 (Conscript)	100	兵营
 工程师 (Engineer)	500	兵营
 警犬 (Attack Dog)	200	兵营
-防空步兵 (Flak Trooper)	300	兵营, 雷达
+防空步兵 (Flak Trooper)	300	兵营,
 磁暴步兵 (Tesla Trooper)	500	兵营, 雷达
 疯狂伊文 (Crazy Ivan)	600	兵营, 雷达
 尤里 (Yuri)	1200	兵营, 作战实验室

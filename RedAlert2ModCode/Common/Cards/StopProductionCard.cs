@@ -59,27 +59,34 @@ public class StopProductionCard : CardModel
 
 		if (selectedItems != null && selectedItems.Count > 0)
 		{
-			GD.Print($"[StopProductionCard] 选择了 {selectedItems.Count} 个生产序列");
+			GD.Print($"[StopProductionCard] 选择了 {selectedItems.Count} 个生产序列选项");
 
-			foreach (var item in selectedItems)
+			var groupedByPower = selectedItems.GroupBy(item => item.Power);
+
+			foreach (var group in groupedByPower)
 			{
-				if (item.Power is TrainingQueuePower trainingPower)
+				var trainingPower = group.Key as TrainingQueuePower;
+				if (trainingPower == null) continue;
+
+				int selectedCount = group.Count();
+				bool wasStopped = trainingPower.IsStopped;
+				string cardId = trainingPower.TrainedCardId;
+				string unitName = trainingPower.UnitName;
+				bool isUpgraded = trainingPower.IsUpgraded;
+				string iconPath = trainingPower.TrainedUnitIconPath;
+				int unitPrice = trainingPower.UnitPrice;
+				bool exhaustWhenPlayed = trainingPower.ExhaustWhenPlayed;
+				int totalAmount = trainingPower.Amount;
+				Creature owner = trainingPower.Owner;
+
+				GD.Print($"[StopProductionCard] 训练队列: {unitName}, 总层数: {totalAmount}, 选中层数: {selectedCount}");
+
+				owner.RemovePowerInternal(trainingPower);
+
+				bool newStopped = !wasStopped;
+
+				if (selectedCount == totalAmount)
 				{
-					bool wasStopped = trainingPower.IsStopped;
-					string cardId = trainingPower.TrainedCardId;
-					string unitName = trainingPower.UnitName;
-					bool isUpgraded = trainingPower.IsUpgraded;
-					string iconPath = trainingPower.TrainedUnitIconPath;
-					int unitPrice = trainingPower.UnitPrice;
-					bool exhaustWhenPlayed = trainingPower.ExhaustWhenPlayed;
-					int amount = trainingPower.Amount;
-					Creature owner = trainingPower.Owner;
-
-					owner.RemovePowerInternal(trainingPower);
-					GD.Print($"[StopProductionCard] 移除训练队列能力: {unitName}, 层数: {amount}");
-
-					bool newStopped = !wasStopped;
-
 					var newPower = await TrainingQueuePower.ApplyTrainingQueue(
 						owner: owner,
 						cardId: cardId,
@@ -92,15 +99,58 @@ public class StopProductionCard : CardModel
 						isStopped: newStopped
 					);
 
-					if (newPower != null && amount > 1)
+					if (newPower != null && totalAmount > 1)
 					{
-						await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), newPower, amount - 1, owner, this);
-						GD.Print($"[StopProductionCard] 恢复训练队列层数: {newPower.Amount}");
+						await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), newPower, totalAmount - 1, owner, this);
 					}
 
-					GD.Print($"[StopProductionCard] 训练队列 {unitName} 停产状态反转: {newStopped}");
+					GD.Print($"[StopProductionCard] 训练队列 {unitName} 全部反转状态: {newStopped}");
 				}
-				
+				else
+				{
+					int remainingAmount = totalAmount - selectedCount;
+
+					var selectedPower = await TrainingQueuePower.ApplyTrainingQueue(
+						owner: owner,
+						cardId: cardId,
+						unitName: unitName,
+						iconPath: iconPath,
+						unitPrice: unitPrice,
+						isUpgraded: isUpgraded,
+						sourceCard: this,
+						exhaustWhenPlayed: exhaustWhenPlayed,
+						isStopped: newStopped
+					);
+
+					if (selectedPower != null && selectedCount > 1)
+					{
+						await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), selectedPower, selectedCount - 1, owner, this);
+					}
+
+					GD.Print($"[StopProductionCard] 训练队列 {unitName} 创建 {selectedCount} 层{(newStopped ? "停产" : "正常")}状态");
+
+					if (remainingAmount > 0)
+					{
+						var remainingPower = await TrainingQueuePower.ApplyTrainingQueue(
+							owner: owner,
+							cardId: cardId,
+							unitName: unitName,
+							iconPath: iconPath,
+							unitPrice: unitPrice,
+							isUpgraded: isUpgraded,
+							sourceCard: this,
+							exhaustWhenPlayed: exhaustWhenPlayed,
+							isStopped: wasStopped
+						);
+
+						if (remainingPower != null && remainingAmount > 1)
+						{
+							await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), remainingPower, remainingAmount - 1, owner, this);
+						}
+
+						GD.Print($"[StopProductionCard] 训练队列 {unitName} 创建 {remainingAmount} 层{(wasStopped ? "停产" : "正常")}状态");
+					}
+				}
 			}
 		}
 		else
@@ -122,14 +172,19 @@ public class StopProductionCard : CardModel
 
 		foreach (var power in Owner.Creature.Powers.OfType<TrainingQueuePower>())
 		{
-			queues.Add(new ProductionQueueItem
+			for (int i = 0; i < power.Amount; i++)
 			{
-				Power = power,
-				Name = power.UnitName,
-				IconPath = power.PackedIconPath,
-				IsStopped = power.IsStopped,
-				Type = "训练队列"
-			});
+				queues.Add(new ProductionQueueItem
+				{
+					Power = power,
+					Name = power.UnitName,
+					IconPath = power.PackedIconPath,
+					IsStopped = power.IsStopped,
+					Type = "训练队列",
+					StackIndex = i + 1,
+					TotalStacks = power.Amount
+				});
+			}
 		}
 
 		return queues;
@@ -142,5 +197,7 @@ public class StopProductionCard : CardModel
 		public string IconPath { get; set; } = string.Empty;
 		public bool IsStopped { get; set; }
 		public string Type { get; set; } = string.Empty;
+		public int StackIndex { get; set; } = 0;
+		public int TotalStacks { get; set; } = 0;
 	}
 }
