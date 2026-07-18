@@ -1,6 +1,8 @@
 {
     "AIRBORNE_DIVISION.title": "空挺部隊",
     "AIRBORNE_DIVISION.description": "[gold]消耗[/gold]付きの[gold]アメリカ兵[/gold]4枚と[gold]ガーディアンGI[/gold]1枚を獲得する。",
+    "YURI_CARD.title": "ユーリ",
+    "YURI_CARD.description": "[gold]${DollarNumber}[/gold]消費する。ランダムなT{IfUpgraded:show:3|2}ユニットカード1枚を[gold]消耗[/gold]付きで獲得する。",
     "PARATROOPER.title": "降下部隊",
     "PARATROOPER.description": "いくつかの[gold]虚无[/gold]な部隊を手札に加える。",
     "SELL_MC_V.title": "基地売却",

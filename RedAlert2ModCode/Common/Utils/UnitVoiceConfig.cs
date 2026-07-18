@@ -613,7 +613,24 @@ public static class UnitVoiceConfig
         },
     };
 
-    public static readonly Dictionary<string, List<string>> YuriUnits = new();
+    public static readonly Dictionary<string, List<string>> YuriUnits = new()
+    {
+        ["Yuri"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/YuriUnits/Yuri/Iyurata.mp3",
+            "res://RedAlert2ModResources/audio/YuriUnits/Yuri/Iyuratd.mp3",
+            "res://RedAlert2ModResources/audio/YuriUnits/Yuri/Iyurate.mp3",
+            "res://RedAlert2ModResources/audio/YuriUnits/Yuri/Iyurmoa.mp3",
+            "res://RedAlert2ModResources/audio/YuriUnits/Yuri/Iyurmoc.mp3",
+            "res://RedAlert2ModResources/audio/YuriUnits/Yuri/Iyursea.mp3",
+            "res://RedAlert2ModResources/audio/YuriUnits/Yuri/Iyursec.mp3",
+            "res://RedAlert2ModResources/audio/YuriUnits/Yuri/Iyursed.mp3",
+        },
+        ["YuriAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/YuriUnits/Yuri/Iyurat1a_attack.mp3",
+        },
+    };
 
     public static List<string> GetUnitVoices(string unitName, string faction = "Allied")
     {

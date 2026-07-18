@@ -3,6 +3,8 @@
     "PARATROOPER.description": "Add a few [gold]Ethereal[/gold] units to your hand.",
     "AIRBORNE_DIVISION.title": "Airborne Division",
     "AIRBORNE_DIVISION.description": "Gain 4 [gold]American Soldiers[/gold] and 1 [gold]Guardian GI[/gold] with [gold]Exhaust[/gold].",
+    "YURI_CARD.title": "Yuri",
+    "YURI_CARD.description": "Spend [gold]${DollarNumber}[/gold]. Gain 1 random T{IfUpgraded:show:3|2} unit card with [gold]Exhaust[/gold].",
     "SELL_MC_V.title": "Sell MCV",
     "SELL_MC_V.description": "Sell the [gold]Construction Yard[/gold] for 2400 funds.{IfUpgraded:show:Gain an Engineer.|}",
     "SELL_BUILDING_CARD.title": "Sell Building",

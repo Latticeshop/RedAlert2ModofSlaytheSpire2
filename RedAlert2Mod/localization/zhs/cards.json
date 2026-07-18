@@ -3,6 +3,8 @@
     "PARATROOPER.description": "将些许[gold]虚无[/gold]的部队加入手牌。",
     "AIRBORNE_DIVISION.title": "空降部队",
     "AIRBORNE_DIVISION.description": "获得带[gold]消耗[/gold]的 4 张[gold]美国大兵[/gold]和 1 张[gold]重装大兵[/gold]。",
+    "YURI_CARD.title": "尤里",
+    "YURI_CARD.description": "花费[gold]${DollarNumber}[/gold]，获得一张随机带[gold]消耗[/gold]的T{IfUpgraded:show:3|2}单位卡牌。",
     "SELL_MC_V.title": "卖本",
     "SELL_MC_V.description": "出售[gold]基地[/gold]获得 2400 资金。{IfUpgraded:show:获得一名工程师。|}",
     "SELL_BUILDING_CARD.title": "出售",

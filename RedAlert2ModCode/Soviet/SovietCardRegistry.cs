@@ -103,6 +103,7 @@ public static class SovietCardRegistry
         return new List<Func<CardModel>>
         {
             () => ModelDb.Card<Paratrooper>(),
+            () => ModelDb.Card<YuriCard>(),
         };
     }
 

@@ -139,6 +139,13 @@ public static class CommonCardValues
 		RepeatUpgraded = 0         // 升级后最大数量不变，改为"任意"数量
 	};
 
+	/// <summary>尤里 - 0费技能卡，花费1200资金获得一张随机带消耗的T2(升级T3)单位卡牌</summary>
+	public static CardValueStore.CardValues Yuri => new()
+	{
+		Cost = 0,
+		DollarValue = 1200
+	};
+
 	private static Dictionary<Type, decimal> _sellablePowerDollarMap;
 
 	public static Dictionary<Type, decimal> GetSellablePowerDollarMap()

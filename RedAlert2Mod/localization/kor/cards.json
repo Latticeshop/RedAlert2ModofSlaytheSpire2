@@ -213,6 +213,8 @@
     "WAR_MINER.title": "전쟁 채굴차",
     "WEATHER_CONTROLLER.description": "[gold]비용: ${DollarNumber}[/gold].\n[gold]웨더 컨트롤러[/gold]를 얻습니다.\n{IfUpgraded:show:재사용 대기시간이 1턴 감소합니다.|}",
     "WEATHER_CONTROLLER.title": "웨더 컨트롤러",
+    "YURI_CARD.title": "유리",
+    "YURI_CARD.description": "[gold]${DollarNumber}[/gold]를 소비합니다. [gold]소진[/gold]이 붙은 랜덤 T{IfUpgraded:show:3|2} 유닛 카드 1장을 얻습니다.",
     "FORCE_FIELD.title": "포스 필드",
     "FORCE_FIELD.description": "[gold]무형[/gold] 1층을 얻습니다. 다음 턴에 에너지 {EnergyLoss}를 잃습니다.",
     "BATTLE_FORTRESS.title": "배틀 포트레스",
