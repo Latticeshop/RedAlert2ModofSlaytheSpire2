@@ -92,7 +92,7 @@ public static class CommonCardValues
 	public static CardValueStore.CardValues StopProduction => new()
 	{
 		Cost = 1,
-		Repeat = 1                  // 未升级时选择数量
+		Repeat = 2                  // 未升级时选择数量
 	};
 
 	public static CardValueStore.CardValues Kiting => new()
