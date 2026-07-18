@@ -134,11 +134,6 @@ public static class FlagSelectionPatches
 				continue;
 			}
 
-			if (!RedAlert2ModCode.UI.MultiplayerSyncHelper.IsLocalPlayer(player))
-			{
-				continue;
-			}
-
 			FlagManager.Faction faction = FlagManager.GetPlayerFaction(player);
 
 			if (faction == FlagManager.Faction.Yuri)
@@ -149,15 +144,22 @@ public static class FlagSelectionPatches
 				continue;
 			}
 
-			RelicModel? selected = await SelectFlagWithLocalScreen(faction);
-			if (selected == null)
-			{
-				changed = true;
-				continue;
-			}
+			List<RelicModel> allFlags = FlagManager.GetAllFlags(faction);
 
-			await RelicCmd.Obtain(selected.ToMutable(), player);
-			changed = true;
+			int? selectedIndex = await RedAlert2ModCode.UI.MultiplayerSyncHelper.ExecuteSyncChoice(
+				player,
+				async () =>
+				{
+					RelicModel? selected = await SelectFlagWithLocalScreen(faction);
+					return selected != null ? allFlags.FindIndex(f => f.Id == selected.Id) : null;
+				});
+
+			if (selectedIndex.HasValue && selectedIndex.Value >= 0 && selectedIndex.Value < allFlags.Count)
+			{
+				RelicModel selectedFlag = allFlags[selectedIndex.Value];
+				await RelicCmd.Obtain(selectedFlag.ToMutable(), player);
+				changed = true;
+			}
 		}
 
 		return changed;
