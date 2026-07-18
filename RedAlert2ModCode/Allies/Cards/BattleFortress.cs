@@ -67,7 +67,7 @@ public sealed class BattleFortress : CardModel
 	protected override void DeepCloneFields()
 	{
 		base.DeepCloneFields();
-		_storedCards = new List<CardModel>();
+		_storedCards = new List<CardModel>(_storedCards);
 		_hasStored = false;
 		((StringVar)DynamicVars["StoredCards"]).StringValue = string.Empty;
 	}

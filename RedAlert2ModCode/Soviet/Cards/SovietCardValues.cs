@@ -312,11 +312,12 @@ public static class SovietCardValues
 		MagicNumberUpgraded = 15    // 升级后增加15%，总共-40%
 	};
 
-	/// <summary>雷达 - 0费能力卡，价格1000，解锁苏联空军和轨道战备</summary>
+	/// <summary>雷达 - 0费能力卡，价格1000（升级后500），解锁苏联空军和轨道战备</summary>
 	public static CardValueStore.CardValues Radar => new()
 	{
 		Cost = 0,
-		DollarValue = 1000
+		DollarValue = 1000,
+		DollarValueUpgraded = 500
 	};
 	
 	// ==================== 防御建筑 ====================

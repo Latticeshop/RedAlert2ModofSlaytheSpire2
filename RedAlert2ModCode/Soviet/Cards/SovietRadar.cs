@@ -25,7 +25,7 @@ public sealed class SovietRadar : CardModel
 	
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new IntVar("DollarNumber", Values.DollarValue)
+		new IntVar("DollarNumber", IsUpgraded ? Values.DollarValueUpgraded : Values.DollarValue)
 	};
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
@@ -46,7 +46,8 @@ public sealed class SovietRadar : CardModel
 				return false;
 
 			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-			if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
+			decimal requiredDollar = IsUpgraded ? Values.DollarValueUpgraded : Values.DollarValue;
+			if (dollarPower == null || dollarPower.DollarValue < requiredDollar)
 				return false;
 
 			return true;
@@ -62,8 +63,9 @@ public sealed class SovietRadar : CardModel
 		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
 		if (dollarPower != null)
 		{
-			dollarPower.AddDollar(-(int)Values.DollarValue);
-			GD.Print($"[SovietRadar] 扣除资金 {Values.DollarValue}");
+			decimal dollarCost = IsUpgraded ? Values.DollarValueUpgraded : Values.DollarValue;
+			dollarPower.AddDollar(-(int)dollarCost);
+			GD.Print($"[SovietRadar] 扣除资金 {dollarCost}");
 		}
 
 		// 添加雷达能力（用于科技线检查），每次打出都增加层数
@@ -81,5 +83,6 @@ public sealed class SovietRadar : CardModel
 
 	protected override void OnUpgrade()
 	{
+		base.DynamicVars["DollarNumber"].BaseValue = Values.DollarValueUpgraded;
 	}
 }

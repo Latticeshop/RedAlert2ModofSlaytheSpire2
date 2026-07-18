@@ -40,7 +40,7 @@ public sealed class BattleBunkerPower : PowerModel
 	protected override void DeepCloneFields()
 	{
 		base.DeepCloneFields();
-		_storedCards = new List<CardModel>();
+		_storedCards = new List<CardModel>(_storedCards);
 		_isFirstTurn = true;
 	}
 
@@ -72,16 +72,7 @@ public sealed class BattleBunkerPower : PowerModel
 			{
 				foreach (var card in storedCards)
 				{
-					var cloneMethod = card.GetType().GetMethod("DeepClone", BindingFlags.Public | BindingFlags.Instance);
-					if (cloneMethod != null)
-					{
-						var clonedCard = (CardModel)cloneMethod.Invoke(card, null)!;
-						newPower._storedCards.Add(clonedCard);
-					}
-					else
-					{
-						newPower._storedCards.Add(card);
-					}
+					newPower._storedCards.Add(card);
 				}
 			}
 			newPower._isFirstTurn = false;

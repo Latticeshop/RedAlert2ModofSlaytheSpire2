@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.CardSelection;
@@ -8,24 +7,22 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
-using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet.Powers;
-using RedAlert2ModCode.UI;
 
 namespace RedAlert2ModCode.Soviet.Cards;
 
 public sealed class BattleBunkerCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.BattleBunker;
-	private static readonly MethodInfo? CardOnPlayMethod = typeof(CardModel).GetMethod("OnPlay", BindingFlags.NonPublic | BindingFlags.Instance);
 
-	private readonly List<CardModel> _storedCards = new();
+	private List<CardModel> _storedCards = new();
 
 	public BattleBunkerCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
 
@@ -67,7 +64,7 @@ public sealed class BattleBunkerCard : CardModel
 	protected override void DeepCloneFields()
 	{
 		base.DeepCloneFields();
-		_storedCards.Clear();
+		_storedCards = new List<CardModel>(_storedCards);
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -96,13 +93,21 @@ public sealed class BattleBunkerCard : CardModel
 		if (soldierCards.Count == 0)
 			return;
 
-		var selectedCards = await CardSelectionScreen.ShowMultiSelection(
-			soldierCards,
-			maxSelect,
-			0,
+		var selectPrompt = new LocString("cards", "BATTLE_BUNKER.select_prompt");
+		selectPrompt.Add("0", 0);
+		selectPrompt.Add("1", maxSelect);
+		var prefs = new CardSelectorPrefs(selectPrompt, 0, maxSelect)
+		{
+			RequireManualConfirmation = true
+		};
+
+		var selectedCards = (await CardSelectCmd.FromHand(
+			choiceContext,
 			Owner,
-			FactionType.Soviet
-		);
+			prefs,
+			c => soldierCards.Contains(c),
+			this
+		)).ToList();
 
 		if (selectedCards == null || selectedCards.Count == 0)
 			return;
@@ -110,8 +115,11 @@ public sealed class BattleBunkerCard : CardModel
 		_storedCards.Clear();
 		foreach (var card in selectedCards)
 		{
-			card.HasBeenRemovedFromState = true;
 			_storedCards.Add(card);
+		}
+
+		foreach (var card in _storedCards)
+		{
 			await CardPileCmd.RemoveFromCombat(card);
 		}
 
