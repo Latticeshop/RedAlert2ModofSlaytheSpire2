@@ -145,6 +145,9 @@ public sealed class SovietMCV : CardModel
 	private bool IsBuildingCardType(System.Type cardType)
 	{
 		var typeName = cardType.Name;
+		if (typeName == "ChronoWarp" || typeName == "LightningStorm" ||
+		    typeName == "NuclearAttack" || typeName == "IronCurtain")
+			return false;
 		return typeName.Contains("Repair") || typeName.Contains("Defense") || typeName.Contains("Bunker") || 
 			   typeName.Contains("Wall") || typeName.Contains("Cannon") || typeName.Contains("Tower") ||
 			   typeName.Contains("Tesla") || typeName.Contains("Coil") || typeName.Contains("Flak") ||

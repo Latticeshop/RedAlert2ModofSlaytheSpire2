@@ -15,6 +15,7 @@ using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet.Powers;
+using RedAlert2ModCode.Yuri;
 
 namespace RedAlert2ModCode.Soviet.Cards;
 
@@ -139,7 +140,8 @@ public sealed class BattleBunkerCard : CardModel
 	{
 		var cardType = card.GetType().Name.ToUpper();
 		return AlliedCardRegistry.Soldiers.Any(f => f().GetType().Name.ToUpper() == cardType) ||
-			   SovietCardRegistry.Soldiers.Any(f => f().GetType().Name.ToUpper() == cardType);
+			   SovietCardRegistry.Soldiers.Any(f => f().GetType().Name.ToUpper() == cardType) ||
+			   YuriCardRegistry.Soldiers.Any(f => f().GetType().Name.ToUpper() == cardType);
 	}
 
 	private void UpdateStoredCardsVar()

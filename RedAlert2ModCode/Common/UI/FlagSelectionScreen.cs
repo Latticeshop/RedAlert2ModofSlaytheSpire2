@@ -32,6 +32,7 @@ internal sealed partial class FlagSelectionScreen : Control, IOverlayScreen, ISc
 	private NChoiceSelectionSkipButton? _skipButton;
 	private OptionButton? _customOptionButton;
 	private VBoxContainer? _customContainer;
+	private bool _isClosed;
 
 	public NetScreenType ScreenType => NetScreenType.Rewards;
 	public bool UseSharedBackstop => true;
@@ -242,6 +243,8 @@ internal sealed partial class FlagSelectionScreen : Control, IOverlayScreen, ISc
 
 	public void CloseSelectionScreen()
 	{
+		if (_isClosed) return;
+		_isClosed = true;
 		NOverlayStack.Instance?.Remove(this);
 	}
 
@@ -254,6 +257,7 @@ internal sealed partial class FlagSelectionScreen : Control, IOverlayScreen, ISc
 
 	public void AfterOverlayClosed()
 	{
+		if (!IsInstanceValid(this)) return;
 		QueueFree();
 	}
 

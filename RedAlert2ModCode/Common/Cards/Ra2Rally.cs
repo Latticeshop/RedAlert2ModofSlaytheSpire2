@@ -12,6 +12,7 @@ using System.Linq;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Soviet;
+using RedAlert2ModCode.Yuri;
 
 namespace RedAlert2ModCode.Common.Cards;
 
@@ -104,6 +105,11 @@ public class Ra2Rally : CardModel
 			unitTypes.Add(card.GetType());
 		}
 		foreach (var soldierFunc in SovietCardRegistry.Soldiers)
+		{
+			var card = soldierFunc();
+			unitTypes.Add(card.GetType());
+		}
+		foreach (var soldierFunc in YuriCardRegistry.Soldiers)
 		{
 			var card = soldierFunc();
 			unitTypes.Add(card.GetType());

@@ -89,6 +89,7 @@ public sealed class NuclearMissileSiloCard : CardModel
 
         var nuclearAttackTemplate = ModelDb.Card<NuclearAttack>();
         var nuclearAttackCard = Owner.Creature.CombatState.CreateCard(nuclearAttackTemplate, Owner);
+        nuclearAttackCard.EnergyCost.SetCustomBaseCost(0);
         nuclearAttackCard.AddKeyword(CardKeyword.Exhaust);
         await CardPileCmd.AddGeneratedCardToCombat(nuclearAttackCard, PileType.Hand, Owner);
         GD.Print("[NuclearMissileSiloCard] 已添加核弹攻击卡牌到手牌");

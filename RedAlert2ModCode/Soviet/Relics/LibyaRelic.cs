@@ -30,6 +30,9 @@ public sealed class LibyaRelic : RelicModel
 		if (target != Owner.Creature || result.UnblockedDamage <= 0)
 			return;
 
+		if (!FlagManager.HasLibya(Owner))
+			return;
+
 		var combatState = Owner.Creature.CombatState;
 		if (combatState == null)
 			return;

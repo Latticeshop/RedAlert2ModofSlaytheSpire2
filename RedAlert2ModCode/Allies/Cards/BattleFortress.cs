@@ -20,6 +20,7 @@ using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Soviet;
+using RedAlert2ModCode.Yuri;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -209,6 +210,11 @@ public sealed class BattleFortress : CardModel
 			soldierTypes.Add(card.GetType());
 		}
 		foreach (var soldierFunc in SovietCardRegistry.Soldiers)
+		{
+			var card = soldierFunc();
+			soldierTypes.Add(card.GetType());
+		}
+		foreach (var soldierFunc in YuriCardRegistry.Soldiers)
 		{
 			var card = soldierFunc();
 			soldierTypes.Add(card.GetType());

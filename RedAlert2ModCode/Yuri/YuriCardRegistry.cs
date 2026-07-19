@@ -3,6 +3,7 @@ using System.Linq;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using RedAlert2ModCode.Common.Cards;
 
 namespace RedAlert2ModCode.Yuri;
 
@@ -11,7 +12,7 @@ public static class YuriCardRegistry
     // 尤里单位卡
     public static List<Func<CardModel>> Soldiers { get; } = new()
     {
-        // 待添加：尤里步兵、尤里克隆兵等
+        () => ModelDb.Card<YuriCard>(),
     };
 
     public static List<Func<CardModel>> Vehicles { get; } = new()

@@ -100,6 +100,7 @@ public sealed class WeatherController : CardModel
 
         var lightningStormTemplate = ModelDb.Card<LightningStorm>();
         var lightningStormCard = Owner.Creature.CombatState.CreateCard(lightningStormTemplate, Owner);
+        lightningStormCard.EnergyCost.SetCustomBaseCost(0);
         lightningStormCard.AddKeyword(CardKeyword.Exhaust);
         await CardPileCmd.AddGeneratedCardToCombat(lightningStormCard, PileType.Hand, Owner);
         GD.Print("[WeatherController] 已添加闪电风暴卡牌到手牌");

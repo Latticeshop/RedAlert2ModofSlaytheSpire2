@@ -214,7 +214,10 @@ public static class FlagSelectionPatches
 		{
 			foreach (FlagSelectionScreen screen in localScreens)
 			{
-				screen.CloseSelectionScreen();
+				if (GodotObject.IsInstanceValid(screen))
+				{
+					screen.CloseSelectionScreen();
+				}
 			}
 		}
 

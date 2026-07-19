@@ -41,6 +41,7 @@ public sealed class YuriCard : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Soldier.CreateHoverTip(),
+		ModCardKeywords.Unit.CreateHoverTip(),
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust)
 	];
 

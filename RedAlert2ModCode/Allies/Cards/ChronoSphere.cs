@@ -100,6 +100,7 @@ public sealed class ChronoSphere : CardModel
 
             var chronoWarpTemplate = ModelDb.Card<ChronoWarp>();
             var chronoWarpCard = Owner.Creature.CombatState.CreateCard(chronoWarpTemplate, Owner);
+            chronoWarpCard.EnergyCost.SetCustomBaseCost(0);
             chronoWarpCard.AddKeyword(CardKeyword.Exhaust);
             await CardPileCmd.AddGeneratedCardToCombat(chronoWarpCard, PileType.Hand, Owner);
             GD.Print("[ChronoSphere] 已添加超时空传送卡牌到手牌");
