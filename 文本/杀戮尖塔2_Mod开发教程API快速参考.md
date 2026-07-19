@@ -321,6 +321,86 @@ dotnet build RedAlert2Mod.csproj -c Release -o build
 
 ---
 
+## 👥 多人联机卡牌
+
+### 多人模式限制（CardMultiplayerConstraint）
+
+通过重写 `MultiplayerConstraint` 属性控制卡牌在单人/多人模式下的可见性：
+
+```csharp
+public enum CardMultiplayerConstraint
+{
+    None,              // 无限制（默认）
+    MultiplayerOnly,   // 仅多人模式可用
+    SingleplayerOnly   // 仅单人模式可用
+}
+```
+
+**使用方式**：
+```csharp
+public override CardMultiplayerConstraint MultiplayerConstraint => CardMultiplayerConstraint.MultiplayerOnly;
+```
+
+### 多人目标类型（TargetType）
+
+| 目标类型 | 说明 |
+|---------|------|
+| `TargetType.AnyAlly` | 选择任意单个队友 |
+| `TargetType.AllAllies` | 选择所有队友 |
+| `TargetType.AnyPlayer` | 选择任意玩家 |
+
+### 获取队友列表
+
+```csharp
+// 获取所有队友生物（包含自己）
+IEnumerable<Creature> allTeammates = CombatState.GetTeammatesOf(Owner.Creature);
+
+// 过滤：只获取存活的、非自己的队友玩家
+var teammates = from c in CombatState.GetTeammatesOf(Owner.Creature)
+    where c != null && c.IsAlive && c.IsPlayer && c.Player != Owner
+    select c;
+```
+
+### 将卡牌转移给队友（核心API）
+
+```csharp
+// 签名：CardPileCmd.GiveToAnotherPlayer
+await CardPileCmd.GiveToAnotherPlayer(
+    cardModel,                    // 要转移的卡牌
+    targetPlayer,                 // 目标队友（接收方）
+    PileType.Hand,                // 放入目标的哪个牌堆
+    CardPilePosition.Random       // 牌堆中的位置
+);
+```
+
+**PileType 可选值**：`Hand`（手牌）、`Draw`（抽牌堆）、`Discard`（弃牌堆）、`Exhaust`（消耗堆）
+
+**CardPilePosition 可选值**：`Top`（顶部）、`Bottom`（底部）、`Random`（随机）
+
+### 给队友添加生成的卡牌
+
+```csharp
+// 给队友生成一张随机牌（参考原版"慷慨捐助"Largesse）
+CardModel cardModel = CardFactory.GetDistinctForCombat(
+    targetPlayer,
+    ModelDb.CardPool<ColorlessCardPool>().GetUnlockedCards(...),
+    1,
+    Owner.RunState.Rng.CombatCardGeneration
+).FirstOrDefault();
+
+await CardPileCmd.AddGeneratedCardToCombat(cardModel, PileType.Hand, Owner);
+```
+
+### 参考原版实现
+
+| 卡牌 | 功能 | 实现要点 |
+|-----|------|---------|
+| **Largesse（慷慨捐助）** | 给队友添加一张随机无色牌 | `CardFactory.GetDistinctForCombat()` + `CardPileCmd.AddGeneratedCardToCombat()` |
+| **TheBall（魔球，beta版）** | 将本卡交给随机队友 | `CombatState.GetTeammatesOf()` + `CardPileCmd.GiveToAnotherPlayer()` |
+| **EnergySurge（能量涌动）** | 给所有队友加能量 | 遍历 `GetTeammatesOf()` + `PlayerCmd.GainEnergy()` |
+
+---
+
 ## 🏷️ 自定义词条（Custom Keywords）
 
 ### 设计理念

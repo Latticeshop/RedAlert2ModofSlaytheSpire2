@@ -233,5 +233,8 @@
     "CHRONO_LEGIONNAIRE.title": "크로노 레기온어",
     "CHRONO_LEGIONNAIRE.description": "적의 최대 HP의 {ErasePercent}%에 해당하는 [gold]지우기[/gold]를 적용합니다. 최초 적용 시 적을 기절시킵니다.",
     "GRAND_CANNON.title": "그랜드 캐논",
-    "GRAND_CANNON.description": "[gold]비용: ${DollarNumber}[/gold]. 턴 종료 시 적에게 {Damage}(업그레이드 시{DamageUpgraded})의 피해를 입힙니다."
+    "GRAND_CANNON.description": "[gold]비용: ${DollarNumber}[/gold]. 턴 종료 시 적에게 {Damage}(업그레이드 시{DamageUpgraded})의 피해를 입힙니다.",
+    "SUPPORT_CARD.title": "지원",
+    "SUPPORT_CARD.description": "손에서 최대 {MagicNumber}개의 [gold]유닛[/gold] 카드를 선택하여 아군에게 전달합니다.",
+    "SUPPORT_CARD.select_prompt": "아군에게 전달할 유닛 카드 0-{MaxCount}개를 선택하세요"
 }

@@ -16,6 +16,7 @@ public static class FlagManager
 {
 	public enum Faction
 	{
+		None,
 		Allies,
 		Soviet,
 		Yuri
@@ -47,19 +48,30 @@ public static class FlagManager
 	{
 		string? charId = player.Character?.Id?.Entry;
 		GD.Print($"[RedAlert2Mod] GetPlayerFaction: charId={charId}");
-		if (charId == null) return Faction.Allies;
+		if (charId == null) return Faction.None;
 
-		if (charId.Contains("SOVIET", StringComparison.OrdinalIgnoreCase))
+		if (charId.Equals("Allies", StringComparison.OrdinalIgnoreCase) ||
+		    charId.Contains("ALLIES", StringComparison.OrdinalIgnoreCase))
+		{
+			GD.Print($"[RedAlert2Mod] GetPlayerFaction: detected ALLIES");
+			return Faction.Allies;
+		}
+
+		if (charId.Equals("Soviet", StringComparison.OrdinalIgnoreCase) ||
+		    charId.Contains("SOVIET", StringComparison.OrdinalIgnoreCase))
 		{
 			GD.Print($"[RedAlert2Mod] GetPlayerFaction: detected SOVIET");
 			return Faction.Soviet;
 		}
 
 		if (charId.Contains("YURI", StringComparison.OrdinalIgnoreCase))
+		{
+			GD.Print($"[RedAlert2Mod] GetPlayerFaction: detected YURI");
 			return Faction.Yuri;
+		}
 
-		GD.Print($"[RedAlert2Mod] GetPlayerFaction: default ALLIES");
-		return Faction.Allies;
+		GD.Print($"[RedAlert2Mod] GetPlayerFaction: not a RA2 character, returning None");
+		return Faction.None;
 	}
 
 	public static List<Type> GetFlagsForFaction(Faction faction)
@@ -69,7 +81,7 @@ public static class FlagManager
 			Faction.Allies => AlliedFlags,
 			Faction.Soviet => SovietFlags,
 			Faction.Yuri => YuriFlags,
-			_ => AlliedFlags,
+			_ => new List<Type>(),
 		};
 	}
 

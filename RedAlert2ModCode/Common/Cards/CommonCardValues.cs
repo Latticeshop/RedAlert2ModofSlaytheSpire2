@@ -146,6 +146,14 @@ public static class CommonCardValues
 		DollarValue = 1200
 	};
 
+	/// <summary>支援 - 0费技能卡，仅多人模式，选择手牌中3(升级5)张单位卡送给队友</summary>
+	public static CardValueStore.CardValues Support => new()
+	{
+		Cost = 0,
+		MagicNumber = 3,
+		MagicNumberUpgraded = 2
+	};
+
 	private static Dictionary<Type, decimal> _sellablePowerDollarMap;
 
 	public static Dictionary<Type, decimal> GetSellablePowerDollarMap()

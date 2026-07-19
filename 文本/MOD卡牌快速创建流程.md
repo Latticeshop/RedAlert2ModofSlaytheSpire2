@@ -1302,4 +1302,269 @@ protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 
 ---
 
+## 十二、多人联机卡牌创建流程
+
+### 12.1 快速决策：这张卡需要做多人支持吗？
+
+| 场景 | 需要多人支持？ | 操作 |
+|-----|:------------:|------|
+| 单人/多人都能用的普通卡 | ❌ | 无需额外配置 |
+| 仅多人模式出现（给队友送牌、buff等） | ✅ | 设置 `MultiplayerConstraint = MultiplayerOnly` |
+| 仅单人模式出现（防联机破坏平衡） | ✅ | 设置 `MultiplayerConstraint = SingleplayerOnly` |
+| 卡牌效果涉及队友/其他玩家 | ✅ | 使用 `TargetType.AnyAlly` / `AllAllies`，并实现多人逻辑 |
+
+### 12.2 多人卡牌创建七步走
+
+#### 第①步：设置多人模式限制
+
+```csharp
+public override CardMultiplayerConstraint MultiplayerConstraint 
+    => CardMultiplayerConstraint.MultiplayerOnly;
+```
+
+**可选值**：
+| 值 | 说明 |
+|---|------|
+| `None` | 无限制（默认） |
+| `MultiplayerOnly` | 仅多人模式可用 |
+| `SingleplayerOnly` | 仅单人模式可用 |
+
+#### 第②步：选择目标类型（如果需要选队友）
+
+```csharp
+// 构造函数中指定 TargetType
+public MyMultiplayerCard() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.AnyAlly) { }
+```
+
+| 目标类型 | 说明 |
+|---------|------|
+| `TargetType.AnyAlly` | 选择任意单个队友 |
+| `TargetType.AllAllies` | 选择所有队友 |
+| `TargetType.AnyPlayer` | 选择任意玩家 |
+
+#### 第③步：获取队友列表
+
+```csharp
+// 获取所有存活的、非自己的队友玩家
+var teammates = from c in base.CombatState.GetTeammatesOf(base.Owner.Creature)
+    where c != null && c.IsAlive && c.IsPlayer && c.Player != base.Owner
+    select c;
+
+// 必须判空！单人模式下队友列表为空
+if (teammates.Count() == 0)
+    return; // 或处理单人降级逻辑
+```
+
+#### 第④步A：将本卡转移给队友（接力/传递类效果）
+
+```csharp
+// 参考 beta 版"魔球"TheBall
+Creature randomTeammate = base.Owner.RunState.Rng.CombatTargets.NextItem(teammates);
+
+await CardPileCmd.GiveToAnotherPlayer(
+    this,                          // 要转移的卡牌（this = 本卡）
+    randomTeammate.Player,         // 接收方队友
+    PileType.Draw,                 // 放入目标的抽牌堆
+    CardPilePosition.Random        // 随机位置
+);
+```
+
+**PileType 速查**：
+
+| 值 | 说明 | 常用场景 |
+|---|------|---------|
+| `PileType.Hand` | 手牌 | 立即能打 |
+| `PileType.Draw` | 抽牌堆 | 稍后抽到 |
+| `PileType.Discard` | 弃牌堆 | 下回合洗回 |
+| `PileType.Exhaust` | 消耗堆 | 本局不再出现 |
+
+**CardPilePosition 速查**：
+
+| 值 | 说明 |
+|---|------|
+| `Top` | 顶部（下一张抽到） |
+| `Bottom` | 底部（默认） |
+| `Random` | 随机位置 |
+
+#### 第④步B：给队友生成一张新牌（送牌类效果）
+
+```csharp
+// 参考原版"慷慨捐助"Largesse
+CardModel cardModel = CardFactory.GetDistinctForCombat(
+    cardPlay.Target.Player,
+    ModelDb.CardPool<ColorlessCardPool>().GetUnlockedCards(
+        cardPlay.Target.Player, CardRarity.Common, includeUncollectable: false),
+    1,
+    Owner.RunState.Rng.CombatCardGeneration
+).FirstOrDefault();
+
+if (cardModel != null && IsUpgraded)
+    CardCmd.Upgrade(cardModel);
+
+await CardPileCmd.AddGeneratedCardToCombat(cardModel, PileType.Hand, Owner);
+```
+
+#### 第④步C：给所有队友加效果（群体增益类）
+
+```csharp
+// 参考原版"能量涌动"EnergySurge
+var allTeammates = from c in base.CombatState.GetTeammatesOf(base.Owner.Creature)
+    where c != null && c.IsAlive && c.IsPlayer
+    select c;
+
+foreach (Creature teammate in allTeammates)
+{
+    await PlayerCmd.GainEnergy(2, teammate.Player);
+    // 或：await PowerCmd.Apply<StrengthPower>(2, teammate, base.Owner);
+}
+```
+
+#### 第⑤步：注册卡牌（和普通卡一样）
+
+```csharp
+// 在 ModContent 中注册（和普通卡牌完全相同）
+cards
+    .AddMyCard<AlliedTechShareCard>()
+    .AddMyCard<SovietCombinedArmsCard>();
+```
+
+多人卡牌**不需要**额外的注册步骤，和普通卡完全一致。
+
+#### 第⑥步：本地化（和普通卡一样）
+
+```json
+{
+  "AlliedTechShare": {
+    "NAME": "技术共享",
+    "DESCRIPTION": "将一张随机盟军卡交给队友。"
+  }
+}
+```
+
+多人卡牌**不需要**额外的本地化配置。
+
+#### 第⑦步：联机同步检查
+
+如果卡牌使用了随机数或选择面板，确保使用同步方式：
+
+| 操作 | 正确做法 | 错误做法 |
+|-----|---------|---------|
+| 获取战斗随机数 | `Owner.RunState.Rng.CombatTargets.NextItem(...)` | `new Random().Next(...)` |
+| 显示选择面板 | `ShowSelectionWithSync(...)` | 直接 `ShowSelection(...)` |
+
+### 12.3 多人卡牌模板大全
+
+#### 模板A：接力传递卡（把本卡交给队友）
+
+```csharp
+using System.Linq;
+using MegaCrit.Sts2.Core.Cards;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Enums;
+
+public sealed class RelayCard : CardModel
+{
+    public override CardMultiplayerConstraint MultiplayerConstraint 
+        => CardMultiplayerConstraint.MultiplayerOnly;
+
+    public RelayCard() : base(0, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+
+    protected override void DefineDynamicVars(DynamicVarManager mgr)
+    {
+        mgr.Create("MagicNumber", 1);
+    }
+
+    public override void AddDescriptionTokens(DescriptionTokenCollector collector, ICardInstance instance)
+    {
+        collector.AddDynamicVar("M", "MagicNumber", instance);
+    }
+
+    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+        var teammates = from c in base.CombatState.GetTeammatesOf(base.Owner.Creature)
+            where c != null && c.IsAlive && c.IsPlayer && c.Player != base.Owner
+            select c;
+
+        if (teammates.Count() == 0)
+            return;
+
+        Creature target = base.Owner.RunState.Rng.CombatTargets.NextItem(teammates);
+
+        await CardPileCmd.GiveToAnotherPlayer(
+            this,
+            target.Player,
+            PileType.Hand,
+            CardPilePosition.Random
+        );
+    }
+}
+```
+
+#### 模板B：送牌卡（给队友生成一张新牌）
+
+```csharp
+using System.Linq;
+using MegaCrit.Sts2.Core.Cards;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Enums;
+using MegaCrit.Sts2.Core.ModelDb;
+
+public sealed class GiftCard : CardModel
+{
+    public override CardMultiplayerConstraint MultiplayerConstraint 
+        => CardMultiplayerConstraint.MultiplayerOnly;
+
+    public GiftCard() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.AnyAlly) { }
+
+    protected override void DefineDynamicVars(DynamicVarManager mgr)
+    {
+        mgr.Create("MagicNumber", 1);
+    }
+
+    public override void AddDescriptionTokens(DescriptionTokenCollector collector, ICardInstance instance)
+    {
+        collector.AddDynamicVar("M", "MagicNumber", instance);
+    }
+
+    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+        ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
+
+        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+
+        CardModel cardModel = CardFactory.GetDistinctForCombat(
+            cardPlay.Target.Player,
+            ModelDb.CardPool<ColorlessCardPool>().GetUnlockedCards(
+                cardPlay.Target.Player, CardRarity.Common, includeUncollectable: false),
+            1,
+            Owner.RunState.Rng.CombatCardGeneration
+        ).FirstOrDefault();
+
+        if (cardModel != null && IsUpgraded)
+            CardCmd.Upgrade(cardModel);
+
+        await CardPileCmd.AddGeneratedCardToCombat(cardModel, PileType.Hand, Owner);
+    }
+}
+```
+
+### 12.4 多人卡牌常见遗漏检查清单
+
+| 检查项 | 是否需要 | 说明 |
+|--------|:--------:|------|
+| 设置 `MultiplayerConstraint` | ✅ | 多人专用卡必须设为 `MultiplayerOnly` |
+| 队友列表判空 | ✅ | 单人模式下 `GetTeammatesOf` 可能只返回自己 |
+| 使用战斗同步随机数 | ✅ | 用 `Owner.RunState.Rng.CombatTargets`，别用 `new Random()` |
+| `GiveToAnotherPlayer` 参数正确 | ✅ | 第二个参数是 `Player` 不是 `Creature`，记得 `.Player` |
+| 升级联动检查 | ❓ | 如果升级影响生成的牌，记得调用 `CardCmd.Upgrade()` |
+| 本地化文件更新 | ✅ | 多人卡的 NAME/DESCRIPTION 和普通卡一样需要本地化 |
+
+---
+
 *本文档基于实际开发经验整理，与API快速参考手册配合使用效果更佳。*

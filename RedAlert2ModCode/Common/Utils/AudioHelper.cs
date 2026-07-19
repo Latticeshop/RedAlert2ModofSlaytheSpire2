@@ -186,6 +186,34 @@ public static class AudioHelper
         }
     }
 
+    public static void PlaySupportCheer()
+    {
+        try
+        {
+            EnsureEffectPlayer();
+            if (_effectPlayer == null) return;
+
+            string soundPath = "res://RedAlert2ModResources/audio/CommonSFX/cheer.wav";
+            var sound = GD.Load<AudioStream>(soundPath);
+            if (sound != null)
+            {
+                if (_effectPlayer.Playing) _effectPlayer.Stop();
+                _effectPlayer.Stream = sound;
+                _effectPlayer.VolumeDb = -5;
+                _effectPlayer.Play();
+                GD.Print($"[AudioHelper] 播放支援欢呼音效");
+            }
+            else
+            {
+                GD.PrintErr($"[AudioHelper] 无法加载音效: {soundPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[AudioHelper] 播放音效失败: {ex.Message}");
+        }
+    }
+
     private static readonly string[] _explosionFiles = new[]
     {
         "res://RedAlert2ModResources/audio/ExplosionSFX/explosion_01.wav",

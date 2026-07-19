@@ -225,5 +225,8 @@
     "DEMOLITION_TRUCK_CARD.title": "自爆卡车",
     "DEMOLITION_TRUCK_CARD.description": "对敌方全体造成 {Damage} 点伤害和 {IfUpgraded:show:15|{Poison}} 层中毒。若受到没有格挡的伤害或打出时对面有攻击意图：对全体玩家也造成 {Damage} 点伤害。",
     "GRAND_CANNON.title": "巨炮",
-    "GRAND_CANNON.description": "[gold]价格：${DollarNumber}[/gold]。回合结束时对敌人造成 {Damage} 点伤害。"
+    "GRAND_CANNON.description": "[gold]价格：${DollarNumber}[/gold]。回合结束时对敌人造成 {Damage} 点伤害。",
+    "SUPPORT_CARD.title": "支援",
+    "SUPPORT_CARD.description": "选择手牌中最多 {MagicNumber} 张[gold]单位[/gold]卡送给队友。",
+    "SUPPORT_CARD.select_prompt": "选择 0-{MaxCount} 张单位卡送给队友"
 }

@@ -225,5 +225,8 @@
     "CHRONO_LEGIONNAIRE.title": "Chrono Legionnaire",
     "CHRONO_LEGIONNAIRE.description": "Apply [gold]Erase[/gold] equal to {ErasePercent}% of enemy's max HP. Stun the enemy on first application.",
     "GRAND_CANNON.title": "Grand Cannon",
-    "GRAND_CANNON.description": "[gold]Cost: ${DollarNumber}[/gold]. At the end of turn, deal {Damage}(upgraded {DamageUpgraded}) damage to an enemy."
+    "GRAND_CANNON.description": "[gold]Cost: ${DollarNumber}[/gold]. At the end of turn, deal {Damage}(upgraded {DamageUpgraded}) damage to an enemy.",
+    "SUPPORT_CARD.title": "Support",
+    "SUPPORT_CARD.description": "Select up to {MagicNumber} [gold]Unit[/gold] cards from your hand and give them to an ally.",
+    "SUPPORT_CARD.select_prompt": "Select 0-{MaxCount} unit cards to give to an ally"
 }

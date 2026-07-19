@@ -103,6 +103,12 @@ public static class FlagSelectionPatches
 		FlagManager.Faction faction = FlagManager.GetPlayerFaction(player);
 		GD.Print($"[RedAlert2Mod] EnsureFlagSelected: detected faction={faction}");
 
+		if (faction == FlagManager.Faction.None)
+		{
+			GD.Print("[RedAlert2Mod] EnsureFlagSelected: not a RA2 character, skipping flag selection.");
+			return false;
+		}
+
 		if (faction == FlagManager.Faction.Yuri)
 		{
 			RelicModel yuriFlag = FlagManager.GetAllFlags(FlagManager.Faction.Yuri)[0];
@@ -161,6 +167,12 @@ public static class FlagSelectionPatches
 			}
 
 			FlagManager.Faction faction = FlagManager.GetPlayerFaction(player);
+
+			if (faction == FlagManager.Faction.None)
+			{
+				GD.Print($"[RedAlert2Mod] Multiplayer: player {player.NetId} is not a RA2 character, skipping.");
+				continue;
+			}
 
 			// 尤里阵营自动获得尤里国旗
 			if (faction == FlagManager.Faction.Yuri)

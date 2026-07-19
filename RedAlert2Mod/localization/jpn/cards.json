@@ -225,5 +225,8 @@
     "CHRONO_LEGIONNAIRE.title": "クロノレジョナー",
     "CHRONO_LEGIONNAIRE.description": "敵の最大HPの{ErasePercent}%の[gold]イレイズ[/gold]を与える。初回適用時に敵を眩暈させる。",
     "GRAND_CANNON.title": "グランドキャノン",
-    "GRAND_CANNON.description": "[gold]価格：${DollarNumber}[/gold]。ターン終了時に敵に{Damage}(アップグレード時{DamageUpgraded})ダメージを与える。"
+    "GRAND_CANNON.description": "[gold]価格：${DollarNumber}[/gold]。ターン終了時に敵に{Damage}(アップグレード時{DamageUpgraded})ダメージを与える。",
+    "SUPPORT_CARD.title": "支援",
+    "SUPPORT_CARD.description": "手札から最大{MagicNumber}枚の[gold]ユニット[/gold]カードを選び、味方に渡す。",
+    "SUPPORT_CARD.select_prompt": "味方に渡すユニットカードを0-{MaxCount}枚選択"
 }

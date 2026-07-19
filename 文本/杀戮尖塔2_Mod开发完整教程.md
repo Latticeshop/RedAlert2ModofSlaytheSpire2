@@ -1017,6 +1017,208 @@ public static class HoverTipHelper
 
 ---
 
+## 3.11 多人联机卡牌
+
+### 3.11.1 概述
+
+《杀戮尖塔2》支持多人联机模式，Mod可以创建仅在多人模式下可用的卡牌。多人联机卡牌可以实现：
+- 给队友添加卡牌或buff
+- 将自己的卡牌转移给队友
+- 与队友配合的组合效果
+
+### 3.11.2 多人模式限制（CardMultiplayerConstraint）
+
+通过重写 `MultiplayerConstraint` 属性控制卡牌在单人/多人模式下的可见性：
+
+```csharp
+public enum CardMultiplayerConstraint
+{
+    None,              // 无限制（默认）
+    MultiplayerOnly,   // 仅多人模式可用
+    SingleplayerOnly   // 仅单人模式可用
+}
+```
+
+**使用方式**：
+
+```csharp
+public sealed class MyMultiplayerCard : CardModel
+{
+    // 此卡仅在多人联机模式下出现
+    public override CardMultiplayerConstraint MultiplayerConstraint 
+        => CardMultiplayerConstraint.MultiplayerOnly;
+}
+```
+
+### 3.11.3 多人目标类型（TargetType）
+
+多人联机卡牌可以使用以下目标类型来选择队友：
+
+| 目标类型 | 说明 |
+|---------|------|
+| `TargetType.AnyAlly` | 选择任意单个队友（可以是自己或其他玩家） |
+| `TargetType.AllAllies` | 选择所有队友 |
+| `TargetType.AnyPlayer` | 选择任意玩家 |
+
+**使用示例**：
+
+```csharp
+// 需要选择一个队友作为目标
+public MyMultiplayerCard() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.AnyAlly) { }
+```
+
+### 3.11.4 获取队友列表
+
+使用 `CombatState.GetTeammatesOf()` 方法获取所有队友生物：
+
+```csharp
+// 获取所有队友（包含自己）
+IEnumerable<Creature> allTeammates = base.CombatState.GetTeammatesOf(base.Owner.Creature);
+
+// 过滤：只获取存活的、非自己的队友玩家
+var validTeammates = from c in base.CombatState.GetTeammatesOf(base.Owner.Creature)
+    where c != null && c.IsAlive && c.IsPlayer && c.Player != base.Owner
+    select c;
+
+// 判断是否有有效队友
+if (validTeammates.Count() == 0)
+{
+    // 没有队友，处理单人模式情况
+    return;
+}
+```
+
+### 3.11.5 将卡牌转移给队友（核心API）
+
+使用 `CardPileCmd.GiveToAnotherPlayer()` 方法将卡牌转移给队友（参考beta版"魔球"TheBall）：
+
+```csharp
+// 方法签名
+public static async Task GiveToAnotherPlayer(
+    CardModel card,                    // 要转移的卡牌
+    Player player,                     // 目标队友（接收方）
+    PileType pileType,                 // 放入目标的哪个牌堆
+    CardPilePosition position = CardPilePosition.Bottom,  // 牌堆中的位置
+    AbstractModel? clonedBy = null
+)
+```
+
+**参数说明**：
+
+| 参数 | 说明 |
+|------|------|
+| `card` | 要转移的卡牌（可以是 `this` 即本卡，也可以是其他卡牌） |
+| `player` | 接收卡牌的队友玩家 |
+| `pileType` | 放入目标的哪个牌堆 |
+| `position` | 在牌堆中的位置 |
+
+**PileType 可选值**：
+- `PileType.Hand` - 手牌
+- `PileType.Draw` - 抽牌堆
+- `PileType.Discard` - 弃牌堆
+- `PileType.Exhaust` - 消耗堆
+
+**CardPilePosition 可选值**：
+- `CardPilePosition.Top` - 顶部
+- `CardPilePosition.Bottom` - 底部（默认）
+- `CardPilePosition.Random` - 随机位置
+
+**完整示例：将本卡交给随机队友**
+
+```csharp
+protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+{
+    // 1. 获取有效队友
+    var teammates = from c in base.CombatState.GetTeammatesOf(base.Owner.Creature)
+        where c != null && c.IsAlive && c.IsPlayer && c.Player != base.Owner
+        select c;
+
+    if (teammates.Count() == 0)
+        return;
+
+    // 2. 随机选择一个队友
+    Creature randomTeammate = base.Owner.RunState.Rng.CombatTargets.NextItem(teammates);
+
+    // 3. 将本卡转移给队友（放入抽牌堆，随机位置）
+    await CardPileCmd.GiveToAnotherPlayer(
+        this,
+        randomTeammate.Player,
+        PileType.Draw,
+        CardPilePosition.Random
+    );
+}
+```
+
+### 3.11.6 给队友添加生成的卡牌
+
+使用 `CardFactory.GetDistinctForCombat()` + `CardPileCmd.AddGeneratedCardToCombat()` 给队友添加一张随机卡牌（参考原版"慷慨捐助"Largesse）：
+
+```csharp
+protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+{
+    // 校验目标
+    ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
+
+    // 播放施法动画
+    await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+
+    // 为目标玩家生成一张随机无色牌
+    CardModel cardModel = CardFactory.GetDistinctForCombat(
+        cardPlay.Target.Player,
+        ModelDb.CardPool<ColorlessCardPool>().GetUnlockedCards(
+            cardPlay.Target.Player, CardRarity.Common, includeUncollectable: false),
+        1,
+        Owner.RunState.Rng.CombatCardGeneration
+    ).FirstOrDefault();
+
+    // 如果本卡升级了，生成的牌也升级
+    if (cardModel != null && IsUpgraded)
+        CardCmd.Upgrade(cardModel);
+
+    // 添加到目标玩家手牌（通过 Owner 同步）
+    await CardPileCmd.AddGeneratedCardToCombat(cardModel, PileType.Hand, Owner);
+}
+```
+
+### 3.11.7 给所有队友添加效果
+
+遍历所有队友，给每个队友添加 buff 或其他效果（参考原版"能量涌动"EnergySurge）：
+
+```csharp
+protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+{
+    // 获取所有存活的队友玩家
+    var teammates = from c in base.CombatState.GetTeammatesOf(base.Owner.Creature)
+        where c != null && c.IsAlive && c.IsPlayer
+        select c;
+
+    // 给每个队友加能量
+    foreach (Creature teammate in teammates)
+    {
+        await PlayerCmd.GainEnergy(base.DynamicVars.Energy.IntValue, teammate.Player);
+    }
+}
+```
+
+### 3.11.8 参考原版实现
+
+| 卡牌 | 功能 | 实现要点 | 适用场景 |
+|-----|------|---------|---------|
+| **Largesse（慷慨捐助）** | 给队友添加一张随机无色牌 | `CardFactory.GetDistinctForCombat()` + `CardPileCmd.AddGeneratedCardToCombat()` | 给队友随机送牌 |
+| **TheBall（魔球，beta版）** | 将本卡交给随机队友 | `CombatState.GetTeammatesOf()` + `CardPileCmd.GiveToAnotherPlayer()` | 传递卡牌/接力效果 |
+| **EnergySurge（能量涌动）** | 给所有队友加能量 | 遍历 `GetTeammatesOf()` + `PlayerCmd.GainEnergy()` | 群体增益效果 |
+
+### 3.11.9 常见问题
+
+| 问题 | 原因 | 解决 |
+|------|------|------|
+| 单人模式下多人卡牌仍出现 | 没有设置 `MultiplayerConstraint` | 设置为 `CardMultiplayerConstraint.MultiplayerOnly` |
+| 转移卡牌后自己手牌还有这张牌 | 没有同时移除本卡 | `GiveToAnotherPlayer` 会自动处理，无需手动移除 |
+| 队友列表为空导致报错 | 单人模式下没有队友 | 先检查 `teammates.Count() > 0` 再执行 |
+| 联机状态不同步 | 使用了非同步的随机数 | 使用 `Owner.RunState.Rng.CombatTargets` 获取战斗随机数 |
+
+---
+
 ## 4. 自定义药水
 
 ### 4.1 药水核心属性
