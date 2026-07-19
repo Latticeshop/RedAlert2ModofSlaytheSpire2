@@ -119,10 +119,10 @@ public class PrismTowerPower : PowerModel
 			GD.Print($"[PrismTowerPower] 对敌人 {enemy.Name} 造成 {CurrentDamage} 点伤害");
 			
 			await CreatureCmd.Damage(new MegaCrit.Sts2.Core.GameActions.Multiplayer.ThrowingPlayerChoiceContext(), 
-				new System.Collections.Generic.List<Creature> { enemy }, 
+				enemy, 
 				(decimal)CurrentDamage, 
 				MegaCrit.Sts2.Core.ValueProps.ValueProp.Unpowered, 
-				base.Owner, 
+				null, 
 				null);
 		}
 	}

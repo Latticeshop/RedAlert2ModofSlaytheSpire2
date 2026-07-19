@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -45,7 +45,7 @@ public sealed class TyphoonSubmarine : CardModel
         for (int i = 0; i < 2; i++)
         {
             await DamageCmd.Attack(damage)
-                .FromCard(this)
+                .FromCard(this, play)
                 .Targeting(play.Target)
                 .Execute(ctx);
         }

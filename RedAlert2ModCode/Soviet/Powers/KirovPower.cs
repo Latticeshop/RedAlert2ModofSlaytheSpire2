@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -80,7 +80,7 @@ public sealed class KirovPower : PowerModel
 
             await CreatureCmd.Damage(
                 new ThrowingPlayerChoiceContext(),
-                new List<Creature> { Owner },
+                Owner,
                 (decimal)DamagePerStack,
                 ValueProp.Move,
                 null,

@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -113,7 +113,7 @@ public sealed partial class NightHawkChopper : CardModel
         int dexterity = IsUpgraded ? Values.MagicNumber + Values.MagicNumberUpgraded : Values.MagicNumber;
         await PowerCmd.Apply<NightHawkTemporaryDexterityPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, dexterity, Owner.Creature, this);
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-            .FromCard(this)
+            .FromCard(this, play)
             .Targeting(play.Target)
             .Execute(ctx);
     }

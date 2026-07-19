@@ -98,7 +98,13 @@ public sealed class SupportCard : CardModel
 
 	private static async Task GiveCardToAnotherPlayer(CardModel card, Player targetPlayer, PileType pileType, CardPilePosition position)
 	{
-		await GameVersionDetector.CallGiveToAnotherPlayer(card, targetPlayer, pileType, position);
+		await CardPileCmd.RemoveFromCombat(card);
+		
+		card.HasBeenRemovedFromState = false;
+		
+		card.GiveToAnotherPlayer(targetPlayer);
+		
+		await CardPileCmd.Add(new[] { card }, pileType.GetPile(targetPlayer), position, null, skipVisuals: false, isChangingOwners: true);
 	}
 
 	private static HashSet<Type> GetUnitTypes()

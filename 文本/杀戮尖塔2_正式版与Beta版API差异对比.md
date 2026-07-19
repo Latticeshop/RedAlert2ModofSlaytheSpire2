@@ -14,7 +14,10 @@
 | 多人卡牌传递 | 无原生API | `CardPileCmd.GiveToAnotherPlayer()` | 支援卡等需要传递卡牌的Mod功能 |
 | 卡牌Owner切换 | 需反射修改 `_owner` | `CardModel.GiveToAnotherPlayer(player)` | 跨玩家卡牌转移 |
 | Add方法参数 | 5个参数 | 新增 `isChangingOwners` 参数 | 防止重复触发 `AfterCardEnteredCombat` |
-| 打牌结果返回 | `PileType` | `(PileType, CardPilePosition)` 元组 | 可指定卡牌打牌后的位置 |
+| 打牌结果返回 | `PileType` | `CardLocation`（含 player + pileType + position） | 围墙、魔球等控制卡牌去向的卡牌 |
+| AttackCommand.FromCard | `FromCard(CardModel card)` | `FromCard(CardModel card, CardPlay? cardPlay)` | **所有攻击卡** |
+| CardPlay构造 | 无需Player | `CardPlay.Player` 为必填成员 | BattleBunkerPower等手动创建CardPlay的代码 |
+| DamageCmd.Attack.Targeting | 接受List | 接受单个Creature | V3RocketPower、TeslaCoilPower等 |
 
 ---
 
@@ -139,9 +142,9 @@ public CardModel CreateCloneForPlayer(Player player)
 }
 ```
 
-### 3.3 GetResultPileTypeForCardPlay → GetResultPileTypeAndPositionForCardPlay
+### 3.3 GetResultPileTypeForCardPlay → GetResultLocationForCardPlay
 
-方法签名改变，返回值从单一 `PileType` 改为 `(PileType, CardPilePosition)` 元组。
+方法签名改变，返回值从单一 `PileType` 改为 `CardLocation`（包含 player、pileType、position）。
 
 ```csharp
 // 正式版
@@ -158,20 +161,78 @@ protected virtual PileType GetResultPileTypeForCardPlay()
 }
 
 // Beta版
-protected virtual (PileType, CardPilePosition) GetResultPileTypeAndPositionForCardPlay()
+protected virtual CardLocation GetResultLocationForCardPlay()
 {
+    CardLocation result = new CardLocation(Owner, PileType.Discard, CardPilePosition.Bottom);
     if (IsDupe || Type == CardType.Power)
-        return (PileType.None, CardPilePosition.Bottom);
+    {
+        result.pileType = PileType.None;
+        return result;
+    }
     if (ExhaustOnNextPlay || Keywords.Contains(CardKeyword.Exhaust))
     {
         ExhaustOnNextPlay = false;
-        return (PileType.Exhaust, CardPilePosition.Bottom);
+        result.pileType = PileType.Exhaust;
+        return result;
     }
-    return (PileType.Discard, CardPilePosition.Bottom);
+    return result;
 }
 ```
 
-**影响**：Mod中如果重写了此方法，需要在Beta版中改为新的签名。
+**CardLocation 结构**（Beta版新增）：
+
+```csharp
+public record struct CardLocation
+{
+    public Player player;
+    public PileType pileType;
+    public CardPilePosition position;
+}
+```
+
+**围墙卡牌修改示例**：
+
+```csharp
+// 正式版
+protected override PileType GetResultPileTypeForCardPlay()
+{
+    PileType result = base.GetResultPileTypeForCardPlay();
+    if (result != PileType.Discard) return result;
+    return PileType.Hand;
+}
+
+// Beta版
+protected override CardLocation GetResultLocationForCardPlay()
+{
+    CardLocation result = base.GetResultLocationForCardPlay();
+    if (result.pileType != PileType.Discard) return result;
+    result.pileType = PileType.Hand;
+    return result;
+}
+```
+
+**魔球跨玩家传递示例（Beta版）：
+
+```csharp
+protected override CardLocation GetResultLocationForCardPlay()
+{
+    CardLocation result = base.GetResultLocationForCardPlay();
+    if (CombatState == null) return result;
+    List<Creature> teammates = (from c in CombatState.GetTeammatesOf(Owner.Creature)
+        where c != null && c.IsAlive && c.IsPlayer && c.Player != Owner
+        select c).ToList();
+    if (teammates.Count == 0) return result;
+    result.player = Owner.RunState.Rng.CombatTargets.NextItem(teammates).Player;
+    if (result.pileType == PileType.Discard)
+    {
+        result.pileType = PileType.Draw;
+        result.position = CardPilePosition.Random;
+    }
+    return result;
+}
+```
+
+**影响**：Mod中如果重写了 `GetResultPileTypeForCardPlay()`，需要在Beta版中改为 `GetResultLocationForCardPlay()`。
 
 ### 3.4 其他改动
 
@@ -180,7 +241,107 @@ protected virtual (PileType, CardPilePosition) GetResultPileTypeAndPositionForCa
 
 ---
 
-## 四、Beta版新增卡牌：TheBall（魔球）
+## 四、Beta版全量API变化及移植指南
+
+### 4.1 AttackCommand.FromCard 签名变化
+
+**影响范围：所有攻击卡**
+
+```csharp
+// 正式版
+public AttackCommand FromCard(CardModel card)
+
+// Beta版（新增 cardPlay 参数）
+public AttackCommand FromCard(CardModel card, CardPlay? cardPlay)
+```
+
+**移植示例：
+
+```csharp
+// 正式版
+await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+    .FromCard(this)
+    .Targeting(cardPlay.Target)
+    .Execute(choiceContext);
+
+// Beta版
+await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+    .FromCard(this, cardPlay)  // 新增 cardPlay 参数
+    .Targeting(cardPlay.Target)
+    .Execute(choiceContext);
+```
+
+**需要修改的文件（项目内）：
+- `AmericanSoldier.cs`、`GrizzlyTank.cs`、`GuardianGI.cs`、`MirageTank.cs`、`Intruder.cs`
+- `BlackHawk.cs`、`Destroyer.cs`、`Dolphin.cs`
+- `Conscript.cs`、`RhinoTank.cs`、`SovietAttackDog.cs`、`TerrorMan.cs`、`ApocalypseTank.cs`
+- 以及所有调用 `FromCard(this)` 的攻击卡
+
+### 4.2 DamageCmd.Attack.Targeting 参数变化
+
+**影响范围：使用 Targeting 传List的Power和卡牌
+
+```csharp
+// 正式版
+DamageCmd.Attack(amount).FromCard(this, cardPlay).Targeting(List<Creature>)
+
+// Beta版
+DamageCmd.Attack(amount).FromCard(this, cardPlay).TargetingAllOpponents(CombatState)
+// 或
+DamageCmd.Attack(amount).FromCard(this, cardPlay).Targeting(Creature)  // 单个目标
+```
+
+**需要修改的文件：
+- `V3RocketPower.cs`
+- `SovietTeslaCoilPower.cs`
+- `SovietTerrorDronePower.cs`
+- `SovietPillboxPower.cs`
+- `SovietGiantSquidPower.cs`
+- `KirovPower.cs`
+- `LibyaRelic.cs`
+- `DemolitionTruckCard.cs`
+- `NuclearAttack.cs`
+
+### 4.3 CardPlay 构造函数变化
+
+**影响范围：手动创建 CardPlay 的代码
+
+```csharp
+// 正式版
+new CardPlay
+{
+    Card = this,
+    Target = target,
+    // ...
+}
+
+// Beta版（CardPlay.Player 为必填成员）
+new CardPlay
+{
+    Player = Owner,  // 新增必填
+    Card = this,
+    Target = target,
+    // ...
+}
+```
+
+**需要修改的文件：
+- `BattleBunkerPower.cs`
+
+### 4.4 移植清单（按优先级）
+
+| 优先级 | 模块 | 数量 | 说明 |
+|--------|------|------|------|
+| P0 | 围墙卡牌（4张） | 4 | 已完成：GetResultLocationForCardPlay |
+| P0 | 支援卡 | 1 | 已完成：CardPileCmd.GiveToAnotherPlayer |
+| P0 | DollarVfxHelper | 1 | 已完成：直接引用Beta版Vfx |
+| P1 | 攻击卡（FromCard参数） | ~15 | 需要添加 cardPlay 参数 |
+| P1 | Powers（Targeting参数） | ~8 | 需要改为Targeting或TargetingAllOpponents |
+| P2 | BattleBunkerPower | 1 | 需要添加 CardPlay.Player |
+
+---
+
+## 五、Beta版新增卡牌：TheBall（魔球）
 
 ### 4.1 基本信息
 - 类型：攻击卡 (Attack)

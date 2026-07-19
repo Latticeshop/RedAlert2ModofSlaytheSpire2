@@ -128,10 +128,10 @@ public class EagleMachineGunPower : PowerModel, IDesperateMeasurePower
                 await Cmd.Wait(0.1f);
                 
                 await CreatureCmd.Damage(ctx ?? new ThrowingPlayerChoiceContext(),
-                    new List<Creature> { target },
+                    target,
                     (decimal)CurrentDamage,
                     ValueProp.Move,
-                    base.Owner,
+                    null,
                     null);
                 
                 GD.Print($"[EagleMachineGunPower] 第 {i + 1} 次攻击 - 对 {target.Name} 造成 {CurrentDamage} 点伤害");

@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -76,7 +76,7 @@ public sealed class Destroyer : CardModel
 			for (int i = 0; i < repeatCount; i++)
 			{
 				await DamageCmd.Attack(defendDamage)
-					.FromCard(this)
+					.FromCard(this, play)
 					.Targeting(play.Target)
 					.Execute(ctx);
 				GD.Print($"[Destroyer] 第 {i + 1} 次伤害：{defendDamage}");
@@ -87,7 +87,7 @@ public sealed class Destroyer : CardModel
 			// 正常情况：造成8点（升级12点）伤害
 			GD.Print($"[Destroyer] 执行正常伤害：{DynamicVars.Damage.BaseValue}");
 			await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-				.FromCard(this)
+				.FromCard(this, play)
 				.Targeting(play.Target)
 				.Execute(ctx);
 		}

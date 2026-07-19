@@ -93,6 +93,7 @@ public static class SovietCardRegistry
         cards.Add(() => ModelDb.Card<MassProductionCard>());
         cards.Add(() => ModelDb.Card<ForceField>());
         cards.Add(() => ModelDb.Card<NuclearPlantCard>());
+        cards.Add(() => ModelDb.Card<SupportCard>());
         return cards;
     }
 
@@ -121,6 +122,7 @@ public static class SovietCardRegistry
             () => ModelDb.Card<GemMineCard>(),
             () => ModelDb.Card<GoldMineColumnCard>(),
             () => ModelDb.Card<F2A>(),
+            () => ModelDb.Card<SupportCard>(),
         };
     }
 

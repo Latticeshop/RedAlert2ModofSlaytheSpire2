@@ -73,8 +73,8 @@ public sealed class NuclearAttack : CardModel
 
             foreach (var enemy in allEnemies)
             {
-                await CreatureCmd.Damage(ctx, new List<Creature> { enemy },
-                    (decimal)damage, ValueProp.Move, Owner.Creature, this);
+                await CreatureCmd.Damage(ctx, enemy,
+                    (decimal)damage, ValueProp.Move, this, play);
 
                 await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.PoisonPower>(ctx, enemy, (decimal)poisonAmount, Owner.Creature, this);
             }

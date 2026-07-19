@@ -19,6 +19,7 @@ public static class CommonCardRegistry
         () => ModelDb.Card<GoldMineCard>(),
         () => ModelDb.Card<GemMineCard>(),
         () => ModelDb.Card<GoldMineColumnCard>(),
+        () => ModelDb.Card<SupportCard>(),
     };
 
     public static List<Func<CardModel>> SharedSpecialCards { get; } = new()

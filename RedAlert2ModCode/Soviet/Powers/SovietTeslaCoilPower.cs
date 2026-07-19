@@ -106,10 +106,10 @@ public class SovietTeslaCoilPower : PowerModel
 		VfxCmd.PlayOnCreature(randomEnemy, "vfx/vfx_attack_lightning");
 
 		await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(),
-			new List<Creature> { randomEnemy },
+			randomEnemy,
 			(decimal)finalDamage,
 			ValueProp.Unpowered,
-			base.Owner,
+			null,
 			null);
 	}
 }

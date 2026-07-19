@@ -113,6 +113,7 @@ public static class AlliedCardRegistry
         cards.Add(() => ModelDb.Card<KitingCard>());
         cards.Add(() => ModelDb.Card<OreRefineryCard>());
         cards.Add(() => ModelDb.Card<ForceField>());
+        cards.Add(() => ModelDb.Card<SupportCard>());
         return cards;
     }
 
@@ -142,6 +143,7 @@ public static class AlliedCardRegistry
             () => ModelDb.Card<GemMineCard>(),
             () => ModelDb.Card<GoldMineColumnCard>(),
             () => ModelDb.Card<F2A>(),
+            () => ModelDb.Card<SupportCard>(),
         };
     }
 

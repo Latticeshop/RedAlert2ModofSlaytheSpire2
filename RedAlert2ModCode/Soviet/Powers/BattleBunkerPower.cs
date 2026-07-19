@@ -135,6 +135,7 @@ public sealed class BattleBunkerPower : PowerModel
 
 				var cardPlay = new CardPlay
 				{
+					Player = Owner?.Player,
 					Card = storedCard,
 					Target = target,
 					ResultPile = PileType.Discard,

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -51,7 +51,7 @@ public sealed class Dolphin : CardModel
 		{
 			// 造成伤害
 			await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-				.FromCard(this)
+				.FromCard(this, play)
 				.Targeting(enemy)
 				.Execute(ctx);
 			

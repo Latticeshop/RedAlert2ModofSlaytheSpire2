@@ -172,10 +172,10 @@ public class Eagle500kgPower : PowerModel, IDesperateMeasurePower
 
             // 造成50点伤害
             await CreatureCmd.Damage(ctx ?? new ThrowingPlayerChoiceContext(),
-                new List<Creature> { target },
+                target,
                 (decimal)CurrentDamage,
                 ValueProp.Move,
-                base.Owner,
+                null,
                 null);
 
             GD.Print($"[Eagle500kgPower] 对 {target.Name} 造成 {CurrentDamage} 点伤害");
@@ -193,10 +193,10 @@ public class Eagle500kgPower : PowerModel, IDesperateMeasurePower
                     await Cmd.Wait(0.15f);
                     
                     await CreatureCmd.Damage(ctx ?? new ThrowingPlayerChoiceContext(),
-                        new List<Creature> { otherEnemy },
+                        otherEnemy,
                         splashDamage,
                         ValueProp.Move,
-                        base.Owner,
+                        null,
                         null);
                     GD.Print($"[Eagle500kgPower] 对 {otherEnemy.Name} 造成 {splashDamage} 点溅射伤害");
                 }

@@ -110,10 +110,10 @@ public sealed class GrandCannonPower : PowerModel
                     GD.Print($"[GrandCannonPower] 向 {target.Name} 开火，造成 {CurrentDamage} 点伤害");
 
                     await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(),
-                        new List<Creature> { target },
+                        target,
                         (decimal)CurrentDamage,
                         MegaCrit.Sts2.Core.ValueProps.ValueProp.Move,
-                        Owner,
+                        null,
                         null);
                 }
             }

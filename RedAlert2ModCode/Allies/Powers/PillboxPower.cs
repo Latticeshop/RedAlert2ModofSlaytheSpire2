@@ -116,10 +116,10 @@ public class PillboxPower : PowerModel
 					GD.Print($"[PillboxPower] 第{i+1}层第{j+1}次攻击 - 对敌人 {randomEnemy.Name} 造成 {CurrentDamage} 点伤害");
 					
 					await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(), 
-						new List<Creature> { randomEnemy }, 
+						randomEnemy, 
 						(decimal)CurrentDamage, 
 						ValueProp.Unpowered, 
-						base.Owner, 
+						null, 
 						null);
 				}
 			}

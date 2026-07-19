@@ -79,8 +79,8 @@ public sealed class LibyaRelic : RelicModel
 		var allEnemies = combatState.HittableEnemies.ToList();
 		foreach (var enemy in allEnemies)
 		{
-			await CreatureCmd.Damage(choiceContext, new List<Creature> { enemy },
-				(decimal)damage, ValueProp.Move, Owner.Creature, truckCard);
+			await CreatureCmd.Damage(choiceContext, enemy,
+				(decimal)damage, ValueProp.Move, truckCard, null);
 
 			await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.PoisonPower>(choiceContext, enemy, (decimal)poisonAmount, Owner.Creature, truckCard);
 		}
@@ -88,8 +88,8 @@ public sealed class LibyaRelic : RelicModel
 		var allPlayers = combatState.PlayerCreatures.ToList();
 		foreach (var playerCreature in allPlayers)
 		{
-			await CreatureCmd.Damage(choiceContext, new List<Creature> { playerCreature },
-				(decimal)damage, ValueProp.Move, Owner.Creature, truckCard);
+			await CreatureCmd.Damage(choiceContext, playerCreature,
+				(decimal)damage, ValueProp.Move, truckCard, null);
 		}
 
 		await CardPileCmd.Add(truckCard, PileType.Exhaust);

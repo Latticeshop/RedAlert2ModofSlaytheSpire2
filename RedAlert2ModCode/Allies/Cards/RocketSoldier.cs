@@ -1,4 +1,4 @@
-using MegaCrit.Sts2.Core.Models;
+﻿using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -50,7 +50,7 @@ public sealed class RocketSoldier : CardModel
 			// 升级后：对所有敌人造成伤害
 			await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 				.WithHitCount(DynamicVars.Repeat.IntValue)
-				.FromCard(this)
+				.FromCard(this, play)
 				.TargetingAllOpponents(Owner.Creature.CombatState)
 				.Execute(ctx);
 		}
@@ -59,7 +59,7 @@ public sealed class RocketSoldier : CardModel
 			// 升级前：对单个敌人造成伤害
 			await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 				.WithHitCount(DynamicVars.Repeat.IntValue)
-				.FromCard(this)
+				.FromCard(this, play)
 				.Targeting(play.Target)
 				.Execute(ctx);
 		}

@@ -53,7 +53,7 @@ public sealed class WarMiner : CardModel
 		{
 			// 升级后：对所有敌人造成伤害
 			await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-				.FromCard(this)
+				.FromCard(this, play)
 				.TargetingAllOpponents(Owner.Creature.CombatState)
 				.Execute(ctx);
 			GD.Print($"[WarMiner] 升级：对所有敌人造成 {DynamicVars.Damage.BaseValue} 点伤害");
@@ -62,7 +62,7 @@ public sealed class WarMiner : CardModel
 		{
 			// 基础：对选中的敌人造成伤害
 			await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-				.FromCard(this)
+				.FromCard(this, play)
 				.Targeting(play.Target)
 				.Execute(ctx);
 			GD.Print($"[WarMiner] 攻击 {play.Target} 造成 {DynamicVars.Damage.BaseValue} 点伤害");

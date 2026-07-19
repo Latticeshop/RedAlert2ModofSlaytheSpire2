@@ -1,4 +1,4 @@
-using MegaCrit.Sts2.Core.Models;
+﻿using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions;
@@ -46,7 +46,7 @@ public sealed class AmericanSoldier : CardModel
 		UnitVoiceHelper.PlayUnitVoice("AmericanSoldierAttack", "Allied");
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithHitCount(DynamicVars.Repeat.IntValue)
-			.FromCard(this)
+			.FromCard(this, play)
 			.Targeting(play.Target)
 			.Execute(ctx);
 	}

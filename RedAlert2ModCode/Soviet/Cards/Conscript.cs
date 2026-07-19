@@ -45,7 +45,7 @@ public sealed class Conscript : CardModel
 		UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Soviet");
 		UnitVoiceHelper.PlayUnitVoice("ConscriptAttack", "Soviet");
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this)
+			.FromCard(this, play)
 			.Targeting(play.Target)
 			.Execute(ctx);
 	}

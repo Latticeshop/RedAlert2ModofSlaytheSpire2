@@ -1,4 +1,4 @@
-using MegaCrit.Sts2.Core.Models;
+﻿using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions;
@@ -40,7 +40,7 @@ public sealed class Sniper : CardModel
 		GD.Print("[Sniper] 卡牌打出开始");
 
 		await CreatureCmd.Damage(ctx, play.Target, DynamicVars.Damage.BaseValue,
-			ValueProp.Move | ValueProp.Unblockable, Owner.Creature, this);
+			ValueProp.Move | ValueProp.Unblockable, this, play);
 
 		GD.Print("[Sniper] 卡牌打出完成");
 	}

@@ -1,4 +1,4 @@
-using MegaCrit.Sts2.Core.Models;
+﻿using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions;
@@ -39,7 +39,7 @@ public sealed class TankDestroyer : CardModel
 		await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.WeakPower>(ctx, Owner.Creature, Values.Repeat, Owner.Creature, this);
 		
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this)
+			.FromCard(this, play)
 			.Targeting(play.Target)
 			.Execute(ctx);
 	}

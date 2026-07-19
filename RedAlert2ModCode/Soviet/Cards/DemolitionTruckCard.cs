@@ -73,8 +73,8 @@ public sealed class DemolitionTruckCard : CardModel
 
 		foreach (var enemy in allEnemies)
 		{
-			await CreatureCmd.Damage(choiceContext, new List<Creature> { enemy },
-				(decimal)damage, ValueProp.Move, Owner.Creature, this);
+			await CreatureCmd.Damage(choiceContext, enemy,
+				(decimal)damage, ValueProp.Move, this, cardPlay);
 
 			await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.PoisonPower>(choiceContext, enemy, (decimal)poisonAmount, Owner.Creature, this);
 		}
@@ -84,8 +84,8 @@ public sealed class DemolitionTruckCard : CardModel
 			var allPlayers = combatState.PlayerCreatures.ToList();
 			foreach (var player in allPlayers)
 			{
-				await CreatureCmd.Damage(choiceContext, new List<Creature> { player },
-					(decimal)damage, ValueProp.Move, Owner.Creature, this);
+				await CreatureCmd.Damage(choiceContext, player,
+					(decimal)damage, ValueProp.Move, this, cardPlay);
 			}
 		}
 	}

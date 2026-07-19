@@ -53,7 +53,7 @@ public sealed class TerrorMan : CardModel
 
 		decimal damage = IsUpgraded ? Values.Damage + Values.DamageUpgraded : Values.Damage;
 		await DamageCmd.Attack(damage)
-			.FromCard(this)
+			.FromCard(this, play)
 			.Targeting(target)
 			.Execute(ctx);
 
@@ -63,7 +63,7 @@ public sealed class TerrorMan : CardModel
 			foreach (Creature otherEnemy in otherEnemies)
 			{
 				await DamageCmd.Attack(splashDamage)
-					.FromCard(this)
+					.FromCard(this, play)
 					.Targeting(otherEnemy)
 					.Execute(ctx);
 			}

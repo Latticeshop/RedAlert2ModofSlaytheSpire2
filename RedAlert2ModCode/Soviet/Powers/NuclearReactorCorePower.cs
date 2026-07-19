@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -120,13 +120,13 @@ public sealed class NuclearReactorCorePower : PowerModel
             var allEnemies = combatState.Enemies.Where(e => e.IsAlive).ToList();
             foreach (var enemy in allEnemies)
             {
-                await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.PoisonPower>(new ThrowingPlayerChoiceContext(), new List<Creature> { enemy }, (decimal)poisonAmount, Owner, null);
+                await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.PoisonPower>(new ThrowingPlayerChoiceContext(), enemy, (decimal)poisonAmount, Owner, null);
             }
 
             var allPlayers = combatState.PlayerCreatures.Where(p => p.IsAlive).ToList();
             foreach (var player in allPlayers)
             {
-                await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.PoisonPower>(new ThrowingPlayerChoiceContext(), new List<Creature> { player }, (decimal)poisonAmount, Owner, null);
+                await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.PoisonPower>(new ThrowingPlayerChoiceContext(), player, (decimal)poisonAmount, Owner, null);
             }
 
             GD.Print($"[NuclearReactorCorePower] 爆炸！对全体敌人和玩家赋予 {poisonAmount} 层中毒");

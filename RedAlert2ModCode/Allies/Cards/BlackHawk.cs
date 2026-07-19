@@ -1,4 +1,4 @@
-using MegaCrit.Sts2.Core.Models;
+﻿using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions;
@@ -48,7 +48,7 @@ public sealed class BlackHawk : CardModel
 		GD.Print("[BlackHawk] 卡牌打出开始");
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this)
+			.FromCard(this, play)
 			.Targeting(play.Target)
 			.Execute(ctx);
 

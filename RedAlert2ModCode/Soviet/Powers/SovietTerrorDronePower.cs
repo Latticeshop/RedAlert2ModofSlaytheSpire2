@@ -61,7 +61,7 @@ public sealed class SovietTerrorDronePower : PowerModel
         
         await CreatureCmd.Damage(
             new ThrowingPlayerChoiceContext(),
-            new List<Creature> { Owner },
+            Owner,
             (decimal)DamagePerStack,
             ValueProp.Move,
             null,

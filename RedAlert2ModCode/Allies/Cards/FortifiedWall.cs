@@ -87,16 +87,17 @@ public sealed class FortifiedWall : CardModel
     }
 
     /// <summary>
-    /// 设置卡牌使用后的去向（返回手牌）
+    /// 设置卡牌使用后的去向（返回手牌）- Beta版API
     /// </summary>
-    protected override PileType GetResultPileTypeForCardPlay()
+    protected override CardLocation GetResultLocationForCardPlay()
     {
-        PileType resultPileType = base.GetResultPileTypeForCardPlay();
-        if (resultPileType != PileType.Discard)
+        CardLocation result = base.GetResultLocationForCardPlay();
+        if (result.pileType != PileType.Discard)
         {
-            return resultPileType;
+            return result;
         }
-        return PileType.Hand;
+        result.pileType = PileType.Hand;
+        return result;
     }
 
     protected override void OnUpgrade()

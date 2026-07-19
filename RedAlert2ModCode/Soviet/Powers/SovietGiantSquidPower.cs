@@ -70,7 +70,7 @@ public sealed class SovietGiantSquidPower : PowerModel
         
         await CreatureCmd.Damage(
             new ThrowingPlayerChoiceContext(),
-            new List<Creature> { Owner },
+            Owner,
             (decimal)damage,
             ValueProp.Move,
             null,

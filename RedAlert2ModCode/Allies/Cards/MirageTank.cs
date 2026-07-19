@@ -85,14 +85,14 @@ public sealed class MirageTank : CardModel
         {
             // 敌人不意图攻击，造成伤害
             GD.Print("[MirageTank] 敌人不意图攻击，造成伤害");
-            await DealDamage(ctx, target);
+            await DealDamage(ctx, target, play);
         }
     }
 
     /// <summary>
     /// 造成伤害并播放火焰特效
     /// </summary>
-    private async Task DealDamage(PlayerChoiceContext ctx, Creature target)
+    private async Task DealDamage(PlayerChoiceContext ctx, Creature target, CardPlay play)
     {
         decimal damage = DynamicVars.Damage.BaseValue;
         
@@ -101,7 +101,7 @@ public sealed class MirageTank : CardModel
         
         // 造成伤害
         await DamageCmd.Attack(damage)
-            .FromCard(this)
+            .FromCard(this, play)
             .Targeting(target)
             .Execute(ctx);
     }

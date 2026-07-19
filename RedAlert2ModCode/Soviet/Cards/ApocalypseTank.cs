@@ -1,4 +1,4 @@
-using MegaCrit.Sts2.Core.Models;
+﻿using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -62,7 +62,7 @@ public sealed class ApocalypseTank : CardModel
 		for (int i = 0; i < repeat; i++)
 		{
 			await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-				.FromCard(this)
+				.FromCard(this, play)
 				.Targeting(play.Target)
 				.Execute(ctx);
 		}

@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -73,7 +73,7 @@ public sealed class GuardianGi : CardModel
         {
             UnitVoiceHelper.PlayUnitVoice("GuardianGiDeploy", "Allies");
             await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-                .FromCard(this)
+                .FromCard(this, play)
                 .Targeting(play.Target)
                 .Execute(ctx);
 

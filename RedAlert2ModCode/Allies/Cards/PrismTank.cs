@@ -68,7 +68,7 @@ public sealed class PrismTank : CardModel
         decimal mainDamage = DynamicVars.Damage.BaseValue;
         GD.Print($"[PrismTank] 对主目标造成 {mainDamage} 点伤害");
         await DamageCmd.Attack(mainDamage)
-            .FromCard(this)
+            .FromCard(this, play)
             .Targeting(target)
             .Execute(ctx);
 
@@ -80,7 +80,7 @@ public sealed class PrismTank : CardModel
             foreach (Creature otherEnemy in otherEnemies)
             {
                 await DamageCmd.Attack(splashDamage)
-                    .FromCard(this)
+                    .FromCard(this, play)
                     .Targeting(otherEnemy)
                     .Execute(ctx);
             }

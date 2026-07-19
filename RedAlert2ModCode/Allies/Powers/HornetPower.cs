@@ -200,10 +200,10 @@ public class HornetPower : PowerModel
 
             // 造成伤害
             await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(),
-                new List<Creature> { target },
+                target,
                 (decimal)CurrentDamage,
                 ValueProp.Move,
-                Owner,
+                null,
                 null);
 
             GD.Print($"[HornetPower] 第{i+1}次攻击 - 造成 {CurrentDamage} 点伤害");

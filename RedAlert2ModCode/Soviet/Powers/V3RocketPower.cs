@@ -157,10 +157,10 @@ public sealed class V3RocketPower : PowerModel
                     await Cmd.Wait(0.3f);
 
                     await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(),
-                        new List<Creature> { target },
+                        target,
                         (decimal)CurrentDamage,
                         ValueProp.Move,
-                        Owner,
+                        null,
                         null);
 
                     if (i < stacks - 1)
