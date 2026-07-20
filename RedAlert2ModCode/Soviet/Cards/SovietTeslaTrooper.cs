@@ -61,7 +61,8 @@ public sealed class SovietTeslaTrooper : CardModel
 				{
 					Id = "deploy",
 					Title = new LocString("card_keywords", "ui.tesla_trooper.deploy_title"),
-					Description = new LocString("card_keywords", "ui.tesla_trooper.deploy_desc")
+					Description = new LocString("card_keywords", "ui.tesla_trooper.deploy_desc"),
+					IconPath = "res://RedAlert2ModResources/images/ui/deploy.png"
 				},
 				new DeployChoiceScreen.ChoiceOption
 				{

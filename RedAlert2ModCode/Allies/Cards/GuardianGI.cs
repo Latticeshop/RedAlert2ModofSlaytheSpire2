@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +57,8 @@ public sealed class GuardianGi : CardModel
                 {
                     Id = "deploy",
                     Title = new LocString("card_keywords", "ui.guardian_gi.deploy_title"),
-                    Description = deployDesc
+                    Description = deployDesc,
+                    IconPath = "res://RedAlert2ModResources/images/ui/deploy.png"
                 },
                 new DeployChoiceScreen.ChoiceOption
                 {

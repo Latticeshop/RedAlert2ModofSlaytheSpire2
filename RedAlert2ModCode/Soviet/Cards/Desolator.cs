@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -50,14 +50,16 @@ public sealed class Desolator : CardModel
 				Id = "attack",
 				Title = new LocString("card_keywords", "ui.desolator.attack_title").GetFormattedText(),
 				Description = new LocString("card_keywords", "ui.desolator.attack_desc").GetFormattedText()
-					.Replace("{Poison}", poisonAmount.ToString())
+					.Replace("{Poison}", poisonAmount.ToString()),
+				IconPath = "res://RedAlert2ModResources/images/ui/attack.png"
 			},
 			new DeployChoiceScreen.ChoiceOption
 			{
 				Id = "deploy",
 				Title = new LocString("card_keywords", "ui.desolator.deploy_title").GetFormattedText(),
 				Description = new LocString("card_keywords", "ui.desolator.deploy_desc").GetFormattedText()
-					.Replace("{DeployPoison}", deployPoisonAmount.ToString())
+					.Replace("{DeployPoison}", deployPoisonAmount.ToString()),
+				IconPath = "res://RedAlert2ModResources/images/ui/deploy.png"
 			}
 		};
 

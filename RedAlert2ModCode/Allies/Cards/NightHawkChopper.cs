@@ -86,13 +86,15 @@ public sealed partial class NightHawkChopper : CardModel
             {
                 Id = "deploy",
                 Title = new LocString("card_keywords", "ui.night_hawk.deploy_title"),
-                Description = new LocString("card_keywords", "ui.night_hawk.deploy_desc")
+                Description = new LocString("card_keywords", "ui.night_hawk.deploy_desc"),
+                IconPath = "res://RedAlert2ModResources/images/ui/deploy.png"
             },
             new DeployChoiceScreen.ChoiceOption
             {
                 Id = "attack",
                 Title = new LocString("card_keywords", "ui.night_hawk.attack_title"),
-                Description = new LocString("card_keywords", "ui.night_hawk.attack_desc")
+                Description = new LocString("card_keywords", "ui.night_hawk.attack_desc"),
+                IconPath = "res://RedAlert2ModResources/images/ui/attack.png"
             }
         };
 

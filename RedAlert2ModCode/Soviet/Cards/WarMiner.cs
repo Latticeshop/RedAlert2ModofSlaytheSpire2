@@ -29,6 +29,18 @@ public sealed class WarMiner : CardModel
 	
 	public WarMiner() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
+	public override TargetType TargetType
+	{
+		get
+		{
+			if (IsUpgraded)
+			{
+				return TargetType.AllEnemies;
+			}
+			return TargetType.AnyEnemy;
+		}
+	}
+
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/soviet/harvicon.png";
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>

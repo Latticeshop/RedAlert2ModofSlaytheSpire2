@@ -128,7 +128,7 @@
     "OIL_DERRICK_CARD.title": "석유 시추기",
     "ORE_REFINERY_CARD.description": "[gold]비용: ${DollarNumber}[/gold].\n광물 가치 +{Bonus}%.",
     "ORE_REFINERY_CARD.title": "제련소",
-    "PARATROOPER.description": "손에 [gold]휘발성[/gold] 유닛 카드를 몇 장 추가합니다.",
+    "PARATROOPER.description": "손에 [gold]휘발성[/gold] 기본 병사 카드를 몇 장 추가합니다.",
     "PARATROOPER.title": "낙하병",
     "PATRIOT_MISSILE.description": "[gold]비용: ${DollarNumber}[/gold]. 매 턴 종료 시, 방어도를 {Block} 얻습니다.",
     "PATRIOT_MISSILE.title": "패트리어트 미사일",

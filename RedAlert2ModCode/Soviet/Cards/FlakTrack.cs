@@ -86,13 +86,15 @@ public sealed partial class FlakTrack : CardModel
             {
                 Id = "deploy",
                 Title = new LocString("card_keywords", "ui.flak_track.deploy_title"),
-                Description = new LocString("card_keywords", "ui.flak_track.deploy_desc")
+                Description = new LocString("card_keywords", "ui.flak_track.deploy_desc"),
+                IconPath = "res://RedAlert2ModResources/images/ui/deploy.png"
             },
             new DeployChoiceScreen.ChoiceOption
             {
                 Id = "attack",
                 Title = new LocString("card_keywords", "ui.flak_track.defend_title"),
-                Description = new LocString("card_keywords", "ui.flak_track.defend_desc")
+                Description = new LocString("card_keywords", "ui.flak_track.defend_desc"),
+                IconPath = "res://RedAlert2ModResources/images/ui/attack.png"
             }
         };
 

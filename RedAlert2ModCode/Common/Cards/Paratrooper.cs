@@ -36,17 +36,9 @@ public class Paratrooper : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
-		HoverTipFactory.FromKeyword(CardKeyword.Ethereal)
+		ModCardKeywords.ParatrooperFactionInfo.CreateHoverTip(),
+		HoverTipFactory.FromKeyword(CardKeyword.Ethereal),
 	];
-
-	private int GetSoldierCount()
-	{
-		if (Owner == null || Owner.Character == null || Owner.Character.Id == null)
-			return 6;
-
-		bool isSoviet = Owner.Character.Id.Entry?.Contains("SOVIET") ?? false;
-		return isSoviet ? 9 : 6;
-	}
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
@@ -57,7 +49,8 @@ public class Paratrooper : CardModel
 		bool isSoviet = Owner.Character?.Id?.Entry?.Contains("SOVIET") ?? false;
 		bool isAllies = !isSoviet && (Owner.Character?.Id?.Entry?.Contains("REDALERT") ?? false);
 		
-		int soldierCount = isSoviet ? 5 : 3;
+		// 获得的士兵数量
+		int soldierCount = isSoviet ? 4 : 3;
 		
 		for (int i = 0; i < soldierCount; i++)
 		{

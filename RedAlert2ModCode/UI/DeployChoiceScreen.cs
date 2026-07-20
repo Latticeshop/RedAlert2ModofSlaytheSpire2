@@ -214,6 +214,19 @@ public sealed partial class DeployChoiceScreen : Control, IOverlayScreen
         content.AddThemeConstantOverride("separation", 8);
         contentMargin.AddChild(content);
 
+        if (!string.IsNullOrEmpty(option.IconPath))
+        {
+            TextureRect icon = new()
+            {
+                Name = $"Icon_{index}",
+                Texture = ResourceLoader.Load<Texture2D>(option.IconPath),
+                StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+                CustomMinimumSize = new Vector2(64f, 64f),
+                SizeFlagsHorizontal = SizeFlags.ShrinkCenter
+            };
+            content.AddChild(icon);
+        }
+
         Label titleLabel = new Label()
         {
             Text = GetLocStringText(option.Title),

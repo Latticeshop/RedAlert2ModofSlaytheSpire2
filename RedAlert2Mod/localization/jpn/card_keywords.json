@@ -128,5 +128,7 @@
     "ui.dollar_transfer.amount": "転送金額",
     "ui.dollar_transfer.recipient": "受け取り先を選択",
     "ui.dollar_transfer.no_target": "利用可能な仲間がいません",
-    "ui.dollar_transfer.cancel": "キャンセル"
+    "ui.dollar_transfer.cancel": "キャンセル",
+    "paratrooper.faction_info.title": "降下兵士詳細",
+    "paratrooper.faction_info.description": "連合軍は3人のジーアイを獲得します。\nソ連軍は4人の徴兵を獲得します。\nユーリは3人の入信者を獲得します。"
 }

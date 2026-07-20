@@ -128,5 +128,7 @@
   "ui.dollar_transfer.amount": "이체 금액",
   "ui.dollar_transfer.recipient": "수신자 선택",
   "ui.dollar_transfer.no_target": "이체 가능한 팀원이 없습니다",
-  "ui.dollar_transfer.cancel": "취소"
+  "ui.dollar_transfer.cancel": "취소",
+  "paratrooper.faction_info.title": "낙하병 상세",
+  "paratrooper.faction_info.description": "연합군은 GI 3명을 받습니다.\n소련군은 징병 4명을 받습니다.\n유리는 개척자 3명을 받습니다."
 }
