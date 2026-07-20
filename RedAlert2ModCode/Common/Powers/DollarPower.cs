@@ -12,11 +12,15 @@ public class DollarPower : PowerModel
     
     public override PowerStackType StackType => PowerStackType.Counter;
     
-    public int DollarValue { get; set; } = 0;
+    public int DollarValue
+    {
+        get => Amount;
+        set => SetAmount(value);
+    }
 
     public DollarPower()
     {
-        GD.Print($"[DollarPower] 构造函数被调用 - DollarValue={DollarValue}");
+        GD.Print($"[DollarPower] 构造函数被调用 - Amount={Amount}");
     }
 
     public override LocString Description
@@ -24,7 +28,7 @@ public class DollarPower : PowerModel
         get
         {
             var locString = new LocString("powers", base.Id.Entry + ".description");
-            locString.Add("dollar_value", DollarValue);
+            locString.Add("dollar_value", Amount);
             return locString;
         }
     }
@@ -37,8 +41,8 @@ public class DollarPower : PowerModel
     
     public void AddDollar(int amount)
     {
-        DollarValue += amount;
-        GD.Print($"[DollarPower] 添加资金 {amount}，当前资金 {DollarValue}");
+        SetAmount(Amount + amount);
+        GD.Print($"[DollarPower] 添加资金 {amount}，当前资金 {Amount}");
         
         if (amount > 0)
         {
@@ -52,7 +56,7 @@ public class DollarPower : PowerModel
     
     public void SetDollar(int value)
     {
-        DollarValue = value;
-        GD.Print($"[DollarPower] 设置资金为 {DollarValue}");
+        SetAmount(value);
+        GD.Print($"[DollarPower] 设置资金为 {Amount}");
     }
 }

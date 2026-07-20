@@ -1,0 +1,8 @@
+{
+    "enabled": true,
+    "auto_accept": false,
+    "timeout_seconds": 30,
+    "respect_ectoplasm": true,
+    "bypass_gold_gain_triggers": true,
+    "debug_mode": false
+}

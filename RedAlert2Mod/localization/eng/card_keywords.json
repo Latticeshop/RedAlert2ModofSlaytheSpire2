@@ -122,5 +122,11 @@
     "ui.sell_building.cancel": "Cancel",
     "ui.sell_building.confirm": "Confirm Sale",
     "ui.sell_building.sell_value": "Sell Value",
-    "ui.sell_building.layer_count": "Stacks"
+    "ui.sell_building.layer_count": "Stacks",
+    "ui.dollar_transfer.title": "Transfer Funds",
+    "ui.dollar_transfer.balance": "Current Funds",
+    "ui.dollar_transfer.amount": "Amount to Transfer",
+    "ui.dollar_transfer.recipient": "Select Recipient",
+    "ui.dollar_transfer.no_target": "No Teammates Available",
+    "ui.dollar_transfer.cancel": "Cancel"
 }

@@ -122,5 +122,11 @@
   "ui.sell_building.cancel": "취소",
   "ui.sell_building.confirm": "판매 확인",
   "ui.sell_building.sell_value": "판매 가치",
-  "ui.sell_building.layer_count": "중첩"
+  "ui.sell_building.layer_count": "중첩",
+  "ui.dollar_transfer.title": "자금 이체",
+  "ui.dollar_transfer.balance": "현재 자금",
+  "ui.dollar_transfer.amount": "이체 금액",
+  "ui.dollar_transfer.recipient": "수신자 선택",
+  "ui.dollar_transfer.no_target": "이체 가능한 팀원이 없습니다",
+  "ui.dollar_transfer.cancel": "취소"
 }

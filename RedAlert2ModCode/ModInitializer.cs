@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Models;
 using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Allies.Patches;
+using RedAlert2ModCode.Common.GameActions;
 using RedAlert2ModCode.Common.Patches;
 using RedAlert2ModCode.Soviet;
 
@@ -35,6 +36,12 @@ public static class ModInitializer
 
         // 注册国旗选择补丁
         FlagSelectionPatches.Install(harmony);
+
+        // 注册刀乐能力点击补丁
+        DollarPowerClickPatch.Install(harmony);
+        
+        // 注册自定义 NetAction 类型用于网络同步
+        RegisterNetActionSubtype(typeof(NetDollarTransferGameAction));
         
         // 注册所有盟军卡牌到盟军卡池
         ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AmericanSoldier));
@@ -53,5 +60,43 @@ public static class ModInitializer
         Godot.Bridge.ScriptManagerBridge.LookupScriptsInAssembly(Assembly.GetExecutingAssembly());
         
         Logger.Info("红警2Mod加载成功！");
+    }
+    
+    private static void RegisterNetActionSubtype(Type netActionType)
+    {
+        try
+        {
+            var subtypesClass = Type.GetType("MegaCrit.Sts2.Core.GameActions.Multiplayer.INetActionSubtypes, sts2");
+            if (subtypesClass == null)
+            {
+                Logger.Warn("INetActionSubtypes not found");
+                return;
+            }
+            
+            var subtypesField = subtypesClass.GetField("_subtypes", BindingFlags.NonPublic | BindingFlags.Static);
+            if (subtypesField == null)
+            {
+                Logger.Warn("_subtypes field not found");
+                return;
+            }
+            
+            var currentSubtypes = (Type[])subtypesField.GetValue(null);
+            var newSubtypes = new Type[currentSubtypes.Length + 1];
+            Array.Copy(currentSubtypes, newSubtypes, currentSubtypes.Length);
+            newSubtypes[currentSubtypes.Length] = netActionType;
+            subtypesField.SetValue(null, newSubtypes);
+            
+            var countField = subtypesClass.GetField("Count", BindingFlags.Public | BindingFlags.Static);
+            if (countField != null)
+            {
+                countField.SetValue(null, newSubtypes.Length);
+            }
+            
+            Logger.Info($"Registered NetAction subtype: {netActionType.Name}");
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"Failed to register NetAction subtype: {ex}");
+        }
     }
 }

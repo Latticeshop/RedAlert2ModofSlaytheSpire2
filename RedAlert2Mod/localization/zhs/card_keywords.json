@@ -122,5 +122,11 @@
     "ui.sell_building.cancel": "取消",
     "ui.sell_building.confirm": "确认出售",
     "ui.sell_building.sell_value": "出售价值",
-    "ui.sell_building.layer_count": "层数"
+    "ui.sell_building.layer_count": "层数",
+    "ui.dollar_transfer.title": "转账给队友",
+    "ui.dollar_transfer.balance": "当前资金",
+    "ui.dollar_transfer.amount": "输入转账金额",
+    "ui.dollar_transfer.recipient": "选择接收人",
+    "ui.dollar_transfer.no_target": "没有可转账的队友",
+    "ui.dollar_transfer.cancel": "取消"
 }

@@ -149,7 +149,7 @@ public sealed class V3RocketPower : PowerModel
                 for (int i = 0; i < stacks; i++)
                 {
                     PlayV3LaunchSound();
-                    await Cmd.Wait(0.5f);
+                    await Cmd.Wait(0.3f);
 
                     Creature target = targetLockedEnemies.First();
                     PlaySmashEffect(target);

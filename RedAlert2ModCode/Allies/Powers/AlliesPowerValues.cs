@@ -44,8 +44,8 @@ public static class AlliesPowerValues
 	/// <summary>黄蜂舰载机能力 - 每回合对目标锁定敌人造成伤害</summary>
 	public static CardValueStore.CardValues HornetPower => new()
 	{
-		Damage = 3,            // 基础伤害
-		DamageUpgraded = 1     // 升级后4 = 3 + 1
+		Damage = 5,            // 基础伤害
+		DamageUpgraded = 2     // 升级后7 = 5 + 2
 	};
 
 	/// <summary>基地车能力</summary>

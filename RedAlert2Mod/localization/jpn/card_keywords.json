@@ -122,5 +122,11 @@
     "ui.sell_building.cancel": "キャンセル",
     "ui.sell_building.confirm": "売却を確認",
     "ui.sell_building.sell_value": "売却価値",
-    "ui.sell_building.layer_count": "層数"
+    "ui.sell_building.layer_count": "層数",
+    "ui.dollar_transfer.title": "資金転送",
+    "ui.dollar_transfer.balance": "現在の資金",
+    "ui.dollar_transfer.amount": "転送金額",
+    "ui.dollar_transfer.recipient": "受け取り先を選択",
+    "ui.dollar_transfer.no_target": "利用可能な仲間がいません",
+    "ui.dollar_transfer.cancel": "キャンセル"
 }
