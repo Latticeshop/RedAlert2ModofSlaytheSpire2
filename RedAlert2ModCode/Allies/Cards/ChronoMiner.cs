@@ -26,21 +26,35 @@ public sealed class ChronoMiner : CardModel
 {
 	// 数值引用
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.ChronoMiner;
+	private bool _chronoConsumed;
 	
 	public ChronoMiner() : base((int)Values.Cost, CardType.Skill, CardRarity.Token, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/ahrvicon.png";
 
-	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-	[
-		ModCardKeywords.TechLevelT1.CreateHoverTip(),
-		ModCardKeywords.Vehicle.CreateHoverTip(),
-		ModCardKeywords.Chrono.CreateHoverTip()
-	];
+	protected override IEnumerable<IHoverTip> ExtraHoverTips
+	{
+		get
+		{
+			var tips = new List<IHoverTip>
+			{
+				ModCardKeywords.TechLevelT1.CreateHoverTip(),
+				ModCardKeywords.Vehicle.CreateHoverTip()
+			};
+			
+			if (!_chronoConsumed)
+			{
+				tips.Add(ModCardKeywords.Chrono.CreateHoverTip());
+			}
+			
+			return tips;
+		}
+	}
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
-		new IntVar("DollarValue", Values.DollarValue)
+		new IntVar("DollarValue", Values.DollarValue),
+		new StringVar("ChronoTitle", "[gold]超时空.[/gold]\n")
 	};
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -74,8 +88,26 @@ public sealed class ChronoMiner : CardModel
 			GD.Print($"[ChronoMiner] 总共获得 {totalAmount} 资金");
 		}
 
-		await CardPileCmd.Add(play.Card, PileType.Draw);
-		GD.Print($"[ChronoMiner] 手动打出，进入摸牌堆");
+		bool hasExhaustKeyword = play.Card.Keywords.Contains(CardKeyword.Exhaust);
+		if (hasExhaustKeyword && !_chronoConsumed)
+		{
+			_chronoConsumed = true;
+			if (DynamicVars["ChronoTitle"] is StringVar chronoTitleVar)
+			{
+				chronoTitleVar.StringValue = string.Empty;
+			}
+			await CardPileCmd.Add(play.Card, PileType.Draw);
+			GD.Print($"[ChronoMiner] 检测到消耗关键字，触发最后一次超时空进入摸牌堆，超时空效果已消耗");
+		}
+		else if (!hasExhaustKeyword)
+		{
+			await CardPileCmd.Add(play.Card, PileType.Draw);
+			GD.Print($"[ChronoMiner] 超时空效果生效，进入摸牌堆");
+		}
+		else
+		{
+			GD.Print($"[ChronoMiner] 超时空效果已消耗，卡牌正常消耗");
+		}
 	}
 
 	/// <summary>

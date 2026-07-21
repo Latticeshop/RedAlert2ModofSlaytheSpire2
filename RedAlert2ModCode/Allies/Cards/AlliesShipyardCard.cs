@@ -27,7 +27,12 @@ public sealed class AlliesShipyardCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.Shipyard;
 	
-	public AlliesShipyardCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
+	public AlliesShipyardCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+
+	public override HashSet<CardKeyword> CanonicalKeywords => new HashSet<CardKeyword>
+	{
+		CardKeyword.Exhaust
+	};
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/ayaricon.png";
 	
@@ -39,7 +44,8 @@ public sealed class AlliesShipyardCard : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		ModCardKeywords.ProductionQueue.CreateHoverTip()
+		ModCardKeywords.ProductionQueue.CreateHoverTip(),
+		HoverTipFactory.FromKeyword(CardKeyword.Exhaust)
 	];
 
 	protected override bool IsPlayable
@@ -82,8 +88,6 @@ public sealed class AlliesShipyardCard : CardModel
 		// 如果玩家选择了卡牌，才执行能力效果
 		if (selectedCard != null)
 		{
-			ConfirmCardPlay();
-			
 			// 选择成功后才扣除建筑资金
 			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
 			if (dollarPower != null)

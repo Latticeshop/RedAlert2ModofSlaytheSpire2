@@ -73,12 +73,12 @@ public static class AlliesCardValues
 		DollarValue = 600
 	};
 
-	/// <summary>超时空军团兵 - 1费攻击卡，赋予敌人血量10%(升级20%)层数的抹除，首次眩晕敌人，价格1200，需要作战实验室</summary>
+	/// <summary>超时空军团兵 - 1费攻击卡，赋予敌人血量6%(升级10%)层数的抹除，首次眩晕敌人，价格1200，需要作战实验室</summary>
 	public static CardValueStore.CardValues ChronoLegionnaire => new()
 	{
 		Cost = 1,
-		MagicNumber = 10,           // 抹除层数百分比（基础10%）
-		MagicNumberUpgraded = 10,   // 升级后20% = 10 + 10
+		MagicNumber = 6,           // 抹除层数百分比（基础6%）
+		MagicNumberUpgraded = 4,   // 升级后10% = 6 + 4
 		DollarValue = 1500
 	};
 	

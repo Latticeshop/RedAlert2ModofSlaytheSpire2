@@ -24,7 +24,12 @@ public sealed class SovietShipyardCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.Shipyard;
 	
-	public SovietShipyardCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
+	public SovietShipyardCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+
+	public override HashSet<CardKeyword> CanonicalKeywords => new HashSet<CardKeyword>
+	{
+		CardKeyword.Exhaust
+	};
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/soviet/yardicon.png";
 	
@@ -36,7 +41,8 @@ public sealed class SovietShipyardCard : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		ModCardKeywords.ProductionQueue.CreateHoverTip()
+		ModCardKeywords.ProductionQueue.CreateHoverTip(),
+		HoverTipFactory.FromKeyword(CardKeyword.Exhaust)
 	];
 
 	protected override bool IsPlayable
@@ -73,8 +79,6 @@ public sealed class SovietShipyardCard : CardModel
 
 		if (selectedCard != null)
 		{
-			ConfirmCardPlay();
-			
 			// 选择成功后才扣除建筑资金
 			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
 			if (dollarPower != null)

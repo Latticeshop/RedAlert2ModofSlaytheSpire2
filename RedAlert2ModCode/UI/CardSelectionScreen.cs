@@ -672,6 +672,14 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
                 {
                     value = intValueProp.GetValue(varItem);
                 }
+                else
+                {
+                    var stringValueProp = varItem.GetType().GetProperty("StringValue");
+                    if (stringValueProp != null)
+                    {
+                        value = stringValueProp.GetValue(varItem);
+                    }
+                }
             }
 
             if (value != null)
