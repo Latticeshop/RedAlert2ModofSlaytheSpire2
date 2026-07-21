@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -16,6 +16,7 @@ using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Common.Cards;
 
 namespace RedAlert2ModCode.Soviet.Cards;
 
@@ -62,13 +63,6 @@ public sealed class SovietShipyardCard : CardModel
 		
 		BuildingSoundHelper.PlayBuildingPlaceSound();
 
-		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-		if (dollarPower != null)
-		{
-			dollarPower.AddDollar(-(int)Values.DollarValue);
-			GD.Print($"[SovietShipyardCard] 扣除资金 {Values.DollarValue}");
-		}
-
 		List<CardModel> availableCards = SovietCardRegistry.CreateShips(Owner);
 		GD.Print($"[SovietShipyardCard] 可用卡牌数量: {availableCards.Count}");
 
@@ -79,6 +73,16 @@ public sealed class SovietShipyardCard : CardModel
 
 		if (selectedCard != null)
 		{
+			ConfirmCardPlay();
+			
+			// 选择成功后才扣除建筑资金
+			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+			if (dollarPower != null)
+			{
+				dollarPower.AddDollar(-(int)Values.DollarValue);
+				GD.Print($"[SovietShipyardCard] 扣除建筑资金 {Values.DollarValue}");
+			}
+
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			
 			await PowerCmd.Apply<SovietShipyardPower>(ctx, Owner.Creature, 1, Owner.Creature, this);

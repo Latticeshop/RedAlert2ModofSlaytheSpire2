@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -15,6 +15,7 @@ using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Common.Cards;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -63,14 +64,6 @@ public sealed class AlliesBarracksCard : CardModel
 		// 播放建筑释放音效
 		BuildingSoundHelper.PlayBuildingPlaceSound();
 
-		// 扣除资金
-		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-		if (dollarPower != null)
-		{
-			dollarPower.AddDollar(-(int)AlliesCardValues.Barracks.DollarValue);
-			GD.Print($"[AlliesBarracksCard] 扣除资金 {AlliesCardValues.Barracks.DollarValue}");
-		}
-
 		// 检查是否有空指部能力或牌库中有空军单位
 		bool hasAirForceCommand = HasAirForceCommand();
 		bool hasAirUnitInDeck = HasAirUnitInDeck();
@@ -113,6 +106,16 @@ public sealed class AlliesBarracksCard : CardModel
 		// 如果玩家选择了卡牌，才执行能力效果
 		if (selectedCard != null)
 		{
+			ConfirmCardPlay();
+			
+			// 选择成功后才扣除建筑资金
+			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+			if (dollarPower != null)
+			{
+				dollarPower.AddDollar(-(int)AlliesCardValues.Barracks.DollarValue);
+				GD.Print($"[AlliesBarracksCard] 扣除建筑资金 {AlliesCardValues.Barracks.DollarValue}");
+			}
+
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			
 			// 添加兵营能力（用于出售检查和生产序列管理）
@@ -137,10 +140,10 @@ public sealed class AlliesBarracksCard : CardModel
 			await CardPileCmd.Draw(ctx, 1, Owner);
 		}
 		else
-		{
+			{
 			// 取消选择：返还费用并将卡牌放回手牌
 			await CardUtils.HandleCardCancellation(play, this, Owner);
-		}
+			}
 	}
 
 		protected override void OnUpgrade()

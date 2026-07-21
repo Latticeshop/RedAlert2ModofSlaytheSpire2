@@ -110,11 +110,12 @@ public static class CommonCardValues
 		MagicNumberUpgraded = 1     // 升级后增加1张（共2张）
 	};
 
-	/// <summary>大生产 - 3费能力卡，单位价格减少50（升级后每有一层生产序列减少50）</summary>
+	/// <summary>大生产 - 3费能力卡，单位价格减少100（升级后每有一层生产序列减少100）</summary>
 	public static CardValueStore.CardValues MassProduction => new()
 	{
 		Cost = 3,
-		CostUpgraded = 0            // 升级后费用不变（仍为3费）
+		CostUpgraded = 0,           // 升级后费用不变（仍为3费）
+		Stars = 100                 // 每层减少的价格
 	};
 
 	/// <summary>F2A钢铁洪流 - 1费能力卡（升级后0费），手牌中的单位卡将自动打出</summary>

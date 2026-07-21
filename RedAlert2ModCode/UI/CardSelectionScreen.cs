@@ -653,9 +653,10 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             return text;
         }
 
-        foreach (var varItem in card.DynamicVars)
+        foreach (var kvp in card.DynamicVars)
         {
-            string varName = varItem.GetType().Name.Replace("Var", "");
+            string varName = kvp.Key;
+            var varItem = kvp.Value;
             string pattern = $"\\$?\\{{{varName}\\}}";
             
             object? value = null;

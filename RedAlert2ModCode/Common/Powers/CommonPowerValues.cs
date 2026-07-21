@@ -47,7 +47,7 @@ public static class CommonPowerValues
 	/// <summary>大生产能力 - 降低单位训练成本</summary>
 	public static CardValueStore.CardValues MassProductionPower => new()
 	{
-		Stars = 50              // 每层降低的价格
+		Stars = 100             // 每层降低的价格
 	};
 
 	/// <summary>力场护盾能力 - 回合开始时失去能量</summary>

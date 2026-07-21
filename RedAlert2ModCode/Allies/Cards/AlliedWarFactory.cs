@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -15,6 +15,7 @@ using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Common.Cards;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -67,14 +68,6 @@ public sealed class AlliedWarFactory : CardModel
 		
 		GD.Print($"[AlliedWarFactory] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
 
-		// 扣除资金
-		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-		if (dollarPower != null)
-		{
-			dollarPower.AddDollar(-(int)AlliesCardValues.AlliedWarFactory.DollarValue);
-			GD.Print($"[AlliedWarFactory] 扣除资金 {AlliesCardValues.AlliedWarFactory.DollarValue}");
-		}
-
 		// 使用盟军卡牌注册管理器获取所有装甲单位卡
 		List<CardModel> availableCards = AlliedCardRegistry.CreateVehicles(Owner);
 		GD.Print($"[AlliedWarFactory] 可用卡牌数量: {availableCards.Count}");
@@ -111,6 +104,16 @@ public sealed class AlliedWarFactory : CardModel
 		// 如果玩家选择了卡牌，才执行能力效果
 		if (selectedCard != null)
 		{
+			ConfirmCardPlay();
+			
+			// 选择成功后才扣除建筑资金
+			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+			if (dollarPower != null)
+			{
+				dollarPower.AddDollar(-(int)AlliesCardValues.AlliedWarFactory.DollarValue);
+				GD.Print($"[AlliedWarFactory] 扣除建筑资金 {AlliesCardValues.AlliedWarFactory.DollarValue}");
+			}
+
 			// 添加重工能力（用于科技线检查），每次打出都增加层数
 			await PowerCmd.Apply<AlliedWarFactoryPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
 			GD.Print("[AlliedWarFactory] 添加重工能力");

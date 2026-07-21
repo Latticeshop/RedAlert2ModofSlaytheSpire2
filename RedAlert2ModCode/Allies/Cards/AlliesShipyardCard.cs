@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -15,6 +15,7 @@ using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Common.Cards;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -67,14 +68,6 @@ public sealed class AlliesShipyardCard : CardModel
 		// 播放建筑释放音效
 		BuildingSoundHelper.PlayBuildingPlaceSound();
 
-		// 扣除资金
-		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-		if (dollarPower != null)
-		{
-			dollarPower.AddDollar(-(int)AlliesCardValues.Shipyard.DollarValue);
-			GD.Print($"[AlliesShipyardCard] 扣除资金 {AlliesCardValues.Shipyard.DollarValue}");
-		}
-
 		// 使用盟军卡牌注册管理器获取所有海军单位卡
 		List<CardModel> availableCards = AlliedCardRegistry.CreateShips(Owner);
 		
@@ -89,6 +82,16 @@ public sealed class AlliesShipyardCard : CardModel
 		// 如果玩家选择了卡牌，才执行能力效果
 		if (selectedCard != null)
 		{
+			ConfirmCardPlay();
+			
+			// 选择成功后才扣除建筑资金
+			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+			if (dollarPower != null)
+			{
+				dollarPower.AddDollar(-(int)AlliesCardValues.Shipyard.DollarValue);
+				GD.Print($"[AlliesShipyardCard] 扣除建筑资金 {AlliesCardValues.Shipyard.DollarValue}");
+			}
+
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			
 			await PowerCmd.Apply<AlliedShipyardPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
@@ -112,10 +115,10 @@ public sealed class AlliesShipyardCard : CardModel
 			await CardPileCmd.Draw(ctx, 1, Owner);
 		}
 		else
-		{
+			{
 			// 取消选择：返还费用并将卡牌放回手牌
 			await CardUtils.HandleCardCancellation(play, this, Owner);
-		}
+			}
 	}
 
 	protected override void OnUpgrade()

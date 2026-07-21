@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -13,6 +13,7 @@ using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Common.Cards;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -65,14 +66,6 @@ public sealed class AirForceCommand : CardModel
 		
 		GD.Print($"[AirForceCommand] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
 
-		// 扣除资金
-		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-		if (dollarPower != null)
-		{
-			dollarPower.AddDollar(-(int)AlliesCardValues.AirForceCommand.DollarValue);
-			GD.Print($"[AirForceCommand] 扣除资金 {AlliesCardValues.AirForceCommand.DollarValue}");
-		}
-
 		// 使用盟军卡牌注册管理器获取所有空军单位卡
 		List<CardModel> availableCards = AlliedCardRegistry.CreateAirUnits(Owner);
 		GD.Print($"[AirForceCommand] 可用卡牌数量: {availableCards.Count}");
@@ -103,6 +96,16 @@ public sealed class AirForceCommand : CardModel
 		// 如果玩家选择了卡牌，才执行能力效果
 		if (selectedCard != null)
 		{
+			ConfirmCardPlay();
+			
+			// 选择成功后才扣除建筑资金
+			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+			if (dollarPower != null)
+			{
+				dollarPower.AddDollar(-(int)AlliesCardValues.AirForceCommand.DollarValue);
+				GD.Print($"[AirForceCommand] 扣除建筑资金 {AlliesCardValues.AirForceCommand.DollarValue}");
+			}
+
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 			
 			await PowerCmd.Apply<AlliedAirForceCommandPower>(ctx, Owner.Creature, 1, Owner.Creature, this);

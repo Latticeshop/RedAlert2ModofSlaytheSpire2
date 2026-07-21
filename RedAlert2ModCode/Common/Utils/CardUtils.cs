@@ -145,50 +145,22 @@ public static class CardUtils
 			GD.PrintErr("[CardUtils] 无法获取 Player 对象，能量返还失败");
 		}
 		
-		if (!IsMcvCard(cardModel))
-		{
-			await RefundDollarCost(cardModel, owner);
-		}
+		var cardToReturn = play?.Card ?? cardModel;
 		
-		if (play?.Card != null)
+		if (cardToReturn != null)
 		{
-			var card = play.Card;
+			// 参考运输船逻辑：能力卡被移出战斗后，设置 HasBeenRemovedFromState = false 使其能重新进入战斗
+			cardToReturn.HasBeenRemovedFromState = false;
+			GD.Print($"[CardUtils] 重置卡牌状态 HasBeenRemovedFromState = false");
 			
-			// 不要手动调用 RemoveFromCurrentPile()，让 CardPileCmd.Add 处理牌堆转移和视觉节点
-			await CardPileCmd.Add(card, PileType.Hand);
+			// 使用 CardPileCmd.Add 添加回手牌，第四个参数传递 cardModel（调用者的 this），与运输船保持一致
+			await CardPileCmd.Add(cardToReturn, PileType.Hand, CardPilePosition.Bottom, cardModel);
 			
-			GD.Print($"[CardUtils] 卡牌已放回手牌，当前手牌数: {PileType.Hand.GetPile(card.Owner).Cards.Count}");
+			GD.Print($"[CardUtils] 卡牌已放回手牌底部，当前手牌数: {PileType.Hand.GetPile(cardToReturn.Owner).Cards.Count}");
 		}
 		else
 		{
 			GD.PrintErr("[CardUtils] 无法获取实际卡牌实体，放回手牌失败");
-		}
-	}
-	
-	private static async Task RefundDollarCost(CardModel cardModel, Player owner)
-	{
-		if (owner?.Creature == null)
-		{
-			GD.PrintErr("[CardUtils] 无法获取 Creature 对象，资金返还失败");
-			return;
-		}
-		
-		int dollarCost = GetCardDollarCost(cardModel);
-		if (dollarCost <= 0)
-		{
-			return;
-		}
-		
-		var dollarPower = owner.Creature.Powers.OfType<RedAlert2ModCode.Common.Powers.DollarPower>().FirstOrDefault();
-		if (dollarPower != null)
-		{
-			dollarPower.DollarValue += dollarCost;
-			DollarVfxHelper.PlayVfx(owner.Creature, dollarCost, DollarVfxType.None);
-			GD.Print($"[CardUtils] 已返还 {dollarCost} 资金给玩家（无动画）");
-		}
-		else
-		{
-			GD.PrintErr("[CardUtils] 无法获取 DollarPower，资金返还失败");
 		}
 	}
 	

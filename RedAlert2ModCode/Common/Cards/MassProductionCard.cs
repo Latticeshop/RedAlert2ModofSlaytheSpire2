@@ -29,7 +29,7 @@ public class MassProductionCard : CardModel
 
     protected override List<DynamicVar> CanonicalVars => new()
     {
-        new IntVar("Reduction", 50)
+        new IntVar("Reduction", (int)Values.Stars)
     };
 
     protected override void OnUpgrade()

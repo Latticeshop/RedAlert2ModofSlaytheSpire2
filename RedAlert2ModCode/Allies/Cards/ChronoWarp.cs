@@ -96,9 +96,6 @@ public sealed class ChronoWarp : CardModel
             await CardPileCmd.Add(card, targetPile);
             GD.Print($"[ChronoWarp] 移动卡牌 {card.Id.Entry} 到 {targetPile}");
         }
-
-        // 消耗自身
-        await CardPileCmd.Add(this, PileType.Exhaust);
     }
 
     private PileType ConvertToPileType(int choice)

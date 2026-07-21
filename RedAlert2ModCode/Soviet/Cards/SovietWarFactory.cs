@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -14,6 +14,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Soviet.Powers;
 
 namespace RedAlert2ModCode.Soviet.Cards;
@@ -65,13 +66,6 @@ public sealed class SovietWarFactory : CardModel
 		
 		GD.Print($"[SovietWarFactory] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
 
-		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-		if (dollarPower != null)
-		{
-			dollarPower.AddDollar(-(int)Values.DollarValue);
-			GD.Print($"[SovietWarFactory] 扣除资金 {Values.DollarValue}");
-		}
-
 		List<CardModel> availableCards = SovietCardRegistry.CreateVehicles(Owner);
 		GD.Print($"[SovietWarFactory] 可用卡牌数量: {availableCards.Count}");
 
@@ -96,6 +90,16 @@ public sealed class SovietWarFactory : CardModel
 
 		if (selectedCard != null)
 		{
+			ConfirmCardPlay();
+			
+			// 选择成功后才扣除建筑资金
+			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+			if (dollarPower != null)
+			{
+				dollarPower.AddDollar(-(int)Values.DollarValue);
+				GD.Print($"[SovietWarFactory] 扣除建筑资金 {Values.DollarValue}");
+			}
+
 			// 添加重工能力（用于科技线检查），每次打出都增加层数
 			await PowerCmd.Apply<SovietWarFactoryPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
 			GD.Print("[SovietWarFactory] 添加重工能力");

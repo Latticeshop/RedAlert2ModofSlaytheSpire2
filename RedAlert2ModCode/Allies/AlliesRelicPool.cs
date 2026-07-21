@@ -30,10 +30,6 @@ public class AlliesRelicPool : RelicPoolModel
             ModelDb.Relic<FranceRelic>(),
             ModelDb.Relic<GermanyRelic>(),
             ModelDb.Relic<SouthKoreaRelic>(),
-            ModelDb.Relic<USSRRelic>(),
-            ModelDb.Relic<CubaRelic>(),
-            ModelDb.Relic<IraqRelic>(),
-            ModelDb.Relic<LibyaRelic>(),
         };
     }
 }

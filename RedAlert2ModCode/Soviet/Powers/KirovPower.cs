@@ -131,6 +131,7 @@ public sealed class KirovPower : PowerModel
     public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature target, bool wasRemovalPrevented, float deathAnimLength)
     {
         if (wasRemovalPrevented) return;
+        if (target != Owner) return;
         
         var combatState = Owner?.CombatState;
         if (combatState == null) return;

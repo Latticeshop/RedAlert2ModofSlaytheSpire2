@@ -219,6 +219,12 @@ public static class ModCardKeywords
 		new LocString("card_keywords", "steel_flood.description")
 	);
 
+	public static readonly CustomKeyword ChronoMiner = new(
+		"CHRONO_MINER",
+		new LocString("card_keywords", "chrono_miner.title"),
+		new LocString("card_keywords", "chrono_miner.description")
+	);
+
 	public static readonly CustomKeyword Chrono = new(
 		"CHRONO",
 		new LocString("card_keywords", "chrono.title"),
@@ -278,6 +284,7 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(OrbitalReadiness);
         CustomKeywordManager.RegisterKeyword(TerrorDrone);
         CustomKeywordManager.RegisterKeyword(SteelFlood);
+        CustomKeywordManager.RegisterKeyword(ChronoMiner);
         CustomKeywordManager.RegisterKeyword(Chrono);
         CustomKeywordManager.RegisterKeyword(Miner);
         CustomKeywordManager.RegisterKeyword(Garrison);

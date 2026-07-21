@@ -29,11 +29,6 @@ public class SovietRelicPool : RelicPoolModel
             ModelDb.Relic<CubaRelic>(),
             ModelDb.Relic<IraqRelic>(),
             ModelDb.Relic<LibyaRelic>(),
-            ModelDb.Relic<USARelic>(),
-            ModelDb.Relic<UKRelic>(),
-            ModelDb.Relic<FranceRelic>(),
-            ModelDb.Relic<GermanyRelic>(),
-            ModelDb.Relic<SouthKoreaRelic>(),
         };
     }
 }
