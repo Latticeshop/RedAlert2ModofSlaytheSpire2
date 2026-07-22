@@ -58,9 +58,13 @@ public sealed class SovietWarFactory : CardModel
 			if (!CardUtils.HasMcvPower(Owner.Creature))
 				return false;
 
-			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-			if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
-				return false;
+			bool hasPower = Owner.Creature.Powers.OfType<SovietWarFactoryPower>().Any();
+			if (!hasPower)
+			{
+				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+				if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
+					return false;
+			}
 
 			return true;
 		}
@@ -96,12 +100,19 @@ public sealed class SovietWarFactory : CardModel
 
 		if (selectedCard != null)
 		{
-			// 选择成功后才扣除建筑资金
-			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-			if (dollarPower != null)
+			bool hasPower = Owner.Creature.Powers.OfType<SovietWarFactoryPower>().Any();
+			if (!hasPower)
 			{
-				dollarPower.AddDollar(-(int)Values.DollarValue);
-				GD.Print($"[SovietWarFactory] 扣除建筑资金 {Values.DollarValue}");
+				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+				if (dollarPower != null)
+				{
+					dollarPower.AddDollar(-(int)Values.DollarValue);
+					GD.Print($"[SovietWarFactory] 扣除建筑资金 {Values.DollarValue}");
+				}
+			}
+			else
+			{
+				GD.Print("[SovietWarFactory] 已有重工能力，不扣除建筑资金");
 			}
 
 			// 添加重工能力（用于科技线检查），每次打出都增加层数

@@ -16,16 +16,25 @@ using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Common.Cards;
 
-public sealed class ChronoCommandos : CardModel
+public sealed class ChronoCommandos : ChronoCardModel
 {
 	private static readonly CardValueStore.CardValues Values = CommonCardValues.ChronoCommandos;
-	private bool _chronoConsumed;
 
 	public ChronoCommandos() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
 	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/other/ccomicon.png";
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[0];
+
+	protected override List<IHoverTip> GetExtraHoverTips()
+	{
+		return new List<IHoverTip>
+		{
+			ModCardKeywords.Soldier.CreateHoverTip(),
+			ModCardKeywords.Infiltrator.CreateHoverTip(),
+			ModCardKeywords.Deploy.CreateHoverTip()
+		};
+	}
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
@@ -36,30 +45,11 @@ public sealed class ChronoCommandos : CardModel
 		new StringVar("ChronoTitle", "[gold]超时空.[/gold]\n")
 	};
 
-	protected override IEnumerable<IHoverTip> ExtraHoverTips
-	{
-		get
-		{
-			var tips = new List<IHoverTip>
-			{
-				ModCardKeywords.Soldier.CreateHoverTip(),
-				ModCardKeywords.Infiltrator.CreateHoverTip(),
-				ModCardKeywords.Deploy.CreateHoverTip()
-			};
-
-			if (!_chronoConsumed)
-			{
-				tips.Insert(1, ModCardKeywords.Chrono.CreateHoverTip());
-			}
-
-			return tips;
-		}
-	}
-
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		if (play.Target is not Creature target) return;
 
+		PlayChronoMoveSound();
 		UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Allied");
 
 		bool isAttackIntent = IsAttackIntent(target);
@@ -86,21 +76,6 @@ public sealed class ChronoCommandos : CardModel
 				.Execute(ctx);
 			GD.Print($"[ChronoCommandos] 攻击效果触发，造成 {DynamicVars.Damage.BaseValue} 点伤害 {DynamicVars.Repeat.IntValue} 次");
 		}
-
-		if (!_chronoConsumed)
-		{
-			_chronoConsumed = true;
-			if (DynamicVars["ChronoTitle"] is StringVar chronoTitleVar)
-			{
-				chronoTitleVar.StringValue = string.Empty;
-			}
-			await CardPileCmd.Add(play.Card, PileType.Draw);
-			GD.Print($"[ChronoCommandos] 超时空效果生效，进入摸牌堆，超时空效果已消耗");
-		}
-		else
-		{
-			GD.Print($"[ChronoCommandos] 超时空效果已消耗，卡牌正常丢弃");
-		}
 	}
 
 	protected override void OnUpgrade()
@@ -116,5 +91,10 @@ public sealed class ChronoCommandos : CardModel
 			return target.Monster.NextMove.Intents.Any(intent => intent is AttackIntent);
 		}
 		return false;
+	}
+
+	private void PlayChronoMoveSound()
+	{
+		CommonSoundHelper.PlayChronoMoveSound();
 	}
 }

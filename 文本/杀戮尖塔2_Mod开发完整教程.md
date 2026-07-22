@@ -797,6 +797,215 @@ protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 ];
 ```
 
+### 进阶：带行为逻辑的自定义词条（超时空词条案例）
+
+前面介绍的自定义词条只包含视觉效果（金色文本 + 悬停提示）。当词条需要绑定游戏行为时，需要创建基类来封装词条逻辑。
+
+#### 应用场景
+
+"超时空"词条的核心逻辑：
+1. 打出卡牌时，卡牌进入摸牌堆而非弃牌堆
+2. 当卡牌同时拥有"消耗(Exhaust)"词条时，首次打出进入摸牌堆并移除超时空词条，下次打出正常消耗
+
+#### 实现步骤
+
+##### 第一步：创建词条定义
+
+在 `CustomKeyword.cs` 的 `ModCardKeywords` 类中添加超时空词条：
+
+```csharp
+public static readonly CustomKeyword Chrono = new(
+    "CHRONO",
+    new LocString("card_keywords", "chrono.title"),
+    new LocString("card_keywords", "chrono.description")
+);
+```
+
+##### 第二步：创建词条行为基类
+
+在 `Common/Cards/` 目录下创建 `ChronoCardModel.cs`：
+
+```csharp
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Godot;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
+using RedAlert2ModCode.Common.Utils;
+
+namespace RedAlert2ModCode.Common.Cards;
+
+/// <summary>
+/// 超时空卡牌基类
+/// 自动处理超时空词条效果：
+/// 1. 打出时卡牌进入摸牌堆而非弃牌堆
+/// 2. 当卡牌同时拥有消耗(Exhaust)词条时，本次打出进入摸牌堆并移除超时空词条，下次打出正常消耗
+/// 3. 自动添加超时空描述文本和悬停提示
+/// </summary>
+public abstract class ChronoCardModel : CardModel
+{
+    private bool _chronoConsumed;
+
+    protected ChronoCardModel(int cost, CardType cardType, CardRarity cardRarity, TargetType targetType)
+        : base(cost, cardType, cardRarity, targetType) { }
+
+    protected override List<DynamicVar> CanonicalVars => new()
+    {
+        new StringVar("ChronoTitle", "[gold]超时空.[/gold]\n")
+    };
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips
+    {
+        get
+        {
+            var tips = GetExtraHoverTips();
+            
+            if (!_chronoConsumed)
+            {
+                tips.Add(ModCardKeywords.Chrono.CreateHoverTip());
+            }
+            
+            return tips;
+        }
+    }
+
+    /// <summary>
+    /// 子类重写此方法提供额外的悬停提示
+    /// </summary>
+    protected abstract List<IHoverTip> GetExtraHoverTips();
+
+    protected override CardLocation GetResultLocationForCardPlay()
+    {
+        // 如果超时空效果已消耗，走正常流程
+        if (_chronoConsumed)
+        {
+            return base.GetResultLocationForCardPlay();
+        }
+
+        bool hasExhaustKeyword = Keywords.Contains(CardKeyword.Exhaust);
+        
+        if (hasExhaustKeyword)
+        {
+            // 有消耗词条：执行最后一次超时空，移除超时空效果
+            _chronoConsumed = true;
+            if (DynamicVars["ChronoTitle"] is StringVar chronoTitleVar)
+            {
+                chronoTitleVar.StringValue = string.Empty;
+            }
+            return new CardLocation(Owner, PileType.Draw, CardPilePosition.Bottom);
+        }
+
+        // 无消耗词条：正常超时空效果，进入摸牌堆
+        return new CardLocation(Owner, PileType.Draw, CardPilePosition.Bottom);
+    }
+}
+```
+
+##### 第三步：卡牌继承基类
+
+改造原有卡牌，继承 `ChronoCardModel` 而非 `CardModel`：
+
+```csharp
+public sealed class ChronoMiner : ChronoCardModel
+{
+    private static readonly CardValueStore.CardValues Values = AlliesCardValues.ChronoMiner;
+    
+    public ChronoMiner() : base((int)Values.Cost, CardType.Skill, CardRarity.Token, TargetType.Self) { }
+
+    public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/allies/ahrvicon.png";
+
+    protected override List<IHoverTip> GetExtraHoverTips()
+    {
+        return new List<IHoverTip>
+        {
+            ModCardKeywords.TechLevelT1.CreateHoverTip(),
+            ModCardKeywords.Vehicle.CreateHoverTip()
+        };
+    }
+
+    protected override List<DynamicVar> CanonicalVars => new()
+    {
+        new IntVar("DollarValue", Values.DollarValue),
+        new StringVar("ChronoTitle", "[gold]超时空.[/gold]\n")
+    };
+
+    protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+    {
+        // 卡牌特有逻辑...
+    }
+
+    protected override void OnUpgrade()
+    {
+        base.DynamicVars["DollarValue"].BaseValue = Values.DollarValue + Values.DollarValueUpgraded;
+    }
+}
+```
+
+##### 第四步：添加本地化文本
+
+**card_keywords.json**：
+```json
+{
+    "chrono.title": "超时空",
+    "chrono.description": "打出时进入摸牌堆。与消耗词条共存时，首次打出进入摸牌堆并移除超时空，下次打出正常消耗。"
+}
+```
+
+**cards.json**（在描述开头添加 `{ChronoTitle}` 动态变量）：
+```json
+{
+    "CHRONO_MINER.description": "{ChronoTitle}获得 {DollarValue} 资金。"
+}
+```
+
+#### 核心机制详解
+
+| 机制 | 说明 |
+|------|------|
+| `GetResultLocationForCardPlay()` | Beta版新增方法，控制卡牌打出后的去向 |
+| `_chronoConsumed` | 状态标记，控制超时空效果是否已消耗 |
+| `StringVar("ChronoTitle")` | 动态变量，控制描述开头的"超时空."文本显示/隐藏 |
+| `GetExtraHoverTips()` | 抽象方法，子类返回额外的悬浮提示 |
+| `ExtraHoverTips` | 基类重写，根据 `_chronoConsumed` 状态动态添加超时空词条悬浮提示 |
+
+#### 效果流程
+
+```
+打出超时空卡牌（无消耗词条）
+    ↓
+GetResultLocationForCardPlay() 返回 CardLocation(Draw, Bottom)
+    ↓
+卡牌进入摸牌堆底部，超时空效果保留
+    ↓
+下次打出重复此流程
+
+打出超时空卡牌（有消耗词条）
+    ↓
+检测到 CardKeyword.Exhaust
+    ↓
+_chronoConsumed = true
+    ↓
+ChronoTitle.StringValue = ""（移除描述中的"超时空."文本）
+    ↓
+返回 CardLocation(Draw, Bottom)，卡牌进入摸牌堆
+    ↓
+下次打出时 _chronoConsumed = true
+    ↓
+走 base.GetResultLocationForCardPlay()，正常消耗
+```
+
+#### 优势
+
+1. **代码解耦**：超时空逻辑集中在基类，卡牌只需关注自身特有逻辑
+2. **易于维护**：修改超时空规则只需修改基类，影响所有超时空卡牌
+3. **一致性**：所有超时空卡牌行为一致，避免遗漏或错误
+4. **可扩展性**：新增超时空卡牌只需继承基类，无需重复编写超时空逻辑
+
 ---
 
 ## 3.10 卡牌悬浮提示（HoverTip）

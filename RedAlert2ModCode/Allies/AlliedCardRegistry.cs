@@ -434,11 +434,12 @@ public static class AlliedCardRegistry
     }
 
     /// <summary>
-    /// 检查是否有空指部能力
+    /// 检查是否有空指部或雷达能力（T2科技解锁）
     /// </summary>
     public static bool HasAirForceCommandPower(Creature creature)
     {
-        return creature.Powers.Any(p => p is AlliedAirForceCommandPower);
+        return creature.Powers.Any(p => p is AlliedAirForceCommandPower) ||
+               creature.Powers.Any(p => p is RedAlert2ModCode.Soviet.Powers.SovietRadarPower);
     }
 
     public static List<CardModel> CreateAircraft(Player owner)

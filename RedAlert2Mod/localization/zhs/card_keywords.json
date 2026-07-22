@@ -132,5 +132,12 @@
     "ui.dollar_transfer.no_target": "没有可转账的队友",
     "ui.dollar_transfer.cancel": "取消",
     "paratrooper.faction_info.title": "伞兵详情",
-    "paratrooper.faction_info.description": "盟军获得3张美国大兵。\n苏联获得4张动员兵。\n尤里获得3张尤里新兵。"
+    "paratrooper.faction_info.description": "盟军获得3张美国大兵。\n苏联获得4张动员兵。\n尤里获得3张尤里新兵。",
+    "timed_bomb.title": "定时炸弹",
+    "timed_bomb.description": "打出前获得[gold]活力[/gold]。卡牌获得[gold]消耗[/gold]。",
+    "ui.crazy_ivan.title": "选择疯狂伊文的行动",
+    "ui.crazy_ivan.attack_title": "安装炸弹",
+    "ui.crazy_ivan.attack_desc": "对一名敌人赋予 {BombStacks} 层定时炸弹",
+    "ui.crazy_ivan.deploy_title": "部署",
+    "ui.crazy_ivan.deploy_desc": "选择一张手牌，赋予消耗和定时炸弹"
 }

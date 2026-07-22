@@ -14,6 +14,7 @@ using System.Linq;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
+using RedAlert2ModCode.Common.Cards;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -22,33 +23,22 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 0费，获得500资金（升级后1000），使用后加入摸牌堆
 /// 挖矿逻辑：优先挖宝石矿(2倍价值)，再挖黄金矿
 /// </summary>
-public sealed class ChronoMiner : CardModel
+public sealed class ChronoMiner : ChronoCardModel
 {
 	// 数值引用
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.ChronoMiner;
-	private bool _chronoConsumed;
 	
 	public ChronoMiner() : base((int)Values.Cost, CardType.Skill, CardRarity.Token, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/ahrvicon.png";
 
-	protected override IEnumerable<IHoverTip> ExtraHoverTips
+	protected override List<IHoverTip> GetExtraHoverTips()
 	{
-		get
+		return new List<IHoverTip>
 		{
-			var tips = new List<IHoverTip>
-			{
-				ModCardKeywords.TechLevelT1.CreateHoverTip(),
-				ModCardKeywords.Vehicle.CreateHoverTip()
-			};
-			
-			if (!_chronoConsumed)
-			{
-				tips.Add(ModCardKeywords.Chrono.CreateHoverTip());
-			}
-			
-			return tips;
-		}
+			ModCardKeywords.TechLevelT1.CreateHoverTip(),
+			ModCardKeywords.Vehicle.CreateHoverTip()
+		};
 	}
 
 	protected override List<DynamicVar> CanonicalVars => new()
@@ -95,27 +85,6 @@ public sealed class ChronoMiner : CardModel
 
 			dollarPower.AddDollar(totalAmount);
 			GD.Print($"[ChronoMiner] 总共获得 {totalAmount} 资金");
-		}
-
-		bool hasExhaustKeyword = play.Card.Keywords.Contains(CardKeyword.Exhaust);
-		if (hasExhaustKeyword && !_chronoConsumed)
-		{
-			_chronoConsumed = true;
-			if (DynamicVars["ChronoTitle"] is StringVar chronoTitleVar)
-			{
-				chronoTitleVar.StringValue = string.Empty;
-			}
-			await CardPileCmd.Add(play.Card, PileType.Draw);
-			GD.Print($"[ChronoMiner] 检测到消耗关键字，触发最后一次超时空进入摸牌堆，超时空效果已消耗");
-		}
-		else if (!hasExhaustKeyword)
-		{
-			await CardPileCmd.Add(play.Card, PileType.Draw);
-			GD.Print($"[ChronoMiner] 超时空效果生效，进入摸牌堆");
-		}
-		else
-		{
-			GD.Print($"[ChronoMiner] 超时空效果已消耗，卡牌正常消耗");
 		}
 	}
 

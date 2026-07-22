@@ -29,7 +29,7 @@ public class SovietRelicPool : RelicPoolModel
             ModelDb.Relic<CubaRelic>(),
             ModelDb.Relic<IraqRelic>(),
             ModelDb.Relic<LibyaRelic>(),
-            ModelDb.Relic<Allies.Relics.ChronoCommandosRelic>(),
+            ModelDb.Relic<ChronoIvanRelic>(),
         };
     }
 }

@@ -566,6 +566,36 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/TerrorMan/Iterseb.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/TerrorMan/Itersec.mp3",
         },
+        ["CrazyIvan"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icraata.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icraatb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icramoa.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icramoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icramod.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icrasea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icraseb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icrasec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icrased.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icrasee.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icrasef.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icraseg.mp3",
+        },
+        ["ChronoIvan"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icraata.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icraatb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icramoa.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icramoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icramod.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icrasea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icraseb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icrasec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icrased.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icrasee.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icrasef.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/CrazyIvan/Icraseg.mp3",
+        },
         ["SovietTransportShip"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/SovietUnits/SovietTransportShip/Vhosmoa.mp3",

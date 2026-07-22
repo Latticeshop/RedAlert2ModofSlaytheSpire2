@@ -65,7 +65,7 @@ public sealed class SupportCard : CardModel
 			? (int)Values.MagicNumber + (int)Values.MagicNumberUpgraded
 			: (int)Values.MagicNumber;
 
-		HashSet<Type> unitTypes = GetUnitTypes();
+		HashSet<Type> unitTypes = CardUtils.GetUnitTypes();
 
 		GD.Print($"[SupportCard] 选择 {selectCount} 张单位卡送给队友");
 
@@ -105,56 +105,5 @@ public sealed class SupportCard : CardModel
 		card.GiveToAnotherPlayer(targetPlayer);
 		
 		await CardPileCmd.Add(new[] { card }, pileType.GetPile(targetPlayer), position, null, skipVisuals: false, isChangingOwners: true);
-	}
-
-	private static HashSet<Type> GetUnitTypes()
-	{
-		HashSet<Type> unitTypes = new();
-
-		foreach (var soldierFunc in AlliedCardRegistry.Soldiers)
-			unitTypes.Add(soldierFunc().GetType());
-		foreach (var soldierFunc in SovietCardRegistry.Soldiers)
-			unitTypes.Add(soldierFunc().GetType());
-		foreach (var soldierFunc in YuriCardRegistry.Soldiers)
-			unitTypes.Add(soldierFunc().GetType());
-
-		foreach (var vehicleFunc in AlliedCardRegistry.Vehicles)
-			unitTypes.Add(vehicleFunc().GetType());
-		foreach (var vehicleFunc in SovietCardRegistry.Vehicles)
-			unitTypes.Add(vehicleFunc().GetType());
-
-		foreach (var aircraftFunc in AlliedCardRegistry.Aircraft)
-			unitTypes.Add(aircraftFunc().GetType());
-		foreach (var aircraftFunc in SovietCardRegistry.Aircraft)
-			unitTypes.Add(aircraftFunc().GetType());
-
-		foreach (var shipFunc in AlliedCardRegistry.Ships)
-			unitTypes.Add(shipFunc().GetType());
-		foreach (var shipFunc in SovietCardRegistry.Ships)
-			unitTypes.Add(shipFunc().GetType());
-
-		if (AlliedCardRegistry.HighTechSoldiers != null)
-			foreach (var f in AlliedCardRegistry.HighTechSoldiers)
-				unitTypes.Add(f().GetType());
-		if (AlliedCardRegistry.HighTechVehicles != null)
-			foreach (var f in AlliedCardRegistry.HighTechVehicles)
-				unitTypes.Add(f().GetType());
-		if (AlliedCardRegistry.HighTechShips != null)
-			foreach (var f in AlliedCardRegistry.HighTechShips)
-				unitTypes.Add(f().GetType());
-		if (SovietCardRegistry.HighTechVehicles != null)
-			foreach (var f in SovietCardRegistry.HighTechVehicles)
-				unitTypes.Add(f().GetType());
-		if (SovietCardRegistry.RadarSoldiers != null)
-			foreach (var f in SovietCardRegistry.RadarSoldiers)
-				unitTypes.Add(f().GetType());
-		if (SovietCardRegistry.RadarVehicles != null)
-			foreach (var f in SovietCardRegistry.RadarVehicles)
-				unitTypes.Add(f().GetType());
-
-		unitTypes.Add(typeof(Allies.Cards.AlliedMCV));
-		unitTypes.Add(typeof(Soviet.Cards.SovietMCV));
-
-		return unitTypes;
 	}
 }

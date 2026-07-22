@@ -79,6 +79,30 @@ public static class SovietCardValues
 		DamageUpgraded = 3,
 		DollarValue = 200
 	};
+
+	/// <summary>疯狂伊文 - 1费攻击卡，Token，赋予3(升级2)层定时炸弹，部署给单位卡牌添加消耗并获得3(升级5)活力，价格600，需要雷达/空指部(T2)</summary>
+	public static CardValueStore.CardValues CrazyIvan => new()
+	{
+		Cost = 1,
+		Damage = 3,
+		DamageUpgraded = 2,
+		MagicNumber = 5,
+		DollarValue = 600,
+		DeployVigor = 3,
+		DeployVigorUpgraded = 2
+	};
+
+	/// <summary>超时空伊文 - 1费攻击卡，Token，赋予3(升级2)层定时炸弹，部署给单位卡牌添加消耗并获得3(升级5)活力，超时空效果，价格1000，需要超时空伊文遗物</summary>
+	public static CardValueStore.CardValues ChronoIvan => new()
+	{
+		Cost = 1,
+		Damage = 3,
+		DamageUpgraded = 2,
+		MagicNumber = 5,
+		DollarValue = 1000,
+		DeployVigor = 3,
+		DeployVigorUpgraded = 2
+	};
 	
 	/// <summary>工程师 - 1费技能卡，从选项中选择指令，价格500</summary>
 	public static CardValueStore.CardValues Engineer => new()
@@ -93,8 +117,8 @@ public static class SovietCardValues
 	public static CardValueStore.CardValues SpyPlane => new()
 	{
 		Cost = 0,
-		MagicNumber = 2,
-		MagicNumberUpgraded = 1,
+		MagicNumber = 3,
+		MagicNumberUpgraded = 5,
 		DollarValue = 0
 	};
 	
@@ -448,7 +472,9 @@ public static class SovietCardValues
 			{ "SOVIETTESLATROOPER", TeslaTrooper },
 			{ "DESOLATOR", Desolator },
 			{ "SOVIETENGINEER", Engineer },
-			{ "TERROR_MAN", Terrorist }
+			{ "TERROR_MAN", Terrorist },
+			{ "CRAZY_IVAN_CARD", CrazyIvan },
+			{ "CHRONO_IVAN_CARD", ChronoIvan }
 		};
 	}
 	

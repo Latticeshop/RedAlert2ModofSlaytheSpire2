@@ -13,17 +13,28 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Common.Cards;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
-public sealed class ChronoLegionnaire : CardModel
+public sealed class ChronoLegionnaire : ChronoCardModel
 {
     private static readonly CardValueStore.CardValues Values = AlliesCardValues.ChronoLegionnaire;
-    private bool _chronoConsumed;
 
     public ChronoLegionnaire() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
     public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/allies/clegicon.png";
+
+    protected override List<IHoverTip> GetExtraHoverTips()
+    {
+        return new List<IHoverTip>
+        {
+            ModCardKeywords.TechLevelT3.CreateHoverTip(),
+            ModCardKeywords.Soldier.CreateHoverTip(),
+            ModCardKeywords.Erase.CreateHoverTip(),
+            HoverTipFactory.FromPower<ErasingPower>()
+        };
+    }
 
     protected override List<DynamicVar> CanonicalVars => new()
     {
@@ -32,29 +43,9 @@ public sealed class ChronoLegionnaire : CardModel
         new StringVar("ChronoTitle", "[gold]超时空.[/gold]\n")
     };
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips
-    {
-        get
-        {
-            var tips = new List<IHoverTip>
-            {
-                ModCardKeywords.TechLevelT3.CreateHoverTip(),
-                ModCardKeywords.Soldier.CreateHoverTip(),
-                ModCardKeywords.Erase.CreateHoverTip(),
-                HoverTipFactory.FromPower<ErasingPower>()
-            };
-            
-            if (!_chronoConsumed)
-            {
-                tips.Insert(2, ModCardKeywords.Chrono.CreateHoverTip());
-            }
-            
-            return tips;
-        }
-    }
-
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+        PlayChronoMoveSound();
         UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Allied");
         UnitVoiceHelper.PlayUnitVoice("ChronoLegionnaireAttack", "Allied");
 
@@ -87,31 +78,15 @@ public sealed class ChronoLegionnaire : CardModel
                 await CreatureCmd.Stun(target);
             }
         }
-
-        bool hasExhaustKeyword = play.Card.Keywords.Contains(CardKeyword.Exhaust);
-        if (hasExhaustKeyword && !_chronoConsumed)
-        {
-            _chronoConsumed = true;
-            if (DynamicVars["ChronoTitle"] is StringVar chronoTitleVar)
-            {
-                chronoTitleVar.StringValue = string.Empty;
-            }
-            await CardPileCmd.Add(play.Card, PileType.Draw);
-            GD.Print($"[ChronoLegionnaire] 检测到消耗关键字，触发最后一次超时空进入摸牌堆，超时空效果已消耗");
-        }
-        else if (!hasExhaustKeyword)
-        {
-            await CardPileCmd.Add(play.Card, PileType.Draw);
-            GD.Print($"[ChronoLegionnaire] 超时空效果生效，进入摸牌堆");
-        }
-        else
-        {
-            GD.Print($"[ChronoLegionnaire] 超时空效果已消耗，卡牌正常消耗");
-        }
     }
 
     protected override void OnUpgrade()
     {
         DynamicVars["ErasePercent"].UpgradeValueBy(Values.MagicNumberUpgraded);
+    }
+
+    private void PlayChronoMoveSound()
+    {
+        CommonSoundHelper.PlayChronoMoveSound();
     }
 }

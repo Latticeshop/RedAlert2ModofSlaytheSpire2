@@ -132,5 +132,12 @@
     "ui.dollar_transfer.no_target": "No Teammates Available",
     "ui.dollar_transfer.cancel": "Cancel",
     "paratrooper.faction_info.title": "Paratrooper Details",
-    "paratrooper.faction_info.description": "Allies receive 3 GIs.\nSoviets receive 4 Conscripts.\nYuri receives 3 Initiates."
+    "paratrooper.faction_info.description": "Allies receive 3 GIs.\nSoviets receive 4 Conscripts.\nYuri receives 3 Initiates.",
+    "timed_bomb.title": "Timed Bomb",
+    "timed_bomb.description": "Gain [gold]Vigor[/gold] before playing. Card gains [gold]Exhaust[/gold].",
+    "ui.crazy_ivan.title": "Choose Crazy Ivan Action",
+    "ui.crazy_ivan.attack_title": "Plant Bomb",
+    "ui.crazy_ivan.attack_desc": "Apply {BombStacks} Timed Bomb to an enemy",
+    "ui.crazy_ivan.deploy_title": "Deploy",
+    "ui.crazy_ivan.deploy_desc": "Select a card in hand, apply Exhaust and Timed Bomb"
 }

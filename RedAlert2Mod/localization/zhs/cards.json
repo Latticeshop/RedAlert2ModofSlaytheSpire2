@@ -232,5 +232,9 @@
     "GRAND_CANNON.description": "[gold]价格：${DollarNumber}[/gold]。回合结束时对敌人造成 {Damage} 点伤害。",
     "SUPPORT_CARD.title": "支援",
     "SUPPORT_CARD.description": "选择手牌中最多 {MagicNumber} 张[gold]单位[/gold]卡送给队友。",
-    "SUPPORT_CARD.select_prompt": "选择 0-{MaxCount} 张单位卡送给队友"
+    "SUPPORT_CARD.select_prompt": "选择 0-{MaxCount} 张单位卡送给队友",
+    "CRAZY_IVAN_CARD.title": "疯狂伊文",
+    "CRAZY_IVAN_CARD.description": "赋予敌人{BombStacks}层[gold]定时炸弹[/gold]，已有[gold]定时炸弹[/gold]则减少倒计时。[gold]部署[/gold]：选择手牌中一张[gold]单位[/gold]卡牌添加[gold]“定时炸弹”[/gold]词条，打出卡牌前获得{DeployVigor}点[gold]活力[/gold]并消耗。",
+    "CHRONO_IVAN_CARD.title": "超时空伊文",
+    "CHRONO_IVAN_CARD.description": "{ChronoTitle}赋予敌人{BombStacks}层[gold]定时炸弹[/gold]，已有[gold]定时炸弹[/gold]则减少倒计时。[gold]部署[/gold]：选择手牌中一张[gold]单位[/gold]卡牌添加[gold]“定时炸弹”[/gold]词条，打出卡牌前获得{DeployVigor}点[gold]活力[/gold]并消耗。"
 }

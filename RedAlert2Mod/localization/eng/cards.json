@@ -232,5 +232,9 @@
     "GRAND_CANNON.description": "[gold]Cost: ${DollarNumber}[/gold]. At the end of turn, deal {Damage}(upgraded {DamageUpgraded}) damage to an enemy.",
     "SUPPORT_CARD.title": "Support",
     "SUPPORT_CARD.description": "Select up to {MagicNumber} [gold]Unit[/gold] cards from your hand and give them to an ally.",
-    "SUPPORT_CARD.select_prompt": "Select 0-{MaxCount} unit cards to give to an ally"
+    "SUPPORT_CARD.select_prompt": "Select 0-{MaxCount} unit cards to give to an ally",
+    "CRAZY_IVAN_CARD.title": "Crazy Ivan",
+    "CRAZY_IVAN_CARD.description": "Apply {BombStacks} stacks of [gold]Timed Bomb[/gold] to an enemy. If enemy already has [gold]Timed Bomb[/gold], reduce countdown. [gold]Deploy[/gold]: Select a [gold]Unit[/gold] card from your hand and add the [gold]\"Timed Bomb\"[/gold] keyword. Before playing the card, gain {DeployVigor} [gold]Vigor[/gold] and Exhaust.",
+    "CHRONO_IVAN_CARD.title": "Chrono Ivan",
+    "CHRONO_IVAN_CARD.description": "{ChronoTitle}Apply {BombStacks} stacks of [gold]Timed Bomb[/gold] to an enemy. If enemy already has [gold]Timed Bomb[/gold], reduce countdown. [gold]Deploy[/gold]: Select a [gold]Unit[/gold] card from your hand and add the [gold]\"Timed Bomb\"[/gold] keyword. Before playing the card, gain {DeployVigor} [gold]Vigor[/gold] and Exhaust."
 }

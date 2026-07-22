@@ -59,9 +59,13 @@ public sealed class AlliesShipyardCard : CardModel
 			if (!CardUtils.HasMcvPower(Owner.Creature))
 				return false;
 
-			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-			if (dollarPower == null || dollarPower.DollarValue < AlliesCardValues.Shipyard.DollarValue)
-				return false;
+			bool hasPower = Owner.Creature.Powers.OfType<AlliedShipyardPower>().Any();
+			if (!hasPower)
+			{
+				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+				if (dollarPower == null || dollarPower.DollarValue < AlliesCardValues.Shipyard.DollarValue)
+					return false;
+			}
 
 			return true;
 		}
@@ -88,12 +92,19 @@ public sealed class AlliesShipyardCard : CardModel
 		// 如果玩家选择了卡牌，才执行能力效果
 		if (selectedCard != null)
 		{
-			// 选择成功后才扣除建筑资金
-			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-			if (dollarPower != null)
+			bool hasPower = Owner.Creature.Powers.OfType<AlliedShipyardPower>().Any();
+			if (!hasPower)
 			{
-				dollarPower.AddDollar(-(int)AlliesCardValues.Shipyard.DollarValue);
-				GD.Print($"[AlliesShipyardCard] 扣除建筑资金 {AlliesCardValues.Shipyard.DollarValue}");
+				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+				if (dollarPower != null)
+				{
+					dollarPower.AddDollar(-(int)AlliesCardValues.Shipyard.DollarValue);
+					GD.Print($"[AlliesShipyardCard] 扣除建筑资金 {AlliesCardValues.Shipyard.DollarValue}");
+				}
+			}
+			else
+			{
+				GD.Print("[AlliesShipyardCard] 已有船厂能力，不扣除建筑资金");
 			}
 
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);

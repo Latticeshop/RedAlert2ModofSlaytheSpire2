@@ -55,9 +55,13 @@ public sealed class AlliesBarracksCard : CardModel
 				if (!CardUtils.HasMcvPower(Owner.Creature))
 					return false;
 
-				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-				if (dollarPower == null || dollarPower.DollarValue < AlliesCardValues.Barracks.DollarValue)
-					return false;
+				bool hasPower = Owner.Creature.Powers.OfType<AlliedBarracksPower>().Any();
+				if (!hasPower)
+				{
+					var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+					if (dollarPower == null || dollarPower.DollarValue < AlliesCardValues.Barracks.DollarValue)
+						return false;
+				}
 
 				return true;
 			}
@@ -105,12 +109,19 @@ public sealed class AlliesBarracksCard : CardModel
 		// 如果玩家选择了卡牌，才执行能力效果
 		if (selectedCard != null)
 		{
-			// 选择成功后才扣除建筑资金
-			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-			if (dollarPower != null)
+			bool hasPower = Owner.Creature.Powers.OfType<AlliedBarracksPower>().Any();
+			if (!hasPower)
 			{
-				dollarPower.AddDollar(-(int)AlliesCardValues.Barracks.DollarValue);
-				GD.Print($"[AlliesBarracksCard] 扣除建筑资金 {AlliesCardValues.Barracks.DollarValue}");
+				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+				if (dollarPower != null)
+				{
+					dollarPower.AddDollar(-(int)AlliesCardValues.Barracks.DollarValue);
+					GD.Print($"[AlliesBarracksCard] 扣除建筑资金 {AlliesCardValues.Barracks.DollarValue}");
+				}
+			}
+			else
+			{
+				GD.Print("[AlliesBarracksCard] 已有兵营能力，不扣除建筑资金");
 			}
 
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
@@ -149,7 +160,7 @@ public sealed class AlliesBarracksCard : CardModel
 		}
 		
 		/// <summary>
-		/// 检查玩家是否拥有空指部能力
+		/// 检查玩家是否拥有空指部或雷达能力（T2科技解锁）
 		/// </summary>
 		private bool HasAirForceCommand()
 		{
@@ -158,6 +169,12 @@ public sealed class AlliesBarracksCard : CardModel
 			
 			// 检查是否有空指部能力
 			if (Owner.Creature.Powers.Any(p => p is AlliedAirForceCommandPower))
+			{
+				return true;
+			}
+			
+			// 检查是否有雷达能力
+			if (Owner.Creature.Powers.Any(p => p is Soviet.Powers.SovietRadarPower))
 			{
 				return true;
 			}

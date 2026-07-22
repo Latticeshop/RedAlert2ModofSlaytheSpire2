@@ -23,6 +23,8 @@ public static class CardValueStore
 		public int StarsUpgraded { get; set; } = 0;
 		public int MagicNumber { get; set; } = 0;
 		public int MagicNumberUpgraded { get; set; } = 0;
+		public int DeployVigor { get; set; } = 0;
+		public int DeployVigorUpgraded { get; set; } = 0;
 		
 		public int GetCost(bool upgraded = false) => upgraded ? Cost + CostUpgraded : Cost;
 		

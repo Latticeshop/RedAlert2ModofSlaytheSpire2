@@ -78,6 +78,19 @@ public static Dictionary<string, CardValueStore.CardValues> CreateVehicleValuesM
 }
 ```
 
+> **⚠️ 关键注意事项：映射键必须与卡牌ID完全匹配**
+> 
+> 卡牌ID由类名自动生成，转换规则：`ClassName` → `CLASS_NAME`（大写 + 驼峰处加下划线）
+> 
+> | 类名 | 生成的卡牌ID | 映射键 |
+> |------|-------------|--------|
+> | `Conscript` | `CONSCRIPT` | `{ "CONSCRIPT", Conscript }` |
+> | `SovietTeslaTrooper` | `SOVIET_TESLA_TROOPER` | `{ "SOVIET_TESLA_TROOPER", TeslaTrooper }` |
+> | `CrazyIvanCard` | `CRAZY_IVAN_CARD` | `{ "CRAZY_IVAN_CARD", CrazyIvan }` |
+> | `ChronoIvanCard` | `CHRONO_IVAN_CARD` | `{ "CHRONO_IVAN_CARD", ChronoIvan }` |
+> 
+> **常见错误**：类名带 `Card` 后缀但映射键遗漏 `_CARD`，导致训练UI价格显示为 $0。
+
 ---
 
 ### 4. 生产序列选项
@@ -1259,7 +1272,138 @@ protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 
 ---
 
-## 十一、能力创建：叠层 vs 独立实例 快速决策
+## 十一、创建带行为逻辑的自定义词条（超时空词条案例）
+
+当自定义词条不仅需要视觉效果，还需要绑定游戏行为时，需要创建基类来封装词条逻辑。
+
+### 适用场景
+
+| 词条名称 | 核心逻辑 | 适用卡牌 |
+|---------|---------|---------|
+| 超时空 | 打出进入摸牌堆；与消耗共存时首次进入摸牌堆并移除超时空 | 超时空矿车、超时空军团兵、超时空突击兵、超时空伊文 |
+
+### 创建步骤
+
+#### 第一步：定义词条
+
+在 `CustomKeyword.cs` 的 `ModCardKeywords` 类中添加词条定义：
+
+```csharp
+public static readonly CustomKeyword Chrono = new(
+    "CHRONO",
+    new LocString("card_keywords", "chrono.title"),
+    new LocString("card_keywords", "chrono.description")
+);
+```
+
+#### 第二步：创建词条行为基类
+
+在 `Common/Cards/` 目录下创建基类文件：
+
+```csharp
+// ChronoCardModel.cs
+public abstract class ChronoCardModel : CardModel
+{
+    private bool _chronoConsumed;
+
+    protected ChronoCardModel(int cost, CardType cardType, CardRarity cardRarity, TargetType targetType)
+        : base(cost, cardType, cardRarity, targetType) { }
+
+    protected override List<DynamicVar> CanonicalVars => new()
+    {
+        new StringVar("ChronoTitle", "[gold]超时空.[/gold]\n")
+    };
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips
+    {
+        get
+        {
+            var tips = GetExtraHoverTips();
+            if (!_chronoConsumed)
+            {
+                tips.Add(ModCardKeywords.Chrono.CreateHoverTip());
+            }
+            return tips;
+        }
+    }
+
+    protected abstract List<IHoverTip> GetExtraHoverTips();
+
+    protected override CardLocation GetResultLocationForCardPlay()
+    {
+        if (_chronoConsumed)
+            return base.GetResultLocationForCardPlay();
+
+        bool hasExhaust = Keywords.Contains(CardKeyword.Exhaust);
+        if (hasExhaust)
+        {
+            _chronoConsumed = true;
+            DynamicVars["ChronoTitle"].StringValue = string.Empty;
+            return new CardLocation(Owner, PileType.Draw, CardPilePosition.Bottom);
+        }
+        return new CardLocation(Owner, PileType.Draw, CardPilePosition.Bottom);
+    }
+}
+```
+
+#### 第三步：卡牌继承基类
+
+将卡牌类改为继承 `ChronoCardModel`，重写 `GetExtraHoverTips()` 方法：
+
+```csharp
+public sealed class ChronoMiner : ChronoCardModel
+{
+    public ChronoMiner() : base(0, CardType.Skill, CardRarity.Token, TargetType.Self) { }
+
+    protected override List<IHoverTip> GetExtraHoverTips()
+    {
+        return new List<IHoverTip>
+        {
+            ModCardKeywords.TechLevelT1.CreateHoverTip(),
+            ModCardKeywords.Vehicle.CreateHoverTip()
+        };
+    }
+
+    // ... 其他逻辑
+}
+```
+
+#### 第四步：添加本地化
+
+**card_keywords.json**：
+```json
+{
+    "chrono.title": "超时空",
+    "chrono.description": "打出时进入摸牌堆。与消耗词条共存时，首次打出进入摸牌堆并移除超时空，下次打出正常消耗。"
+}
+```
+
+**cards.json**（在描述开头添加 `{ChronoTitle}`）：
+```json
+{
+    "CHRONO_MINER.description": "{ChronoTitle}获得 {DollarValue} 资金。"
+}
+```
+
+### 核心机制速查
+
+| 机制 | 说明 |
+|------|------|
+| `GetResultLocationForCardPlay()` | 控制卡牌打出后的去向（Beta版API） |
+| `_chronoConsumed` | 状态标记，控制超时空效果是否已消耗 |
+| `StringVar("ChronoTitle")` | 动态变量，控制描述开头的"超时空."文本显示 |
+| `GetExtraHoverTips()` | 抽象方法，子类返回额外的悬浮提示 |
+
+### 优势
+
+- **代码解耦**：词条逻辑集中在基类，卡牌只需关注自身特有逻辑
+- **易于维护**：修改词条规则只需修改基类
+- **一致性**：所有同词条卡牌行为一致
+- **可扩展性**：新增同词条卡牌只需继承基类
+
+---
+
+## 十二、能力创建：叠层 vs 独立实例 快速决策
 
 创建建筑/战备/资源类 Power 时，第一时间决定 `InstanceType`，否则后续返工成本极高。
 

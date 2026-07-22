@@ -132,5 +132,12 @@
   "ui.dollar_transfer.no_target": "이체 가능한 팀원이 없습니다",
   "ui.dollar_transfer.cancel": "취소",
   "paratrooper.faction_info.title": "낙하병 상세",
-  "paratrooper.faction_info.description": "연합군은 GI 3명을 받습니다.\n소련군은 징병 4명을 받습니다.\n유리는 개척자 3명을 받습니다."
+  "paratrooper.faction_info.description": "연합군은 GI 3명을 받습니다.\n소련군은 징병 4명을 받습니다.\n유리는 개척자 3명을 받습니다.",
+  "timed_bomb.title": "타임드 폭탄",
+  "timed_bomb.description": "사용 전에 [gold]비거[/gold]층을 얻습니다. 카드에 [gold]소멸[/gold]이 부여됩니다.",
+  "ui.crazy_ivan.title": "크레이지 이반 행동 선택",
+  "ui.crazy_ivan.attack_title": "폭탄 설치",
+  "ui.crazy_ivan.attack_desc": "적 1명에게 {BombStacks}층의 타임드 폭탄 부여",
+  "ui.crazy_ivan.deploy_title": "전개",
+  "ui.crazy_ivan.deploy_desc": "손에 있는 카드를 선택하여 소멸과 타임드 폭탄 부여"
 }

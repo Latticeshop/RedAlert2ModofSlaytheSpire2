@@ -57,9 +57,13 @@ public sealed class AirForceCommand : CardModel
 			if (!CardUtils.HasMcvPower(Owner.Creature))
 				return false;
 
-			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-			if (dollarPower == null || dollarPower.DollarValue < AlliesCardValues.AirForceCommand.DollarValue)
-				return false;
+			bool hasPower = Owner.Creature.Powers.OfType<AlliedAirForceCommandPower>().Any();
+			if (!hasPower)
+			{
+				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+				if (dollarPower == null || dollarPower.DollarValue < AlliesCardValues.AirForceCommand.DollarValue)
+					return false;
+			}
 
 			return true;
 		}
@@ -102,12 +106,19 @@ public sealed class AirForceCommand : CardModel
 		// 如果玩家选择了卡牌，才执行能力效果
 		if (selectedCard != null)
 		{
-			// 选择成功后才扣除建筑资金
-			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-			if (dollarPower != null)
+			bool hasPower = Owner.Creature.Powers.OfType<AlliedAirForceCommandPower>().Any();
+			if (!hasPower)
 			{
-				dollarPower.AddDollar(-(int)AlliesCardValues.AirForceCommand.DollarValue);
-				GD.Print($"[AirForceCommand] 扣除建筑资金 {AlliesCardValues.AirForceCommand.DollarValue}");
+				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+				if (dollarPower != null)
+				{
+					dollarPower.AddDollar(-(int)AlliesCardValues.AirForceCommand.DollarValue);
+					GD.Print($"[AirForceCommand] 扣除建筑资金 {AlliesCardValues.AirForceCommand.DollarValue}");
+				}
+			}
+			else
+			{
+				GD.Print("[AirForceCommand] 已有空指部能力，不扣除建筑资金");
 			}
 
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);

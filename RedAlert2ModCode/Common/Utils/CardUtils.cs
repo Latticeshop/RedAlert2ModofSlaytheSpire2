@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Godot;
@@ -10,6 +12,9 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using RedAlert2ModCode.Allies;
+using RedAlert2ModCode.Soviet;
+using RedAlert2ModCode.Yuri;
 
 namespace RedAlert2ModCode.Common.Utils;
 
@@ -226,5 +231,25 @@ public static class CardUtils
 		}
 		
 		return false;
+	}
+
+	/// <summary>
+	/// 获取所有单位卡牌类型（士兵、载具、飞机、船只、MCV）
+	/// </summary>
+	/// <returns>单位卡牌类型集合</returns>
+	public static HashSet<Type> GetUnitTypes()
+	{
+		HashSet<Type> unitTypes = new();
+
+		// 从各阵营Registry获取所有单位类型
+		unitTypes.UnionWith(AlliedCardRegistry.GetAllUnits().Select(u => u.GetType()));
+		unitTypes.UnionWith(SovietCardRegistry.GetAllUnits().Select(u => u.GetType()));
+		unitTypes.UnionWith(YuriCardRegistry.GetAllUnits().Select(u => u.GetType()));
+
+		// MCV不在GetAllUnits中，需要手动补充
+		unitTypes.Add(typeof(Allies.Cards.AlliedMCV));
+		unitTypes.Add(typeof(Soviet.Cards.SovietMCV));
+
+		return unitTypes;
 	}
 }

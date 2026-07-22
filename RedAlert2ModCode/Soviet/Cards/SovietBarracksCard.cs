@@ -17,6 +17,7 @@ using RedAlert2ModCode.Soviet.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Common.Cards;
+using RedAlert2ModCode.Soviet.Relics;
 
 namespace RedAlert2ModCode.Soviet.Cards;
 
@@ -59,9 +60,13 @@ public sealed class SovietBarracksCard : CardModel
 			if (!CardUtils.HasMcvPower(Owner.Creature))
 				return false;
 
-			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-			if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
-				return false;
+			bool hasPower = Owner.Creature.Powers.OfType<SovietBarracksPower>().Any();
+			if (!hasPower)
+			{
+				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+				if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
+					return false;
+			}
 
 			return true;
 		}
@@ -76,8 +81,9 @@ public sealed class SovietBarracksCard : CardModel
 		List<CardModel> availableCards = SovietCardRegistry.CreateSoldiers(Owner);
 		GD.Print($"[SovietBarracksCard] 可用卡牌数量: {availableCards.Count}");
 
-		// 检查是否有雷达能力，如果没有则移除T2科技士兵（磁暴步兵、辐射工兵、恐怖分子）
-		bool hasRadarPower = Owner.Creature.Powers.Any(p => p is SovietRadarPower);
+		// 检查是否有雷达或空指部能力（T2科技解锁），如果没有则移除T2科技士兵（磁暴步兵、辐射工兵、恐怖分子）
+		bool hasRadarPower = Owner.Creature.Powers.Any(p => p is SovietRadarPower) ||
+							 Owner.Creature.Powers.Any(p => p is Allies.Powers.AlliedAirForceCommandPower);
 		if (!hasRadarPower)
 		{
 			availableCards = availableCards.Where(c => 
@@ -102,6 +108,8 @@ public sealed class SovietBarracksCard : CardModel
 			GD.Print($"[SovietBarracksCard] 无古巴国旗，移除恐怖人选项，剩余卡牌数量: {availableCards.Count}");
 		}
 
+		// 超时空伊文已在 CreateSoldiers 中根据遗物情况添加，此处无需重复添加
+
 		var cardValuesMap = SovietCardValues.CreateSoldierValuesMap();
 		CardModel? selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(availableCards, Owner, cardValuesMap, FactionType.Soviet);
 
@@ -109,12 +117,19 @@ public sealed class SovietBarracksCard : CardModel
 
 		if (selectedCard != null)
 		{
-			// 选择成功后才扣除建筑资金
-			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-			if (dollarPower != null)
+			bool hasPower = Owner.Creature.Powers.OfType<SovietBarracksPower>().Any();
+			if (!hasPower)
 			{
-				dollarPower.AddDollar(-(int)Values.DollarValue);
-				GD.Print($"[SovietBarracksCard] 扣除建筑资金 {Values.DollarValue}");
+				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+				if (dollarPower != null)
+				{
+					dollarPower.AddDollar(-(int)Values.DollarValue);
+					GD.Print($"[SovietBarracksCard] 扣除建筑资金 {Values.DollarValue}");
+				}
+			}
+			else
+			{
+				GD.Print("[SovietBarracksCard] 已有兵营能力，不扣除建筑资金");
 			}
 
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);

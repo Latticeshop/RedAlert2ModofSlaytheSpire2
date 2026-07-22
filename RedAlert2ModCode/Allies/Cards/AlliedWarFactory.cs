@@ -59,9 +59,13 @@ public sealed class AlliedWarFactory : CardModel
 			if (!CardUtils.HasMcvPower(Owner.Creature))
 				return false;
 
-			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-			if (dollarPower == null || dollarPower.DollarValue < AlliesCardValues.AlliedWarFactory.DollarValue)
-				return false;
+			bool hasPower = Owner.Creature.Powers.OfType<AlliedWarFactoryPower>().Any();
+			if (!hasPower)
+			{
+				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+				if (dollarPower == null || dollarPower.DollarValue < AlliesCardValues.AlliedWarFactory.DollarValue)
+					return false;
+			}
 
 			return true;
 		}
@@ -110,12 +114,19 @@ public sealed class AlliedWarFactory : CardModel
 		// 如果玩家选择了卡牌，才执行能力效果
 		if (selectedCard != null)
 		{
-			// 选择成功后才扣除建筑资金
-			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-			if (dollarPower != null)
+			bool hasPower = Owner.Creature.Powers.OfType<AlliedWarFactoryPower>().Any();
+			if (!hasPower)
 			{
-				dollarPower.AddDollar(-(int)AlliesCardValues.AlliedWarFactory.DollarValue);
-				GD.Print($"[AlliedWarFactory] 扣除建筑资金 {AlliesCardValues.AlliedWarFactory.DollarValue}");
+				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+				if (dollarPower != null)
+				{
+					dollarPower.AddDollar(-(int)AlliesCardValues.AlliedWarFactory.DollarValue);
+					GD.Print($"[AlliedWarFactory] 扣除建筑资金 {AlliesCardValues.AlliedWarFactory.DollarValue}");
+				}
+			}
+			else
+			{
+				GD.Print("[AlliedWarFactory] 已有重工能力，不扣除建筑资金");
 			}
 
 			// 添加重工能力（用于科技线检查），每次打出都增加层数

@@ -55,9 +55,13 @@ public sealed class SovietShipyardCard : CardModel
 			if (!CardUtils.HasMcvPower(Owner.Creature))
 				return false;
 
-			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-			if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
-				return false;
+			bool hasPower = Owner.Creature.Powers.OfType<SovietShipyardPower>().Any();
+			if (!hasPower)
+			{
+				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+				if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
+					return false;
+			}
 
 			return true;
 		}
@@ -79,12 +83,19 @@ public sealed class SovietShipyardCard : CardModel
 
 		if (selectedCard != null)
 		{
-			// 选择成功后才扣除建筑资金
-			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-			if (dollarPower != null)
+			bool hasPower = Owner.Creature.Powers.OfType<SovietShipyardPower>().Any();
+			if (!hasPower)
 			{
-				dollarPower.AddDollar(-(int)Values.DollarValue);
-				GD.Print($"[SovietShipyardCard] 扣除建筑资金 {Values.DollarValue}");
+				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+				if (dollarPower != null)
+				{
+					dollarPower.AddDollar(-(int)Values.DollarValue);
+					GD.Print($"[SovietShipyardCard] 扣除建筑资金 {Values.DollarValue}");
+				}
+			}
+			else
+			{
+				GD.Print("[SovietShipyardCard] 已有船厂能力，不扣除建筑资金");
 			}
 
 			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);

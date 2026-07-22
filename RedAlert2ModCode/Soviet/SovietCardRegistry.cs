@@ -8,6 +8,7 @@ using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Cards;
 using RedAlert2ModCode.Soviet.Powers;
+using RedAlert2ModCode.Soviet.Relics;
 
 namespace RedAlert2ModCode.Soviet;
 
@@ -26,6 +27,12 @@ public static class SovietCardRegistry
         () => ModelDb.Card<SovietTeslaTrooper>(),
         () => ModelDb.Card<Desolator>(),
         () => ModelDb.Card<TerrorMan>(),
+        () => ModelDb.Card<CrazyIvanCard>(),
+    };
+
+    public static List<Func<CardModel>> RelicUnlockedSoldiers { get; } = new()
+    {
+        () => ModelDb.Card<ChronoIvanCard>(),
     };
 
     public static List<Func<CardModel>> Vehicles { get; } = new()
@@ -125,7 +132,20 @@ public static class SovietCardRegistry
 
     public static List<CardModel> GetAllSoldiers()
     {
-        return Soldiers.Select(s => s()).ToList();
+        List<CardModel> soldiers = Soldiers.Select(s => s()).ToList();
+        soldiers.AddRange(GetAllRadarSoldiers());
+        soldiers.AddRange(GetAllRelicUnlockedSoldiers());
+        return soldiers;
+    }
+
+    public static List<CardModel> GetAllRadarSoldiers()
+    {
+        return RadarSoldiers.Select(s => s()).ToList();
+    }
+
+    public static List<CardModel> GetAllRelicUnlockedSoldiers()
+    {
+        return RelicUnlockedSoldiers.Select(s => s()).ToList();
     }
 
     public static List<CardModel> GetAllVehicles()
@@ -205,6 +225,11 @@ public static class SovietCardRegistry
             soldiers.AddRange(RadarSoldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList());
         }
         
+        if (HasChronoIvanRelic(owner))
+        {
+            soldiers.AddRange(CreateRelicUnlockedSoldiers(owner));
+        }
+        
         return soldiers;
     }
 
@@ -255,12 +280,23 @@ public static class SovietCardRegistry
 
     public static bool HasRadarPower(Creature creature)
     {
-        return creature.Powers.Any(p => p is SovietRadarPower);
+        return creature.Powers.Any(p => p is SovietRadarPower) ||
+               creature.Powers.Any(p => p is RedAlert2ModCode.Allies.Powers.AlliedAirForceCommandPower);
     }
 
     public static bool HasBattleLabPower(Creature creature)
     {
         return creature.Powers.Any(p => p is SovietBattleLabPower);
+    }
+
+    public static bool HasChronoIvanRelic(Player owner)
+    {
+        return owner.Relics.Any(r => r is ChronoIvanRelic);
+    }
+
+    public static List<CardModel> CreateRelicUnlockedSoldiers(Player owner)
+    {
+        return RelicUnlockedSoldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
     }
 
     public static List<CardModel> CreateAircraft(Player owner)
