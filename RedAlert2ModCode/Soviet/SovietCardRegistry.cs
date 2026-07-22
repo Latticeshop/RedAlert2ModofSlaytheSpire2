@@ -4,7 +4,6 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
-using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Cards;
@@ -19,10 +18,6 @@ public static class SovietCardRegistry
         () => ModelDb.Card<Conscript>(),
         () => ModelDb.Card<SovietEngineer>(),
         () => ModelDb.Card<SovietAttackDog>(),
-        () => ModelDb.Card<SovietFlakTrooper>(),
-        () => ModelDb.Card<SovietTeslaTrooper>(),
-        () => ModelDb.Card<Desolator>(),
-        () => ModelDb.Card<TerrorMan>(),
     };
 
     public static List<Func<CardModel>> RadarSoldiers { get; } = new()
@@ -203,7 +198,14 @@ public static class SovietCardRegistry
 
     public static List<CardModel> CreateSoldiers(Player owner)
     {
-        return Soldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+        List<CardModel> soldiers = Soldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+        
+        if (HasRadarPower(owner.Creature))
+        {
+            soldiers.AddRange(RadarSoldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList());
+        }
+        
+        return soldiers;
     }
 
     public static List<CardModel> CreateVehicles(Player owner)

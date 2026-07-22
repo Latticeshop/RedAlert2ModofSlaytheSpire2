@@ -155,6 +155,18 @@ public static class CommonCardValues
 		MagicNumberUpgraded = 2
 	};
 
+	/// <summary>超时空突击队 - 1费攻击卡，造成2(升级3)点伤害5次，部署对非攻击意图敌人造成20(升级25)伤害，价格2000</summary>
+	public static CardValueStore.CardValues ChronoCommandos => new()
+	{
+		Cost = 1,
+		Damage = 2,
+		DamageUpgraded = 1,
+		Repeat = 5,
+		MagicNumber = 20,
+		MagicNumberUpgraded = 5,
+		DollarValue = 2000
+	};
+
 	private static Dictionary<Type, decimal> _sellablePowerDollarMap;
 
 	public static Dictionary<Type, decimal> GetSellablePowerDollarMap()

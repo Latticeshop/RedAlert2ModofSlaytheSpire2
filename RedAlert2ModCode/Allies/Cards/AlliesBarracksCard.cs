@@ -85,15 +85,8 @@ public sealed class AlliesBarracksCard : CardModel
 			availableCards = availableCards.Where(c => c.GetType() != typeof(RocketSoldier)).ToList();
 			GD.Print($"[AlliesBarracksCard] 移除火箭飞行兵选项，剩余卡牌数量: {availableCards.Count}");
 		}
-		
-		// 如果没有空指部/雷达，移除狙击手选项（T2科技）
-		if (!hasAirForceCommand)
-		{
-			availableCards = availableCards.Where(c => c.GetType() != typeof(Sniper)).ToList();
-			GD.Print($"[AlliesBarracksCard] 移除狙击手选项，剩余卡牌数量: {availableCards.Count}");
-		}
 
-		// 如果没有英国国旗，移除狙击手选项
+		// 如果没有英国国旗，移除狙击手选项（英国特色单位）
 		if (!FlagManager.HasUK(Owner))
 		{
 			availableCards = availableCards.Where(c => c.GetType() != typeof(Sniper)).ToList();

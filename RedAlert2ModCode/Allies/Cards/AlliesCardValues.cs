@@ -81,6 +81,30 @@ public static class AlliesCardValues
 		MagicNumberUpgraded = 4,   // 升级后10% = 6 + 4
 		DollarValue = 1500
 	};
+
+	/// <summary>海豹突击队 - 1费攻击卡，造成2(升级3)点伤害5次，部署对非攻击意图敌人造成15(升级20)伤害，价格1000，T2需要空指部</summary>
+	public static CardValueStore.CardValues SealCommandos => new()
+	{
+		Cost = 1,
+		Damage = 2,
+		DamageUpgraded = 1,        // 升级后3 = 2 + 1
+		Repeat = 5,                // 攻击次数
+		MagicNumber = 15,          // 部署伤害
+		MagicNumberUpgraded = 5,   // 升级后20 = 15 + 5
+		DollarValue = 1000
+	};
+
+	/// <summary>超时空突击队 - 1费攻击卡，造成2(升级3)点伤害5次，部署对非攻击意图敌人造成20(升级25)伤害，价格2000，需要超时空突击队遗物</summary>
+	public static CardValueStore.CardValues ChronoCommandos => new()
+	{
+		Cost = 1,
+		Damage = 2,
+		DamageUpgraded = 1,        // 升级后3 = 2 + 1
+		Repeat = 5,                // 攻击次数
+		MagicNumber = 20,          // 部署伤害
+		MagicNumberUpgraded = 5,   // 升级后25 = 20 + 5
+		DollarValue = 2000
+	};
 	
 	/// <summary>伞兵 - 1费攻击卡，升级后0费，将6张美国大兵加入手牌，消耗</summary>
 	public static CardValueStore.CardValues Paratrooper => new()
@@ -555,7 +579,10 @@ public static class AlliesCardValues
 			{ "GUARDIANGI", GuardianGI },
 			{ "ROCKETSOLDIER", RocketSoldier },
 			{ "ALLIESENGINEER", Engineer },
-			{ "CHRONOLEGIONNAIRE", ChronoLegionnaire }
+			{ "SNIPER", Sniper },
+			{ "CHRONOLEGIONNAIRE", ChronoLegionnaire },
+			{ "SEALCOMMANDOS", SealCommandos },
+			{ "CHRONOCOMMANDOS", ChronoCommandos }
 		};
 	}
 	
@@ -577,7 +604,7 @@ public static class AlliesCardValues
 		return new System.Collections.Generic.Dictionary<string, CardValueStore.CardValues>
 		{
 			{ "INTRUDER", Intruder },
-			{ "BLACKHAWK", BlackHawk },
+			{ "BLACK_HAWK", BlackHawk },
 			{ "NIGHTHAWKCHOPPER", NightHawkChopper }
 		};
 	}

@@ -249,6 +249,12 @@ public static class ModCardKeywords
 		new LocString("card_keywords", "erase.description")
 	);
 
+	public static readonly CustomKeyword Infiltrator = new(
+		"INFILTRATOR",
+		new LocString("card_keywords", "infiltrator.title"),
+		new LocString("card_keywords", "infiltrator.description")
+	);
+
 	public static readonly CustomKeyword ParatrooperFactionInfo = new(
 		"PARATROOPER_FACTION_INFO",
 		new LocString("card_keywords", "paratrooper.faction_info.title"),
@@ -289,6 +295,7 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(Miner);
         CustomKeywordManager.RegisterKeyword(Garrison);
         CustomKeywordManager.RegisterKeyword(Erase);
+        CustomKeywordManager.RegisterKeyword(Infiltrator);
         CustomKeywordManager.RegisterKeyword(ParatrooperFactionInfo);
     }
 }

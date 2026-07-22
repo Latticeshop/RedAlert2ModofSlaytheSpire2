@@ -117,6 +117,8 @@
     "steel_flood.description": "When a unit card enters your hand, it is automatically played.",
     "erase.title": "Erase",
     "erase.description": "When stacks exceed enemy HP, immediately [red]execute[/red] them. Max 50 stacks per application.",
+    "infiltrator.title": "Infiltrator",
+    "infiltrator.description": "Special units. Typically obtained through spy infiltration.",
     "exhaust_text": "and Exhaust",
     "ui.sell_building.title": "Select buildings to sell",
     "ui.sell_building.cancel": "Cancel",

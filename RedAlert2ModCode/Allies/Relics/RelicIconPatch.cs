@@ -32,6 +32,7 @@ public static class RelicIconPatch
         { typeof(IraqRelic), "res://RedAlert2ModResources/images/relics/flags/iraq.png" },
         { typeof(LibyaRelic), "res://RedAlert2ModResources/images/relics/flags/libya.png" },
         { typeof(YuriRelic), "res://RedAlert2ModResources/images/relics/flags/yuri.png" },
+        { typeof(AlliesRelics.ChronoCommandosRelic), "res://RedAlert2ModResources/images/packed/card_portraits/other/ccomicon.png" },
     };
 
     /// <summary>

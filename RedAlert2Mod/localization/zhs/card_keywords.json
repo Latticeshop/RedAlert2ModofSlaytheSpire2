@@ -117,6 +117,8 @@
     "steel_flood.description": "当单位卡进入手牌时立即自动打出。",
     "erase.title": "抹除",
     "erase.description": "当大于敌人血量时[red]斩杀[/red]。单次最多不能超过50点血量。",
+    "infiltrator.title": "渗透单位",
+    "infiltrator.description": "特殊单位。一般通过间谍渗透获取。",
     "exhaust_text": "且消耗",
     "ui.sell_building.title": "请选择要出售的建筑",
     "ui.sell_building.cancel": "取消",

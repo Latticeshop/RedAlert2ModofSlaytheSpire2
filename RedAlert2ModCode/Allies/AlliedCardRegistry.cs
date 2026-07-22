@@ -8,6 +8,7 @@ using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Powers;
+using RedAlert2ModCode.Common.Cards;
 
 namespace RedAlert2ModCode.Allies;
 
@@ -21,13 +22,19 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<GuardianGi>(),
         () => ModelDb.Card<RocketSoldier>(),
         () => ModelDb.Card<AlliesEngineer>(),
-        () => ModelDb.Card<Sniper>(),
     };
 
-    /// <summary>雷达解锁士兵单位 - 需要空指部/雷达解锁</summary>
+    /// <summary>雷达解锁士兵单位 - 需要空指部/雷达解锁(T2)</summary>
     public static List<Func<CardModel>> RadarSoldiers { get; } = new()
     {
-        () => ModelDb.Card<Sniper>()
+        () => ModelDb.Card<Sniper>(),
+        () => ModelDb.Card<SealCommandos>()
+    };
+
+    /// <summary>遗物解锁士兵单位 - 需要超时空突击队遗物</summary>
+    public static List<Func<CardModel>> RelicUnlockedSoldiers { get; } = new()
+    {
+        () => ModelDb.Card<RedAlert2ModCode.Common.Cards.ChronoCommandos>()
     };
 
     /// <summary>高科技(T3)士兵单位 - 需要作战实验室解锁</summary>
@@ -170,8 +177,26 @@ public static class AlliedCardRegistry
     public static List<CardModel> GetAllSoldiers()
     {
         List<CardModel> soldiers = Soldiers.Select(s => s()).ToList();
+        soldiers.AddRange(GetAllRadarSoldiers());
+        soldiers.AddRange(GetAllRelicUnlockedSoldiers());
         soldiers.AddRange(GetAllHighTechSoldiers());
         return soldiers;
+    }
+
+    /// <summary>
+    /// 获取所有雷达解锁士兵单位 - 需要空指部/雷达解锁(T2)
+    /// </summary>
+    public static List<CardModel> GetAllRadarSoldiers()
+    {
+        return RadarSoldiers.Select(s => s()).ToList();
+    }
+
+    /// <summary>
+    /// 获取所有遗物解锁士兵单位
+    /// </summary>
+    public static List<CardModel> GetAllRelicUnlockedSoldiers()
+    {
+        return RelicUnlockedSoldiers.Select(s => s()).ToList();
     }
 
     /// <summary>
@@ -315,12 +340,46 @@ public static class AlliedCardRegistry
     {
         List<CardModel> soldiers = Soldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
         
+        if (HasAirForceCommandPower(owner.Creature))
+        {
+            soldiers.AddRange(CreateRadarSoldiers(owner));
+        }
+        
+        if (HasChronoCommandosRelic(owner))
+        {
+            soldiers.AddRange(CreateRelicUnlockedSoldiers(owner));
+        }
+        
         if (HasBattleLabPower(owner.Creature))
         {
             soldiers.AddRange(CreateHighTechSoldiers(owner));
         }
         
         return soldiers;
+    }
+
+    /// <summary>
+    /// 创建雷达解锁士兵单位卡牌列表
+    /// </summary>
+    public static List<CardModel> CreateRadarSoldiers(Player owner)
+    {
+        return RadarSoldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+    }
+
+    /// <summary>
+    /// 创建遗物解锁士兵单位卡牌列表
+    /// </summary>
+    public static List<CardModel> CreateRelicUnlockedSoldiers(Player owner)
+    {
+        return RelicUnlockedSoldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+    }
+
+    /// <summary>
+    /// 检查是否拥有超时空突击队遗物
+    /// </summary>
+    public static bool HasChronoCommandosRelic(Player owner)
+    {
+        return owner.Relics.Any(r => r is RedAlert2ModCode.Allies.Relics.ChronoCommandosRelic);
     }
 
     /// <summary>

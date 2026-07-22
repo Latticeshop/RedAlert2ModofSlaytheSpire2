@@ -287,6 +287,51 @@ public static class UnitVoiceConfig
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/ChronoLegionnaire/Ichrkill_kill.mp3",
         },
+        ["SealCommandos"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseaatb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseaexc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseamoa.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseamob.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseamoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseasea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseaseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseased.mp3",
+        },
+        ["SealCommandosAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/seal_attack_1.wav",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/seal_attack_2.wav",
+        },
+        ["SealCommandosC4"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseaexa-c4.mp3",
+        },
+        ["ChronoCommandos"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseaatb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseaexc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseamoa.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseamob.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseamoc.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseasea.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseaseb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseasec-时空突击队特有.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseased.mp3",
+        },
+        ["ChronoCommandosAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/seal_attack_1.wav",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/seal_attack_2.wav",
+        },
+        ["ChronoCommandosC4"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseaexa-c4.mp3",
+        },
+        ["ChronoCommandosEnter"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseasec-时空突击队特有.mp3",
+        },
         ["GrandCannonRotate"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/GrandCannon/rotate_1.wav",
