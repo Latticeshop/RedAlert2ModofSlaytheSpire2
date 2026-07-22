@@ -316,7 +316,7 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseamoc.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseasea.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseaseb.mp3",
-            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseasec-时空突击队特有.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseasec_chrono.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseased.mp3",
         },
         ["ChronoCommandosAttack"] = new List<string>
@@ -330,7 +330,7 @@ public static class UnitVoiceConfig
         },
         ["ChronoCommandosEnter"] = new List<string>
         {
-            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseasec-时空突击队特有.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseasec_chrono.mp3",
         },
         ["GrandCannonRotate"] = new List<string>
         {

@@ -295,12 +295,18 @@ public sealed class TrainingQueuePower : PowerModel
                 PlayDemolitionTruckDeploySound();
             }
 
+            if (TrainedCardId == "CHRONO_COMMANDOS")
+            {
+                PlayChronoCommandosDeploySound();
+            }
+
             await CardPileCmd.AddGeneratedCardToCombat(tempCard, PileType.Hand, Owner.Player);
         }
     }
 
     private static AudioStreamPlayer? _kirovDeployAudioPlayer;
     private static AudioStreamPlayer? _demolitionTruckDeployAudioPlayer;
+    private static AudioStreamPlayer? _chronoCommandosDeployAudioPlayer;
 
     private static void EnsureKirovDeployAudioPlayer()
     {
@@ -365,6 +371,39 @@ public sealed class TrainingQueuePower : PowerModel
         catch (Exception ex)
         {
             GD.PrintErr($"[TrainingQueuePower] 播放自爆卡车出厂音效失败: {ex.Message}");
+        }
+    }
+
+    private static void EnsureChronoCommandosDeployAudioPlayer()
+    {
+        if (_chronoCommandosDeployAudioPlayer != null && GodotObject.IsInstanceValid(_chronoCommandosDeployAudioPlayer))
+            return;
+
+        _chronoCommandosDeployAudioPlayer = new AudioStreamPlayer();
+        _chronoCommandosDeployAudioPlayer.Name = "ChronoCommandosDeployAudioPlayer";
+        var root = Engine.GetMainLoop() as SceneTree;
+        root?.Root.AddChild(_chronoCommandosDeployAudioPlayer);
+    }
+
+    private void PlayChronoCommandosDeploySound()
+    {
+        try
+        {
+            EnsureChronoCommandosDeployAudioPlayer();
+            if (_chronoCommandosDeployAudioPlayer == null) return;
+
+            var soundFile = GD.Load<AudioStream>("res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseasec_chrono.mp3");
+            if (soundFile != null)
+            {
+                _chronoCommandosDeployAudioPlayer.Stream = soundFile;
+                _chronoCommandosDeployAudioPlayer.VolumeDb = -5;
+                _chronoCommandosDeployAudioPlayer.Play();
+                GD.Print("[TrainingQueuePower] 播放超时空突击队出厂音效");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[TrainingQueuePower] 播放超时空突击队出厂音效失败: {ex.Message}");
         }
     }
 
