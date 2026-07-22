@@ -118,7 +118,7 @@ public static class SovietCardValues
 	{
 		Cost = 0,
 		MagicNumber = 3,
-		MagicNumberUpgraded = 5,
+		MagicNumberUpgraded = 2,
 		DollarValue = 0
 	};
 	

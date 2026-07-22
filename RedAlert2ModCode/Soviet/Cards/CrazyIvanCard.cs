@@ -48,9 +48,9 @@ public sealed class CrazyIvanCard : CardModel
             {
                 ModCardKeywords.TechLevelT2.CreateHoverTip(),
                 ModCardKeywords.Soldier.CreateHoverTip(),
-                ModCardKeywords.Unit.CreateHoverTip(),
-                ModCardKeywords.Deploy.CreateHoverTip(),
                 HoverTipFactory.FromPower<TimedBombPower>()
+                ModCardKeywords.Deploy.CreateHoverTip(),
+                ModCardKeywords.Unit.CreateHoverTip(),
             };
         }
     }

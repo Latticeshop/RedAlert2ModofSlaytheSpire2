@@ -38,9 +38,10 @@ public sealed class ChronoIvanCard : ChronoCardModel
         return new List<IHoverTip>
         {
             ModCardKeywords.Soldier.CreateHoverTip(),
-            ModCardKeywords.Unit.CreateHoverTip(),
-            ModCardKeywords.Deploy.CreateHoverTip(),
+            ModCardKeywords.Infiltrator.CreateHoverTip(),
             HoverTipFactory.FromPower<TimedBombPower>()
+            ModCardKeywords.Deploy.CreateHoverTip(),
+            ModCardKeywords.Unit.CreateHoverTip(),
         };
     }
 
