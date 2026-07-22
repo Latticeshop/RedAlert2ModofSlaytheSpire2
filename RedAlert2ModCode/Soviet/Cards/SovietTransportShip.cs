@@ -48,7 +48,8 @@ public sealed class SovietTransportShip : CardModel
     {
         new StringVar("StoredCards"),
         new IntVar("StoreCount", IsUpgraded ? Values.MagicNumber + Values.MagicNumberUpgraded : Values.MagicNumber),
-        new IntVar("DollarNumber", Values.DollarValue)
+        new IntVar("DollarNumber", Values.DollarValue),
+        new BlockVar(Values.Block, ValueProp.Unpowered)
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
@@ -70,15 +71,15 @@ public sealed class SovietTransportShip : CardModel
 
         if (!_hasStored)
         {
-            await StoreCards(choiceContext);
+            await StoreCards(choiceContext, cardPlay);
         }
         else
         {
-            await ReleaseCards();
+            await ReleaseCards(cardPlay);
         }
     }
 
-    private async Task StoreCards(PlayerChoiceContext choiceContext)
+    private async Task StoreCards(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         int countToStore = IsUpgraded ? Values.MagicNumber + Values.MagicNumberUpgraded : Values.MagicNumber;
         
@@ -116,13 +117,16 @@ public sealed class SovietTransportShip : CardModel
             _hasStored = true;
             ((StringVar)DynamicVars["StoredCards"]).StringValue = string.Join(", ", _storedCards.Select(c => c.Title));
             GD.Print($"[SovietTransportShip] 存储完成，已存储 {_storedCards.Count} 张卡牌");
+
+            await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
+            GD.Print($"[SovietTransportShip] 获得 {DynamicVars.Block.IntValue} 点格挡");
         }
 
         await CardPileCmd.Add(this, PileType.Hand, CardPilePosition.Bottom, this);
         GD.Print("[SovietTransportShip] 返回手牌");
     }
 
-    private async Task ReleaseCards()
+    private async Task ReleaseCards(CardPlay cardPlay)
     {
         if (_storedCards.Count == 0)
             return;
@@ -136,6 +140,9 @@ public sealed class SovietTransportShip : CardModel
             GD.Print($"[SovietTransportShip] 释放卡牌: {card.Title}");
         }
 
+        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
+        GD.Print($"[SovietTransportShip] 释放卡牌，获得 {DynamicVars.Block.IntValue} 点格挡");
+
         _storedCards.Clear();
         _hasStored = false;
         ((StringVar)DynamicVars["StoredCards"]).StringValue = string.Empty;
@@ -145,5 +152,6 @@ public sealed class SovietTransportShip : CardModel
     protected override void OnUpgrade()
     {
         DynamicVars["StoreCount"].UpgradeValueBy(Values.MagicNumberUpgraded);
+        DynamicVars["Block"].UpgradeValueBy(Values.BlockUpgraded);
     }
 }

@@ -425,12 +425,14 @@ public static class SovietCardValues
 		MagicNumber = 80
 	};
 	
-	/// <summary>苏联运输船 - 1费技能卡，存储最多3张手牌（升级后5张），价格900</summary>
+	/// <summary>苏联运输船 - 1费技能卡，存储最多3张手牌（升级后5张），获得7格挡（升级10），价格900</summary>
 	public static CardValueStore.CardValues SovietTransportShip => new()
 	{
 		Cost = 1,
 		MagicNumber = 3,
 		MagicNumberUpgraded = 2,
+		Block = 7,
+		BlockUpgraded = 3,
 		DollarValue = 900
 	};
 	
