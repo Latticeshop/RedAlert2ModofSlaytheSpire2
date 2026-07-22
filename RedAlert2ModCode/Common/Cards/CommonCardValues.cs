@@ -147,12 +147,40 @@ public static class CommonCardValues
 		DollarValue = 1200
 	};
 
+	/// <summary>尤里改 - 1费技能卡，token，获得10张随机带消耗的T1/T2(升级T3)不同单位卡牌</summary>
+	public static CardValueStore.CardValues YuriPrime => new()
+	{
+		Cost = 1,
+		MagicNumber = 10
+	};
+
 	/// <summary>支援 - 0费技能卡，仅多人模式，选择手牌中3(升级5)张单位卡送给队友</summary>
 	public static CardValueStore.CardValues Support => new()
 	{
 		Cost = 0,
 		MagicNumber = 3,
 		MagicNumberUpgraded = 2
+	};
+
+	/// <summary>超时空伊文 - 1费攻击卡，Token，赋予3(升级5)层定时炸弹，部署给单位卡牌添加消耗并获得3(升级5)活力，超时空效果，价格1000</summary>
+	public static CardValueStore.CardValues ChronoIvan => new()
+	{
+		Cost = 1,
+		Damage = 3,
+		DamageUpgraded = 2,
+		MagicNumber = 5,
+		DollarValue = 1000,
+		DeployVigor = 3,
+		DeployVigorUpgraded = 2
+	};
+
+	/// <summary>心灵突击队 - 1费攻击卡，Token，攻击意图获得随机单位卡，否则造成15(升级20)伤害，价格1000，渗透单位</summary>
+	public static CardValueStore.CardValues PsiCommando => new()
+	{
+		Cost = 1,
+		MagicNumber = 15,
+		MagicNumberUpgraded = 5,
+		DollarValue = 1000
 	};
 
 	/// <summary>超时空突击队 - 1费攻击卡，造成2(升级3)点伤害5次，部署对非攻击意图敌人造成20(升级25)伤害，价格2000</summary>

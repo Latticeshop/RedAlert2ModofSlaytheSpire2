@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Soviet.Cards;
@@ -474,7 +475,8 @@ public static class SovietCardValues
 			{ "SOVIETENGINEER", Engineer },
 			{ "TERROR_MAN", Terrorist },
 			{ "CRAZY_IVAN_CARD", CrazyIvan },
-			{ "CHRONO_IVAN_CARD", ChronoIvan }
+			{ "CHRONO_IVAN_CARD", CommonCardValues.ChronoIvan },
+			{ "PSICOMMANDOCARD", CommonCardValues.PsiCommando }
 		};
 	}
 	

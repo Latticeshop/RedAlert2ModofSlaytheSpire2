@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.MonsterMoves.Intents;
 using RedAlert2ModCode.Common.Utils;
 
@@ -24,15 +25,20 @@ public sealed class ChronoCommandos : ChronoCardModel
 
 	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/other/ccomicon.png";
 
+	public override CardPoolModel Pool => IsMutable && Owner != null
+		? Owner.Character.CardPool
+		: ModelDb.CardPool<TokenCardPool>();
+
+	public override CardPoolModel VisualCardPool => ModelDb.CardPool<TokenCardPool>();
+
 	public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[0];
 
 	protected override List<IHoverTip> GetExtraHoverTips()
 	{
 		return new List<IHoverTip>
 		{
-			ModCardKeywords.Soldier.CreateHoverTip(),
 			ModCardKeywords.Infiltrator.CreateHoverTip(),
-			ModCardKeywords.Deploy.CreateHoverTip()
+			ModCardKeywords.Soldier.CreateHoverTip(),
 		};
 	}
 
@@ -56,7 +62,8 @@ public sealed class ChronoCommandos : ChronoCardModel
 
 		if (!isAttackIntent)
 		{
-			UnitVoiceHelper.PlayUnitVoice("ChronoCommandosC4", "Allied");
+			AudioHelper.PlaySealC4Voice();
+			AudioHelper.PlayRandomExplosionSound();
 
 			int deployDamage = DynamicVars["DeployDamage"].IntValue;
 			await DamageCmd.Attack(deployDamage)

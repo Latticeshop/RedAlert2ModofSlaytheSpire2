@@ -8,7 +8,6 @@ using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Powers;
-using RedAlert2ModCode.Common.Cards;
 
 namespace RedAlert2ModCode.Allies;
 
@@ -31,10 +30,11 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<SealCommandos>()
     };
 
-    /// <summary>遗物解锁士兵单位 - 需要超时空突击队遗物</summary>
+    /// <summary>遗物解锁士兵单位 - 需要超时空突击队/心灵突击队遗物</summary>
     public static List<Func<CardModel>> RelicUnlockedSoldiers { get; } = new()
     {
-        () => ModelDb.Card<RedAlert2ModCode.Common.Cards.ChronoCommandos>()
+        () => ModelDb.Card<RedAlert2ModCode.Common.Cards.ChronoCommandos>(),
+        () => ModelDb.Card<RedAlert2ModCode.Common.Cards.PsiCommandoCard>()
     };
 
     /// <summary>高科技(T3)士兵单位 - 需要作战实验室解锁</summary>
@@ -130,6 +130,7 @@ public static class AlliedCardRegistry
         {
             () => ModelDb.Card<Paratrooper>(),
             () => ModelDb.Card<AirborneDivision>(),
+            () => ModelDb.Card<PsiCommandoCard>(),
         };
     }
 
@@ -347,7 +348,12 @@ public static class AlliedCardRegistry
         
         if (HasChronoCommandosRelic(owner))
         {
-            soldiers.AddRange(CreateRelicUnlockedSoldiers(owner));
+            soldiers.Add(owner.Creature.CombatState.CreateCard(ModelDb.Card<RedAlert2ModCode.Common.Cards.ChronoCommandos>(), owner));
+        }
+
+        if (HasPsiCommandoRelic(owner))
+        {
+            soldiers.Add(owner.Creature.CombatState.CreateCard(ModelDb.Card<RedAlert2ModCode.Common.Cards.PsiCommandoCard>(), owner));
         }
         
         if (HasBattleLabPower(owner.Creature))
@@ -380,6 +386,14 @@ public static class AlliedCardRegistry
     public static bool HasChronoCommandosRelic(Player owner)
     {
         return owner.Relics.Any(r => r is RedAlert2ModCode.Allies.Relics.ChronoCommandosRelic);
+    }
+
+    /// <summary>
+    /// 检查是否拥有心灵突击队遗物
+    /// </summary>
+    public static bool HasPsiCommandoRelic(Player owner)
+    {
+        return owner.Relics.Any(r => r is RedAlert2ModCode.Allies.Relics.PsiCommandoRelic);
     }
 
     /// <summary>

@@ -258,4 +258,31 @@ public static class AudioHelper
             GD.PrintErr($"[AudioHelper] 播放爆炸音效失败: {ex.Message}");
         }
     }
+
+    public static void PlaySealC4Voice()
+    {
+        try
+        {
+            EnsureEffectPlayer();
+            if (_effectPlayer == null) return;
+
+            string soundPath = "res://RedAlert2ModResources/audio/AlliedUnits/SealAndChronoCommandos/Iseaexa-c4.mp3";
+            var sound = GD.Load<AudioStream>(soundPath);
+            if (sound != null)
+            {
+                _effectPlayer.Stream = sound;
+                _effectPlayer.VolumeDb = -5;
+                _effectPlayer.Play();
+                GD.Print("[AudioHelper] 播放海豹突击队C4语音");
+            }
+            else
+            {
+                GD.PrintErr($"[AudioHelper] 无法加载C4语音: {soundPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[AudioHelper] 播放C4语音失败: {ex.Message}");
+        }
+    }
 }

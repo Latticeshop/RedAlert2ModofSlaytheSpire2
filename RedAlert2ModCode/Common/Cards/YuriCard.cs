@@ -101,7 +101,7 @@ public sealed class YuriCard : CardModel
 		}
 	}
 
-	private static List<Type> GetUnitPool(bool includeT3)
+	internal static List<Type> GetUnitPool(bool includeT3)
 	{
 		List<Type> pool = new()
 		{

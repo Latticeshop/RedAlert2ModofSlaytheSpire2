@@ -33,6 +33,7 @@ public static class SovietCardRegistry
     public static List<Func<CardModel>> RelicUnlockedSoldiers { get; } = new()
     {
         () => ModelDb.Card<ChronoIvanCard>(),
+        () => ModelDb.Card<PsiCommandoCard>(),
     };
 
     public static List<Func<CardModel>> Vehicles { get; } = new()
@@ -109,6 +110,7 @@ public static class SovietCardRegistry
         {
             () => ModelDb.Card<Paratrooper>(),
             () => ModelDb.Card<YuriCard>(),
+            () => ModelDb.Card<YuriPrimeCard>(),
         };
     }
 
@@ -227,7 +229,12 @@ public static class SovietCardRegistry
         
         if (HasChronoIvanRelic(owner))
         {
-            soldiers.AddRange(CreateRelicUnlockedSoldiers(owner));
+            soldiers.Add(owner.Creature.CombatState.CreateCard(ModelDb.Card<ChronoIvanCard>(), owner));
+        }
+
+        if (HasPsiCommandoRelic(owner))
+        {
+            soldiers.Add(owner.Creature.CombatState.CreateCard(ModelDb.Card<PsiCommandoCard>(), owner));
         }
         
         return soldiers;
@@ -292,6 +299,11 @@ public static class SovietCardRegistry
     public static bool HasChronoIvanRelic(Player owner)
     {
         return owner.Relics.Any(r => r is ChronoIvanRelic);
+    }
+
+    public static bool HasPsiCommandoRelic(Player owner)
+    {
+        return owner.Relics.Any(r => r is RedAlert2ModCode.Allies.Relics.PsiCommandoRelic);
     }
 
     public static List<CardModel> CreateRelicUnlockedSoldiers(Player owner)

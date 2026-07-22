@@ -31,6 +31,7 @@ public class AlliesRelicPool : RelicPoolModel
             ModelDb.Relic<GermanyRelic>(),
             ModelDb.Relic<SouthKoreaRelic>(),
             ModelDb.Relic<ChronoCommandosRelic>(),
+            ModelDb.Relic<PsiCommandoRelic>(),
         };
     }
 }

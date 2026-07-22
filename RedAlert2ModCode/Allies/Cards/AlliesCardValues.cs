@@ -1,3 +1,4 @@
+using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Utils;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -82,7 +83,7 @@ public static class AlliesCardValues
 		DollarValue = 1500
 	};
 
-	/// <summary>海豹突击队 - 1费攻击卡，造成2(升级3)点伤害5次，部署对非攻击意图敌人造成15(升级20)伤害，价格1000，T2需要空指部</summary>
+	/// <summary>海豹突击队 - 1费攻击卡，造成2(升级3)点伤害5次，对非攻击意图敌人造成15(升级20)伤害，价格1000，T2需要空指部</summary>
 	public static CardValueStore.CardValues SealCommandos => new()
 	{
 		Cost = 1,
@@ -94,18 +95,6 @@ public static class AlliesCardValues
 		DollarValue = 1000
 	};
 
-	/// <summary>超时空突击队 - 1费攻击卡，造成2(升级3)点伤害5次，部署对非攻击意图敌人造成20(升级25)伤害，价格2000，需要超时空突击队遗物</summary>
-	public static CardValueStore.CardValues ChronoCommandos => new()
-	{
-		Cost = 1,
-		Damage = 2,
-		DamageUpgraded = 1,        // 升级后3 = 2 + 1
-		Repeat = 5,                // 攻击次数
-		MagicNumber = 20,          // 部署伤害
-		MagicNumberUpgraded = 5,   // 升级后25 = 20 + 5
-		DollarValue = 2000
-	};
-	
 	/// <summary>伞兵 - 1费攻击卡，升级后0费，将6张美国大兵加入手牌，消耗</summary>
 	public static CardValueStore.CardValues Paratrooper => new()
 	{
@@ -582,7 +571,8 @@ public static class AlliesCardValues
 			{ "SNIPER", Sniper },
 			{ "CHRONOLEGIONNAIRE", ChronoLegionnaire },
 			{ "SEALCOMMANDOS", SealCommandos },
-			{ "CHRONOCOMMANDOS", ChronoCommandos }
+			{ "CHRONOCOMMANDOS", CommonCardValues.ChronoCommandos },
+			{ "PSICOMMANDOCARD", CommonCardValues.PsiCommando }
 		};
 	}
 	

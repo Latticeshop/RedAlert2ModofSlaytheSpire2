@@ -557,6 +557,44 @@ res://images/packed/card_portraits/<卡池名称>/<卡牌ID小写>.png
 - `{Damage}` 会被动态变量的当前值替换
 - `{Damage:diff()}` 显示升级后的差值（如"造成 2→4 点伤害"）
 
+#### 本地化 ID 命名规则（`_CARD` 后缀）
+
+游戏的本地化 key 由**卡牌类名**自动生成，规则如下：
+
+- 类名 → 全大写 + 驼峰处加下划线
+- **类名以 `Card` 结尾** → 本地化 key **保留** `_CARD` 后缀
+- **类名不以 `Card` 结尾** → 本地化 key **没有** `_CARD` 后缀
+
+| 类名 | 本地化 key（title/description） | 是否以 Card 结尾 |
+|------|--------------------------------|-------------------|
+| `SealCommandos` | `SEAL_COMMANDOS.title` | ❌ 否 |
+| `ChronoCommandos` | `CHRONO_COMMANDOS.title` | ❌ 否 |
+| `YuriCard` | `YURI_CARD.title` | ✅ 是 |
+| `ChronoIvanCard` | `CHRONO_IVAN_CARD.title` | ✅ 是 |
+| `PsiCommandoCard` | `PSI_COMMANDO_CARD.title` | ✅ 是 |
+
+> **排查技巧**：如果卡牌标题/描述在游戏中显示为原始 key（如 `cards.PSI_COMMANDO.title`），说明本地化 key 不匹配。检查类名是否以 `Card` 结尾，并同步修改所有 4 个语言的 `cards.json`。
+
+#### 百科卡框颜色（`Pool` / `VisualCardPool`）
+
+卡牌在百科（图鉴）中的边框颜色由 `VisualCardPool` 属性决定：
+
+| 效果 | 实现方式 |
+|------|---------|
+| 🟦 盟军蓝色边框 / 🟥 苏军红色边框 | **不 override** `Pool` 和 `VisualCardPool`，使用基类默认值（继承 `Owner.Character.CardPool`） |
+| ⬜ 白色无色边框（公共/中立卡） | override 两者，将 `VisualCardPool` 设为 `TokenCardPool` |
+
+**无色公共卡（渗透单位等）标准写法**：
+```csharp
+public override CardPoolModel Pool => IsMutable && Owner != null
+    ? Owner.Character.CardPool      // 战斗中：角色实际卡池（正常打牌）
+    : ModelDb.CardPool<TokenCardPool>();
+
+public override CardPoolModel VisualCardPool => ModelDb.CardPool<TokenCardPool>();  // 百科显示：白色无阵营边框
+```
+
+> 不要忘了添加 `using MegaCrit.Sts2.Core.Models.CardPools;`。
+
 ### 3.8 公共卡牌架构（多阵营共享）
 
 当你的Mod包含多个阵营/角色，且某些卡牌在多个阵营中逻辑完全相同时，可以使用公共卡牌架构避免代码重复。

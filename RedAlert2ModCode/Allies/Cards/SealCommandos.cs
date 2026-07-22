@@ -43,7 +43,6 @@ public sealed class SealCommandos : CardModel
 			{
 				ModCardKeywords.TechLevelT2.CreateHoverTip(),
 				ModCardKeywords.Soldier.CreateHoverTip(),
-				ModCardKeywords.Deploy.CreateHoverTip()
 			};
 			return tips;
 		}
@@ -59,7 +58,8 @@ public sealed class SealCommandos : CardModel
 
 		if (!isAttackIntent)
 		{
-			UnitVoiceHelper.PlayUnitVoice("SealCommandosC4", "Allied");
+			AudioHelper.PlaySealC4Voice();
+			AudioHelper.PlayRandomExplosionSound();
 
 			int deployDamage = DynamicVars["DeployDamage"].IntValue;
 			await DamageCmd.Attack(deployDamage)

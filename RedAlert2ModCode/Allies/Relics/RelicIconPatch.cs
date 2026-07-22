@@ -33,6 +33,7 @@ public static class RelicIconPatch
         { typeof(LibyaRelic), "res://RedAlert2ModResources/images/relics/flags/libya.png" },
         { typeof(YuriRelic), "res://RedAlert2ModResources/images/relics/flags/yuri.png" },
         { typeof(AlliesRelics.ChronoCommandosRelic), "res://RedAlert2ModResources/images/packed/card_portraits/other/ccomicon.png" },
+        { typeof(AlliesRelics.PsiCommandoRelic), "res://RedAlert2ModResources/images/packed/card_portraits/other/Psi_Commando.png" },
         { typeof(ChronoIvanRelic), "res://RedAlert2ModResources/images/packed/card_portraits/other/ivncicon.png" },
     };
 
