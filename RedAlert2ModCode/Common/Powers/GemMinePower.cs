@@ -40,7 +40,8 @@ public class GemMinePower : PowerModel
         get
         {
             var locString = new LocString("powers", base.Id.Entry + ".description");
-            locString.Add("Reserve", CurrentReserve);
+            string reserveColor = CurrentReserve > 0 ? $"[green]{CurrentReserve}[/green]" : $"[red]{CurrentReserve}[/red]";
+            locString.Add("Reserve", reserveColor);
             return locString;
         }
     }

@@ -23,7 +23,7 @@ public class SellMCV : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = CommonCardValues.SellMCV;
 
-	public SellMCV() : base((int)Values.Cost, CardType.Attack, CardRarity.Uncommon, TargetType.Self) { }
+	public SellMCV() : base((int)Values.Cost, CardType.Attack, CardRarity.Rare, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/sellmcvicon.png";
 

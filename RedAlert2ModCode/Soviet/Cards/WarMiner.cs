@@ -91,8 +91,17 @@ public sealed class WarMiner : CardModel
 			int miningBonus = MineResources();
 			GD.Print($"[WarMiner] 挖矿额外获得 {miningBonus} 资金");
 
-			// 计算总资金
+			// 计算总资金（矿车基础 + 挖矿收益）
 			int totalAmount = amount + miningBonus;
+
+			// 检查矿石精炼器加成（对总收益生效）
+			var oreRefineryPower = Owner.Creature.Powers.OfType<Allies.Powers.OreRefineryPower>().FirstOrDefault();
+			if (oreRefineryPower != null && totalAmount > 0)
+			{
+				float oreMultiplier = oreRefineryPower.GetOreMultiplier();
+				totalAmount = Mathf.FloorToInt(totalAmount * oreMultiplier);
+				GD.Print($"[WarMiner] 矿石精炼器加成 {oreMultiplier}，总资金从 {amount + miningBonus} 变为 {totalAmount}");
+			}
 
 			// 检查是否有提前倒矿debuff（本回合矿车收益为80%）
 			var earlyMiningPower = Owner.Creature.Powers.OfType<EarlyMiningPower>().FirstOrDefault();
@@ -150,16 +159,6 @@ public sealed class WarMiner : CardModel
 				remainingToMine -= goldToMine;
 				GD.Print($"[WarMiner] 挖黄金矿 {goldToMine}，获得 {goldToMine} 资金，剩余待挖 {remainingToMine}");
 			}
-		}
-
-		// 3. 检查矿石精炼器加成（虽然苏联没有这个建筑，但为了代码完整性保留）
-		var oreRefineryPower = Owner.Creature.Powers.OfType<Allies.Powers.OreRefineryPower>().FirstOrDefault();
-		if (oreRefineryPower != null && totalBonus > 0)
-		{
-			float multiplier = oreRefineryPower.GetOreMultiplier();
-			int refinedBonus = Mathf.FloorToInt(totalBonus * multiplier);
-			GD.Print($"[WarMiner] 矿石精炼器加成 {multiplier}，挖矿收益从 {totalBonus} 变为 {refinedBonus}");
-			return refinedBonus;
 		}
 
 		return totalBonus;

@@ -79,7 +79,7 @@ public static class CommonCardValues
 	public static CardValueStore.CardValues SellMCV => new()
 	{
 		Cost = 1,
-		DollarValue = 2400
+		DollarValue = 3000
 	};
 
 	public static CardValueStore.CardValues Ra2Rally => new()

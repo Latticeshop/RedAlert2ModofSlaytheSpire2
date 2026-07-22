@@ -72,8 +72,17 @@ public sealed class ChronoMiner : CardModel
 			int miningBonus = MineResources();
 			GD.Print($"[ChronoMiner] 挖矿额外获得 {miningBonus} 资金");
 
-			// 计算总资金
+			// 计算总资金（矿车基础 + 挖矿收益）
 			int totalAmount = amount + miningBonus;
+
+			// 检查矿石精炼器加成（对总收益生效）
+			var oreRefineryPower = Owner.Creature.Powers.OfType<OreRefineryPower>().FirstOrDefault();
+			if (oreRefineryPower != null && totalAmount > 0)
+			{
+				float oreMultiplier = oreRefineryPower.GetOreMultiplier();
+				totalAmount = Mathf.FloorToInt(totalAmount * oreMultiplier);
+				GD.Print($"[ChronoMiner] 矿石精炼器加成 {oreMultiplier}，总资金从 {amount + miningBonus} 变为 {totalAmount}");
+			}
 
 			// 检查是否有提前倒矿debuff（本回合矿车收益为80%）
 			var earlyMiningPower = Owner.Creature.Powers.OfType<EarlyMiningPower>().FirstOrDefault();
@@ -144,16 +153,6 @@ public sealed class ChronoMiner : CardModel
 				remainingToMine -= goldToMine;
 				GD.Print($"[ChronoMiner] 挖黄金矿 {goldToMine}，获得 {goldToMine} 资金，剩余待挖 {remainingToMine}");
 			}
-		}
-
-		// 3. 检查矿石精炼器加成
-		var oreRefineryPower = Owner.Creature.Powers.OfType<OreRefineryPower>().FirstOrDefault();
-		if (oreRefineryPower != null && totalBonus > 0)
-		{
-			float multiplier = oreRefineryPower.GetOreMultiplier();
-			int refinedBonus = Mathf.FloorToInt(totalBonus * multiplier);
-			GD.Print($"[ChronoMiner] 矿石精炼器加成 {multiplier}，挖矿收益从 {totalBonus} 变为 {refinedBonus}");
-			return refinedBonus;
 		}
 
 		return totalBonus;
