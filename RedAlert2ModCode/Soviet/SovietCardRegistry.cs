@@ -70,6 +70,8 @@ public static class SovietCardRegistry
 
     public static List<Func<CardModel>> BuildingCards { get; } = SovietCardValues.CreateBuildingCardFactories();
 
+    public static List<Func<CardModel>> DefenseTowers { get; } = SovietCardValues.CreateDefenseTowerCardFactories();
+
     public static List<Func<CardModel>> PowerCards { get; } = CreatePowerCards();
 
     private static List<Func<CardModel>> CreatePowerCards()
@@ -162,6 +164,21 @@ public static class SovietCardRegistry
     public static List<CardModel> GetAllBuildingCards()
     {
         return BuildingCards.Select(s => s()).ToList();
+    }
+
+    public static List<CardModel> GetAllDefenseTowers()
+    {
+        return DefenseTowers.Select(s => s()).ToList();
+    }
+
+    public static List<System.Type> GetAllBuildingCardTypes()
+    {
+        return BuildingCards.Select(f => f().GetType()).ToList();
+    }
+
+    public static List<System.Type> GetAllDefenseTowerTypes()
+    {
+        return DefenseTowers.Select(f => f().GetType()).ToList();
     }
 
     public static List<CardModel> GetAllPowerCards()

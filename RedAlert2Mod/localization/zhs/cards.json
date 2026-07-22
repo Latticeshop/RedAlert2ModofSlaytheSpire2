@@ -6,7 +6,7 @@
     "YURI_CARD.title": "尤里",
     "YURI_CARD.description": "花费[gold]${DollarNumber}[/gold]，获得一张随机带[gold]消耗[/gold]的T1/T2{IfUpgraded:show:/T3|}[gold]单位[/gold]卡牌。",
     "SELL_MC_V.title": "卖本",
-    "SELL_MC_V.description": "出售[gold]基地[/gold]获得 2400 资金。{IfUpgraded:show:获得一名工程师。|}",
+    "SELL_MC_V.description": "出售[gold]基地[/gold]获得 3000 资金。{IfUpgraded:show:获得一名工程师。|}",
     "SELL_BUILDING_CARD.title": "出售",
     "SELL_BUILDING_CARD.description": "出售{IfUpgraded:show:任意|{MaxSellCount}个}[gold]建筑[/gold]。",
     "OIL_DERRICK_CARD.title": "油井",

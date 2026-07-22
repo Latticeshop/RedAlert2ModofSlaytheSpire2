@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -157,17 +157,7 @@ public sealed class AlliedMCV : CardModel
 
 	private bool IsBuildingCardType(System.Type cardType)
 	{
-		var typeName = cardType.Name;
-		if (typeName == "ChronoWarp" || typeName == "LightningStorm" ||
-		    typeName == "NuclearAttack" || typeName == "IronCurtain")
-			return false;
-		return typeName.Contains("Repair") || typeName.Contains("Defense") || typeName.Contains("Bunker") || 
-			   typeName.Contains("Wall") || typeName.Contains("Cannon") || typeName.Contains("Tower") ||
-			   typeName.Contains("Tesla") || typeName.Contains("Coil") || typeName.Contains("Flak") ||
-			   typeName.Contains("Pillbox") || typeName.Contains("Nuclear") || typeName.Contains("Iron") ||
-			   typeName.Contains("Chrono") || typeName.Contains("Weather") || typeName.Contains("Industrial") ||
-			   typeName.Contains("Ore") || typeName.Contains("Plant") || typeName.Contains("Refinery") ||
-			   typeName.Contains("Patriot") || typeName.Contains("Power");
+		return BuildingCardUtils.IsBuildingCard(cardType);
 	}
 
 	/// <summary>

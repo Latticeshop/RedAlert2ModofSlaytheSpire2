@@ -263,6 +263,22 @@ public static class AlliedCardRegistry
     }
 
     /// <summary>
+    /// 获取所有建筑卡类型
+    /// </summary>
+    public static List<System.Type> GetAllBuildingCardTypes()
+    {
+        return BuildingCards.Select(f => f().GetType()).ToList();
+    }
+
+    /// <summary>
+    /// 获取所有防御塔卡类型
+    /// </summary>
+    public static List<System.Type> GetAllDefenseTowerTypes()
+    {
+        return DefenseTowers.Select(f => f().GetType()).ToList();
+    }
+
+    /// <summary>
     /// 获取所有技能卡
     /// </summary>
     public static List<CardModel> GetAllPowerCards()
