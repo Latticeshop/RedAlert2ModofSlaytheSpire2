@@ -1466,6 +1466,367 @@ protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay
 
 ---
 
+## 3.12 转账系统（DollarTransfer）
+
+### 3.12.1 概述
+
+转账系统允许玩家在多人联机模式下将资金转移给队友，增强团队协作体验。系统包含完整的并发控制和网络同步机制，确保转账操作的安全性和一致性。
+
+### 3.12.2 核心架构
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     转账系统架构                            │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  DollarTransferScreen (UI层)                                │
+│       │                                                     │
+│       │ 用户选择目标和金额                                    │
+│       ↓                                                     │
+│  DollarTransferManager (业务层)                             │
+│       │                                                     │
+│       ├── 并发控制 (_isTransferring + lock)                 │
+│       ├── 转账执行 (ExecuteTransfer)                        │
+│       └── 网络同步解锁 (DollarTransferUnlockAction)         │
+│                 │                                           │
+│                 ↓                                           │
+│  DollarTransferGameAction (游戏动作层)                       │
+│       │                                                     │
+│       ├── 资金扣除 (sender)                                 │
+│       └── 资金增加 (receiver)                               │
+│                 │                                           │
+│                 ↓                                           │
+│  NetDollarTransferGameAction (网络同步层)                    │
+│       │                                                     │
+│       └── 自动注册 (ReflectionHelper.GetSubtypesInMods)     │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 3.12.3 核心组件详解
+
+#### DollarTransferManager
+
+转账逻辑管理器，负责并发控制和网络同步：
+
+```csharp
+// RedAlert2ModCode/Common/Utils/DollarTransferManager.cs
+public static class DollarTransferManager
+{
+    private static readonly Dictionary<long, TransferRequest> _pendingTransfers = new();
+    private static readonly object _lock = new();
+    private static bool _isTransferring = false;
+
+    // 检查是否可以转账
+    public static bool CanTransfer(Player sender, int amount);
+
+    // 获取有效转账目标
+    public static IEnumerable<Player> GetValidTargets(Player sender);
+
+    // 执行转账（核心方法）
+    public static bool ExecuteTransfer(Player sender, Player receiver, int amount);
+
+    // 获取发送者资金余额
+    public static int GetSenderBalance(Player sender);
+
+    // 重置转账锁
+    public static void ResetTransferLock();
+}
+```
+
+#### DollarTransferScreen
+
+转账UI面板，供玩家选择目标和金额：
+
+```csharp
+// RedAlert2ModCode/UI/DollarTransferScreen.cs
+public sealed partial class DollarTransferScreen : Control, IOverlayScreen
+{
+    // 显示转账面板
+    public static async Task<int?> ShowTransferScreen(Player sender);
+
+    // 关闭面板
+    public void Close();
+
+    // 内部方法
+    private void OnTargetSelected(int targetIndex);  // 选择目标后触发
+    private void ShowError(string message);          // 显示错误提示
+}
+```
+
+#### DollarTransferGameAction
+
+转账游戏动作，处理实际的资金转移：
+
+```csharp
+// RedAlert2ModCode/Common/GameActions/DollarTransferGameAction.cs
+public class DollarTransferGameAction : GameAction
+{
+    public Player Sender { get; }
+    public ulong ReceiverNetId { get; }
+    public int Amount { get; }
+
+    protected override async Task ExecuteAction()
+    {
+        // 1. 从发送者扣除资金
+        await PowerCmd.ModifyAmount(context, senderPower, -Amount, ...);
+        
+        // 2. 给接收者增加资金（如果没有DollarPower则创建）
+        if (receiverPower == null)
+            await PowerCmd.Apply<DollarPower>(context, receiver.Creature, Amount, ...);
+        else
+            await PowerCmd.ModifyAmount(context, receiverPower, Amount, ...);
+    }
+
+    public override INetAction ToNetAction()
+    {
+        return new NetDollarTransferGameAction { receiverNetId, amount };
+    }
+}
+```
+
+#### DollarTransferUnlockAction
+
+转账锁解锁动作，用于网络同步解锁信号：
+
+```csharp
+// RedAlert2ModCode/Common/GameActions/DollarTransferUnlockAction.cs
+public class DollarTransferUnlockAction : GameAction
+{
+    protected override async Task ExecuteAction()
+    {
+        // 重置转账锁（所有玩家收到后都会执行）
+        DollarTransferManager.ResetTransferLock();
+    }
+}
+```
+
+### 3.12.4 并发控制机制
+
+转账系统采用多重并发保护机制，确保多人联机时的安全性：
+
+#### 第一层：_isTransferring 标志
+
+使用静态布尔值防止同时发起多次转账：
+
+```csharp
+lock (_lock)
+{
+    if (_isTransferring)
+    {
+        // 已有转账进行中，拒绝本次请求
+        return false;
+    }
+    _isTransferring = true;
+}
+```
+
+#### 第二层：lock 线程安全
+
+使用 `lock(_lock)` 确保多线程环境下的线程安全：
+
+```csharp
+private static readonly object _lock = new();
+
+public static void ResetTransferLock()
+{
+    lock (_lock)
+    {
+        _isTransferring = false;
+    }
+}
+```
+
+#### 第三层：网络同步解锁
+
+转账完成后发送 `DollarTransferUnlockAction` 同步给所有玩家：
+
+```csharp
+action.AfterFinished += delegate
+{
+    // 本地解锁
+    lock (_lock)
+    {
+        _isTransferring = false;
+    }
+
+    // 发送解锁同步给其他玩家
+    var unlockAction = new DollarTransferUnlockAction(sender);
+    RunManager.Instance.ActionQueueSynchronizer.RequestEnqueue(unlockAction);
+};
+```
+
+#### 第四层：面板打开自动解锁
+
+作为保险机制，重新打开转账面板时自动调用 `ResetTransferLock()`：
+
+```csharp
+public static async Task<int?> ShowTransferScreen(Player sender)
+{
+    // 打开面板时自动解锁
+    DollarTransferManager.ResetTransferLock();
+    
+    var screen = new DollarTransferScreen(sender);
+    // ...
+}
+```
+
+### 3.12.5 完整工作流程
+
+#### 正常转账流程
+
+```
+玩家A打开转账面板
+    ↓
+ResetTransferLock() → _isTransferring = false
+    ↓
+玩家A选择目标（玩家B）和金额（1000），点击转账
+    ↓
+ExecuteTransfer(A, B, 1000) 检查 _isTransferring
+    ↓
+_isTransferring = false → 设置为 true
+    ↓
+创建 DollarTransferGameAction(A, B.NetId, 1000)
+    ↓
+RequestEnqueue(action) → 加入动作队列
+    ↓
+动作执行：A的资金-1000，B的资金+1000
+    ↓
+AfterFinished 回调：
+    ↓
+_isTransferring = false（本地解锁）
+    ↓
+创建 DollarTransferUnlockAction(A)
+    ↓
+RequestEnqueue(unlockAction) → 同步给所有玩家
+    ↓
+玩家B收到解锁动作 → ResetTransferLock() → _isTransferring = false
+    ↓
+所有玩家均可再次发起转账
+```
+
+#### 并发冲突流程
+
+```
+玩家A和玩家B同时点击转账
+    ↓
+玩家A的 ExecuteTransfer() 获取锁 → _isTransferring = true
+    ↓
+玩家B的 ExecuteTransfer() 获取锁 → _isTransferring = true（被拒绝）
+    ↓
+玩家B收到错误提示："转账失败，请稍后重试"
+    ↓
+玩家A的转账完成 → 发送解锁同步
+    ↓
+玩家B收到解锁信号 → _isTransferring = false
+    ↓
+玩家B可以再次尝试转账
+```
+
+### 3.12.6 本地化配置
+
+在 `card_keywords.json` 中添加转账UI的本地化：
+
+```json
+{
+    "ui.dollar_transfer.title": "转账给队友",
+    "ui.dollar_transfer.balance": "当前资金",
+    "ui.dollar_transfer.amount": "输入转账金额",
+    "ui.dollar_transfer.recipient": "选择接收人",
+    "ui.dollar_transfer.no_target": "没有可转账的队友",
+    "ui.dollar_transfer.cancel": "取消",
+    "ui.dollar_transfer.failed": "转账失败，请稍后重试"
+}
+```
+
+### 3.12.7 UI组件说明
+
+转账面板包含以下UI组件：
+
+| 组件 | 说明 |
+|------|------|
+| 标题 | "转账给队友" |
+| 余额显示 | 显示当前资金余额 |
+| 金额选择 | +/- 按钮和输入框，步长1000 |
+| 目标选择 | 显示所有存活队友的按钮 |
+| 错误提示 | 红色文本，显示转账失败原因 |
+| 取消按钮 | 关闭面板 |
+
+### 3.12.8 关键设计要点
+
+#### NetAction 自动注册
+
+游戏通过反射自动发现并注册所有实现 `INetAction` 接口的类型：
+
+```csharp
+// 游戏内部机制，无需手动注册
+ReflectionHelper.GetSubtypesInMods<INetAction>();
+```
+
+因此 `NetDollarTransferGameAction` 和 `NetDollarTransferUnlockAction` 只需实现接口即可自动注册。
+
+#### 异常处理
+
+转账系统在所有关键路径都添加了异常处理：
+
+```csharp
+try
+{
+    RunManager.Instance.ActionQueueSynchronizer.RequestEnqueue(action);
+}
+catch (Exception ex)
+{
+    // 异常时也要解锁
+    lock (_lock)
+    {
+        _isTransferring = false;
+    }
+    // 发送解锁同步
+    var unlockAction = new DollarTransferUnlockAction(sender);
+    RunManager.Instance.ActionQueueSynchronizer.RequestEnqueue(unlockAction);
+}
+```
+
+#### UI反馈机制
+
+- **转账成功**：关闭面板，玩家知道操作已完成
+- **转账失败**：显示红色错误提示，保留面板，玩家可以重试
+
+### 3.12.9 使用示例
+
+#### 打开转账面板
+
+```csharp
+// 在卡牌或能力中调用
+await DollarTransferScreen.ShowTransferScreen(player);
+```
+
+#### 直接执行转账
+
+```csharp
+// 在代码中直接执行转账（不需要UI）
+bool success = DollarTransferManager.ExecuteTransfer(sender, receiver, amount);
+if (success)
+{
+    // 转账成功
+}
+else
+{
+    // 转账失败
+}
+```
+
+### 3.12.10 常见问题
+
+| 问题 | 原因 | 解决 |
+|------|------|------|
+| 转账后资金不同步 | 网络延迟或同步失败 | `DollarTransferGameAction` 通过 `INetAction` 自动同步 |
+| 并发转账导致卡死 | 未正确处理锁状态 | 多重并发保护机制确保安全 |
+| 转账锁永久锁定 | 异常导致解锁逻辑未执行 | 打开面板时自动解锁作为保险 |
+| 远程玩家无法转账 | 锁状态未同步 | `DollarTransferUnlockAction` 同步解锁信号 |
+
+---
+
 ## 4. 自定义药水
 
 ### 4.1 药水核心属性

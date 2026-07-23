@@ -24,6 +24,7 @@ public sealed partial class DollarTransferScreen : Control, IOverlayScreen
     private int _selectedAmount = 1000;
     private int _maxAmount = 0;
     private LineEdit? _amountInput;
+    private Label? _errorLabel;
 
     public NetScreenType ScreenType => NetScreenType.Rewards;
     public bool UseSharedBackstop => true;
@@ -41,6 +42,8 @@ public sealed partial class DollarTransferScreen : Control, IOverlayScreen
 
     public static async Task<int?> ShowTransferScreen(Player sender)
     {
+        DollarTransferManager.ResetTransferLock();
+
         var screen = new DollarTransferScreen(sender);
         NOverlayStack.Instance?.Push(screen);
 
@@ -235,6 +238,17 @@ public sealed partial class DollarTransferScreen : Control, IOverlayScreen
             }
         }
 
+        _errorLabel = new Label()
+        {
+            Text = "",
+            HorizontalAlignment = HorizontalAlignment.Center,
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            Visible = false
+        };
+        _errorLabel.AddThemeFontSizeOverride("font_size", 16);
+        _errorLabel.AddThemeColorOverride("font_color", new Color(1f, 0.4f, 0.4f));
+        root.AddChild(_errorLabel);
+
         Button cancelBtn = new()
         {
             Text = new LocString("card_keywords", "ui.dollar_transfer.cancel").GetRawText(),
@@ -278,16 +292,31 @@ public sealed partial class DollarTransferScreen : Control, IOverlayScreen
         if (targetIndex < 0 || targetIndex >= _targets.Count) return;
         if (_selectedAmount <= 0) return;
 
-        _choiceLocked = true;
-
         Player receiver = _targets[targetIndex];
-        DollarTransferManager.ExecuteTransfer(_sender, receiver, _selectedAmount);
+        bool success = DollarTransferManager.ExecuteTransfer(_sender, receiver, _selectedAmount);
 
-        GD.Print($"[DollarTransfer] 转账请求已发送: {_sender.Character?.GetType().Name} -> {receiver.Character?.GetType().Name}, {_selectedAmount}");
+        if (success)
+        {
+            _choiceLocked = true;
+            GD.Print($"[DollarTransfer] 转账请求已发送: {_sender.Character?.GetType().Name} -> {receiver.Character?.GetType().Name}, {_selectedAmount}");
+            _completionSource.SetResult(targetIndex);
+            NOverlayStack.Instance?.Remove(this);
+            QueueFree();
+        }
+        else
+        {
+            ShowError(new LocString("card_keywords", "ui.dollar_transfer.failed").GetRawText());
+            GD.Print($"[DollarTransfer] 转账请求失败: {_sender.Character?.GetType().Name} -> {receiver.Character?.GetType().Name}, {_selectedAmount}");
+        }
+    }
 
-        _completionSource.SetResult(targetIndex);
-        NOverlayStack.Instance?.Remove(this);
-        QueueFree();
+    private void ShowError(string message)
+    {
+        if (_errorLabel != null)
+        {
+            _errorLabel.Text = message;
+            _errorLabel.Visible = true;
+        }
     }
 
     private StyleBoxFlat CreatePanelStyle()

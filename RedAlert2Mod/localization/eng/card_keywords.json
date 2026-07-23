@@ -131,6 +131,7 @@
     "ui.dollar_transfer.recipient": "Select Recipient",
     "ui.dollar_transfer.no_target": "No Teammates Available",
     "ui.dollar_transfer.cancel": "Cancel",
+    "ui.dollar_transfer.failed": "Transfer failed, please try again later",
     "paratrooper.faction_info.title": "Paratrooper Details",
     "paratrooper.faction_info.description": "Allies receive 3 GIs.\nSoviets receive 4 Conscripts.\nYuri receives 3 Initiates.",
     "timed_bomb.title": "Timed Bomb",

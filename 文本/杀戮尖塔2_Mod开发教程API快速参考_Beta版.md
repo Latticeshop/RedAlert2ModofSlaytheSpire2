@@ -1158,6 +1158,99 @@ public class DollarPower : PowerModel
 
 ---
 
+## 💳 转账系统（DollarTransfer）
+
+### 核心组件
+
+| 组件 | 文件路径 | 作用 |
+|------|----------|------|
+| `DollarTransferManager` | `RedAlert2ModCode/Common/Utils/DollarTransferManager.cs` | 转账逻辑管理器，处理并发控制和网络同步 |
+| `DollarTransferScreen` | `RedAlert2ModCode/UI/DollarTransferScreen.cs` | 转账UI面板，供玩家选择目标和金额 |
+| `DollarTransferGameAction` | `RedAlert2ModCode/Common/GameActions/DollarTransferGameAction.cs` | 转账游戏动作，处理资金转移 |
+| `NetDollarTransferGameAction` | `RedAlert2ModCode/Common/GameActions/NetDollarTransferGameAction.cs` | 转账网络同步动作 |
+| `DollarTransferUnlockAction` | `RedAlert2ModCode/Common/GameActions/DollarTransferUnlockAction.cs` | 转账锁解锁动作（网络同步） |
+| `NetDollarTransferUnlockAction` | `RedAlert2ModCode/Common/GameActions/NetDollarTransferUnlockAction.cs` | 转账锁解锁网络同步动作 |
+
+### 核心方法
+
+```csharp
+// 检查是否可以转账（资金充足）
+DollarTransferManager.CanTransfer(sender, amount);
+
+// 获取有效转账目标（存活的队友）
+DollarTransferManager.GetValidTargets(sender);
+
+// 执行转账（返回bool表示是否成功发起）
+DollarTransferManager.ExecuteTransfer(sender, receiver, amount);
+
+// 获取发送者资金余额
+DollarTransferManager.GetSenderBalance(sender);
+
+// 重置转账锁（手动解锁）
+DollarTransferManager.ResetTransferLock();
+
+// 显示转账面板（异步）
+await DollarTransferScreen.ShowTransferScreen(sender);
+```
+
+### 并发控制机制
+
+转账系统采用多重并发保护：
+
+| 机制 | 说明 |
+|------|------|
+| `_isTransferring` 标志 | 静态布尔值，防止同时发起多次转账 |
+| 锁保护 | 使用 `lock(_lock)` 确保线程安全 |
+| 网络同步解锁 | 转账完成后发送 `DollarTransferUnlockAction` 同步给其他玩家 |
+| 面板打开自动解锁 | 重新打开转账面板时自动调用 `ResetTransferLock()` |
+
+### 工作流程
+
+```
+玩家打开转账面板
+    ↓
+ResetTransferLock() → _isTransferring = false
+    ↓
+玩家选择目标和金额，点击转账
+    ↓
+ExecuteTransfer() 检查 _isTransferring
+    ↓ 如果为true → 显示错误提示，不关闭面板
+    ↓ 如果为false → 设置 _isTransferring = true，发送转账请求
+    ↓
+转账完成（AfterFinished回调）
+    ↓
+_isTransferring = false
+    ↓
+发送 DollarTransferUnlockAction 给所有玩家
+    ↓
+其他玩家收到解锁信号，执行 ResetTransferLock()
+    ↓
+所有玩家均可再次发起转账
+```
+
+### 本地化配置
+
+```json
+{
+    "ui.dollar_transfer.title": "转账给队友",
+    "ui.dollar_transfer.balance": "当前资金",
+    "ui.dollar_transfer.amount": "输入转账金额",
+    "ui.dollar_transfer.recipient": "选择接收人",
+    "ui.dollar_transfer.no_target": "没有可转账的队友",
+    "ui.dollar_transfer.cancel": "取消",
+    "ui.dollar_transfer.failed": "转账失败，请稍后重试"
+}
+```
+
+### 注意事项
+
+1. **网络同步**：`DollarTransferUnlockAction` 通过 `INetAction` 接口自动注册并同步
+2. **异常处理**：转账失败时会自动发送解锁同步，防止永久锁定
+3. **保险机制**：即使网络同步失败，重新打开面板也会自动解锁
+4. **UI反馈**：转账成功关闭面板，失败显示红色错误提示并保留面板
+
+---
+
 ## ⚡ 能力/Buff（PowerModel）
 
 ### 基本结构

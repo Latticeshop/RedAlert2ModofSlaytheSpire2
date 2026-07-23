@@ -18,6 +18,7 @@ public static class DollarTransferManager
 {
     private static readonly Dictionary<long, TransferRequest> _pendingTransfers = new();
     private static readonly object _lock = new();
+    private static bool _isTransferring = false;
 
     public class TransferRequest
     {
@@ -64,39 +65,87 @@ public static class DollarTransferManager
         return targets;
     }
 
-    public static void ExecuteTransfer(Player sender, Player receiver, int amount)
+    public static bool ExecuteTransfer(Player sender, Player receiver, int amount)
     {
         if (!CanTransfer(sender, amount))
         {
             GD.PrintErr($"[DollarTransfer] 转账失败：资金不足或无效参数");
-            return;
+            return false;
         }
 
         if (sender == receiver)
         {
             GD.PrintErr("[DollarTransfer] 转账失败：不能转给自己");
-            return;
+            return false;
         }
 
-        GD.Print("[DollarTransfer] 暂停战斗执行转账操作...");
-        CombatManager.Instance.Pause();
+        lock (_lock)
+        {
+            if (_isTransferring)
+            {
+                GD.PrintErr("[DollarTransfer] 转账失败：已有转账操作进行中，请稍后再试");
+                return false;
+            }
+            _isTransferring = true;
+        }
+
+        var request = CreateTransferRequest(sender, receiver, amount);
 
         var action = new DollarTransferGameAction(sender, receiver.NetId, amount);
         action.AfterFinished += delegate
         {
-            GD.Print("[DollarTransfer] 转账操作完成，恢复战斗...");
-            CombatManager.Instance.Unpause();
+            GD.Print("[DollarTransfer] 转账操作完成");
+            if (request != null)
+            {
+                CompleteTransfer(request.Id);
+            }
+            lock (_lock)
+            {
+                _isTransferring = false;
+            }
+
+            try
+            {
+                var unlockAction = new DollarTransferUnlockAction(sender);
+                RunManager.Instance.ActionQueueSynchronizer.RequestEnqueue(unlockAction);
+                GD.Print("[DollarTransfer] 转账锁解锁同步已发送");
+            }
+            catch (Exception ex)
+            {
+                GD.PrintErr($"[DollarTransfer] 发送解锁同步异常：{ex}");
+            }
         };
 
         try
         {
             RunManager.Instance.ActionQueueSynchronizer.RequestEnqueue(action);
             GD.Print($"[DollarTransfer] 转账请求已发送：{GetPlayerName(sender)} -> {GetPlayerName(receiver)}, 金额: {amount}");
+            return true;
         }
         catch (Exception ex)
         {
             GD.PrintErr($"[DollarTransfer] 转账异常：{ex}");
-            CombatManager.Instance.Unpause();
+            lock (_lock)
+            {
+                _isTransferring = false;
+            }
+            if (request != null)
+            {
+                CancelTransfer(request.Id);
+            }
+
+            try
+            {
+                var unlockAction = new DollarTransferUnlockAction(sender);
+                RunManager.Instance.ActionQueueSynchronizer.RequestEnqueue(unlockAction);
+                GD.Print("[DollarTransfer] 转账失败，解锁同步已发送");
+            }
+            catch (Exception unlockEx)
+            {
+                GD.PrintErr($"[DollarTransfer] 发送解锁同步异常：{unlockEx}");
+            }
+
+            return false;
         }
     }
 
@@ -174,6 +223,15 @@ public static class DollarTransferManager
     {
         var dollarPower = sender.Creature.Powers.OfType<DollarPower>().FirstOrDefault();
         return dollarPower?.DollarValue ?? 0;
+    }
+
+    public static void ResetTransferLock()
+    {
+        lock (_lock)
+        {
+            _isTransferring = false;
+            GD.Print("[DollarTransfer] 转账锁已重置");
+        }
     }
 
     private static string GetPlayerName(Player player)

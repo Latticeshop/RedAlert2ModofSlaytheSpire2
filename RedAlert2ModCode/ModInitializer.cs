@@ -40,9 +40,6 @@ public static class ModInitializer
         // 注册刀乐能力点击补丁
         DollarPowerClickPatch.Install(harmony);
         
-        // 注册自定义 NetAction 类型用于网络同步
-        RegisterNetActionSubtype(typeof(NetDollarTransferGameAction));
-        
         // 注册所有盟军卡牌到盟军卡池
         ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AmericanSoldier));
         ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(GrizzlyTank));

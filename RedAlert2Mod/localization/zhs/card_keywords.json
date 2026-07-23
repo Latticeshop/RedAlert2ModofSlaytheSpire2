@@ -131,6 +131,7 @@
     "ui.dollar_transfer.recipient": "选择接收人",
     "ui.dollar_transfer.no_target": "没有可转账的队友",
     "ui.dollar_transfer.cancel": "取消",
+    "ui.dollar_transfer.failed": "转账失败，请稍后重试",
     "paratrooper.faction_info.title": "伞兵详情",
     "paratrooper.faction_info.description": "盟军获得3张美国大兵。\n苏联获得4张动员兵。\n尤里获得3张尤里新兵。",
     "timed_bomb.title": "定时炸弹",
