@@ -29,11 +29,10 @@ public sealed class SovietBarracksCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.Barracks;
 	
-	public SovietBarracksCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+	public SovietBarracksCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
 	public override HashSet<CardKeyword> CanonicalKeywords => new HashSet<CardKeyword>
 	{
-		CardKeyword.Exhaust
 	};
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/soviet/handicon.png";
@@ -46,8 +45,7 @@ public sealed class SovietBarracksCard : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		ModCardKeywords.ProductionQueue.CreateHoverTip(),
-		HoverTipFactory.FromKeyword(CardKeyword.Exhaust)
+		ModCardKeywords.ProductionQueue.CreateHoverTip()
 	];
 
 	protected override bool IsPlayable

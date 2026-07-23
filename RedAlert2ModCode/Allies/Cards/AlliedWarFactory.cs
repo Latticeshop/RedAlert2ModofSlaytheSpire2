@@ -27,11 +27,10 @@ public sealed class AlliedWarFactory : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.AlliedWarFactory;
 	
-	public AlliedWarFactory() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+	public AlliedWarFactory() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
 	public override HashSet<CardKeyword> CanonicalKeywords => new HashSet<CardKeyword>
 	{
-		CardKeyword.Exhaust
 	};
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/gwepicon.png";
@@ -44,8 +43,7 @@ public sealed class AlliedWarFactory : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		ModCardKeywords.ProductionQueue.CreateHoverTip(),
-		HoverTipFactory.FromKeyword(CardKeyword.Exhaust)
+		ModCardKeywords.ProductionQueue.CreateHoverTip()
 	];
 
 	protected override bool IsPlayable

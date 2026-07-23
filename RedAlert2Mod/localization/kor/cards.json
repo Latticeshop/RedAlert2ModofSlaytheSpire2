@@ -217,7 +217,7 @@
     "V3_ROCKET.title": "V3 로켓",
     "WAR_MINER.description": "[gold]${DollarValue}[/gold]를 얻습니다.\n{IfUpgraded:show:모든 적|적 1명}에게 피해를 {Damage} 줍니다.",
     "WAR_MINER.title": "전쟁 채굴차",
-    "WEATHER_CONTROLLER.description": "[gold]비용: ${DollarNumber}[/gold].\n[gold]웨더 컨트롤러[/gold]를 얻습니다.\n{IfUpgraded:show:재사용 대기시간이 1턴 감소합니다.|}",
+    "WEATHER_CONTROLLER.description": "[gold]비용: ${DollarNumber}[/gold].\n[gold]{TurnsRemaining}[/gold]턴마다, 전기를 [gold]{Block}[/gold]개 얻고, 손에 0코스트 [gold]{LightningStormName}[/gold] 카드를 추가합니다.",
     "WEATHER_CONTROLLER.title": "웨더 컨트롤러",
     "YURI_CARD.title": "유리",
     "YURI_CARD.description": "[gold]${DollarNumber}[/gold]를 소비합니다. [gold]소진[/gold]이 붙은 랜덤 T1/T2{IfUpgraded:show:/T3|} [gold]유닛[/gold] 카드 1장을 얻습니다.",

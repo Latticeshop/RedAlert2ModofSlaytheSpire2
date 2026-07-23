@@ -195,7 +195,7 @@
     "CHRONO_WARP.title": "Chrono Warp",
     "CHRONO_WARP.description": "[gold]Super Weapon[/gold].\nMove any number of cards between your draw pile, hand, and discard pile.",
     "WEATHER_CONTROLLER.title": "Weather Controller",
-    "WEATHER_CONTROLLER.description": "[gold]Cost: ${DollarNumber}[/gold].\nEvery [gold]{TurnsRemaining}[/gold] turns, add a 0-cost [gold]{LightningStormName}[/gold] to your hand.",
+    "WEATHER_CONTROLLER.description": "[gold]Cost: ${DollarNumber}[/gold].\nEvery [gold]{TurnsRemaining}[/gold] turns, gains [gold]{Block}[/gold] Lightning Orbs, adding a 0-cost [gold]{LightningStormName}[/gold] to your hand.",
     "LIGHTNING_STORM.title": "Lightning Storm",
     "LIGHTNING_STORM.description": "[gold]Super Weapon[/gold].\nGains {Block} Lightning Orbs.\n[gold]Chain Lightning[/gold].",
     "NIGHT_HAWK_CHOPPER.title": "Night Hawk Chopper",

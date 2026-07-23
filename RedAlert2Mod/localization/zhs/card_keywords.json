@@ -141,6 +141,7 @@
     "ui.crazy_ivan.attack_desc": "对一名敌人赋予 {BombStacks} 层定时炸弹",
     "ui.crazy_ivan.deploy_title": "部署",
     "ui.crazy_ivan.deploy_desc": "选择一张手牌，赋予消耗和定时炸弹",
+    "ui.spy.select_teammate": "选择要渗透的队友",
     "ui.spy.title": "选择间谍行动",
     "ui.spy.attack_title": "渗透",
     "ui.spy.attack_desc": "选择队友的建筑进行渗透",
@@ -186,10 +187,10 @@
     "ui.spy.attack.shipyard_desc_base": "获得一张升级的己方船厂",
     "ui.spy.attack.shipyard_desc_upgraded": "获得一张升级的己方船厂",
     "ui.spy.attack.radar_title": "雷达",
-    "ui.spy.attack.radar_desc_base": "队友减少{RadarTargetAgilityLoss}点敏捷，自己获得{RadarAttackerAgilityGain}点敏捷",
-    "ui.spy.attack.radar_desc_upgraded": "队友减少{RadarTargetAgilityLossUpgraded}点敏捷，自己获得{RadarAttackerAgilityGainUpgraded}点敏捷",
+    "ui.spy.attack.radar_desc_base": "队友获得{RadarTargetVulnerable}层易伤，自己获得{RadarAttackerAgilityGain}点敏捷",
+    "ui.spy.attack.radar_desc_upgraded": "队友获得{RadarTargetVulnerableUpgraded}层易伤，自己获得{RadarAttackerAgilityGainUpgraded}点敏捷",
     "ui.spy.attack.superweapon_title": "超级武器",
-    "ui.spy.attack.superweapon_desc_base": "重置队友超武计数，获得一张0费消耗的超级武器",
-    "ui.spy.attack.superweapon_desc_upgraded": "重置队友超武计数，获得一张0费消耗的超级武器",
+    "ui.spy.attack.superweapon_desc_base": "队友超武计数-1，若计数为0则重置队友计数，自己获得一张0费消耗的超级武器",
+    "ui.spy.attack.superweapon_desc_upgraded": "队友超武计数-1，若计数为0则重置队友计数，自己获得一张0费消耗的超级武器",
     "ui.spy.attack.unknown_desc": "未知建筑效果"
 }

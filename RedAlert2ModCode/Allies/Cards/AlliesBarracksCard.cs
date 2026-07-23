@@ -23,12 +23,11 @@ public sealed class AlliesBarracksCard : CardModel
 	{
 		private static readonly CardValueStore.CardValues Values = AlliesCardValues.Barracks;
 		
-		public AlliesBarracksCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+		public AlliesBarracksCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
 		public override HashSet<CardKeyword> CanonicalKeywords => new HashSet<CardKeyword>
-		{
-			CardKeyword.Exhaust
-		};
+	{
+	};
 
 		public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/brrkicon.png";
 		
@@ -40,8 +39,7 @@ public sealed class AlliesBarracksCard : CardModel
 		protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		ModCardKeywords.ProductionQueue.CreateHoverTip(),
-		HoverTipFactory.FromKeyword(CardKeyword.Exhaust)
+		ModCardKeywords.ProductionQueue.CreateHoverTip()
 	];
 
 		protected override bool IsPlayable
@@ -149,7 +147,7 @@ public sealed class AlliesBarracksCard : CardModel
 		}
 		else
 			{
-			// 取消选择：返还费用并将卡牌放回手牌
+			// 取消选择：返还费用并将卡牌放回手牌	
 			await CardUtils.HandleCardCancellation(play, this, Owner);
 			}
 	}

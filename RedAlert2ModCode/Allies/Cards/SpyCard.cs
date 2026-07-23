@@ -38,10 +38,10 @@ public sealed class SpyCard : CardModel
     private const int ORE_REFINERY_CREDITS_UPGRADED = 2000;
     private const int POWER_PLANT_ENERGY_GAIN = 2;
     private const int POWER_PLANT_ENERGY_GAIN_UPGRADED = 3;
-    private const int RADAR_TARGET_AGILITY_LOSS = 2;
-    private const int RADAR_TARGET_AGILITY_LOSS_UPGRADED = 1;
-    private const int RADAR_ATTACKER_AGILITY_GAIN = 4;
-    private const int RADAR_ATTACKER_AGILITY_GAIN_UPGRADED = 5;
+    private const int RADAR_TARGET_VULNERABLE = 2;
+    private const int RADAR_TARGET_VULNERABLE_UPGRADED = 1;
+    private const int RADAR_ATTACKER_AGILITY_GAIN = 2;
+    private const int RADAR_ATTACKER_AGILITY_GAIN_UPGRADED = 3;
 
     public SpyCard() : base(COST, CardType.Skill, CardRarity.Token, TargetType.Self) { }
 
@@ -59,8 +59,8 @@ public sealed class SpyCard : CardModel
         new IntVar("OreRefineryCreditsUpgraded", ORE_REFINERY_CREDITS_UPGRADED),
         new IntVar("PowerPlantEnergyGain", POWER_PLANT_ENERGY_GAIN),
         new IntVar("PowerPlantEnergyGainUpgraded", POWER_PLANT_ENERGY_GAIN_UPGRADED),
-        new IntVar("RadarTargetAgilityLoss", RADAR_TARGET_AGILITY_LOSS),
-        new IntVar("RadarTargetAgilityLossUpgraded", RADAR_TARGET_AGILITY_LOSS_UPGRADED),
+        new IntVar("RadarTargetVulnerable", RADAR_TARGET_VULNERABLE),
+        new IntVar("RadarTargetVulnerableUpgraded", RADAR_TARGET_VULNERABLE_UPGRADED),
         new IntVar("RadarAttackerAgilityGain", RADAR_ATTACKER_AGILITY_GAIN),
         new IntVar("RadarAttackerAgilityGainUpgraded", RADAR_ATTACKER_AGILITY_GAIN_UPGRADED)
     };
@@ -78,7 +78,13 @@ public sealed class SpyCard : CardModel
     {
         UnitVoiceConfig.PlayUnitVoice("Spy", "Camouflage");
 
-        if (MultiplayerSyncHelper.IsMultiplayerGame())
+        if (!MultiplayerSyncHelper.IsMultiplayerGame())
+        {
+            await ExecuteDeployMode(ctx, play);
+            return;
+        }
+
+        while (true)
         {
             int? choice = await SpyChoiceScreen.ShowSelectionWithSync(Owner);
 
@@ -87,27 +93,32 @@ public sealed class SpyCard : CardModel
 
             if (choice == 0)
             {
-                await ExecuteAttackMode(ctx, play);
+                List<Player> teammates = GetTeammates();
+                if (teammates.Count == 0)
+                {
+                    await ExecuteDeployMode(ctx, play);
+                    return;
+                }
+
+                Player? targetTeammate = await SpyTeammateSelectScreen.ShowSelectionWithSync(teammates, Owner);
+                if (targetTeammate == null)
+                    continue;
+
+                await ExecuteAttackMode(ctx, play, targetTeammate);
+                return;
             }
             else
             {
                 await ExecuteDeployMode(ctx, play);
+                return;
             }
-        }
-        else
-        {
-            await ExecuteDeployMode(ctx, play);
         }
     }
 
-    private async Task ExecuteAttackMode(PlayerChoiceContext ctx, CardPlay play)
+    private async Task ExecuteAttackMode(PlayerChoiceContext ctx, CardPlay play, Player targetTeammate)
     {
-        List<Player> teammates = GetTeammates();
-        if (teammates.Count == 0)
-            return;
-
         List<(Type PowerType, string Title, string Description, string IconPath)> buildingOptions =
-            GetTeammateBuildingOptions(teammates[0]);
+            GetTeammateBuildingOptions(targetTeammate);
 
         if (buildingOptions.Count == 0)
             return;
@@ -119,7 +130,7 @@ public sealed class SpyCard : CardModel
         PlayRandomVoice();
 
         var selectedOption = buildingOptions[(int)selectedOptionIndex];
-        await SpyChoiceHelper.ExecuteAttackEffect(ctx, this, teammates[0], selectedOption.PowerType, IsUpgraded);
+        await SpyChoiceHelper.ExecuteAttackEffect(ctx, this, targetTeammate, selectedOption.PowerType, IsUpgraded);
     }
 
     private async Task ExecuteDeployMode(PlayerChoiceContext ctx, CardPlay play)
@@ -181,14 +192,10 @@ public sealed class SpyCard : CardModel
             if (addedTypes.Contains(powerType))
                 continue;
 
-            bool isValid = CommonCardValues.GetSellablePowerTypes().Any(t => t.IsAssignableFrom(powerType)) ||
-                           powerType.Name.Contains("MCV", StringComparison.OrdinalIgnoreCase) ||
-                           powerType.Name.Contains("Super", StringComparison.OrdinalIgnoreCase);
-
-            if (!isValid)
+            if (!IsStealableBuilding(powerType))
                 continue;
 
-            string title = GetPowerTitle(power);
+            string title = GetLocStringText(power.Title);
             string description = GetAttackEffectDescription(powerType);
             string iconPath = GetPowerIconPath(power);
 
@@ -197,6 +204,33 @@ public sealed class SpyCard : CardModel
         }
 
         return options;
+    }
+
+    private bool IsStealableBuilding(Type powerType)
+    {
+        string typeName = powerType.Name;
+        return typeName == "AlliedMCVPower" ||
+               typeName == "SovietMCVPower" ||
+               typeName == "PowerPlantPower" ||
+               typeName == "SovietPowerPlantPower" ||
+               typeName == "NuclearReactorCorePower" ||
+               typeName == "AlliedRefineryPower" ||
+               typeName == "SovietRefineryPower" ||
+               typeName == "OreRefineryPower" ||
+               typeName == "AlliedBarracksPower" ||
+               typeName == "SovietBarracksPower" ||
+               typeName == "AlliedWarFactoryPower" ||
+               typeName == "SovietWarFactoryPower" ||
+               typeName == "AlliedShipyardPower" ||
+               typeName == "SovietShipyardPower" ||
+               typeName == "BattleLabPower" ||
+               typeName == "SovietBattleLabPower" ||
+               typeName == "AlliedAirForceCommandPower" ||
+               typeName == "SovietRadarPower" ||
+               typeName == "ChronoSpherePower" ||
+               typeName == "WeatherControllerPower" ||
+               typeName == "IronCurtainPower" ||
+               typeName == "NuclearMissileSiloPower";
     }
 
     private string GetPowerTitle(PowerModel power)
@@ -230,17 +264,93 @@ public sealed class SpyCard : CardModel
     {
         try
         {
-            object? icon = power.GetType().GetProperty("Icon")?.GetValue(power);
-            if (icon != null)
+            var packedIconPathProp = power.GetType().GetProperty("PackedIconPath", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+            if (packedIconPathProp != null)
             {
-                object? path = icon.GetType().GetProperty("Path")?.GetValue(icon);
-                if (path is string pathStr && !string.IsNullOrEmpty(pathStr))
+                string? path = packedIconPathProp.GetValue(power) as string;
+                if (!string.IsNullOrEmpty(path))
+                    return path;
+            }
+
+            var iconProp = power.GetType().GetProperty("Icon", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+            if (iconProp != null)
+            {
+                object? icon = iconProp.GetValue(power);
+                if (icon != null)
                 {
-                    return pathStr;
+                    var pathProp = icon.GetType().GetProperty("Path");
+                    if (pathProp != null)
+                    {
+                        string? path = pathProp.GetValue(icon) as string;
+                        if (!string.IsNullOrEmpty(path))
+                            return path;
+                    }
                 }
             }
         }
         catch { }
+
+        return "res://RedAlert2ModResources/images/packed/card_portraits/allies/spyicon.png";
+    }
+
+    private string GetBuildingCardPortrait(Type powerType, Player teammate)
+    {
+        string typeName = powerType.Name;
+        bool isSoviet = FlagManager.GetPlayerFaction(teammate) == FlagManager.Faction.Soviet;
+        string factionPath = isSoviet ? "soviet" : "allies";
+
+        if (typeName == "AlliedMCVPower" || typeName == "SovietMCVPower")
+            return isSoviet 
+                ? "res://RedAlert2ModResources/images/packed/card_portraits/soviet/mcvicon.png" 
+                : "res://RedAlert2ModResources/images/packed/card_portraits/allies/mcvicon.png";
+        
+        if (typeName == "PowerPlantPower" || typeName == "SovietPowerPlantPower" || typeName == "NuclearReactorCorePower")
+            return isSoviet 
+                ? "res://RedAlert2ModResources/images/packed/card_portraits/soviet/npwricon.png" 
+                : "res://RedAlert2ModResources/images/packed/card_portraits/allies/powerplanticon.png";
+        
+        if (typeName == "NuclearMissileSiloPower")
+            return "res://RedAlert2ModResources/images/packed/card_portraits/soviet/nwepicon.png";
+        
+        if (typeName == "AlliedRefineryPower" || typeName == "SovietRefineryPower" || typeName == "OreRefineryPower")
+            return isSoviet 
+                ? "res://RedAlert2ModResources/images/packed/card_portraits/soviet/orerefineryicon.png" 
+                : "res://RedAlert2ModResources/images/packed/card_portraits/allies/orerefineryicon.png";
+        
+        if (typeName == "AlliedBarracksPower" || typeName == "SovietBarracksPower")
+            return isSoviet 
+                ? "res://RedAlert2ModResources/images/packed/card_portraits/soviet/sovietbarracksicon.png" 
+                : "res://RedAlert2ModResources/images/packed/card_portraits/allies/alliedbarracksicon.png";
+        
+        if (typeName == "AlliedWarFactoryPower" || typeName == "SovietWarFactoryPower")
+            return isSoviet 
+                ? "res://RedAlert2ModResources/images/packed/card_portraits/soviet/sovietwarfactoryicon.png" 
+                : "res://RedAlert2ModResources/images/packed/card_portraits/allies/alliedwarfactoryicon.png";
+        
+        if (typeName == "AlliedShipyardPower" || typeName == "SovietShipyardPower")
+            return isSoviet 
+                ? "res://RedAlert2ModResources/images/packed/card_portraits/soviet/sovietshipyardicon.png" 
+                : "res://RedAlert2ModResources/images/packed/card_portraits/allies/alliedshipyardicon.png";
+        
+        if (typeName == "BattleLabPower" || typeName == "SovietBattleLabPower")
+            return isSoviet 
+                ? "res://RedAlert2ModResources/images/packed/card_portraits/soviet/sovietbattlelabicon.png" 
+                : "res://RedAlert2ModResources/images/packed/card_portraits/allies/alliedbattlelabicon.png";
+        
+        if (typeName == "SovietRadarPower")
+            return "res://RedAlert2ModResources/images/packed/card_portraits/soviet/sovietradaricon.png";
+        
+        if (typeName == "AlliedAirForceCommandPower")
+            return "res://RedAlert2ModResources/images/packed/card_portraits/allies/alliedradaricon.png";
+        
+        if (typeName == "ChronoSpherePower")
+            return "res://RedAlert2ModResources/images/packed/card_portraits/allies/csphicon.png";
+        
+        if (typeName == "WeatherControllerPower")
+            return "res://RedAlert2ModResources/images/packed/card_portraits/allies/wethicon.png";
+        
+        if (typeName == "IronCurtainPower")
+            return "res://RedAlert2ModResources/images/packed/card_portraits/soviet/ironicon.png";
 
         return "res://RedAlert2ModResources/images/packed/card_portraits/allies/spyicon.png";
     }
@@ -251,24 +361,24 @@ public sealed class SpyCard : CardModel
         string upgradedTag = IsUpgraded ? "_upgraded" : "_base";
         string key = string.Empty;
 
-        if (typeName.Contains("MCV", StringComparison.OrdinalIgnoreCase))
+        if (typeName == "AlliedMCVPower" || typeName == "SovietMCVPower")
             key = "ui.spy.attack.base_desc" + upgradedTag;
-        else if (typeName.Contains("Power", StringComparison.OrdinalIgnoreCase))
+        else if (typeName == "PowerPlantPower" || typeName == "SovietPowerPlantPower" || typeName == "NuclearReactorCorePower")
             key = "ui.spy.attack.powerplant_desc" + upgradedTag;
-        else if (typeName.Contains("Ore", StringComparison.OrdinalIgnoreCase))
+        else if (typeName == "AlliedRefineryPower" || typeName == "SovietRefineryPower" || typeName == "OreRefineryPower")
             key = "ui.spy.attack.orerefinery_desc" + upgradedTag;
-        else if (typeName.Contains("BattleLab", StringComparison.OrdinalIgnoreCase))
+        else if (typeName == "BattleLabPower" || typeName == "SovietBattleLabPower")
             key = "ui.spy.attack.battlelab_desc" + upgradedTag;
-        else if (typeName.Contains("Barracks", StringComparison.OrdinalIgnoreCase))
+        else if (typeName == "AlliedBarracksPower" || typeName == "SovietBarracksPower")
             key = "ui.spy.attack.barracks_desc" + upgradedTag;
-        else if (typeName.Contains("WarFactory", StringComparison.OrdinalIgnoreCase))
+        else if (typeName == "AlliedWarFactoryPower" || typeName == "SovietWarFactoryPower")
             key = "ui.spy.attack.warfactory_desc" + upgradedTag;
-        else if (typeName.Contains("Shipyard", StringComparison.OrdinalIgnoreCase))
+        else if (typeName == "AlliedShipyardPower" || typeName == "SovietShipyardPower")
             key = "ui.spy.attack.shipyard_desc" + upgradedTag;
-        else if (typeName.Contains("Radar", StringComparison.OrdinalIgnoreCase) ||
-                 typeName.Contains("AirForce", StringComparison.OrdinalIgnoreCase))
+        else if (typeName == "SovietRadarPower" || typeName == "AlliedAirForceCommandPower")
             key = "ui.spy.attack.radar_desc" + upgradedTag;
-        else if (typeName.Contains("Super", StringComparison.OrdinalIgnoreCase))
+        else if (typeName == "ChronoSpherePower" || typeName == "WeatherControllerPower" || 
+                 typeName == "IronCurtainPower" || typeName == "NuclearMissileSiloPower")
             key = "ui.spy.attack.superweapon_desc" + upgradedTag;
         else
             key = "ui.spy.attack.unknown_desc";
@@ -286,7 +396,7 @@ public sealed class SpyCard : CardModel
         int radarWeak = IsUpgraded ? RADAR_WEAK_UPGRADED : RADAR_WEAK;
         int oreRefineryCredits = IsUpgraded ? ORE_REFINERY_CREDITS_UPGRADED : ORE_REFINERY_CREDITS;
         int powerPlantEnergyGain = IsUpgraded ? POWER_PLANT_ENERGY_GAIN_UPGRADED : POWER_PLANT_ENERGY_GAIN;
-        int radarTargetAgilityLoss = IsUpgraded ? RADAR_TARGET_AGILITY_LOSS_UPGRADED : RADAR_TARGET_AGILITY_LOSS;
+        int radarTargetVulnerable = IsUpgraded ? RADAR_TARGET_VULNERABLE_UPGRADED : RADAR_TARGET_VULNERABLE;
         int radarAttackerAgilityGain = IsUpgraded ? RADAR_ATTACKER_AGILITY_GAIN_UPGRADED : RADAR_ATTACKER_AGILITY_GAIN;
 
         text = text.Replace("{PowerPlantDamage}", powerPlantDamage.ToString());
@@ -297,8 +407,8 @@ public sealed class SpyCard : CardModel
         text = text.Replace("{OreRefineryCreditsUpgraded}", ORE_REFINERY_CREDITS_UPGRADED.ToString());
         text = text.Replace("{PowerPlantEnergyGain}", powerPlantEnergyGain.ToString());
         text = text.Replace("{PowerPlantEnergyGainUpgraded}", POWER_PLANT_ENERGY_GAIN_UPGRADED.ToString());
-        text = text.Replace("{RadarTargetAgilityLoss}", radarTargetAgilityLoss.ToString());
-        text = text.Replace("{RadarTargetAgilityLossUpgraded}", RADAR_TARGET_AGILITY_LOSS_UPGRADED.ToString());
+        text = text.Replace("{RadarTargetVulnerable}", radarTargetVulnerable.ToString());
+        text = text.Replace("{RadarTargetVulnerableUpgraded}", RADAR_TARGET_VULNERABLE_UPGRADED.ToString());
         text = text.Replace("{RadarAttackerAgilityGain}", radarAttackerAgilityGain.ToString());
         text = text.Replace("{RadarAttackerAgilityGainUpgraded}", RADAR_ATTACKER_AGILITY_GAIN_UPGRADED.ToString());
 

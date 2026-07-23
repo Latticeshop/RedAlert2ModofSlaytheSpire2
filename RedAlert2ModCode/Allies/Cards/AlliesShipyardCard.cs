@@ -27,11 +27,10 @@ public sealed class AlliesShipyardCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.Shipyard;
 	
-	public AlliesShipyardCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+	public AlliesShipyardCard() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
 	public override HashSet<CardKeyword> CanonicalKeywords => new HashSet<CardKeyword>
 	{
-		CardKeyword.Exhaust
 	};
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/ayaricon.png";
@@ -44,8 +43,7 @@ public sealed class AlliesShipyardCard : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		ModCardKeywords.ProductionQueue.CreateHoverTip(),
-		HoverTipFactory.FromKeyword(CardKeyword.Exhaust)
+		ModCardKeywords.ProductionQueue.CreateHoverTip()
 	];
 
 	protected override bool IsPlayable
@@ -131,8 +129,8 @@ public sealed class AlliesShipyardCard : CardModel
 		}
 		else
 			{
-			// 取消选择：返还费用并将卡牌放回手牌
-			await CardUtils.HandleCardCancellation(play, this, Owner);
+				// 取消选择：返还费用并将卡牌放回手牌
+				await CardUtils.HandleCardCancellation(play, this, Owner);
 			}
 	}
 

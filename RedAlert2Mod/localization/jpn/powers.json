@@ -34,7 +34,7 @@
     "BATTLE_BUNKER_POWER.title": "バトルバンカー",
     "BATTLE_BUNKER_POWER.description": "毎ターン攻撃する。\n現在保存中: {StoredCards}",
     "STRATEGY_TOWER_DEFENSE_POWER.title": "タワーディフェンス",
-    "STRATEGY_TOWER_DEFENSE_POWER.description": "[gold]壁[/gold]を使用した時、[gold]プリズムタワー[/gold]能力を持っていれば1ターン[gold]残影[/gold]を獲得する。",
+    "STRATEGY_TOWER_DEFENSE_POWER.description": "各ターン開始時に、[gold]エテリアル[/gold]と[gold]消費[/gold]が付いたプリズムタワーカードを手札に加える。[gold]壁[/gold]を使用した時、[gold]プリズムタワー[/gold]能力を持っていれば1ターン[gold]残影[/gold]を獲得する。",
     "ALLIED_TRANSPORT_SHIP_POWER.title": "連合軍輸送船",
     "ALLIED_TRANSPORT_SHIP_POWER.description": "現在保存中のカード：\n{StoredCard0}\n{StoredCard1}\n{StoredCard2}\n{StoredCard3}\n{StoredCard4}\n{StoredCard5}\n{StoredCard6}\n{StoredCard7}\n{StoredCard8}\n{StoredCard9}",
     "SOVIET_TRANSPORT_SHIP_POWER.title": "ソ連輸送船",

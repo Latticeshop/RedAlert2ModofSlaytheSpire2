@@ -137,7 +137,6 @@ public static class UnitVoiceConfig
         ["Spy"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispyata.mp3",
-            "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispyatb.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispymoc.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispymod.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispymoe.mp3",

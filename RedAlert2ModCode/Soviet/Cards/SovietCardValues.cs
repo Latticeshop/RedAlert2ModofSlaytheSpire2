@@ -628,10 +628,16 @@ public static class SovietCardValues
 		if (string.IsNullOrEmpty(cardId))
 			return 0;
 		
-		string key = cardId.ToUpper().Replace("_", "");
 		var allValues = CreateAllValuesMap();
 		
-		if (allValues.TryGetValue(key, out var values))
+		string keyWithUnderscore = cardId.ToUpper();
+		if (allValues.TryGetValue(keyWithUnderscore, out var values))
+		{
+			return values.BuildCost > 0 ? values.BuildCost : (int)values.DollarValue;
+		}
+		
+		string keyWithoutUnderscore = keyWithUnderscore.Replace("_", "");
+		if (allValues.TryGetValue(keyWithoutUnderscore, out values))
 		{
 			return values.BuildCost > 0 ? values.BuildCost : (int)values.DollarValue;
 		}

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -36,6 +36,7 @@ public sealed class StrategyTowerDefense : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
 	{
 		HoverTipFactory.FromPower<StrategyTowerDefensePower>(),
+		HoverTipFactory.FromCard<PrismTowerCard>(),
 		HoverTipFactory.Static(StaticHoverTip.Block)
 	};
 

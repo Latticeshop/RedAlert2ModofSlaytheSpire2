@@ -197,7 +197,7 @@
     "CHRONO_WARP.title": "超时空传送",
     "CHRONO_WARP.description": "[gold]超级武器[/gold]。\n从 摸牌/手牌/弃牌堆 选择任意张牌移动到 摸牌/手牌/弃牌堆 。",
     "WEATHER_CONTROLLER.title": "天气控制器",
-    "WEATHER_CONTROLLER.description": "[gold]价格：${DollarNumber}[/gold]。\n每过 [gold]{TurnsRemaining}[/gold] 回合，将一张0费消耗的[gold]{LightningStormName}[/gold]加入手牌。",
+    "WEATHER_CONTROLLER.description": "[gold]价格：${DollarNumber}[/gold]。\n每过 [gold]{TurnsRemaining}[/gold] 回合，获得 [gold]{Block}[/gold] 个电球，将一张0费消耗的[gold]{LightningStormName}[/gold]加入手牌。",
     "LIGHTNING_STORM.title": "闪电风暴",
     "LIGHTNING_STORM.description": "[gold]超级武器[/gold]。\n获得 {Block} 个电球。\n[gold]电流相生[/gold]。",
     "NIGHT_HAWK_CHOPPER.title": "夜莺直升机",

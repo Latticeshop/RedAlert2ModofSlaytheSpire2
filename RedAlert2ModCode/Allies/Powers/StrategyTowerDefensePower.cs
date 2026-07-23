@@ -1,6 +1,7 @@
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Localization;
@@ -43,6 +44,16 @@ public class StrategyTowerDefensePower : PowerModel
 	{
 		if (side != CombatSide.Player)
 			return;
+
+		// 添加带虚无和消耗的光棱塔卡牌到手牌
+		var prismTowerCard = Owner.CombatState.CreateCard(ModelDb.Card<Cards.PrismTowerCard>(), Owner.Player);
+		if (prismTowerCard != null)
+		{
+			prismTowerCard.AddKeyword(CardKeyword.Exhaust);
+			prismTowerCard.AddKeyword(CardKeyword.Ethereal);
+			await CardPileCmd.AddGeneratedCardToCombat(prismTowerCard, PileType.Hand, Owner.Player);
+			GD.Print("[StrategyTowerDefensePower] 成功添加虚无消耗光棱塔到手牌");
+		}
 
 		// 检查是否拥有光棱塔能力
 		var prismTowerPower = Owner.Powers.OfType<PrismTowerPower>().FirstOrDefault();

@@ -26,6 +26,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     private readonly FactionType _faction;
     private ScrollContainer _scrollContainer;
     private HBoxContainer _cardsRow;
+    private Button _cancelButton;
     private bool _choiceLocked;
     private bool _isMultiSelect = false;
     private int _maxSelection = 1;
@@ -269,21 +270,24 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             };
             buttonContainer.AddThemeConstantOverride("separation", 20);
             
-            Button cancelButton = new()
+            _cancelButton = new Button()
             {
                 Text = GetLocStringText(new LocString("card_keywords", "ui.production_queue.cancel")),
                 CustomMinimumSize = new Vector2(160f, 50f),
                 SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
                 FocusMode = FocusModeEnum.All,
-                MouseDefaultCursorShape = CursorShape.PointingHand
+                MouseDefaultCursorShape = CursorShape.PointingHand,
+                Disabled = true
             };
-            cancelButton.AddThemeStyleboxOverride("normal", CreateCancelStyle());
-            cancelButton.AddThemeStyleboxOverride("hover", CreateCancelStyle(new Color(0.6f, 0.15f, 0.15f, 0.9f)));
-            cancelButton.AddThemeStyleboxOverride("pressed", CreateCancelStyle(new Color(0.35f, 0.08f, 0.08f, 0.95f)));
-            cancelButton.AddThemeColorOverride("font_color", new Color(1f, 0.85f, 0.85f));
-            cancelButton.AddThemeFontSizeOverride("font_size", 20);
-            cancelButton.Pressed += OnCancelClicked;
-            buttonContainer.AddChild(cancelButton);
+            _cancelButton.AddThemeStyleboxOverride("normal", CreateCancelStyle());
+            _cancelButton.AddThemeStyleboxOverride("hover", CreateCancelStyle(new Color(0.6f, 0.15f, 0.15f, 0.9f)));
+            _cancelButton.AddThemeStyleboxOverride("pressed", CreateCancelStyle(new Color(0.35f, 0.08f, 0.08f, 0.95f)));
+            _cancelButton.AddThemeStyleboxOverride("disabled", CreateCancelStyle(new Color(0.3f, 0.3f, 0.3f, 0.6f)));
+            _cancelButton.AddThemeColorOverride("font_color", new Color(1f, 0.85f, 0.85f));
+            _cancelButton.AddThemeColorOverride("font_disabled_color", new Color(0.5f, 0.5f, 0.5f));
+            _cancelButton.AddThemeFontSizeOverride("font_size", 20);
+            _cancelButton.Pressed += OnCancelClicked;
+            buttonContainer.AddChild(_cancelButton);
 
             Button confirmButton = new()
             {
@@ -306,21 +310,36 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         else
         {
             // 单选模式：只有取消按钮
-            Button cancelButton = new()
+            _cancelButton = new Button()
             {
                 Text = GetLocStringText(new LocString("card_keywords", "ui.production_queue.cancel")),
                 CustomMinimumSize = new Vector2(160f, 50f),
                 SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
                 FocusMode = FocusModeEnum.All,
-                MouseDefaultCursorShape = CursorShape.PointingHand
+                MouseDefaultCursorShape = CursorShape.PointingHand,
+                Disabled = true
             };
-            cancelButton.AddThemeStyleboxOverride("normal", CreateCancelStyle());
-            cancelButton.AddThemeStyleboxOverride("hover", CreateCancelStyle(new Color(0.6f, 0.15f, 0.15f, 0.9f)));
-            cancelButton.AddThemeStyleboxOverride("pressed", CreateCancelStyle(new Color(0.35f, 0.08f, 0.08f, 0.95f)));
-            cancelButton.AddThemeColorOverride("font_color", new Color(1f, 0.85f, 0.85f));
-            cancelButton.AddThemeFontSizeOverride("font_size", 20);
-            cancelButton.Pressed += OnCancelClicked;
-            root.AddChild(cancelButton);
+            _cancelButton.AddThemeStyleboxOverride("normal", CreateCancelStyle());
+            _cancelButton.AddThemeStyleboxOverride("hover", CreateCancelStyle(new Color(0.6f, 0.15f, 0.15f, 0.9f)));
+            _cancelButton.AddThemeStyleboxOverride("pressed", CreateCancelStyle(new Color(0.35f, 0.08f, 0.08f, 0.95f)));
+            _cancelButton.AddThemeStyleboxOverride("disabled", CreateCancelStyle(new Color(0.3f, 0.3f, 0.3f, 0.6f)));
+            _cancelButton.AddThemeColorOverride("font_color", new Color(1f, 0.85f, 0.85f));
+            _cancelButton.AddThemeColorOverride("font_disabled_color", new Color(0.5f, 0.5f, 0.5f));
+            _cancelButton.AddThemeFontSizeOverride("font_size", 20);
+            _cancelButton.Pressed += OnCancelClicked;
+            root.AddChild(_cancelButton);
+        }
+
+        // 900ms后启用取消按钮
+        _ = EnableCancelButtonAfterDelay();
+    }
+
+    private async Task EnableCancelButtonAfterDelay()
+    {
+        await Task.Delay(900);
+        if (_cancelButton != null && IsInstanceValid(_cancelButton))
+        {
+            _cancelButton.Disabled = false;
         }
     }
 

@@ -34,7 +34,7 @@
     "BATTLE_BUNKER_POWER.title": "战斗碉堡",
     "BATTLE_BUNKER_POWER.description": "每回合进行攻击。\n当前存储：{StoredCards}",
     "STRATEGY_TOWER_DEFENSE_POWER.title": "塔防",
-    "STRATEGY_TOWER_DEFENSE_POWER.description": "当你打出[gold]围墙[/gold]时，如果拥有[gold]光棱塔[/gold]能力，获得 1 回合[gold]残影[/gold]。",
+    "STRATEGY_TOWER_DEFENSE_POWER.description": "每回合获得一张[gold]虚无[/gold]且[gold]消耗[/gold]的光棱塔。当你打出[gold]围墙[/gold]时，如果拥有[gold]光棱塔[/gold]能力，获得 1 回合[gold]残影[/gold]。",
     "ALLIED_TRANSPORT_SHIP_POWER.title": "盟军运输船",
     "ALLIED_TRANSPORT_SHIP_POWER.description": "当前存储卡牌：\n{StoredCard0}\n{StoredCard1}\n{StoredCard2}\n{StoredCard3}\n{StoredCard4}\n{StoredCard5}\n{StoredCard6}\n{StoredCard7}\n{StoredCard8}\n{StoredCard9}",
     "SOVIET_TRANSPORT_SHIP_POWER.title": "苏联运输船",

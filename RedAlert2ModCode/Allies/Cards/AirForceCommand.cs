@@ -25,11 +25,10 @@ public sealed class AirForceCommand : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.AirForceCommand;
 	
-	public AirForceCommand() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+	public AirForceCommand() : base((int)Values.Cost, CardType.Power, CardRarity.Common, TargetType.Self) { }
 
 	public override HashSet<CardKeyword> CanonicalKeywords => new HashSet<CardKeyword>
 	{
-		CardKeyword.Exhaust
 	};
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/heliicon.png";
@@ -42,8 +41,7 @@ public sealed class AirForceCommand : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		ModCardKeywords.ProductionQueue.CreateHoverTip(),
-		HoverTipFactory.FromKeyword(CardKeyword.Exhaust)
+		ModCardKeywords.ProductionQueue.CreateHoverTip()
 	];
 
 	protected override bool IsPlayable

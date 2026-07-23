@@ -195,7 +195,7 @@
     "CHRONO_WARP.title": "クロノワープ",
     "CHRONO_WARP.description": "[gold]スーパーウェポン[/gold]。\nドロー/手札/捨て札山から任意のカードをドロー/手札/捨て札山に移動する。",
     "WEATHER_CONTROLLER.title": "ウェザーコントローラー",
-    "WEATHER_CONTROLLER.description": "[gold]価格：${DollarNumber}[/gold]。\n[gold]{TurnsRemaining}[/gold]ターンごとに、0費用の[gold]{LightningStormName}[/gold]カードを手札に加える。",
+    "WEATHER_CONTROLLER.description": "[gold]価格：${DollarNumber}[/gold]。\n[gold]{TurnsRemaining}[/gold]ターンごとに、[gold]{Block}[/gold]個の電球を獲得し、0費用の[gold]{LightningStormName}[/gold]カードを手札に加える。",
     "LIGHTNING_STORM.title": "ライトニングストーム",
     "LIGHTNING_STORM.description": "[gold]スーパーウェポン[/gold]。\n{Block}個の電球を獲得する。\n[gold]電流相生[/gold]。",
     "NIGHT_HAWK_CHOPPER.title": "ナイトホークチョッパー",

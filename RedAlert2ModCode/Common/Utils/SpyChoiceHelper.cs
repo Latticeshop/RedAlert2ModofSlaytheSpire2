@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -266,37 +267,52 @@ public static class SpyChoiceHelper
     {
         string powerTypeName = powerType.Name;
 
-        if (powerTypeName.Contains("MCV", StringComparison.OrdinalIgnoreCase) ||
-            powerTypeName.Contains("Base", StringComparison.OrdinalIgnoreCase))
+        if (powerTypeName == "AlliedMCVPower" ||
+            powerTypeName == "SovietMCVPower")
         {
             await ExecuteBaseAttackEffect(ctx, card, target, upgraded);
         }
-        else if (powerTypeName.Contains("Power", StringComparison.OrdinalIgnoreCase))
+        else if (powerTypeName == "ChronoSpherePower" ||
+                 powerTypeName == "WeatherControllerPower" ||
+                 powerTypeName == "IronCurtainPower" ||
+                 powerTypeName == "NuclearMissileSiloPower")
+        {
+            await ExecuteSuperWeaponAttackEffect(ctx, card, target, powerType, upgraded);
+        }
+        else if (powerTypeName == "PowerPlantPower" ||
+                 powerTypeName == "SovietPowerPlantPower" ||
+                 powerTypeName == "NuclearReactorCorePower")
         {
             await ExecutePowerPlantAttackEffect(ctx, card, target, upgraded);
         }
-        else if (powerTypeName.Contains("Ore", StringComparison.OrdinalIgnoreCase))
+        else if (powerTypeName == "AlliedRefineryPower" ||
+                 powerTypeName == "SovietRefineryPower" ||
+                 powerTypeName == "OreRefineryPower")
         {
             await ExecuteOreRefineryAttackEffect(ctx, card, target, upgraded);
         }
-        else if (powerTypeName.Contains("BattleLab", StringComparison.OrdinalIgnoreCase))
+        else if (powerTypeName == "BattleLabPower" ||
+                 powerTypeName == "SovietBattleLabPower")
         {
-            await ExecuteBattleLabAttackEffect(ctx, card, target, upgraded);
+            await ExecuteBattleLabAttackEffect(ctx, card, target, powerType, upgraded);
         }
-        else if (powerTypeName.Contains("Barracks", StringComparison.OrdinalIgnoreCase))
+        else if (powerTypeName == "AlliedBarracksPower" ||
+                 powerTypeName == "SovietBarracksPower")
         {
             await ExecuteBarracksAttackEffect(ctx, card, upgraded);
         }
-        else if (powerTypeName.Contains("WarFactory", StringComparison.OrdinalIgnoreCase))
+        else if (powerTypeName == "AlliedWarFactoryPower" ||
+                 powerTypeName == "SovietWarFactoryPower")
         {
             await ExecuteWarFactoryAttackEffect(ctx, card, upgraded);
         }
-        else if (powerTypeName.Contains("Shipyard", StringComparison.OrdinalIgnoreCase))
+        else if (powerTypeName == "AlliedShipyardPower" ||
+                 powerTypeName == "SovietShipyardPower")
         {
             await ExecuteShipyardAttackEffect(ctx, card, upgraded);
         }
-        else if (powerTypeName.Contains("Radar", StringComparison.OrdinalIgnoreCase) ||
-                 powerTypeName.Contains("AirForce", StringComparison.OrdinalIgnoreCase))
+        else if (powerTypeName == "AlliedAirForceCommandPower" ||
+                 powerTypeName == "SovietRadarPower")
         {
             await ExecuteRadarAttackEffect(ctx, card, target, upgraded);
         }
@@ -348,23 +364,26 @@ public static class SpyChoiceHelper
         }
     }
 
-    private static async Task ExecuteBattleLabAttackEffect(PlayerChoiceContext ctx, CardModel card, Player target, bool upgraded)
+    private static readonly MethodInfo _modelDbRelicMethod = typeof(ModelDb).GetMethod("Relic", 1, Type.EmptyTypes)
+        ?? throw new InvalidOperationException("Could not find ModelDb.Relic<T>() method.");
+
+    private static async Task ExecuteBattleLabAttackEffect(PlayerChoiceContext ctx, CardModel card, Player target, Type powerType, bool upgraded)
     {
-        Type targetFaction = target.GetType();
         Type? relicType = null;
 
-        if (targetFaction.Namespace?.Contains("Allies", StringComparison.OrdinalIgnoreCase) == true)
+        if (powerType == typeof(Allies.Powers.BattleLabPower))
         {
             relicType = typeof(Allies.Relics.ChronoCommandosRelic);
         }
-        else if (targetFaction.Namespace?.Contains("Soviet", StringComparison.OrdinalIgnoreCase) == true)
+        else if (powerType == typeof(Soviet.Powers.SovietBattleLabPower))
         {
             relicType = typeof(Soviet.Relics.ChronoIvanRelic);
         }
 
         if (relicType != null && !card.Owner.Relics.Any(r => r.GetType() == relicType))
         {
-            RelicModel relic = (RelicModel)Activator.CreateInstance(relicType)!;
+            MethodInfo generic = _modelDbRelicMethod.MakeGenericMethod(relicType);
+            RelicModel relic = (RelicModel)generic.Invoke(null, null)!;
             await RelicCmd.Obtain(relic.ToMutable(), card.Owner);
         }
     }
@@ -416,23 +435,100 @@ public static class SpyChoiceHelper
 
     private static async Task ExecuteRadarAttackEffect(PlayerChoiceContext ctx, CardModel card, Player target, bool upgraded)
     {
-        int targetAgilityLoss = upgraded ? 1 : 2;
-        int attackerAgilityGain = upgraded ? 5 : 4;
+        int targetVulnerable = upgraded ? 1 : 2;
+        int attackerAgilityGain = upgraded ? 3 : 2;
 
-        if (card.DynamicVars.TryGetValue("RadarTargetAgilityLoss", out var lossVar))
+        if (card.DynamicVars.TryGetValue("RadarTargetVulnerable", out var lossVar))
         {
-            targetAgilityLoss = upgraded 
-                ? card.DynamicVars.TryGetValue("RadarTargetAgilityLossUpgraded", out var upgradedLossVar) ? upgradedLossVar.IntValue : 2 
+            targetVulnerable = upgraded 
+                ? card.DynamicVars.TryGetValue("RadarTargetVulnerableUpgraded", out var upgradedLossVar) ? upgradedLossVar.IntValue : 2 
                 : lossVar.IntValue;
         }
         if (card.DynamicVars.TryGetValue("RadarAttackerAgilityGain", out var gainVar))
         {
             attackerAgilityGain = upgraded 
-                ? card.DynamicVars.TryGetValue("RadarAttackerAgilityGainUpgraded", out var upgradedGainVar) ? upgradedGainVar.IntValue : 4 
+                ? card.DynamicVars.TryGetValue("RadarAttackerAgilityGainUpgraded", out var upgradedGainVar) ? upgradedGainVar.IntValue : 3 
                 : gainVar.IntValue;
         }
 
-        await PowerCmd.Apply<VulnerablePower>(ctx, target.Creature, targetAgilityLoss, target.Creature, card);
+        await PowerCmd.Apply<VulnerablePower>(ctx, target.Creature, targetVulnerable, target.Creature, card);
         await PowerCmd.Apply<DexterityPower>(ctx, card.Owner.Creature, attackerAgilityGain, card.Owner.Creature, card);
+    }
+
+    private static async Task ExecuteSuperWeaponAttackEffect(PlayerChoiceContext ctx, CardModel card, Player target, Type powerType, bool upgraded)
+    {
+        bool shouldGiveSuperWeapon = false;
+        
+        foreach (var power in target.Creature.Powers)
+        {
+            if (power.GetType() == powerType)
+            {
+                shouldGiveSuperWeapon = DecrementSuperWeaponCounter(power);
+                break;
+            }
+        }
+
+        if (shouldGiveSuperWeapon)
+        {
+            CardModel? superWeaponCard = CreateSuperWeaponCard(card.Owner, powerType);
+            if (superWeaponCard != null)
+            {
+                superWeaponCard.EnergyCost.SetCustomBaseCost(0);
+                superWeaponCard.AddKeyword(CardKeyword.Exhaust);
+                await CardPileCmd.AddGeneratedCardToCombat(superWeaponCard, PileType.Hand, card.Owner);
+            }
+        }
+    }
+
+    private static bool DecrementSuperWeaponCounter(PowerModel power)
+    {
+        Type powerType = power.GetType();
+        var turnCounterField = powerType.GetField("_turnCounter", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        var getIntervalMethod = powerType.GetMethod("GetInterval", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
+        if (turnCounterField != null && getIntervalMethod != null)
+        {
+            int currentCounter = (int)turnCounterField.GetValue(power)!;
+            int interval = (int)getIntervalMethod.Invoke(power, null)!;
+            
+            if (currentCounter <= 0)
+            {
+                turnCounterField.SetValue(power, interval);
+                return true;
+            }
+            
+            int newCounter = currentCounter - 1;
+            if (newCounter <= 0)
+            {
+                turnCounterField.SetValue(power, interval);
+                return true;
+            }
+            else
+            {
+                turnCounterField.SetValue(power, newCounter);
+                return false;
+            }
+        }
+        
+        return false;
+    }
+
+    private static CardModel? CreateSuperWeaponCard(Player owner, Type powerType)
+    {
+        string typeName = powerType.Name;
+        
+        if (typeName == "WeatherControllerPower")
+            return owner.Creature.CombatState.CreateCard(ModelDb.Card<RedAlert2ModCode.Allies.Cards.LightningStorm>(), owner);
+        
+        if (typeName == "NuclearMissileSiloPower")
+            return owner.Creature.CombatState.CreateCard(ModelDb.Card<RedAlert2ModCode.Soviet.Cards.NuclearAttack>(), owner);
+        
+        if (typeName == "ChronoSpherePower")
+            return owner.Creature.CombatState.CreateCard(ModelDb.Card<RedAlert2ModCode.Allies.Cards.ChronoWarp>(), owner);
+        
+        if (typeName == "IronCurtainPower")
+            return owner.Creature.CombatState.CreateCard(ModelDb.Card<RedAlert2ModCode.Soviet.Cards.IronCurtain>(), owner);
+
+        return null;
     }
 }

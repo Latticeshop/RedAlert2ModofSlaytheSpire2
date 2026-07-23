@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +34,7 @@ public sealed class WeatherController : CardModel
     {
         new IntVar("DollarNumber", Values.DollarValue),
         new IntVar("TurnsRemaining", Values.Repeat),
+        new IntVar("Block", (int)Values.Block),
         new StringVar("LightningStormName", ModelDb.Card<LightningStorm>().Title.ToString())
     };
 

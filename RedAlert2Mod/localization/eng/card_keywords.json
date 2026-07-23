@@ -141,6 +141,7 @@
     "ui.crazy_ivan.attack_desc": "Apply {BombStacks} Timed Bomb to an enemy",
     "ui.crazy_ivan.deploy_title": "Deploy",
     "ui.crazy_ivan.deploy_desc": "Select a card in hand, apply Exhaust and Timed Bomb",
+    "ui.spy.select_teammate": "Select Ally to Infiltrate",
     "ui.spy.title": "Choose Spy Action",
     "ui.spy.attack_title": "Infiltrate",
     "ui.spy.attack_desc": "Select an ally's building to infiltrate",
@@ -186,10 +187,10 @@
     "ui.spy.attack.shipyard_desc_base": "Gain an upgraded friendly Shipyard",
     "ui.spy.attack.shipyard_desc_upgraded": "Gain an upgraded friendly Shipyard",
     "ui.spy.attack.radar_title": "Radar",
-    "ui.spy.attack.radar_desc_base": "Ally loses {RadarTargetAgilityLoss} Dex, self gains {RadarAttackerAgilityGain} Dex",
-    "ui.spy.attack.radar_desc_upgraded": "Ally loses {RadarTargetAgilityLossUpgraded} Dex, self gains {RadarAttackerAgilityGainUpgraded} Dex",
+    "ui.spy.attack.radar_desc_base": "Ally gains {RadarTargetVulnerable} Vulnerable, self gains {RadarAttackerAgilityGain} Dex",
+    "ui.spy.attack.radar_desc_upgraded": "Ally gains {RadarTargetVulnerableUpgraded} Vulnerable, self gains {RadarAttackerAgilityGainUpgraded} Dex",
     "ui.spy.attack.superweapon_title": "Super Weapon",
-    "ui.spy.attack.superweapon_desc_base": "Reset ally's superweapon cooldown, gain a 0-cost exhausted superweapon",
-    "ui.spy.attack.superweapon_desc_upgraded": "Reset ally's superweapon cooldown, gain a 0-cost exhausted superweapon",
+    "ui.spy.attack.superweapon_desc_base": "Ally's superweapon counter -1, if counter reaches 0 reset it, gain a 0-cost exhausted superweapon",
+    "ui.spy.attack.superweapon_desc_upgraded": "Ally's superweapon counter -1, if counter reaches 0 reset it, gain a 0-cost exhausted superweapon",
     "ui.spy.attack.unknown_desc": "Unknown building effect"
 }
