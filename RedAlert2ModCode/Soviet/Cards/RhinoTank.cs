@@ -1,4 +1,4 @@
-﻿using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -12,12 +12,15 @@ using MegaCrit.Sts2.Core.HoverTips;
 using System.Collections.Generic;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
 /// 犀牛坦克 - 攻击牌
 /// 1费5攻击3防御+1易伤，升级后7攻击5防御+1易伤
 /// </summary>
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class RhinoTank : CardModel
 {
 	// 数值引用

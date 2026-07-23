@@ -1,4 +1,4 @@
-﻿using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions;
@@ -11,12 +11,16 @@ using MegaCrit.Sts2.Core.HoverTips;
 using System.Collections.Generic;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
 /// 美国大兵 - 类似于打击的基础攻击牌
 /// 1费2伤害2次，升级后2伤害3次
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class AmericanSoldier : CardModel
 {
 	// 数值引用

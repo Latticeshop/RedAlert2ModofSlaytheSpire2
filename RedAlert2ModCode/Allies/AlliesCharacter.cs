@@ -1,40 +1,23 @@
 // 小格子铺 | Latticeshop
-using BaseLib.Abstracts;
-using RedAlert2ModCode.Extensions;
-using RedAlert2ModCode.Allies.Cards;
-using RedAlert2ModCode.Common.Cards;
 using Godot;
-using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Models.Cards;
-using MegaCrit.Sts2.Core.Models.Relics;
+using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Characters;
 
 namespace RedAlert2ModCode.Allies;
 
 /// <summary>
-/// 盟军角色 - 使用BaseLib的PlaceholderCharacterModel
+/// 盟军角色 - 使用RitsuLib的ModCharacterTemplate
 /// 覆盖所有资源路径以使用自定义资源
 /// </summary>
-public sealed class Allies : PlaceholderCharacterModel
+[RegisterCharacter]
+public sealed class Allies : ModCharacterTemplate<AlliesCardPool, AlliesRelicPool, AlliesPotionPool>
 {
     public const string CharacterId = "Allies";
     
     // 借用故障机器人的基础场景（使用蓝色能量指示器），然后用自定义资源覆盖
-    public override string PlaceholderID => "defect";
-    
-    // 自定义资源路径
-    public override string CustomIconPath => "res://RedAlert2ModResources/scenes/ui/character_icons/allies_icon.tscn";
-    public override string CustomIconTexturePath => "res://RedAlert2ModResources/images/ui/allies_icon.png";
-    public override string CustomCharacterSelectIconPath => "res://RedAlert2ModResources/images/charui/allies_character_select.png";
-    public override string CustomVisualPath => "res://RedAlert2ModResources/scenes/creature_visuals/allies.tscn";
-    public override string CustomCharacterSelectBg => "res://RedAlert2ModResources/scenes/allies_bg.tscn";
-    
-    // 篝火休息场景
-    public override string CustomRestSiteAnimPath => "res://RedAlert2ModResources/scenes/rest_site/characters/allies_rest_site.tscn";
-    
-    // 商店场景（复用战斗立绘）
-    public override string CustomMerchantAnimPath => "res://RedAlert2ModResources/scenes/creature_visuals/allies_shop.tscn";
+    public override string PlaceholderCharacterId => "defect";
     
     // 角色颜色配置
     public static readonly Color Color = new("2060a0"); // 盟军蓝色
@@ -45,36 +28,27 @@ public sealed class Allies : PlaceholderCharacterModel
     public override CharacterGender Gender => CharacterGender.Feminine; // 谭雅是女性角色
     public override int StartingHp => 85;
     
-    public override string CustomArmPointingTexturePath => "res://RedAlert2ModResources/images/ui/hands/multiplayer_hand_allies_point.png";
-    public override string CustomArmRockTexturePath => "res://RedAlert2ModResources/images/ui/hands/multiplayer_hand_allies_rock.png";
-    public override string CustomArmPaperTexturePath => "res://RedAlert2ModResources/images/ui/hands/multiplayer_hand_allies_paper.png";
-    public override string CustomArmScissorsTexturePath => "res://RedAlert2ModResources/images/ui/hands/multiplayer_hand_allies_scissors.png";
+    // CharacterModel抽象成员实现
+    public override float CastAnimDelay => 0f;
+    public override float AttackAnimDelay => 0f;
+    public override int StartingGold => 99;
+    public override List<string> GetArchitectAttackVfx() => new();
     
-    // 起始卡组（5张美国大兵 + 5张灰熊坦克 + 1张盟军基地车 + 1张盟军围墙）
-    public override IEnumerable<CardModel> StartingDeck => new List<CardModel>
-    {
-        ModelDb.Card<AmericanSoldier>(),
-        ModelDb.Card<AmericanSoldier>(),
-        ModelDb.Card<AmericanSoldier>(),
-        ModelDb.Card<AmericanSoldier>(),
-        ModelDb.Card<AmericanSoldier>(),
-        ModelDb.Card<GrizzlyTank>(),
-        ModelDb.Card<GrizzlyTank>(),
-        ModelDb.Card<GrizzlyTank>(),
-        ModelDb.Card<GrizzlyTank>(),
-        ModelDb.Card<GrizzlyTank>(),
-        ModelDb.Card<AlliedMCV>(),
-        ModelDb.Card<AlliedWallCard>(),
-    };
+    // 自定义资源路径（使用RitsuLib的AssetProfile）
+    public override string CustomVisualsPath => "res://RedAlert2ModResources/scenes/creature_visuals/allies.tscn";
+    public override string CustomEnergyCounterPath => "";
+    public override string CustomMerchantAnimPath => "res://RedAlert2ModResources/scenes/creature_visuals/allies_shop.tscn";
+    public override string CustomRestSiteAnimPath => "res://RedAlert2ModResources/scenes/rest_site/characters/allies_rest_site.tscn";
+    public override string CustomIconTexturePath => "res://RedAlert2ModResources/images/ui/allies_icon.png";
+    public override string CustomIconOutlineTexturePath => "";
+    public override string CustomIconPath => "res://RedAlert2ModResources/scenes/ui/character_icons/allies_icon.tscn";
+    public override string CustomCharacterSelectBgPath => "res://RedAlert2ModResources/scenes/allies_bg.tscn";
+    public override string CustomCharacterSelectIconPath => "res://RedAlert2ModResources/images/charui/allies_character_select.png";
+    public override string CustomCharacterSelectLockedIconPath => "";
+    public override string CustomCharacterSelectTransitionPath => "";
+    public override string CustomMapMarkerPath => "";
+    public override string CustomTrailPath => "";
     
-    // 起始遗物（刀乐）
-    public override IReadOnlyList<RelicModel> StartingRelics => new List<RelicModel>
-    {
-        ModelDb.Relic<RedAlert2ModCode.Common.Relics.DollarRelic>(),
-    };
-    
-    // 卡池、遗物池、药水池
-    public override CardPoolModel CardPool => ModelDb.CardPool<AlliesCardPool>();
-    public override RelicPoolModel RelicPool => ModelDb.RelicPool<AlliesRelicPool>();
-    public override PotionPoolModel PotionPool => ModelDb.PotionPool<AlliesPotionPool>();
+    // 起始卡组（通过StartingDeckTypes配置，或者使用属性注册）
+    // 暂保持原有StartingDeck实现，后续逐步迁移到StartingDeckTypes
 }

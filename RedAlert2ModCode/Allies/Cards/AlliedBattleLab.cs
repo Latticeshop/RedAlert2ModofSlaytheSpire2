@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +17,16 @@ using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
 /// 作战实验室 - 盟军建筑卡
 /// 0费能力卡，解锁高级兵种，价格2000
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class AlliedBattleLab : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.AlliedBattleLab;

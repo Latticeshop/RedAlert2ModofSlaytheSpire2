@@ -1,4 +1,4 @@
-﻿using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions;
@@ -12,6 +12,8 @@ using MegaCrit.Sts2.Core.HoverTips;
 using System.Collections.Generic;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
@@ -19,6 +21,7 @@ namespace RedAlert2ModCode.Soviet.Cards;
 /// 0费，造成3点伤害，赋予一层虚弱
 /// 升级后：4点伤害，2层虚弱，费用不变
 /// </summary>
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class SovietAttackDog : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.AttackDog;

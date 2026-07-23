@@ -17,12 +17,16 @@ using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Common.Cards;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
 /// 船厂 - 盟军建筑卡
 /// 0费，选择一张海军单位，创建对应的生产序列
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class AlliesShipyardCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.Shipyard;

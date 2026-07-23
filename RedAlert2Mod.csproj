@@ -11,6 +11,10 @@
     <!-- BaseLib路径配置 -->
     <BaseLibDir>$(MSBuildProjectDirectory)/BaseLib</BaseLibDir>
     <BaseLibDllPath>$(BaseLibDir)/BaseLib.dll</BaseLibDllPath>
+    
+    <!-- RitsuLib路径配置（使用与游戏版本匹配的DLL） -->
+    <RitsuLibDir>$(MSBuildProjectDirectory)/RestuLib</RitsuLibDir>
+    <RitsuLibDllPath>$(RitsuLibDir)/lib/0.109.0/STS2-RitsuLib.dll</RitsuLibDllPath>
   </PropertyGroup>
   
   <!-- 引用游戏程序集（使用项目根目录的DLL） -->
@@ -33,6 +37,18 @@
     </Reference>
     <!-- 确保BaseLib.dll被复制到输出目录 -->
     <None Include="$(BaseLibDllPath)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+  <!-- 引用RitsuLib（渐进式迁移，与BaseLib共存） -->
+  <ItemGroup Condition="Exists('$(RitsuLibDllPath)')">
+    <Reference Include="STS2-RitsuLib">
+      <HintPath>$(RitsuLibDllPath)</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <!-- 确保RitsuLib.dll被复制到输出目录 -->
+    <None Include="$(RitsuLibDllPath)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

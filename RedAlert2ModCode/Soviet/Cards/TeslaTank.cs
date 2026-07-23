@@ -13,8 +13,11 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class TeslaTank : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.TeslaTank;

@@ -1,4 +1,4 @@
-﻿using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions;
@@ -11,8 +11,12 @@ using MegaCrit.Sts2.Core.HoverTips;
 using System.Collections.Generic;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class TankDestroyer : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.TankDestroyer;

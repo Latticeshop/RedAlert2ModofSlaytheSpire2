@@ -14,6 +14,8 @@ using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
@@ -21,6 +23,8 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 1费技能卡（普通白卡）
 /// 效果：获得能力：每回合开始时对随机敌人造成2点伤害，自己获得5点防御
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class AlliesPillboxCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.Pillbox;

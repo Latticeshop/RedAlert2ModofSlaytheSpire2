@@ -17,8 +17,12 @@ using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.UI;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class GuardianGi : CardModel
 {
     private static readonly CardValueStore.CardValues Values = AlliesCardValues.GuardianGI;

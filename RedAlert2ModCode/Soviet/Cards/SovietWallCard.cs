@@ -12,6 +12,8 @@ using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Common.Utils;
 using System.Linq;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
@@ -19,6 +21,7 @@ namespace RedAlert2ModCode.Soviet.Cards;
 /// 0费技能卡
 /// 效果：花费资金，获得护盾，将此牌返回手牌
 /// </summary>
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class SovietWallCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.SovietWall;

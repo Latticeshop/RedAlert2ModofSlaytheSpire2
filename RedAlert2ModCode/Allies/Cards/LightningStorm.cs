@@ -18,6 +18,8 @@ using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
@@ -25,6 +27,8 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 4费技能卡（升级3费），金卡
 /// 效果：生成电球，然后触发"电流相生"效果
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class LightningStorm : CardModel
 {
     private static readonly CardValueStore.CardValues Values = AlliesCardValues.LightningStorm;

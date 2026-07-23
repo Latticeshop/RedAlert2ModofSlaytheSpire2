@@ -14,12 +14,15 @@ using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet.Powers;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
 /// 苏军哨戒炮 - 防御建筑卡
 /// 1费，回合开始时对敌人造成伤害2次，获得防御（升级不加）
 /// </summary>
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class SovietPillboxCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.SovietPillbox;

@@ -13,6 +13,8 @@ using RedAlert2ModCode.Soviet.Powers;
 using RedAlert2ModCode.Soviet.Utils;
 using RedAlert2ModCode.UI;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
@@ -20,6 +22,7 @@ namespace RedAlert2ModCode.Soviet.Cards;
 /// 0费，打出后在初始建筑+当前卡组已有建筑中选择一张加入手牌
 /// 升级后：获得的卡牌为升级版本
 /// </summary>
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class SovietMCV : CardModel
 {
 	public SovietMCV() : base(0, CardType.Skill, CardRarity.Rare, TargetType.Self) { }

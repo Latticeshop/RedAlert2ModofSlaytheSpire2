@@ -14,8 +14,11 @@ using RedAlert2ModCode.UI;
 
 using Choice = RedAlert2ModCode.UI.ChoiceSelectionScreen.Choice;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class SovietEngineer : CardModel
 {
 	private const int COST = 1;

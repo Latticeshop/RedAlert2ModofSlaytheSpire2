@@ -19,12 +19,15 @@ using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Soviet.Relics;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
 /// 苏军兵营 - 建筑卡
 /// 0费，选择一张士兵单位，创建对应的生产序列
 /// </summary>
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class SovietBarracksCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.Barracks;

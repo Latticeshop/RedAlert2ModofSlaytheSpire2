@@ -9,12 +9,16 @@ using MegaCrit.Sts2.Core.HoverTips;
 using System.Collections.Generic;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
 /// IFV - 技能牌
 /// 1费，抽1张牌（升级2张），获得5点护盾
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class Ifv : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.Ifv;

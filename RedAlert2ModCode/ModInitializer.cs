@@ -22,6 +22,10 @@ public static class ModInitializer
     
     public static void Initialize()
     {
+        // ========== RitsuLib框架初始化（渐进式迁移） ==========
+        RitsuLibInitializer.Initialize();
+        
+        // ========== 原有BaseLib逻辑保持不变 ==========
         var harmony = new Harmony(ModId);
         harmony.PatchAll();
         
@@ -56,7 +60,10 @@ public static class ModInitializer
         
         Godot.Bridge.ScriptManagerBridge.LookupScriptsInAssembly(Assembly.GetExecutingAssembly());
         
-        Logger.Info("红警2Mod加载成功！");
+        // ========== 应用RitsuLib补丁（渐进式迁移） ==========
+        RitsuLibInitializer.ApplyPatches();
+        
+        Logger.Info("红警2Mod加载成功！（RitsuLib集成模式）");
     }
     
     private static void RegisterNetActionSubtype(Type netActionType)

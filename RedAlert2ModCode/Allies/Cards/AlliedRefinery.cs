@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -12,12 +12,16 @@ using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
 /// 盟军矿场 - 能力牌
 /// 1费，将一张超时空矿车加入手牌
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class AlliedRefinery : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.AlliedRefinery;

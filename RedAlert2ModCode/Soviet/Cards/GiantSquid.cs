@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -15,8 +15,11 @@ using MegaCrit.Sts2.Core.ValueProps;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet.Powers;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class GiantSquid : CardModel
 {
     private static readonly CardValueStore.CardValues Values = SovietCardValues.GiantSquid;

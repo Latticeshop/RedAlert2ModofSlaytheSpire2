@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -14,6 +14,8 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Common.Cards;
+
+using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Allies.Cards;
 

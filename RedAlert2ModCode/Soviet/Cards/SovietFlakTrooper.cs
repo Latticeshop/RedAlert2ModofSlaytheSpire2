@@ -13,12 +13,15 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.MonsterMoves.Intents;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
 /// 防空步兵 - 苏联士兵单位
 /// 1费攻击卡，每有一个攻击意图的敌人，获得一遍格挡（每个敌人3格挡，升级后4格挡）
 /// </summary>
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class SovietFlakTrooper : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.FlakTrooper;

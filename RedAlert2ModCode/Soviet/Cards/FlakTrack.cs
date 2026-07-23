@@ -22,6 +22,8 @@ using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Soviet;
 using RedAlert2ModCode.Yuri;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
 public sealed partial class FlakTrack : CardModel

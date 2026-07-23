@@ -1,12 +1,13 @@
 using Godot;
-using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Models.Cards;
-using RedAlert2ModCode.Allies.Cards;
-using RedAlert2ModCode.Common.Cards;
+using STS2RitsuLib.Scaffolding.Content;
 
 namespace RedAlert2ModCode.Allies;
 
-public sealed class AlliesCardPool : CardPoolModel
+/// <summary>
+/// 盟军卡池 - 使用RitsuLib的TypeListCardPoolModel
+/// 卡牌通过RegisterOwnedCardPoolAttribute属性自动注册到卡池
+/// </summary>
+public sealed class AlliesCardPool : TypeListCardPoolModel
 {
     public override string Title => "allies";
     public override string EnergyColorName => "defect";
@@ -17,9 +18,4 @@ public sealed class AlliesCardPool : CardPoolModel
     public static readonly Color Color = new("2060a0");
     public override Color DeckEntryCardColor => Color;
     public override Color EnergyOutlineColor => new("103080");
-
-    protected override CardModel[] GenerateAllCards()
-    {
-        return AlliedCardRegistry.GetAllCards().ToArray();
-    }
 }

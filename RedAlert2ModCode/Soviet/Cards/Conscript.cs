@@ -11,6 +11,8 @@ using MegaCrit.Sts2.Core.HoverTips;
 using System.Collections.Generic;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
@@ -18,6 +20,7 @@ namespace RedAlert2ModCode.Soviet.Cards;
 /// 0费3伤害1次，升级后4伤害1次
 /// 对应盟军的美国大兵
 /// </summary>
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class Conscript : CardModel
 {
 	// 数值引用

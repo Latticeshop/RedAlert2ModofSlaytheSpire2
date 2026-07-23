@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +17,15 @@ using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet.Powers;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
 /// 作战实验室 - 苏军建筑卡
 /// 0费能力卡，解锁高级兵种，价格2000
 /// </summary>
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class SovietBattleLab : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.SovietBattleLab;

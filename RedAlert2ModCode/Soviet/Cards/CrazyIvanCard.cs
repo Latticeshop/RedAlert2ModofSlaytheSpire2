@@ -20,8 +20,11 @@ using RedAlert2ModCode.Soviet.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Yuri;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class CrazyIvanCard : CardModel
 {
     private static readonly CardValueStore.CardValues Values = SovietCardValues.CrazyIvan;

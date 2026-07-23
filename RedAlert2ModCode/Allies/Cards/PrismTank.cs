@@ -17,6 +17,8 @@ using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
@@ -25,6 +27,8 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 效果：造成15(升级20)点伤害。[gold]溅射[/gold]
 /// 使用扫荡射线动画展示射线感
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class PrismTank : CardModel
 {
     private static readonly CardValueStore.CardValues Values = AlliesCardValues.PrismTank;

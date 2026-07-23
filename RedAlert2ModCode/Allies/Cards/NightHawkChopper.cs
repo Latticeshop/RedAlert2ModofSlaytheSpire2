@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +21,8 @@ using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Soviet;
 using RedAlert2ModCode.Yuri;
+
+using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Allies.Cards;
 

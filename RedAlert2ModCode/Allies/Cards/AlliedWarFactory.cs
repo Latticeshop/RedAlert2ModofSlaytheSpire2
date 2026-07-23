@@ -17,12 +17,16 @@ using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Common.Cards;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
 /// 盟军重工 - 能力牌
 /// 效果类似兵营，但提供装甲单位（灰熊坦克、IFV）
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class AlliedWarFactory : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.AlliedWarFactory;

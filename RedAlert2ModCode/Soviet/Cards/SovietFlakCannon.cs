@@ -14,6 +14,8 @@ using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet.Powers;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
@@ -21,6 +23,7 @@ namespace RedAlert2ModCode.Soviet.Cards;
 /// 1费技能卡（白卡common）
 /// 效果：获得能力：回合开始时，每有一个攻击意图的敌人，获得2点格挡（升级后3点）
 /// </summary>
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class SovietFlakCannon : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.FlakCannon;

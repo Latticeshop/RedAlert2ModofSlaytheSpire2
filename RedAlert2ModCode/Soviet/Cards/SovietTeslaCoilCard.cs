@@ -13,8 +13,11 @@ using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Powers;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class SovietTeslaCoilCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.TeslaCoilCard;

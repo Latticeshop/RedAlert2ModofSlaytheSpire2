@@ -19,6 +19,8 @@ using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
@@ -27,6 +29,8 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 效果：若敌人意图攻击，获得16(升级20)点格挡；否则造成10(升级15)点伤害
 /// 使用热能射线火焰特效动画
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class MirageTank : CardModel
 {
     private static readonly CardValueStore.CardValues Values = AlliesCardValues.MirageTank;

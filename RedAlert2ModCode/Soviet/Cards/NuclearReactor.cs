@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -13,6 +13,8 @@ using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Powers;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
@@ -21,6 +23,7 @@ namespace RedAlert2ModCode.Soviet.Cards;
 /// 效果：每抽10张牌获得1点能量（升级后改为7张）
 /// 与盟军发电厂效果一致
 /// </summary>
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class NuclearReactor : CardModel
 {
 	// 数值引用

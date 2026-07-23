@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,8 +16,11 @@ using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet.Powers;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class Dreadnought : CardModel
 {
     private static readonly CardValueStore.CardValues Values = SovietCardValues.Dreadnought;

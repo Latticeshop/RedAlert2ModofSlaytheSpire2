@@ -11,6 +11,8 @@ using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
@@ -19,6 +21,8 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 使用普通围墙一样的图片
 /// 效果：花费资金，获得3护盾（升级后5护盾），将此牌返回手牌
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class FortifiedWall : CardModel
 {
     private static readonly CardValueStore.CardValues Values = AlliesCardValues.AlliedFortifiedWall;

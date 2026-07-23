@@ -15,12 +15,16 @@ using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Common.Cards;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
 /// 空指部 - 能力牌
 /// 效果类似兵营和盟军重工，但提供空军单位（入侵者战机等）
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class AirForceCommand : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.AirForceCommand;

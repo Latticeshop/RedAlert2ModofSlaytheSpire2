@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -17,6 +17,8 @@ using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
@@ -24,6 +26,8 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 2费攻击卡，Token衍生卡，需要作战实验室解锁
 /// 效果：选择一名敌人获得目标锁定，获得3架黄蜂舰载机
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class AircraftCarrier : CardModel
 {
     private static readonly CardValueStore.CardValues Values = AlliesCardValues.AircraftCarrier;

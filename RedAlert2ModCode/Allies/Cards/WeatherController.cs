@@ -15,6 +15,8 @@ using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
@@ -22,6 +24,8 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 0费能力卡，金卡，需要作战实验室解锁
 /// 效果：每过3回合（升级后2回合），将一张"虚无"词条的"闪电风暴"加入手牌
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class WeatherController : CardModel
 {
     private static readonly CardValueStore.CardValues Values = AlliesCardValues.WeatherController;

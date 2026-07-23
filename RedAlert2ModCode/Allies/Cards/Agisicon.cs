@@ -13,12 +13,16 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.MonsterMoves.Intents;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
 /// 神盾巡洋舰 - 盟军海军单位技能卡
 /// 1费技能卡，获得8点格挡（升级12点）。若敌人意图攻击，多获得1轮。
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class Agisicon : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.Agisicon;

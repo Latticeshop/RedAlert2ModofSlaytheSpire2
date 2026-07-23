@@ -15,6 +15,8 @@ using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Powers;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
@@ -22,6 +24,7 @@ namespace RedAlert2ModCode.Soviet.Cards;
 /// 0费，对敌方造成2点伤害（升级后对全体敌人），获得1000资金（升级后1500）
 /// 挖矿逻辑：优先挖宝石矿(2倍价值)，再挖黄金矿
 /// </summary>
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class WarMiner : CardModel
 {
 	// 数值引用

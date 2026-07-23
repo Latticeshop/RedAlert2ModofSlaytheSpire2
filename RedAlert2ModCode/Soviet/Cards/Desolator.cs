@@ -14,8 +14,11 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.UI;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class Desolator : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.Desolator;

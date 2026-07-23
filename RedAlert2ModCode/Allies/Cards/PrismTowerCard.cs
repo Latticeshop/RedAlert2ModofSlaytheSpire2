@@ -14,6 +14,8 @@ using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
@@ -21,6 +23,8 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 2费，获得光棱塔能力，效果为回合开始时对随机敌人造成伤害
 /// 升级后费用降低为1费
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class PrismTowerCard : CardModel
 {
 	// 数值引用

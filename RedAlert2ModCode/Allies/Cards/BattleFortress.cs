@@ -22,8 +22,12 @@ using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Soviet;
 using RedAlert2ModCode.Yuri;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class BattleFortress : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.BattleFortress;

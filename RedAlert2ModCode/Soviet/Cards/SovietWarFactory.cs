@@ -17,12 +17,15 @@ using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Soviet.Powers;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
 /// 苏军重工 - 建筑卡
 /// 0费，选择一张装甲单位，创建对应的生产序列
 /// </summary>
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class SovietWarFactory : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.SovietWarFactory;

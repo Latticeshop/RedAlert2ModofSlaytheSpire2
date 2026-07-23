@@ -15,8 +15,12 @@ using RedAlert2ModCode.UI;
 
 using Choice = RedAlert2ModCode.UI.ChoiceSelectionScreen.Choice;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class AlliesEngineer : CardModel
 {
 	// 数值配置

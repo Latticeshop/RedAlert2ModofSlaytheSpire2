@@ -1,7 +1,9 @@
-using RedAlert2ModCode.Common.Cards;
+﻿using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Utils;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+
+using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Allies.Cards;
 

@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -13,8 +13,11 @@ using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Allies.Cards;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class SovietEarlyMining : CardModel
 {
     private static readonly CardValueStore.CardValues Values = SovietCardValues.EarlyMining;

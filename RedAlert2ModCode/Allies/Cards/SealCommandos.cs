@@ -15,8 +15,12 @@ using MegaCrit.Sts2.Core.MonsterMoves.Intents;
 using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class SealCommandos : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.SealCommandos;

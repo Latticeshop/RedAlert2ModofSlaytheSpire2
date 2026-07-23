@@ -20,8 +20,12 @@ using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.UI;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class SpyCard : CardModel
 {
     private const int COST = 1;

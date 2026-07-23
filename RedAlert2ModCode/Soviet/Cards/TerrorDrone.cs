@@ -12,12 +12,15 @@ using MegaCrit.Sts2.Core.ValueProps;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet.Powers;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
 /// 恐怖机器人 - 苏联装甲单位
 /// 1费攻击卡，赋予恐怖机器人+缓慢
 /// </summary>
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class TerrorDrone : CardModel
 {
     private static readonly CardValueStore.CardValues Values = SovietCardValues.TerrorDrone;

@@ -17,8 +17,11 @@ using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Common.Utils;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class SovietTransportShip : CardModel
 {
     private static readonly CardValueStore.CardValues Values = SovietCardValues.SovietTransportShip;

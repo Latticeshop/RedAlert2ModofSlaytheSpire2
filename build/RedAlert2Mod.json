@@ -2,15 +2,15 @@
 	"id": "RedAlert2Mod",
 	"name": "红警2mod",
 	"author": "小格子铺",
-	"description": "关于杀戮尖塔2的红色警戒2游戏mod，主要有盟军，苏军，尤里三个阵营。",
-	"version": "1.0.5",
+	"description": "关于杀戮尖塔2的红色警戒2游戏mod，主要有盟军，苏军，尤里三个阵营。（RitsuLib迁移中）",
+	"version": "1.1.0",
 	"min_game_version": "0.109.0",
 	"has_pck": true,
 	"has_dll": true,
 	"dependencies": [
 		{
-			"id": "BaseLib",
-			"min_version": "3.3.0"
+			"id": "STS2-RitsuLib",
+			"min_version": "0.4.62"
 		}
 	],
 	"affects_gameplay": true

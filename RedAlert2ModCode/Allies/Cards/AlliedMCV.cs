@@ -17,6 +17,8 @@ using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.UI;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
@@ -24,6 +26,8 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 0费，打出后在初始建筑+当前卡组已有建筑中选择一张加入手牌
 /// 升级后：获得的卡牌为升级版本
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class AlliedMCV : CardModel
 {
 	public AlliedMCV() : base((int)AlliesCardValues.AlliedMCV.Cost, CardType.Skill, CardRarity.Rare, TargetType.Self) { }

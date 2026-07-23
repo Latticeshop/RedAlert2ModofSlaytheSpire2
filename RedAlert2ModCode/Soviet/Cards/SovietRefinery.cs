@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -14,12 +14,15 @@ using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet.Powers;
 
+using STS2RitsuLib.Interop.AutoRegistration;
+
 namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
 /// 苏联矿场 - 能力牌
 /// 1费，将一张武装采矿车加入手牌
 /// </summary>
+[RegisterCard(typeof(SovietCardPool))]
 public sealed class SovietRefinery : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.SovietRefinery;
