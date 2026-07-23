@@ -16,7 +16,7 @@ using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.UI;
 
-using EngineerChoice = RedAlert2ModCode.UI.EngineerChoiceScreen.EngineerChoice;
+using Choice = RedAlert2ModCode.UI.ChoiceSelectionScreen.Choice;
 
 namespace RedAlert2ModCode.Common.Utils;
 
@@ -25,17 +25,17 @@ public static class EngineerChoiceHelper
     private const int BASE_CHOICE_COUNT = 2;
     private const int UPGRADED_CHOICE_COUNT = 1;
 
-    public static List<EngineerChoice> GenerateRandomChoices(bool isUpgraded, Player player)
+    public static List<Choice> GenerateRandomChoices(bool isUpgraded, Player player)
     {
         int choiceCount = isUpgraded ? BASE_CHOICE_COUNT + UPGRADED_CHOICE_COUNT : BASE_CHOICE_COUNT;
         return WeightedRandomSelection(EngineerChoiceValues.AllChoices, choiceCount, player.RunState.Rng.CombatCardSelection);
     }
 
-    private static List<EngineerChoice> WeightedRandomSelection(
-        List<EngineerChoice> choices, int count, Rng rng)
+    private static List<Choice> WeightedRandomSelection(
+        List<Choice> choices, int count, Rng rng)
     {
-        List<EngineerChoice> result = new();
-        List<EngineerChoice> remaining = new List<EngineerChoice>(choices);
+        List<Choice> result = new();
+        List<Choice> remaining = new List<Choice>(choices);
 
         for (int i = 0; i < count && remaining.Count > 0; i++)
         {
@@ -58,39 +58,39 @@ public static class EngineerChoiceHelper
         return result;
     }
 
-    public static async Task ExecuteChoice(PlayerChoiceContext ctx, EngineerChoice choice, CardModel card)
+    public static async Task ExecuteChoice(PlayerChoiceContext ctx, Choice choice, CardModel card)
     {
         switch (choice.Type)
         {
-            case EngineerChoiceScreen.ChoiceType.CaptureOilDerrick:
+            case ChoiceSelectionScreen.ChoiceType.CaptureOilDerrick:
                 var oilDerrickCard = card.Owner.Creature.CombatState.CreateCard(ModelDb.Card<OilDerrickCard>(), card.Owner);
                 await CardPileCmd.AddGeneratedCardToCombat(oilDerrickCard, PileType.Hand, card.Owner);
                 break;
 
-            case EngineerChoiceScreen.ChoiceType.RepairBuilding:
+            case ChoiceSelectionScreen.ChoiceType.RepairBuilding:
                 await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.PlatingPower>(ctx, card.Owner.Creature, 3, card.Owner.Creature, card);
                 break;
 
-            case EngineerChoiceScreen.ChoiceType.CaptureAirfield:
+            case ChoiceSelectionScreen.ChoiceType.CaptureAirfield:
                 var paratrooperCard = card.Owner.Creature.CombatState.CreateCard(ModelDb.Card<Paratrooper>(), card.Owner);
                 await CardPileCmd.AddGeneratedCardToCombat(paratrooperCard, PileType.Hand, card.Owner);
                 break;
 
-            case EngineerChoiceScreen.ChoiceType.CaptureHospital:
+            case ChoiceSelectionScreen.ChoiceType.CaptureHospital:
                 await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.DexterityPower>(ctx, card.Owner.Creature, 1, card.Owner.Creature, card);
                 break;
 
-            case EngineerChoiceScreen.ChoiceType.CaptureWorkshop:
+            case ChoiceSelectionScreen.ChoiceType.CaptureWorkshop:
                 await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>(ctx, card.Owner.Creature, 1, card.Owner.Creature, card);
                 break;
 
-            case EngineerChoiceScreen.ChoiceType.CaptureTechOutpost:
+            case ChoiceSelectionScreen.ChoiceType.CaptureTechOutpost:
                 await PowerCmd.Apply<PatriotMissilePower>(ctx, card.Owner.Creature, 1, card.Owner.Creature, card);
                 var repairDepotCard = card.Owner.Creature.CombatState.CreateCard(ModelDb.Card<AlliesRepairDepot>(), card.Owner);
                 await CardPileCmd.AddGeneratedCardToCombat(repairDepotCard, PileType.Hand, card.Owner);
                 break;
 
-            case EngineerChoiceScreen.ChoiceType.RepairBridge:
+            case ChoiceSelectionScreen.ChoiceType.RepairBridge:
                 var handPile = PileType.Hand.GetPile(card.Owner);
                 var handCards = handPile.Cards.ToList();
                 

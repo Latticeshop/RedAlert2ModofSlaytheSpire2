@@ -13,7 +13,7 @@ using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.UI;
 
-using EngineerChoice = RedAlert2ModCode.UI.EngineerChoiceScreen.EngineerChoice;
+using Choice = RedAlert2ModCode.UI.ChoiceSelectionScreen.Choice;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
@@ -44,9 +44,9 @@ public sealed class AlliesEngineer : CardModel
 		UnitVoiceHelper.PlayUnitVoice(GetType());
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
-		List<EngineerChoice> choices = EngineerChoiceHelper.GenerateRandomChoices(IsUpgraded, Owner);
+		List<Choice> choices = EngineerChoiceHelper.GenerateRandomChoices(IsUpgraded, Owner);
 
-		var selectedChoice = await EngineerChoiceScreen.ShowSelectionWithSync(choices, PortraitPath, Owner, FactionType.Allied);
+		var selectedChoice = await ChoiceSelectionScreen.ShowSelectionWithSync(choices, PortraitPath, Owner, FactionType.Allied);
 
 		if (selectedChoice != null)
 		{

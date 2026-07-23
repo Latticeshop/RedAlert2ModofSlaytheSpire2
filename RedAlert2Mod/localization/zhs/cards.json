@@ -240,5 +240,7 @@
     "CRAZY_IVAN_CARD.title": "疯狂伊文",
     "CRAZY_IVAN_CARD.description": "赋予敌人{BombStacks}层[gold]定时炸弹[/gold]，已有[gold]定时炸弹[/gold]则减少倒计时。[gold]部署[/gold]：选择手牌中一张[gold]单位[/gold]卡牌添加[gold]“定时炸弹”[/gold]词条，打出卡牌前获得{DeployVigor}点[gold]活力[/gold]并消耗。",
     "CHRONO_IVAN_CARD.title": "超时空伊文",
-    "CHRONO_IVAN_CARD.description": "{ChronoTitle}赋予敌人{BombStacks}层[gold]定时炸弹[/gold]，已有[gold]定时炸弹[/gold]则减少倒计时。[gold]部署[/gold]：选择手牌中一张[gold]单位[/gold]卡牌添加[gold]“定时炸弹”[/gold]词条，打出卡牌前获得{DeployVigor}点[gold]活力[/gold]并消耗。"
+    "CHRONO_IVAN_CARD.description": "{ChronoTitle}赋予敌人{BombStacks}层[gold]定时炸弹[/gold]，已有[gold]定时炸弹[/gold]则减少倒计时。[gold]部署[/gold]：选择手牌中一张[gold]单位[/gold]卡牌添加[gold]“定时炸弹”[/gold]词条，打出卡牌前获得{DeployVigor}点[gold]活力[/gold]并消耗。",
+    "SPY_CARD.title": "间谍",
+    "SPY_CARD.description": "渗透建筑，从 {IfUpgraded:show:3|2} 个选项中选择一个指令。\n可以渗透队友建筑。"
 }

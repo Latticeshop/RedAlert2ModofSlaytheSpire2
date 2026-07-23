@@ -240,5 +240,7 @@
     "CRAZY_IVAN_CARD.title": "Crazy Ivan",
     "CRAZY_IVAN_CARD.description": "Apply {BombStacks} stacks of [gold]Timed Bomb[/gold] to an enemy. If enemy already has [gold]Timed Bomb[/gold], reduce countdown. [gold]Deploy[/gold]: Select a [gold]Unit[/gold] card from your hand and add the [gold]\"Timed Bomb\"[/gold] keyword. Before playing the card, gain {DeployVigor} [gold]Vigor[/gold] and Exhaust.",
     "CHRONO_IVAN_CARD.title": "Chrono Ivan",
-    "CHRONO_IVAN_CARD.description": "{ChronoTitle}Apply {BombStacks} stacks of [gold]Timed Bomb[/gold] to an enemy. If enemy already has [gold]Timed Bomb[/gold], reduce countdown. [gold]Deploy[/gold]: Select a [gold]Unit[/gold] card from your hand and add the [gold]\"Timed Bomb\"[/gold] keyword. Before playing the card, gain {DeployVigor} [gold]Vigor[/gold] and Exhaust."
+    "CHRONO_IVAN_CARD.description": "{ChronoTitle}Apply {BombStacks} stacks of [gold]Timed Bomb[/gold] to an enemy. If enemy already has [gold]Timed Bomb[/gold], reduce countdown. [gold]Deploy[/gold]: Select a [gold]Unit[/gold] card from your hand and add the [gold]\"Timed Bomb\"[/gold] keyword. Before playing the card, gain {DeployVigor} [gold]Vigor[/gold] and Exhaust.",
+    "SPY_CARD.title": "Spy",
+    "SPY_CARD.description": "Infiltrate buildings. Choose 1 command from {IfUpgraded:show:3|2} options.\nCan infiltrate ally buildings."
 }

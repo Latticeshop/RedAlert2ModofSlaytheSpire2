@@ -65,6 +65,15 @@ public static class AlliesCardValues
 		DollarValue = 500
 	};
 
+	/// <summary>间谍 - 1费技能卡，渗透建筑，从2(升级3)个选项中选择一个指令，价格1000，需要作战实验室(T3)</summary>
+	public static CardValueStore.CardValues Spy => new()
+	{
+		Cost = 1,
+		Repeat = 2,          // 基础选项数量
+		RepeatUpgraded = 1,  // 升级后额外增加1个选项（共3个）
+		DollarValue = 1000
+	};
+
 	/// <summary>狙击手 - 1费攻击卡，无视格挡造成9(升级12)伤害，价格600，需要空指部/雷达(T2)</summary>
 	public static CardValueStore.CardValues Sniper => new()
 	{
@@ -572,7 +581,8 @@ public static class AlliesCardValues
 			{ "CHRONOLEGIONNAIRE", ChronoLegionnaire },
 			{ "SEALCOMMANDOS", SealCommandos },
 			{ "CHRONOCOMMANDOS", CommonCardValues.ChronoCommandos },
-			{ "PSICOMMANDOCARD", CommonCardValues.PsiCommando }
+			{ "PSICOMMANDOCARD", CommonCardValues.PsiCommando },
+			{ "SPYCARD", Spy }
 		};
 	}
 	

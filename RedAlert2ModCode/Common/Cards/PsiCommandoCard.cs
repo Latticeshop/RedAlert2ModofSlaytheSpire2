@@ -13,8 +13,6 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.MonsterMoves.Intents;
-using MegaCrit.Sts2.Core.Random;
-using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 
@@ -62,32 +60,10 @@ public sealed class PsiCommandoCard : CardModel
 			UnitVoiceHelper.PlayUnitVoice("YuriAttack", "Yuri");
 			UnitVoiceHelper.PlayUnitVoice("Yuri", "Yuri");
 
-			List<Type> unitPool = YuriCard.GetUnitPool(IsUpgraded);
-			if (unitPool.Count > 0)
+			CardModel? unitCard = await RandomUnitHelper.CreateRandomUnitCard(Owner, IsUpgraded, true);
+			if (unitCard != null)
 			{
-				Rng rng = Owner.RunState.Rng.CombatCardSelection;
-				int randomIndex = rng.NextInt(unitPool.Count);
-				Type selectedUnitType = unitPool[randomIndex];
-
-				try
-				{
-					var template = (CardModel)typeof(ModelDb)
-						.GetMethod("Card")
-						.MakeGenericMethod(selectedUnitType)
-						.Invoke(null, null);
-
-					CardModel unitCard = Owner.Creature.CombatState.CreateCard(template, Owner);
-					if (unitCard != null)
-					{
-						unitCard.AddKeyword(CardKeyword.Exhaust);
-						await CardPileCmd.AddGeneratedCardToCombat(unitCard, PileType.Hand, Owner);
-						GD.Print($"[PsiCommandoCard] 攻击意图触发，获得随机单位卡牌: {selectedUnitType.Name}");
-					}
-				}
-				catch (Exception ex)
-				{
-					GD.PrintErr($"[PsiCommandoCard] 创建单位卡牌失败: {ex.Message}");
-				}
+				GD.Print($"[PsiCommandoCard] 攻击意图触发，获得随机单位卡牌: {unitCard.GetType().Name}");
 			}
 		}
 		else

@@ -40,7 +40,8 @@ public static class AlliedCardRegistry
     /// <summary>高科技(T3)士兵单位 - 需要作战实验室解锁</summary>
     public static List<Func<CardModel>> HighTechSoldiers { get; } = new()
     {
-        () => ModelDb.Card<ChronoLegionnaire>()
+        () => ModelDb.Card<ChronoLegionnaire>(),
+        () => ModelDb.Card<SpyCard>()
     };
 
     public static List<Func<CardModel>> Vehicles { get; } = new()
@@ -270,6 +271,34 @@ public static class AlliedCardRegistry
         units.AddRange(GetAllShips());
         units.AddRange(GetAllHighTechShips());
         return units;
+    }
+
+    /// <summary>
+    /// 获取所有基础单位类型（T1/T2）- 从现有工厂列表动态推导
+    /// </summary>
+    public static List<Type> GetBasicUnitTypes()
+    {
+        List<Type> types = new();
+        types.AddRange(Soldiers.Select(f => f().GetType()));
+        types.AddRange(RadarSoldiers.Select(f => f().GetType()));
+        types.AddRange(Vehicles.Select(f => f().GetType()));
+        types.AddRange(RadarVehicles.Select(f => f().GetType()));
+        types.AddRange(Aircraft.Select(f => f().GetType()));
+        types.AddRange(Ships.Select(f => f().GetType()));
+        return types;
+    }
+
+    /// <summary>
+    /// 获取所有T3单位类型（高科技单位）- 从现有工厂列表动态推导
+    /// </summary>
+    public static List<Type> GetT3UnitTypes()
+    {
+        List<Type> types = new();
+        types.AddRange(HighTechSoldiers.Select(f => f().GetType()));
+        types.AddRange(HighTechVehicles.Select(f => f().GetType()));
+        types.AddRange(HighTechShips.Select(f => f().GetType()));
+        types.AddRange(RelicUnlockedSoldiers.Select(f => f().GetType()));
+        return types;
     }
 
     /// <summary>

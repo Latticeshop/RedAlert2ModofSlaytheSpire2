@@ -178,6 +178,33 @@ public static class SovietCardRegistry
         return units;
     }
 
+    /// <summary>
+    /// 获取所有基础单位类型（T1/T2）- 从现有工厂列表动态推导
+    /// </summary>
+    public static List<Type> GetBasicUnitTypes()
+    {
+        List<Type> types = new();
+        types.AddRange(Soldiers.Select(f => f().GetType()));
+        types.AddRange(RadarSoldiers.Select(f => f().GetType()));
+        types.AddRange(Vehicles.Select(f => f().GetType()));
+        types.AddRange(RadarVehicles.Select(f => f().GetType()));
+        types.AddRange(Aircraft.Select(f => f().GetType()));
+        types.AddRange(Ships.Select(f => f().GetType()).Where(t => t != typeof(Dreadnought)));
+        return types;
+    }
+
+    /// <summary>
+    /// 获取所有T3单位类型（高科技单位）- 从现有工厂列表动态推导
+    /// </summary>
+    public static List<Type> GetT3UnitTypes()
+    {
+        List<Type> types = new();
+        types.AddRange(HighTechVehicles.Select(f => f().GetType()));
+        types.AddRange(RelicUnlockedSoldiers.Select(f => f().GetType()));
+        types.AddRange(Ships.Select(f => f().GetType()).Where(t => t == typeof(Dreadnought)));
+        return types;
+    }
+
     public static List<CardModel> GetAllBuildingCards()
     {
         return BuildingCards.Select(s => s()).ToList();

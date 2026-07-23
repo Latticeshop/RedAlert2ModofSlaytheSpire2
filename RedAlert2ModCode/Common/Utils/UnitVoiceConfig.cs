@@ -146,6 +146,10 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispysec.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispysed.mp3",
         },
+        ["SpyCamouflage"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/Spy/Ispyatb_camouflage.mp3",
+        },
         ["AlliedTransportShip"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/TransportShip/Vhoamoa.mp3",
@@ -721,5 +725,54 @@ public static class UnitVoiceConfig
     {
         var voices = GetUnitVoices(unitName, faction);
         return voices != null && voices.Count > 0;
+    }
+
+    public static void PlayUnitVoice(string unitName, string voiceKey, string faction = "Allied")
+    {
+        string fullKey = unitName + voiceKey.First().ToString().ToUpper() + voiceKey.Substring(1);
+        var voices = GetUnitVoices(fullKey, faction);
+        if (voices.Count > 0)
+        {
+            PlayVoice(voices[0]);
+        }
+    }
+
+    public static void PlayRandomVoice(string unitName, string faction = "Allied")
+    {
+        var voices = GetUnitVoices(unitName, faction);
+        if (voices.Count > 0)
+        {
+            int index = new System.Random().Next(voices.Count);
+            PlayVoice(voices[index]);
+        }
+    }
+
+    private static void PlayVoice(string path)
+    {
+        try
+        {
+            Godot.AudioStream? stream = Godot.ResourceLoader.Load<Godot.AudioStream>(path);
+            if (stream != null)
+            {
+                var audioPlayer = new Godot.AudioStreamPlayer();
+                audioPlayer.Name = $"UnitVoicePlayer_{System.Guid.NewGuid()}";
+                audioPlayer.Stream = stream;
+                audioPlayer.VolumeDb = -5;
+
+                var root = Godot.Engine.GetMainLoop() as Godot.SceneTree;
+                root?.Root.AddChild(audioPlayer);
+
+                audioPlayer.Play();
+
+                audioPlayer.Finished += () =>
+                {
+                    if (Godot.GodotObject.IsInstanceValid(audioPlayer))
+                    {
+                        audioPlayer.QueueFree();
+                    }
+                };
+            }
+        }
+        catch { }
     }
 }

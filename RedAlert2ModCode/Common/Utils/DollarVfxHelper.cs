@@ -21,7 +21,7 @@ public enum DollarVfxType
 
 public static class DollarVfxHelper
 {
-    private const string DollarGainSoundPath = "res://RedAlert2ModResources/audio/dollar_gain.wav";
+    private const string DollarGainSoundPath = "res://RedAlert2ModResources/audio/CommonSFX/dollar_gain.wav";
     
     private static AudioStreamPlayer? _audioPlayer;
 

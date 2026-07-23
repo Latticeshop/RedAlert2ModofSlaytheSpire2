@@ -12,7 +12,7 @@ using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.UI;
 
-using EngineerChoice = RedAlert2ModCode.UI.EngineerChoiceScreen.EngineerChoice;
+using Choice = RedAlert2ModCode.UI.ChoiceSelectionScreen.Choice;
 
 namespace RedAlert2ModCode.Soviet.Cards;
 
@@ -42,9 +42,9 @@ public sealed class SovietEngineer : CardModel
 		UnitVoiceHelper.PlayUnitVoice(GetType(), "Soviet");
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
-		List<EngineerChoice> choices = EngineerChoiceHelper.GenerateRandomChoices(IsUpgraded, Owner);
+		List<Choice> choices = EngineerChoiceHelper.GenerateRandomChoices(IsUpgraded, Owner);
 
-		var selectedChoice = await EngineerChoiceScreen.ShowSelectionWithSync(choices, PortraitPath, Owner, FactionType.Soviet);
+		var selectedChoice = await ChoiceSelectionScreen.ShowSelectionWithSync(choices, PortraitPath, Owner, FactionType.Soviet);
 
 		if (selectedChoice != null)
 		{
