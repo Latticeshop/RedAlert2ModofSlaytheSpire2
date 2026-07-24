@@ -73,7 +73,7 @@ public sealed class SupportCard : CardModel
 		GD.Print($"[SupportCard] 选择 {selectCount} 张单位卡送给队友");
 
 		CardSelectorPrefs prefs = new CardSelectorPrefs(
-			new LocString("cards", "SUPPORT_CARD.select_prompt"),
+			new LocString("cards", "RED_ALERT2_MOD_CARD_SUPPORT_CARD.select_prompt"),
 			0,
 			selectCount
 		);

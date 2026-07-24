@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -45,7 +45,7 @@ public sealed class OreRefineryCard : CardModel
             if (!CardUtils.HasMcvPower(Owner.Creature))
                 return false;
 
-            if (!Owner.Creature.Powers.Any(p => p is BattleLabPower))
+            if (!Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(BattleLabPower).Name))
                 return false;
 
             var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();

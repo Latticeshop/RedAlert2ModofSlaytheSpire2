@@ -136,14 +136,14 @@ public class SellBuildingCard : CardModel
     {
         GD.Print("[SellBuildingCard] 检查生产序列是否需要停产");
 
-        bool hasAlliedBarracks = Owner.Creature.Powers.Any(p => p is AlliedBarracksPower);
-        bool hasSovietBarracks = Owner.Creature.Powers.Any(p => p is SovietBarracksPower);
-        bool hasAlliedWarFactory = Owner.Creature.Powers.Any(p => p is AlliedWarFactoryPower);
-        bool hasSovietWarFactory = Owner.Creature.Powers.Any(p => p is SovietWarFactoryPower);
-        bool hasAlliedShipyard = Owner.Creature.Powers.Any(p => p is AlliedShipyardPower);
-        bool hasSovietShipyard = Owner.Creature.Powers.Any(p => p is SovietShipyardPower);
-        bool hasSovietRadar = Owner.Creature.Powers.Any(p => p is SovietRadarPower);
-        bool hasAlliedAirForceCommand = Owner.Creature.Powers.Any(p => p is AlliedAirForceCommandPower);
+        bool hasAlliedBarracks = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(AlliedBarracksPower).Name);
+        bool hasSovietBarracks = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(SovietBarracksPower).Name);
+        bool hasAlliedWarFactory = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(AlliedWarFactoryPower).Name);
+        bool hasSovietWarFactory = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(SovietWarFactoryPower).Name);
+        bool hasAlliedShipyard = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(AlliedShipyardPower).Name);
+        bool hasSovietShipyard = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(SovietShipyardPower).Name);
+        bool hasSovietRadar = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(SovietRadarPower).Name);
+        bool hasAlliedAirForceCommand = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(AlliedAirForceCommandPower).Name);
 
         GD.Print($"[SellBuildingCard] 兵营(盟军): {hasAlliedBarracks}, 兵营(苏联): {hasSovietBarracks}");
         GD.Print($"[SellBuildingCard] 重工(盟军): {hasAlliedWarFactory}, 重工(苏联): {hasSovietWarFactory}");
@@ -226,66 +226,66 @@ public class SellBuildingCard : CardModel
 
     private bool IsSoldierCard(string cardId)
     {
-        var soldierIds = new HashSet<string>
+        var soldierIds = new[]
         {
             "AMERICAN_SOLDIER", "ALLIES_DOG_SOLDIER", "GUARDIAN_GI", "ROCKET_SOLDIER", "ALLIES_ENGINEER",
             "CONSCRIPT", "SOVIET_ENGINEER", "SOVIET_ATTACK_DOG", "SOVIET_FLAK_TROOPER", "SOVIET_TESLA_TROOPER"
         };
-        return soldierIds.Contains(cardId);
+        return soldierIds.Any(id => cardId.Contains(id));
     }
 
     private bool IsAlliedVehicleCard(string cardId)
     {
-        var vehicleIds = new HashSet<string>
+        var vehicleIds = new[]
         {
             "GRIZZLY_TANK", "IFV", "CHRONO_MINER", "MIRAGE_TANK", "PRISM_TANK"
         };
-        return vehicleIds.Contains(cardId);
+        return vehicleIds.Any(id => cardId.Contains(id));
     }
 
     private bool IsSovietVehicleCard(string cardId)
     {
-        var vehicleIds = new HashSet<string>
+        var vehicleIds = new[]
         {
             "RHINO_TANK", "WAR_MINER", "FLAK_TRACK", "TERROR_DRONE"
         };
-        return vehicleIds.Contains(cardId);
+        return vehicleIds.Any(id => cardId.Contains(id));
     }
 
     private bool IsAlliedAircraftCard(string cardId)
     {
-        var aircraftIds = new HashSet<string>
+        var aircraftIds = new[]
         {
             "INTRUDER", "NIGHT_HAWK_CHOPPER"
         };
-        return aircraftIds.Contains(cardId);
+        return aircraftIds.Any(id => cardId.Contains(id));
     }
 
     private bool IsSovietAircraftCard(string cardId)
     {
-        var aircraftIds = new HashSet<string>
+        var aircraftIds = new[]
         {
             "KIROV"
         };
-        return aircraftIds.Contains(cardId);
+        return aircraftIds.Any(id => cardId.Contains(id));
     }
 
     private bool IsAlliedShipCard(string cardId)
     {
-        var shipIds = new HashSet<string>
+        var shipIds = new[]
         {
             "DOLPHIN", "ALLIED_TRANSPORT_SHIP", "DESTROYER", "AGISICON", "AIRCRAFT_CARRIER"
         };
-        return shipIds.Contains(cardId);
+        return shipIds.Any(id => cardId.Contains(id));
     }
 
     private bool IsSovietShipCard(string cardId)
     {
-        var shipIds = new HashSet<string>
+        var shipIds = new[]
         {
             "SOVIET_TRANSPORT_SHIP", "FLAK_SUBMARINE", "TYPHOON_SUBMARINE"
         };
-        return shipIds.Contains(cardId);
+        return shipIds.Any(id => cardId.Contains(id));
     }
 
     private async Task StopTrainingQueue(TrainingQueuePower trainingPower)

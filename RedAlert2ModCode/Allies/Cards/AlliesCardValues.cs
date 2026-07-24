@@ -758,14 +758,74 @@ public static class AlliesCardValues
 		if (string.IsNullOrEmpty(cardId))
 			return 0;
 		
-		string key = cardId.ToUpper().Replace("_", "");
 		var allValues = CreateAllValuesMap();
 		
-		if (allValues.TryGetValue(key, out var values))
+		string keyWithUnderscore = cardId.ToUpper();
+		if (allValues.TryGetValue(keyWithUnderscore, out var values))
 		{
 			return values.BuildCost > 0 ? values.BuildCost : (int)values.DollarValue;
 		}
 		
+		string keyWithoutUnderscore = keyWithUnderscore.Replace("_", "");
+		if (allValues.TryGetValue(keyWithoutUnderscore, out values))
+		{
+			return values.BuildCost > 0 ? values.BuildCost : (int)values.DollarValue;
+		}
+		
+		// 尝试提取卡牌名称部分（移除前缀如 RED_ALERT2_MOD_CARD_）
+		string cardName = ExtractCardName(keyWithUnderscore);
+		if (!string.IsNullOrEmpty(cardName))
+		{
+			if (allValues.TryGetValue(cardName, out values))
+			{
+				return values.BuildCost > 0 ? values.BuildCost : (int)values.DollarValue;
+			}
+			
+			// 尝试移除下划线后的名称
+			string cardNameNoUnderscore = cardName.Replace("_", "");
+			if (allValues.TryGetValue(cardNameNoUnderscore, out values))
+			{
+				return values.BuildCost > 0 ? values.BuildCost : (int)values.DollarValue;
+			}
+		}
+		
 		return 0;
+	}
+	
+	/// <summary>
+	/// 从完整的卡牌ID中提取卡牌名称部分
+	/// 例如：RED_ALERT2_MOD_CARD_AIRCRAFT_CARRIER -> AIRCRAFT_CARRIER
+	/// </summary>
+	private static string ExtractCardName(string cardKey)
+	{
+		// 移除前缀 RED_ALERT2_MOD_CARD_
+		string prefix = "RED_ALERT2_MOD_CARD_";
+		if (cardKey.StartsWith(prefix))
+		{
+			return cardKey.Substring(prefix.Length);
+		}
+		
+		// 移除前缀 MOD_CARD_
+		prefix = "MOD_CARD_";
+		if (cardKey.StartsWith(prefix))
+		{
+			return cardKey.Substring(prefix.Length);
+		}
+		
+		// 移除前缀 CARD_
+		prefix = "CARD_";
+		if (cardKey.StartsWith(prefix))
+		{
+			return cardKey.Substring(prefix.Length);
+		}
+		
+		// 如果没有找到前缀，返回最后一个下划线之后的部分
+		int lastUnderscoreIndex = cardKey.LastIndexOf('_');
+		if (lastUnderscoreIndex >= 0 && lastUnderscoreIndex < cardKey.Length - 1)
+		{
+			return cardKey.Substring(lastUnderscoreIndex + 1);
+		}
+		
+		return string.Empty;
 	}
 }

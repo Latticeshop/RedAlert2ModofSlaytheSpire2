@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -67,7 +67,7 @@ public sealed class WeatherController : CardModel
                 return false;
 
             // 检查是否拥有作战实验室能力
-            if (!Owner.Creature.Powers.Any(p => p is BattleLabPower))
+            if (!Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(BattleLabPower).Name))
                 return false;
 
             // 检查资金是否足够

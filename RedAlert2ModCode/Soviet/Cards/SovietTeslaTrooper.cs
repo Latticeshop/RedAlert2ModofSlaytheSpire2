@@ -49,7 +49,7 @@ public sealed class SovietTeslaTrooper : CardModel
 
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
-		bool hasTeslaCoil = Owner.Creature.Powers.Any(p => p is SovietTeslaCoilPower);
+		bool hasTeslaCoil = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(SovietTeslaCoilPower).Name);
 
 		if (!hasTeslaCoil)
 		{
@@ -62,16 +62,17 @@ public sealed class SovietTeslaTrooper : CardModel
 			{
 				new DeployChoiceScreen.ChoiceOption
 				{
+					Id = "orb",
+					Title = new LocString("card_keywords", "ui.tesla_trooper.orb_title"),
+					Description = new LocString("card_keywords", "ui.tesla_trooper.orb_desc"),
+					IconPath = "res://RedAlert2ModResources/images/ui/attack.png"
+				},
+				new DeployChoiceScreen.ChoiceOption
+				{
 					Id = "deploy",
 					Title = new LocString("card_keywords", "ui.tesla_trooper.deploy_title"),
 					Description = new LocString("card_keywords", "ui.tesla_trooper.deploy_desc"),
 					IconPath = "res://RedAlert2ModResources/images/ui/deploy.png"
-				},
-				new DeployChoiceScreen.ChoiceOption
-				{
-					Id = "orb",
-					Title = new LocString("card_keywords", "ui.tesla_trooper.orb_title"),
-					Description = new LocString("card_keywords", "ui.tesla_trooper.orb_desc")
 				}
 			};
 
@@ -79,12 +80,12 @@ public sealed class SovietTeslaTrooper : CardModel
 
 		if (selectedIndex == 0)
 		{
-			AudioHelper.PlayTeslaTrooperChargeSound(Owner.Creature);
-			await SovietTeslaCoilChargePower.ApplyCharge(Owner.Creature);
+			await OrbCmd.Channel<LightningOrb>(ctx, Owner);
 		}
 		else
 		{
-			await OrbCmd.Channel<LightningOrb>(ctx, Owner);
+			AudioHelper.PlayTeslaTrooperChargeSound(Owner.Creature);
+			await SovietTeslaCoilChargePower.ApplyCharge(Owner.Creature);
 		}
 	}
 

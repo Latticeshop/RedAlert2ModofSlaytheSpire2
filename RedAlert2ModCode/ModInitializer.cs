@@ -44,6 +44,9 @@ public static class ModInitializer
         // 注册刀乐能力点击补丁
         DollarPowerClickPatch.Install(harmony);
         
+        // 注册手臂图片补丁
+        HandTexturePatches.Install(harmony);
+        
         // 注意：卡牌注册已通过 RitsuLib 的 [RegisterCard] 属性自动处理
         // 无需手动调用 ModHelper.AddModelToPool()
         

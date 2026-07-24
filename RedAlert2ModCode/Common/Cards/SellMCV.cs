@@ -70,7 +70,7 @@ public class SellMCV : CardModel
 		if (Owner?.Creature == null)
 			return false;
 
-		return Owner.Creature.Powers.Any(p => p is AlliedMCVPower || p is SovietMCVPower);
+		return Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(AlliedMCVPower).Name || p.GetType().Name == typeof(SovietMCVPower).Name);
 	}
 
 	private bool HasMcvCardInPiles()

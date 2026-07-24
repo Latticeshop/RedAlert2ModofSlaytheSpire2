@@ -59,7 +59,7 @@ public sealed class IronCurtainCard : CardModel
             if (!CardUtils.HasMcvPower(Owner.Creature))
                 return false;
 
-            if (!Owner.Creature.Powers.Any(p => p is SovietBattleLabPower))
+            if (!Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(SovietBattleLabPower).Name))
                 return false;
 
             var dollarPower = Owner.Creature.Powers.OfType<DollarPower>().FirstOrDefault();

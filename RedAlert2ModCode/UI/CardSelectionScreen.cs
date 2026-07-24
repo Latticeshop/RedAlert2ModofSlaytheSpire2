@@ -453,7 +453,23 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             return cost.ToString();
         }
         
-        // 2. 如果传递的映射中没有，尝试使用 FindCardValues 方法查找
+        // 2. 尝试移除下划线后查找（因为cardValuesMap的key是不带下划线的）
+        string cardKeyNoUnderscore = cardKey.Replace("_", "");
+        if (_cardValuesMap.TryGetValue(cardKeyNoUnderscore, out values))
+        {
+            int cost = card.IsUpgraded ? values.Cost + values.CostUpgraded : values.Cost;
+            return cost.ToString();
+        }
+        
+        // 3. 尝试提取卡牌名称部分（移除前缀如 RED_ALERT2_MOD_CARD_）
+        string cardName = ExtractCardName(cardKey);
+        if (!string.IsNullOrEmpty(cardName) && _cardValuesMap.TryGetValue(cardName, out values))
+        {
+            int cost = card.IsUpgraded ? values.Cost + values.CostUpgraded : values.Cost;
+            return cost.ToString();
+        }
+        
+        // 4. 如果传递的映射中没有，尝试使用 FindCardValues 方法查找
         CardValueStore.CardValues foundValues = FindCardValues(card.Id.Entry);
         if (foundValues != null)
         {
@@ -461,7 +477,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             return cost.ToString();
         }
         
-        // 3. 尝试从卡牌本身获取费用
+        // 5. 尝试从卡牌本身获取费用
         if (card.EnergyCost != null)
         {
             try
@@ -489,7 +505,28 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     private string GetDollarValueText(CardModel card)
     {
         string cardKey = card.Id.Entry.ToUpper();
+        // 尝试直接查找
         if (_cardValuesMap.TryGetValue(cardKey, out var values))
+        {
+            if (values.BuildCost > 0)
+                return values.BuildCost.ToString();
+            decimal value = card.IsUpgraded ? values.DollarValue + values.DollarValueUpgraded : values.DollarValue;
+            return value.ToString();
+        }
+        
+        // 尝试移除下划线后查找（因为cardValuesMap的key是不带下划线的）
+        string cardKeyNoUnderscore = cardKey.Replace("_", "");
+        if (_cardValuesMap.TryGetValue(cardKeyNoUnderscore, out values))
+        {
+            if (values.BuildCost > 0)
+                return values.BuildCost.ToString();
+            decimal value = card.IsUpgraded ? values.DollarValue + values.DollarValueUpgraded : values.DollarValue;
+            return value.ToString();
+        }
+        
+        // 尝试提取卡牌名称部分（移除前缀如 RED_ALERT2_MOD_CARD_）
+        string cardName = ExtractCardName(cardKey);
+        if (!string.IsNullOrEmpty(cardName) && _cardValuesMap.TryGetValue(cardName, out values))
         {
             if (values.BuildCost > 0)
                 return values.BuildCost.ToString();
@@ -506,16 +543,32 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             return value.ToString();
         }
         
-        decimal result = AlliesCardValues.GetDollarValue(card.Id.Entry);
-        if (result > 0)
+        // 使用提取的卡牌名称尝试获取价格
+        if (!string.IsNullOrEmpty(cardName))
         {
-            return result.ToString();
+            decimal result = SovietCardValues.GetDollarValue(cardName);
+            if (result > 0)
+            {
+                return result.ToString();
+            }
+            
+            result = AlliesCardValues.GetDollarValue(cardName);
+            if (result > 0)
+            {
+                return result.ToString();
+            }
         }
         
-        result = SovietCardValues.GetDollarValue(card.Id.Entry);
-        if (result > 0)
+        decimal result2 = AlliesCardValues.GetDollarValue(card.Id.Entry);
+        if (result2 > 0)
         {
-            return result.ToString();
+            return result2.ToString();
+        }
+        
+        result2 = SovietCardValues.GetDollarValue(card.Id.Entry);
+        if (result2 > 0)
+        {
+            return result2.ToString();
         }
         
         if (card.DynamicVars != null)
@@ -663,6 +716,43 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             sb.Append(str[i]);
         }
         return sb.ToString();
+    }
+    
+    /// <summary>
+    /// 从完整的卡牌ID中提取卡牌名称部分
+    /// 例如：RED_ALERT2_MOD_CARD_DREADNOUGHT -> DREADNOUGHT
+    /// </summary>
+    private string ExtractCardName(string cardKey)
+    {
+        // 移除前缀 RED_ALERT2_MOD_CARD_
+        string prefix = "RED_ALERT2_MOD_CARD_";
+        if (cardKey.StartsWith(prefix))
+        {
+            return cardKey.Substring(prefix.Length);
+        }
+        
+        // 移除前缀 MOD_CARD_
+        prefix = "MOD_CARD_";
+        if (cardKey.StartsWith(prefix))
+        {
+            return cardKey.Substring(prefix.Length);
+        }
+        
+        // 移除前缀 CARD_
+        prefix = "CARD_";
+        if (cardKey.StartsWith(prefix))
+        {
+            return cardKey.Substring(prefix.Length);
+        }
+        
+        // 如果没有找到前缀，返回最后一个下划线之后的部分
+        int lastUnderscoreIndex = cardKey.LastIndexOf('_');
+        if (lastUnderscoreIndex >= 0 && lastUnderscoreIndex < cardKey.Length - 1)
+        {
+            return cardKey.Substring(lastUnderscoreIndex + 1);
+        }
+        
+        return string.Empty;
     }
 
     private string ReplaceDynamicVars(CardModel card, string text)

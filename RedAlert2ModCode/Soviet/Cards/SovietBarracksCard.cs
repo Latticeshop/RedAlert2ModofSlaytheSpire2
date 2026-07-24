@@ -83,8 +83,8 @@ public sealed class SovietBarracksCard : CardModel
 		GD.Print($"[SovietBarracksCard] 可用卡牌数量: {availableCards.Count}");
 
 		// 检查是否有雷达或空指部能力（T2科技解锁），如果没有则移除T2科技士兵（磁暴步兵、辐射工兵、恐怖分子）
-		bool hasRadarPower = Owner.Creature.Powers.Any(p => p is SovietRadarPower) ||
-							 Owner.Creature.Powers.Any(p => p is Allies.Powers.AlliedAirForceCommandPower);
+		bool hasRadarPower = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(SovietRadarPower).Name) ||
+							 Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(Allies.Powers.AlliedAirForceCommandPower).Name);
 		if (!hasRadarPower)
 		{
 			availableCards = availableCards.Where(c => 

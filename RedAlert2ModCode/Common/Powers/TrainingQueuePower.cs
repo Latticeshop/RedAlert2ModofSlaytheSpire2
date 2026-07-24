@@ -127,49 +127,15 @@ public sealed class TrainingQueuePower : PowerModel
         
         GD.Print($"[TrainingQueuePower] DeepCloneFields 被调用 - InstanceId={_instanceId}, TrainedCardId='{TrainedCardId}', TrainedUnitIconPath='{TrainedUnitIconPath}'");
         
+        // 注册能力哈希码以保留图标路径
         PowerIconManager.RegisterPowerHashCode(this);
         
+        // 尝试从PowerIconManager获取存储的图标路径
         string? storedIconPath = PowerIconManager.GetIconPath(this);
         if (!string.IsNullOrEmpty(storedIconPath))
         {
-            GD.Print($"[TrainingQueuePower] DeepCloneFields: 从PowerIconManager恢复图标路径: {storedIconPath}");
             TrainedUnitIconPath = storedIconPath;
-            return;
-        }
-        
-        System.Reflection.FieldInfo? originalField = null;
-        Type? currentType = GetType();
-        while (currentType != null)
-        {
-            originalField = currentType.GetField("_original", 
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            if (originalField != null)
-                break;
-            currentType = currentType.BaseType;
-        }
-        
-        if (originalField != null)
-        {
-            var original = originalField.GetValue(this) as TrainingQueuePower;
-            if (original != null)
-                {
-                    GD.Print($"[TrainingQueuePower] 原始对象 - TrainedCardId={original.TrainedCardId}, TrainedUnitIconPath={original.TrainedUnitIconPath}, UnitPrice={original.UnitPrice}, OriginalUnitPrice={original.OriginalUnitPrice}");
-                    TrainedCardId = original.TrainedCardId;
-                    UnitName = original.UnitName;
-                    IsUpgraded = original.IsUpgraded;
-                    TrainedUnitIconPath = original.TrainedUnitIconPath;
-                    UnitPrice = original.UnitPrice;
-                    OriginalUnitPrice = original.OriginalUnitPrice;
-                    GD.Print($"[TrainingQueuePower] 克隆后 - TrainedCardId={TrainedCardId}, TrainedUnitIconPath={TrainedUnitIconPath}, UnitPrice={UnitPrice}, OriginalUnitPrice={OriginalUnitPrice}");
-                }
-            else
-            {
-                GD.PrintErr($"[TrainingQueuePower] 警告: 无法获取原始对象引用");
-            }
-        }
-        else
-        {
-            GD.PrintErr($"[TrainingQueuePower] 警告: 无法找到 _original 字段");
+            GD.Print($"[TrainingQueuePower] 从PowerIconManager恢复图标路径: {storedIconPath}");
         }
     }
 
@@ -285,17 +251,17 @@ public sealed class TrainingQueuePower : PowerModel
 
             GD.Print($"[TrainingQueuePower] 检查语音播放 - TrainedCardId={TrainedCardId}");
 
-            if (TrainedCardId == "KIROV")
+            if (TrainedCardId.Contains("KIROV"))
             {
                 PlayKirovDeploySound();
             }
 
-            if (TrainedCardId == "DEMOLITION_TRUCK_CARD")
+            if (TrainedCardId.Contains("DEMOLITION_TRUCK"))
             {
                 PlayDemolitionTruckDeploySound();
             }
 
-            if (TrainedCardId == "CHRONO_COMMANDOS")
+            if (TrainedCardId.Contains("CHRONO_COMMANDOS"))
             {
                 PlayChronoCommandosDeploySound();
             }
@@ -412,8 +378,22 @@ public sealed class TrainingQueuePower : PowerModel
         if (string.IsNullOrEmpty(cardId))
             return null;
 
-        string[] parts = cardId.Split('_');
+        GD.Print($"[TrainingQueuePower] GetCardModel 被调用 - cardId={cardId}");
+
+        // 尝试提取卡牌名称部分（移除前缀如 RED_ALERT2_MOD_CARD_）
+        string cardName = ExtractCardName(cardId.ToUpper());
+        GD.Print($"[TrainingQueuePower] 提取卡牌名称: {cardName}");
+
+        // 如果提取失败，使用原始卡牌ID
+        if (string.IsNullOrEmpty(cardName))
+        {
+            cardName = cardId;
+        }
+
+        // 转换为类名格式（驼峰式）
+        string[] parts = cardName.Split('_');
         string typeName = string.Concat(parts.Select(p => char.ToUpper(p[0]) + p.Substring(1).ToLower()));
+        GD.Print($"[TrainingQueuePower] 生成类型名称: {typeName}");
         
         var cardType = Assembly.GetExecutingAssembly()
             .GetType($"RedAlert2ModCode.Allies.Cards.{typeName}");
@@ -439,10 +419,36 @@ public sealed class TrainingQueuePower : PowerModel
         {
             var method = typeof(ModelDb).GetMethod("Card", System.Type.EmptyTypes)
                 ?.MakeGenericMethod(cardType);
-            return method?.Invoke(null, null) as CardModel;
+            CardModel? result = method?.Invoke(null, null) as CardModel;
+            GD.Print($"[TrainingQueuePower] 成功获取卡牌模型: {result?.Id.Entry}");
+            return result;
         }
         
+        GD.PrintErr($"[TrainingQueuePower] 无法找到卡牌类型: {typeName}");
         return null;
+    }
+    
+    /// <summary>
+    /// 从完整的卡牌ID中提取卡牌名称部分
+    /// 例如：RED_ALERT2_MOD_CARD_SOVIET_ATTACK_DOG -> SOVIET_ATTACK_DOG
+    /// </summary>
+    private string ExtractCardName(string cardKey)
+    {
+        // 移除前缀 RED_ALERT2_MOD_CARD_
+        string prefix = "RED_ALERT2_MOD_CARD_";
+        if (cardKey.StartsWith(prefix))
+        {
+            return cardKey.Substring(prefix.Length);
+        }
+        
+        // 如果没有找到前缀，返回最后一个下划线之后的部分
+        int lastUnderscoreIndex = cardKey.LastIndexOf('_');
+        if (lastUnderscoreIndex >= 0 && lastUnderscoreIndex < cardKey.Length - 1)
+        {
+            return cardKey.Substring(lastUnderscoreIndex + 1);
+        }
+        
+        return string.Empty;
     }
 
     }

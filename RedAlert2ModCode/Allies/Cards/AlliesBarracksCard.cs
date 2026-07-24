@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -169,13 +169,13 @@ public sealed class AlliesBarracksCard : CardModel
 				return false;
 			
 			// 检查是否有空指部能力
-			if (Owner.Creature.Powers.Any(p => p is AlliedAirForceCommandPower))
+			if (Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(AlliedAirForceCommandPower).Name))
 			{
 				return true;
 			}
 			
 			// 检查是否有雷达能力
-			if (Owner.Creature.Powers.Any(p => p is Soviet.Powers.SovietRadarPower))
+			if (Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(Soviet.Powers.SovietRadarPower).Name))
 			{
 				return true;
 			}
@@ -185,7 +185,7 @@ public sealed class AlliesBarracksCard : CardModel
 			{
 				if (power is TrainingQueuePower trainingPower)
 				{
-					if (trainingPower.TrainedCardId == "INTRUDER")
+					if (trainingPower.TrainedCardId.Contains("INTRUDER"))
 					{
 						return true;
 					}

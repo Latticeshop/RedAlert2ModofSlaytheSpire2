@@ -473,7 +473,7 @@ public static class AlliedCardRegistry
     /// </summary>
     public static bool HasBattleLabPower(Creature creature)
     {
-        return creature.Powers.Any(p => p is BattleLabPower);
+        return creature.Powers.Any(p => p.GetType().Name == typeof(BattleLabPower).Name);
     }
 
     /// <summary>
@@ -481,8 +481,8 @@ public static class AlliedCardRegistry
     /// </summary>
     public static bool HasAirForceCommandPower(Creature creature)
     {
-        return creature.Powers.Any(p => p is AlliedAirForceCommandPower) ||
-               creature.Powers.Any(p => p is RedAlert2ModCode.Soviet.Powers.SovietRadarPower);
+        return creature.Powers.Any(p => p.GetType().Name == typeof(AlliedAirForceCommandPower).Name) ||
+               creature.Powers.Any(p => p.GetType().Name == typeof(RedAlert2ModCode.Soviet.Powers.SovietRadarPower).Name);
     }
 
     public static List<CardModel> CreateAircraft(Player owner)
@@ -559,4 +559,106 @@ public static class AlliedCardRegistry
         cards.AddRange(CreateSpecialCards(owner));
         return cards;
     }
+
+    #region T1/T2/T3 单位获取
+
+    /// <summary>
+    /// 获取所有T1单位（基础单位，开局即可生产）
+    /// </summary>
+    public static List<CardModel> GetT1Units()
+    {
+        List<CardModel> units = new();
+        units.AddRange(Soldiers.Select(s => s()));
+        units.AddRange(Vehicles.Select(s => s()));
+        units.AddRange(Aircraft.Select(s => s()));
+        units.AddRange(Ships.Select(s => s()));
+        return units;
+    }
+
+    /// <summary>
+    /// 获取所有T2单位（需要空指部/雷达解锁）
+    /// </summary>
+    public static List<CardModel> GetT2Units()
+    {
+        List<CardModel> units = new();
+        units.AddRange(RadarSoldiers.Select(s => s()));
+        units.AddRange(RadarVehicles.Select(s => s()));
+        return units;
+    }
+
+    /// <summary>
+    /// 获取所有T3单位（需要作战实验室解锁）
+    /// </summary>
+    public static List<CardModel> GetT3Units()
+    {
+        List<CardModel> units = new();
+        units.AddRange(HighTechSoldiers.Select(s => s()));
+        units.AddRange(HighTechVehicles.Select(s => s()));
+        units.AddRange(HighTechShips.Select(s => s()));
+        units.AddRange(RelicUnlockedSoldiers.Select(s => s()));
+        return units;
+    }
+
+    /// <summary>
+    /// 创建T1单位卡牌列表
+    /// </summary>
+    public static List<CardModel> CreateT1Units(Player owner)
+    {
+        List<CardModel> units = new();
+        units.AddRange(Soldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)));
+        units.AddRange(Vehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)));
+        units.AddRange(Aircraft.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)));
+        units.AddRange(Ships.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)));
+        return units;
+    }
+
+    /// <summary>
+    /// 创建T2单位卡牌列表（需要空指部/雷达解锁）
+    /// </summary>
+    public static List<CardModel> CreateT2Units(Player owner)
+    {
+        List<CardModel> units = new();
+        units.AddRange(RadarSoldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)));
+        units.AddRange(RadarVehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)));
+        return units;
+    }
+
+    /// <summary>
+    /// 创建T3单位卡牌列表（需要作战实验室解锁）
+    /// </summary>
+    public static List<CardModel> CreateT3Units(Player owner)
+    {
+        List<CardModel> units = new();
+        units.AddRange(HighTechSoldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)));
+        units.AddRange(HighTechVehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)));
+        units.AddRange(HighTechShips.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)));
+        units.AddRange(RelicUnlockedSoldiers.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)));
+        return units;
+    }
+
+    /// <summary>
+    /// 获取T1单位类型列表
+    /// </summary>
+    public static List<Type> GetT1UnitTypes()
+    {
+        List<Type> types = new();
+        types.AddRange(Soldiers.Select(f => f().GetType()));
+        types.AddRange(Vehicles.Select(f => f().GetType()));
+        types.AddRange(Aircraft.Select(f => f().GetType()));
+        types.AddRange(Ships.Select(f => f().GetType()));
+        return types;
+    }
+
+    /// <summary>
+    /// 获取T2单位类型列表
+    /// </summary>
+    public static List<Type> GetT2UnitTypes()
+    {
+        List<Type> types = new();
+        types.AddRange(RadarSoldiers.Select(f => f().GetType()));
+        types.AddRange(RadarVehicles.Select(f => f().GetType()));
+        return types;
+    }
+
+    #endregion
 }
