@@ -1,4 +1,4 @@
-{
+﻿{
     "DOLLAR_RELIC.title": "Dollar",
     "DOLLAR_RELIC.description": "Gain 5000 starting funds at the start of combat.",
     "DOLLAR_RELIC.flavor": "Minimum starting funds.",
@@ -38,8 +38,8 @@
     "PSI_COMMANDO_RELIC.title": "Psi Commando",
     "PSI_COMMANDO_RELIC.description": "Allied Barracks unlocks [gold]Psi Commando[/gold] production.",
     "PSI_COMMANDO_RELIC.flavor": "The perfect fusion of mind and explosion.",
-    "SEA_GLASS.REDALERT2MODCODE-ALLIES.title": "Allied Glass",
-    "SEA_GLASS.REDALERT2MODCODE-SOVIET.title": "Soviet Glass",
+    "SEA_GLASS.RED_ALERT2_MOD_CHARACTER_ALLIES.title": "Allied Glass",
+    "SEA_GLASS.RED_ALERT2_MOD_CHARACTER_SOVIET.title": "Soviet Glass",
     "SEA_GLASS.description": "See [blue]{Cards}[/blue] cards from {Character.StringValue:cond:[gold]{}[/gold]|another character}. Choose any number of them to add to your [gold]Deck[/gold].",
     "SEA_GLASS.selectionScreenPrompt": "Select any number of cards to add to your Deck."
 }

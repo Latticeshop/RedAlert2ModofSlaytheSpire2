@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -22,7 +22,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 海豚 - 盟军海军单位卡
 /// 1费，对所有敌人造成2伤害1层易伤，升级后2层易伤
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class Dolphin : CardModel
 {

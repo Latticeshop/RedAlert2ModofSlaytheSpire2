@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -25,7 +25,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 船厂 - 盟军建筑卡
 /// 0费，选择一张海军单位，创建对应的生产序列
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class AlliesShipyardCard : CardModel
 {

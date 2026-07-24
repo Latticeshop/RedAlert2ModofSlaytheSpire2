@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +25,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 作战实验室 - 盟军建筑卡
 /// 0费能力卡，解锁高级兵种，价格2000
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class AlliedBattleLab : CardModel
 {

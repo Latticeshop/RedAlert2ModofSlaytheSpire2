@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Common.Cards;
@@ -25,6 +26,19 @@ public abstract class ChronoCardModel : CardModel
 
 	protected ChronoCardModel(int cost, CardType cardType, CardRarity cardRarity, TargetType targetType)
 		: base(cost, cardType, cardRarity, targetType) { }
+
+	/// <summary>
+	/// 获取卡牌所属的卡池
+	/// 如果卡牌是可变的且有拥有者，返回拥有者角色的卡池；否则返回Token卡池
+	/// </summary>
+	public override CardPoolModel Pool => IsMutable && Owner != null
+		? Owner.Character.CardPool
+		: ModelDb.CardPool<TokenCardPool>();
+
+	/// <summary>
+	/// 获取卡牌视觉上所属的卡池（与Pool相同）
+	/// </summary>
+	public override CardPoolModel VisualCardPool => Pool;
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{

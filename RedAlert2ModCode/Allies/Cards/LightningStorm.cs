@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using System.Collections.Generic;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -27,7 +27,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 4费技能卡（升级3费），金卡
 /// 效果：生成电球，然后触发"电流相生"效果
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class LightningStorm : CardModel
 {

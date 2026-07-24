@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System;
 using System.Collections.Generic;
@@ -14,9 +14,12 @@ using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
+using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Common.Cards;
 
+[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
+[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public sealed class ForceField : CardModel
 {
     public ForceField() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }

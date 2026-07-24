@@ -1,4 +1,4 @@
-﻿using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -14,9 +14,12 @@ using System.Threading.Tasks;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 using Godot;
+using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Common.Cards;
 
+[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
+[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public sealed class EagleMachineGun : CardModel
 {
     private static readonly CardValueStore.CardValues Values = CommonCardValues.EagleMachineGun;

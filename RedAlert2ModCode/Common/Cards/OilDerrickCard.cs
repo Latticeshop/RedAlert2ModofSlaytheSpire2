@@ -11,9 +11,12 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
+using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Common.Cards;
 
+[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
+[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public class OilDerrickCard : CardModel
 {
     private static readonly CardValueStore.CardValues Values = CommonCardValues.OilDerrick;

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -23,7 +23,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 空指部 - 能力牌
 /// 效果类似兵营和盟军重工，但提供空军单位（入侵者战机等）
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class AirForceCommand : CardModel
 {

@@ -14,9 +14,12 @@ using System.Collections.Generic;
 using System.Linq;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Common.Powers;
+using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Common.Cards;
 
+[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
+[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public class GemMineCard : CardModel
 {
     private static readonly CardValueStore.CardValues Values = CommonCardValues.GemMine;

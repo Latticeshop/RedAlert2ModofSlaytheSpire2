@@ -26,6 +26,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed partial class NightHawkChopper : CardModel
 {
     private static readonly CardValueStore.CardValues Values = AlliesCardValues.NightHawkChopper;

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -16,9 +16,12 @@ using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Cards;
 using RedAlert2ModCode.Soviet.Powers;
 using RedAlert2ModCode.Common.Utils;
+using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Common.Cards;
 
+[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
+[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public class SellMCV : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = CommonCardValues.SellMCV;

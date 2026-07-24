@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -25,7 +25,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 盟军重工 - 能力牌
 /// 效果类似兵营，但提供装甲单位（灰熊坦克、IFV）
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class AlliedWarFactory : CardModel
 {

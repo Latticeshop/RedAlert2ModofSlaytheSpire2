@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +27,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 1费技能卡（升级0费），金卡，消耗
 /// 效果：从摸牌/手牌/弃牌堆选任意张牌到摸牌/手牌/弃牌堆
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class ChronoWarp : CardModel
 {

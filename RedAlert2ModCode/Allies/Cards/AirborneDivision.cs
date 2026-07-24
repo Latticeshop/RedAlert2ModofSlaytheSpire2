@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
@@ -16,7 +16,6 @@ using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class AirborneDivision : CardModel
 {

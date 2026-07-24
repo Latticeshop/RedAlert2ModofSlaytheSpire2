@@ -1,4 +1,4 @@
-{
+﻿{
     "DOLLAR_RELIC.title": "刀乐",
     "DOLLAR_RELIC.description": "战斗开始时获得5000初始资金。",
     "DOLLAR_RELIC.flavor": "开局最低资金。",
@@ -44,8 +44,8 @@
     "PSI_COMMANDO_RELIC.title": "心灵突击队",
     "PSI_COMMANDO_RELIC.description": "任意兵营解锁[gold]心灵突击队[/gold]建造权限。",
     "PSI_COMMANDO_RELIC.flavor": "心灵与爆破的完美结合。",
-    "SEA_GLASS.REDALERT2MODCODE-ALLIES.title": "盟军玻璃",
-    "SEA_GLASS.REDALERT2MODCODE-SOVIET.title": "苏军玻璃",
+    "SEA_GLASS.RED_ALERT2_MOD_CHARACTER_ALLIES.title": "盟军玻璃",
+    "SEA_GLASS.RED_ALERT2_MOD_CHARACTER_SOVIET.title": "苏军玻璃",
     "SEA_GLASS.description": "查看 [blue]{Cards}[/blue] 张来自 {Character.StringValue:cond:[gold]{}[/gold]|另一个角色} 的卡牌。选择任意数量加入你的 [gold]牌组[/gold]。",
     "SEA_GLASS.selectionScreenPrompt": "选择任意数量的卡牌加入你的牌组。"
 }

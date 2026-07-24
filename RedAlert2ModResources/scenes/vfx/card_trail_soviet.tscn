@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bw7mky7ele6mx"]
+
+[node name="CardTrailSoviet" type="Node2D"]
+
+[node name="TrailSprite" type="Sprite2D" parent="."]
+centered = false

@@ -25,6 +25,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 0费，获得500资金（升级后1000），使用后加入摸牌堆
 /// 挖矿逻辑：优先挖宝石矿(2倍价值)，再挖黄金矿
 /// </summary>
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class ChronoMiner : ChronoCardModel
 {
 	// 数值引用

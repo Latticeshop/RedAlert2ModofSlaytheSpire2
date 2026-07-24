@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -22,7 +22,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 驱逐舰 - 盟军海军单位攻击卡
 /// 1费攻击卡，造成8点伤害（升级12点）。若敌人意图防御，改为给予1层易伤，造成2点（升级3点）伤害5次。
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class Destroyer : CardModel
 {

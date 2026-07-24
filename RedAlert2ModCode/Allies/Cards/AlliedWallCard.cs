@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -23,7 +23,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 0费技能卡
 /// 效果：花费资金，获得护盾，将此牌返回手牌
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class AlliedWallCard : CardModel
 {

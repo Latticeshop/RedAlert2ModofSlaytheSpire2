@@ -1,4 +1,4 @@
-using MegaCrit.Sts2.Core.Models;
+﻿using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -23,7 +23,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 0费，对一个敌人造成1点伤害2次，并在本回合获得两点敏捷
 /// 升级后：对所有敌人造成1点伤害2次，并在本回合获得两点敏捷
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class RocketSoldier : CardModel
 {

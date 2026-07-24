@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +24,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 0费能力卡，金卡，需要作战实验室解锁
 /// 效果：每过3回合（升级后2回合），将一张"虚无"词条的"超时空传送"加入手牌
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class ChronoSphere : CardModel
 {

@@ -44,19 +44,8 @@ public static class ModInitializer
         // 注册刀乐能力点击补丁
         DollarPowerClickPatch.Install(harmony);
         
-        // 注册所有盟军卡牌到盟军卡池
-        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AmericanSoldier));
-        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(GrizzlyTank));
-        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AlliedMCV));
-        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AlliesBarracksCard));
-        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(ChronoMiner));
-        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AlliedRefinery));
-        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(MirageTank));
-        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(PrismTank));
-        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AircraftCarrier));
-        ModHelper.AddModelToPool(typeof(AlliesCardPool), typeof(AlliesRepairDepot));
-        
-        // 公共卡牌和盟军专属卡牌通过各阵营 CardPool.GenerateAllCards() -> *CardRegistry 获取，无需在此注册
+        // 注意：卡牌注册已通过 RitsuLib 的 [RegisterCard] 属性自动处理
+        // 无需手动调用 ModHelper.AddModelToPool()
         
         Godot.Bridge.ScriptManagerBridge.LookupScriptsInAssembly(Assembly.GetExecutingAssembly());
         

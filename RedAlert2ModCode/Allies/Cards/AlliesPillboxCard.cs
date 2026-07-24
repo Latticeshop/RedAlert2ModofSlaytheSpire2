@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -23,7 +23,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 1费技能卡（普通白卡）
 /// 效果：获得能力：每回合开始时对随机敌人造成2点伤害，自己获得5点防御
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class AlliesPillboxCard : CardModel
 {

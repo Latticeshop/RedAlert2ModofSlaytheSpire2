@@ -1,4 +1,4 @@
-﻿using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -15,6 +15,7 @@ using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 using Godot;
+using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Common.Cards;
 
@@ -24,6 +25,8 @@ namespace RedAlert2ModCode.Common.Cards;
 /// 效果：获得飞鹰500kg能力，指定一名敌人获得目标锁定
 /// 描述：[gold]绝地战备[/gold]。↑→↓↓↓。[gold]溅射[/gold]。
 /// </summary>
+[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
+[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public sealed class Eagle500kg : CardModel
 {
 	// 数值引用

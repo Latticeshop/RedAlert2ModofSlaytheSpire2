@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -23,7 +23,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 1费技能卡（蓝卡uncommon）
 /// 效果：获得能力：回合开始时，每有一个攻击意图的敌人，获得9点格挡（升级后12点）
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class PatriotMissile : CardModel
 {

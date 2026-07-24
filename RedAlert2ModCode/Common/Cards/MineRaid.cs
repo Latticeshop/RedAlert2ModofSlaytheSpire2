@@ -9,9 +9,12 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using System.Collections.Generic;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
+using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Common.Cards;
 
+[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
+[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public class MineRaid : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = CommonCardValues.MineRaid;

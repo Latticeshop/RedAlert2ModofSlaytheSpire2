@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +29,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 效果：若敌人意图攻击，获得16(升级20)点格挡；否则造成10(升级15)点伤害
 /// 使用热能射线火焰特效动画
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class MirageTank : CardModel
 {

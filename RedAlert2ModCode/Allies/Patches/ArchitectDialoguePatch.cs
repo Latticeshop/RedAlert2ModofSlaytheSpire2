@@ -48,9 +48,8 @@ public static class ArchitectDialoguePatch
             System.Diagnostics.Debug.WriteLine($"[RedAlert2Mod] Failed to get Allies ModelId: {ex.Message}");
         }
 
-        // 回退到完整类型名生成的Slug（参考WineFox使用STS2_WINE_FOX_CHARACTER_WINE_FOX）
-        // 从截图看到实际格式是 REDALERT2MODCODE-ALLIES（连字符分隔）
-        _cachedCharacterEntry = "REDALERT2MODCODE-ALLIES";
+        // 回退到RitsuLib生成的角色ID格式
+        _cachedCharacterEntry = "RED_ALERT2_MOD_CHARACTER_ALLIES";
         return _cachedCharacterEntry;
     }
 

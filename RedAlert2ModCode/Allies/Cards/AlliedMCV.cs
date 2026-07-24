@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -26,7 +26,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 0费，打出后在初始建筑+当前卡组已有建筑中选择一张加入手牌
 /// 升级后：获得的卡牌为升级版本
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class AlliedMCV : CardModel
 {

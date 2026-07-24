@@ -15,6 +15,7 @@ using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 using Godot;
+using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Common.Cards;
 
@@ -24,6 +25,8 @@ namespace RedAlert2ModCode.Common.Cards;
 /// 效果：获得飞鹰空袭能力
 /// 描述：[gold]绝地战备[/gold]。\n对全部敌人造成8点(升级12点)伤害。
 /// </summary>
+[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
+[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public sealed class EagleAirStrike : CardModel
 {
 	// 数值引用

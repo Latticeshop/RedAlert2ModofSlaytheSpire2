@@ -34,7 +34,7 @@ public static class ArchitectDialoguePatch
             System.Diagnostics.Debug.WriteLine($"[RedAlert2Mod] Failed to get Soviet ModelId: {ex.Message}");
         }
 
-        _cachedCharacterEntry = "REDALERT2MODCODE-SOVIET";
+        _cachedCharacterEntry = "RED_ALERT2_MOD_CHARACTER_SOVIET";
         return _cachedCharacterEntry;
     }
 

@@ -19,9 +19,12 @@ using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet;
 using RedAlert2ModCode.Yuri;
+using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Common.Cards;
 
+[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
+[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public sealed class SupportCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = CommonCardValues.Support;

@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -27,7 +27,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 效果：造成15(升级20)点伤害。[gold]溅射[/gold]
 /// 使用扫荡射线动画展示射线感
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class PrismTank : CardModel
 {

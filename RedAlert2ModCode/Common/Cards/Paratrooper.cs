@@ -13,9 +13,12 @@ using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Soviet.Cards;
 using RedAlert2ModCode.Common.Utils;
 using Godot;
+using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Common.Cards;
 
+[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
+[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public class Paratrooper : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = CommonCardValues.Paratrooper;

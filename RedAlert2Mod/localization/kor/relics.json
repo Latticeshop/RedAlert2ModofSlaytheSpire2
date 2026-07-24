@@ -1,4 +1,4 @@
-{
+﻿{
     "DOLLAR_RELIC.title": "달러",
     "DOLLAR_RELIC.description": "전투 시작 시 초기 자금 5000을 얻습니다.",
     "DOLLAR_RELIC.flavor": "시작 시 최소 자금.",
@@ -38,8 +38,8 @@
     "PSI_COMMANDO_RELIC.title": "사이코 코맨도",
     "PSI_COMMANDO_RELIC.description": "연합군 막사에서 [gold]사이코 코맨도[/gold] 생산이 가능해집니다.",
     "PSI_COMMANDO_RELIC.flavor": "정신과 폭발의 완벽한 융합.",
-    "SEA_GLASS.REDALERT2MODCODE-ALLIES.title": "연합군 유리",
-    "SEA_GLASS.REDALERT2MODCODE-SOVIET.title": "소련 유리",
+    "SEA_GLASS.RED_ALERT2_MOD_CHARACTER_ALLIES.title": "연합군 유리",
+    "SEA_GLASS.RED_ALERT2_MOD_CHARACTER_SOVIET.title": "소련 유리",
     "SEA_GLASS.description": "{Character.StringValue:cond:[gold]{}[/gold]|다른 캐릭터}의 [blue]{Cards}[/blue]장의 카드를 확인합니다. 원하는 만큼 선택하여 [gold]덱[/gold]에 추가합니다.",
     "SEA_GLASS.selectionScreenPrompt": "덱에 추가할 카드를 원하는 만큼 선택하세요."
 }

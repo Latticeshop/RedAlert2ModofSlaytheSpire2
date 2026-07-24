@@ -19,6 +19,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Allies.Cards;
 
+[RegisterCard(typeof(AlliesCardPool))]
 public sealed class ChronoLegionnaire : ChronoCardModel
 {
     private static readonly CardValueStore.CardValues Values = AlliesCardValues.ChronoLegionnaire;

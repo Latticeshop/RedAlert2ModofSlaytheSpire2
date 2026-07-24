@@ -1,4 +1,4 @@
-using MegaCrit.Sts2.Core.Models;
+﻿using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions;
@@ -19,7 +19,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 灰熊坦克 - 攻击牌
 /// 1费5攻击3防御，升级后7攻击5防御
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class GrizzlyTank : CardModel
 {

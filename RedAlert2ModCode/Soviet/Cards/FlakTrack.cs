@@ -26,6 +26,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Soviet.Cards;
 
+[RegisterCard(typeof(SovietCardPool))]
 public sealed partial class FlakTrack : CardModel
 {
     private static readonly CardValueStore.CardValues Values = SovietCardValues.FlakTrack;

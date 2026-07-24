@@ -22,9 +22,12 @@ using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Soviet.Cards;
 using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Soviet;
+using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace RedAlert2ModCode.Common.Cards;
 
+[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
+[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public class SellBuildingCard : CardModel
 {
     private static readonly CardValueStore.CardValues Values = CommonCardValues.SellBuilding;

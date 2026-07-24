@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -22,7 +22,6 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 效果：获得"策略：塔防"能力，加入一张带消耗的光棱塔
 /// 策略：塔防能力效果：打出围墙时，若有光棱塔能力则获得1回合残影
 /// </summary>
-[RegisterCard(typeof(AlliesCardPool))]
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class StrategyTowerDefense : CardModel
 {

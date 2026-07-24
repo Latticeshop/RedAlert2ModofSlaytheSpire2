@@ -10,7 +10,7 @@ internal static class AssetHooks
 {
     private const string CombatArtNodeName = "AlliesCombatIllustration";
     private const string DeathArtNodeName = "AlliesDeathIllustration";
-    private const string CharacterCombatImagePath = "res://RedAlert2ModResources/images/charui/allies_character.png";
+    private const string CharacterCombatImagePath = "res://RedAlert2ModResources/images/character/allies_character.png";
     private const string CharacterDeathImagePath = "res://RedAlert2ModResources/images/character/allies_character_die.png";
 
     public static void Install(Harmony harmony)
