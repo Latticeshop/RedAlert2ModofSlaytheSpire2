@@ -37,7 +37,8 @@ public sealed class MineRaidPower : PowerModel
 
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        if (cardPlay.Card.Owner != base.Owner.Player || !IsUnitCard(cardPlay.Card))
+        // 检查是否是自己打出的卡牌，是否是单位卡，且不是矿车卡
+        if (cardPlay.Card.Owner != base.Owner.Player || !IsUnitCard(cardPlay.Card) || IsMinerCard(cardPlay.Card))
             return;
 
         GD.Print($"[MineRaidPower] 打出单位卡 {cardPlay.Card.Id.Entry}，触发扰矿效果，层数={Amount}");

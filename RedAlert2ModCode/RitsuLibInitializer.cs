@@ -98,40 +98,18 @@ public static class RitsuLibInitializer
     }
     
     /// <summary>
-    /// 将公共卡牌注册到TokenCardPool
-    /// 这样公共卡牌能被所有角色使用，且运行时根据持有者动态显示卡框颜色
-    /// 卡池查看器和奖励中的显示通过重写AllCards属性实现
+    /// 公共卡牌不再直接注册到TokenCardPool，避免污染全局token卡池
+    /// 公共卡牌通过卡池的AllCards属性单独包含（使用ModelDb.Card<T>()获取）
+    /// 这样可以避免影响游戏原版非本mod的token卡牌
     /// </summary>
     private static void RegisterCommonCardsToTokenPool()
     {
         try
         {
-            // 使用BaseLib的ModHelper将公共卡牌注册到TokenCardPool
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(ChronoCommandos));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(ChronoIvanCard));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(Eagle500kg));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(EagleAirStrike));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(EagleMachineGun));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(F2A));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(ForceField));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(GemMineCard));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(GoldMineCard));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(GoldMineColumnCard));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(KitingCard));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(MassProductionCard));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(MineRaid));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(OilDerrickCard));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(Paratrooper));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(PsiCommandoCard));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(Ra2Rally));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(SellBuildingCard));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(SellMCV));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(StopProductionCard));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(SupportCard));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(YuriCard));
-            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(YuriPrimeCard));
+            // 注意：不再将公共卡牌注册到TokenCardPool，以避免污染全局token卡池
+            // 公共卡牌通过AlliesCardPool和SovietCardPool的AllCards属性单独包含
             
-            ModInitializer.Logger.Info("公共卡牌注册完成！已将23张公共卡牌注册到TokenCardPool");
+            ModInitializer.Logger.Info("公共卡牌注册策略已修改：不再直接注册到TokenCardPool，避免影响原版token卡牌");
         }
         catch (Exception ex)
         {

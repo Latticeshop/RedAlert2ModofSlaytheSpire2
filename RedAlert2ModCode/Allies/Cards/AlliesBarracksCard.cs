@@ -56,13 +56,10 @@ public sealed class AlliesBarracksCard : CardModel
 				if (!CardUtils.HasMcvPower(Owner.Creature))
 					return false;
 
-				bool hasPower = Owner.Creature.Powers.OfType<AlliedBarracksPower>().Any();
-				if (!hasPower)
-				{
-					var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-					if (dollarPower == null || dollarPower.DollarValue < AlliesCardValues.Barracks.DollarValue)
-						return false;
-				}
+				// 每次打出都需要花费建筑资金
+				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+				if (dollarPower == null || dollarPower.DollarValue < AlliesCardValues.Barracks.DollarValue)
+					return false;
 
 				return true;
 			}
@@ -100,59 +97,68 @@ public sealed class AlliesBarracksCard : CardModel
 		
 		GD.Print($"[AlliesBarracksCard] 可用卡牌数量: {availableCards.Count}");
 
-		// 使用自定义选择面板，支持滚轮滚动选择任意数量卡牌
-		// 传递数值映射，让UI面板能够正确显示费用
+		// 使用自定义选择面板，支持多选和数量选择
 		var cardValuesMap = AlliesCardValues.CreateSoldierValuesMap();
-		CardModel? selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(availableCards, Owner, cardValuesMap, FactionType.Allied);
+		var selectedResults = await CardSelectionSyncHelper.ShowSelectionWithQuantitySync(availableCards, Owner, cardValuesMap, FactionType.Allied);
 
-		GD.Print($"[AlliesBarracksCard] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
+		GD.Print($"[AlliesBarracksCard] 选择结果数量: {(selectedResults != null ? selectedResults.Count : 0)}");
 
-		// 如果玩家选择了卡牌，才执行能力效果
-		if (selectedCard != null)
+		// 如果取消选择（selectedResults == null），返还能量，卡牌返回手中
+		if (selectedResults == null)
 		{
-			bool hasPower = Owner.Creature.Powers.OfType<AlliedBarracksPower>().Any();
-			if (!hasPower)
-			{
-				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-				if (dollarPower != null)
-				{
-					dollarPower.AddDollar(-(int)AlliesCardValues.Barracks.DollarValue);
-					GD.Print($"[AlliesBarracksCard] 扣除建筑资金 {AlliesCardValues.Barracks.DollarValue}");
-				}
-			}
-			else
-			{
-				GD.Print("[AlliesBarracksCard] 已有兵营能力，不扣除建筑资金");
-			}
+			GD.Print("[AlliesBarracksCard] 取消选择，返还能量，卡牌返回手中");
+			await CardUtils.HandleCardCancellation(play, this, Owner);
+			return;
+		}
 
-			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
-			
-			// 添加兵营能力（用于出售检查和生产序列管理）
-			await PowerCmd.Apply<AlliedBarracksPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
-			GD.Print("[AlliesBarracksCard] 添加兵营能力");
-			
-			// 获取单位价格
-			int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
-			
-			// 使用统一的训练队列能力应用方法
-			await TrainingQueuePower.ApplyTrainingQueue(
-				owner: Owner.Creature,
-				cardId: selectedCard.Id.Entry,
-				unitName: selectedCard.Title.ToString(),
-				iconPath: selectedCard.PortraitPath,
-				unitPrice: unitPrice,
-				isUpgraded: base.IsUpgraded,
-				sourceCard: this
-			);
+		// 选择确认后才扣除资金（空选也消耗资金）
+		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+		if (dollarPower != null)
+		{
+			dollarPower.AddDollar(-(int)AlliesCardValues.Barracks.DollarValue);
+			GD.Print($"[AlliesBarracksCard] 扣除建筑资金 {AlliesCardValues.Barracks.DollarValue}");
+		}
 
-			// 打出后抽一张牌
-			await CardPileCmd.Draw(ctx, 1, Owner);
+		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+		
+		// 添加兵营能力（用于出售检查和生产序列管理）
+		await PowerCmd.Apply<AlliedBarracksPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+		GD.Print("[AlliesBarracksCard] 添加兵营能力");
+
+		// 如果玩家选择了卡牌，创建对应的生产序列能力（同一批相同单位叠层）
+		if (selectedResults.Count > 0)
+		{
+			foreach (var result in selectedResults)
+			{
+				CardModel selectedCard = result.Card;
+				int count = result.Count;
+				
+				GD.Print($"[AlliesBarracksCard] 创建生产序列 - CardId={selectedCard.Id.Entry}, Count={count}");
+				
+				// 获取单位价格
+				int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
+				
+				// 同一批相同单位合并为一个能力（叠层）
+				await TrainingQueuePower.ApplyTrainingQueue(
+					owner: Owner.Creature,
+					cardId: selectedCard.Id.Entry,
+					unitName: selectedCard.Title.ToString(),
+					iconPath: selectedCard.PortraitPath,
+					unitPrice: unitPrice,
+					isUpgraded: base.IsUpgraded,
+					sourceCard: this,
+					amount: count
+				);
+			}
 		}
 		else
-			{
-			// 取消选择：返还费用并将卡牌放回手牌	
-			await CardUtils.HandleCardCancellation(play, this, Owner);
-			}
+		{
+			// 空选：仅获得建筑能力，不创建生产序列
+			GD.Print("[AlliesBarracksCard] 空选，仅获得建筑能力");
+		}
+
+		// 无论是否选择了兵种，打出后都抽一张牌
+		await CardPileCmd.Draw(ctx, 1, Owner);
 	}
 
 		protected override void OnUpgrade()

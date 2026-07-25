@@ -59,13 +59,10 @@ public sealed class SovietWarFactory : CardModel
 			if (!CardUtils.HasMcvPower(Owner.Creature))
 				return false;
 
-			bool hasPower = Owner.Creature.Powers.OfType<SovietWarFactoryPower>().Any();
-			if (!hasPower)
-			{
-				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-				if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
-					return false;
-			}
+			// 每次打出都需要花费建筑资金
+			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+			if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
+				return false;
 
 			return true;
 		}
@@ -95,56 +92,70 @@ public sealed class SovietWarFactory : CardModel
 		}
 
 		var cardValuesMap = SovietCardValues.CreateVehicleValuesMap();
-		CardModel? selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(availableCards, Owner, cardValuesMap, FactionType.Soviet);
+		var selectedResults = await CardSelectionSyncHelper.ShowSelectionWithQuantitySync(availableCards, Owner, cardValuesMap, FactionType.Soviet);
 
-		GD.Print($"[SovietWarFactory] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
+		GD.Print($"[SovietWarFactory] 选择结果数量: {(selectedResults != null ? selectedResults.Count : 0)}");
 
-		if (selectedCard != null)
+		// 如果取消选择（selectedResults == null），返还能量，卡牌返回手中
+		if (selectedResults == null)
 		{
-			bool hasPower = Owner.Creature.Powers.OfType<SovietWarFactoryPower>().Any();
-			if (!hasPower)
+			GD.Print("[SovietWarFactory] 取消选择，返还能量，卡牌返回手中");
+			await CardUtils.HandleCardCancellation(play, this, Owner);
+			return;
+		}
+
+		// 选择确认后才扣除资金（空选也消耗资金）
+		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+		if (dollarPower != null)
+		{
+			dollarPower.AddDollar(-(int)Values.DollarValue);
+			GD.Print($"[SovietWarFactory] 扣除建筑资金 {Values.DollarValue}");
+		}
+
+		// 添加重工能力（用于科技线检查），每次打出都增加层数
+		await PowerCmd.Apply<SovietWarFactoryPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+		GD.Print("[SovietWarFactory] 添加重工能力");
+
+		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+
+		// 如果玩家选择了卡牌，创建对应的生产序列能力（同一批相同单位叠层）
+		if (selectedResults.Count > 0)
+		{
+			foreach (var result in selectedResults)
 			{
-				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-				if (dollarPower != null)
-				{
-					dollarPower.AddDollar(-(int)Values.DollarValue);
-					GD.Print($"[SovietWarFactory] 扣除建筑资金 {Values.DollarValue}");
-				}
+				CardModel selectedCard = result.Card;
+				int count = result.Count;
+				
+				GD.Print($"[SovietWarFactory] 创建生产序列 - CardId={selectedCard.Id.Entry}, Count={count}");
+				
+				int unitPrice = SovietCardValues.GetDollarValue(selectedCard.Id.Entry);
+				
+				bool exhaustWhenPlayed = selectedCard is not WarMiner;
+				
+				// 同一批相同单位合并为一个能力（叠层）
+				await TrainingQueuePower.ApplyTrainingQueue(
+					owner: Owner.Creature,
+					cardId: selectedCard.Id.Entry,
+					unitName: selectedCard.Title.ToString(),
+					iconPath: selectedCard.PortraitPath,
+					unitPrice: unitPrice,
+					isUpgraded: base.IsUpgraded,
+					sourceCard: this,
+					exhaustWhenPlayed: exhaustWhenPlayed,
+					amount: count
+				);
+				
+				GD.Print($"[SovietWarFactory] 应用训练队列 - CardId={selectedCard.Id.Entry}, ExhaustWhenPlayed={exhaustWhenPlayed}, Count={count}");
 			}
-			else
-			{
-				GD.Print("[SovietWarFactory] 已有重工能力，不扣除建筑资金");
-			}
-
-			// 添加重工能力（用于科技线检查），每次打出都增加层数
-			await PowerCmd.Apply<SovietWarFactoryPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
-			GD.Print("[SovietWarFactory] 添加重工能力");
-
-			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
-			
-			int unitPrice = SovietCardValues.GetDollarValue(selectedCard.Id.Entry);
-			
-			bool exhaustWhenPlayed = selectedCard is not WarMiner;
-			
-			await TrainingQueuePower.ApplyTrainingQueue(
-				owner: Owner.Creature,
-				cardId: selectedCard.Id.Entry,
-				unitName: selectedCard.Title.ToString(),
-				iconPath: selectedCard.PortraitPath,
-				unitPrice: unitPrice,
-				isUpgraded: base.IsUpgraded,
-				sourceCard: this,
-				exhaustWhenPlayed: exhaustWhenPlayed
-			);
-			
-			GD.Print($"[SovietWarFactory] 应用训练队列 - CardId={selectedCard.Id.Entry}, ExhaustWhenPlayed={exhaustWhenPlayed}");
-
-			await CardPileCmd.Draw(ctx, 1, Owner);
 		}
 		else
 		{
-			await CardUtils.HandleCardCancellation(play, this, Owner);
+			// 空选：仅获得建筑能力，不创建生产序列
+			GD.Print("[SovietWarFactory] 空选，仅获得建筑能力");
 		}
+
+		// 无论是否选择了兵种，打出后都抽一张牌
+		await CardPileCmd.Draw(ctx, 1, Owner);
 	}
 
 	protected override void OnUpgrade()

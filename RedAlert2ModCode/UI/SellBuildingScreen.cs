@@ -17,17 +17,34 @@ using RedAlert2ModCode.Soviet.Cards;
 
 namespace RedAlert2ModCode.UI;
 
+public class SellBuildingItem
+{
+    public PowerModel Power { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string IconPath { get; set; } = string.Empty;
+    public int TotalStacks { get; set; } = 0;
+    public int SellValue { get; set; } = 0;
+    public int SelectedCount { get; set; } = 0;
+}
+
+public class SellBuildingResult
+{
+    public List<SellBuildingItem> Items { get; set; } = new();
+}
+
 public sealed partial class SellBuildingScreen : Control, IOverlayScreen
 {
-    private readonly TaskCompletionSource<List<int>?> _completionSource = new();
-    private readonly List<(PowerModel Power, int Index)> _buildingPowerItems;
+    private readonly TaskCompletionSource<SellBuildingResult?> _completionSource = new();
+    private readonly List<SellBuildingItem> _items;
     private readonly int _maxSelection;
-    private readonly int _minSelection = 0;
     private readonly FactionType _faction;
     private ScrollContainer _scrollContainer;
     private HBoxContainer _cardsRow;
     private bool _choiceLocked;
-    private List<int> _selectedIndices = new();
+    private Dictionary<int, int> _selectedCounts = new(); // index -> count
+    private List<int> _selectionOrder = new(); // 存储选择顺序
+    private Dictionary<int, LineEdit> _quantityInputs = new(); // index -> LineEdit
+    private Dictionary<int, Button> _itemButtons = new(); // index -> Button
 
     public NetScreenType ScreenType => NetScreenType.Rewards;
     public bool UseSharedBackstop => true;
@@ -77,21 +94,28 @@ public sealed partial class SellBuildingScreen : Control, IOverlayScreen
         return string.Empty;
     }
 
-    private SellBuildingScreen(List<(PowerModel Power, int Index)> buildingPowerItems, int maxSelect, FactionType faction)
+    private SellBuildingScreen(List<SellBuildingItem> items, int maxSelect, FactionType faction)
     {
-        _buildingPowerItems = buildingPowerItems;
+        _items = items;
         _maxSelection = maxSelect;
         _faction = faction;
         Name = nameof(SellBuildingScreen);
         SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
         MouseFilter = MouseFilterEnum.Stop;
         FocusMode = FocusModeEnum.All;
+        
+        // 初始化每个项的数量为1
+        for (int i = 0; i < _items.Count; i++)
+        {
+            _selectedCounts[i] = 1;
+        }
+        
         BuildUi();
     }
 
-    public static async Task<List<int>?> ShowSelection(List<(PowerModel Power, int Index)> buildingPowerItems, int maxSelect, Player player, FactionType faction)
+    public static async Task<SellBuildingResult?> ShowSelection(List<SellBuildingItem> items, int maxSelect, Player player, FactionType faction)
     {
-        var screen = new SellBuildingScreen(buildingPowerItems, maxSelect, faction);
+        var screen = new SellBuildingScreen(items, maxSelect, faction);
         NOverlayStack.Instance?.Push(screen);
         
         if (!MultiplayerSyncHelper.IsLocalPlayer(player))
@@ -103,15 +127,85 @@ public sealed partial class SellBuildingScreen : Control, IOverlayScreen
         return await screen._completionSource.Task;
     }
 
-    public static async Task<List<int>> ShowSelectionWithSync(List<(PowerModel Power, int Index)> buildingPowerItems, int maxSelect, Player player, FactionType faction)
+    public static async Task<SellBuildingResult?> ShowSelectionWithSync(List<SellBuildingItem> items, int maxSelect, Player player, FactionType faction)
     {
-        List<(PowerModel Power, int Index)> itemsCopy = new(buildingPowerItems);
+        List<SellBuildingItem> itemsCopy = new(items);
 
-        return await MultiplayerSyncHelper.ExecuteSyncMultiChoice(player, async () =>
+        // 将选择结果编码为整数列表
+        // 使用特殊标记区分取消(-2)和空选确认(-1)
+        List<int> encodedSelection = await MultiplayerSyncHelper.ExecuteSyncMultiChoice(player, async () =>
         {
-            List<int>? selected = await ShowSelection(itemsCopy, maxSelect, player, faction);
-            return selected;
+            SellBuildingResult? result = await ShowSelection(itemsCopy, maxSelect, player, faction);
+            if (result == null)
+            {
+                // 取消操作：返回包含-2的列表
+                return new List<int> { -2 };
+            }
+
+            if (result.Items.Count == 0)
+            {
+                // 空选确认：返回包含-1的列表
+                return new List<int> { -1 };
+            }
+
+            // 正常选择：编码为 [index1, count1, index2, count2, ...]
+            List<int> encoded = new();
+            
+            foreach (var item in result.Items)
+            {
+                int index = itemsCopy.FindIndex(i => i.Power == item.Power && i.Name == item.Name);
+                if (index >= 0)
+                {
+                    encoded.Add(index);
+                    encoded.Add(item.SelectedCount);
+                }
+            }
+            return encoded;
         });
+
+        if (encodedSelection != null && encodedSelection.Count > 0)
+        {
+            // 检查特殊标记
+            if (encodedSelection[0] == -2)
+            {
+                // 取消操作：返回null
+                return null;
+            }
+            
+            if (encodedSelection[0] == -1)
+            {
+                // 空选确认：返回空结果（直接打出卡牌）
+                return new SellBuildingResult();
+            }
+            
+            // 正常选择：解码结果
+            if (encodedSelection.Count >= 2)
+            {
+                var result = new SellBuildingResult();
+                
+                for (int i = 0; i < encodedSelection.Count; i += 2)
+                {
+                    int index = encodedSelection[i];
+                    int count = encodedSelection[i + 1];
+                    if (index >= 0 && index < itemsCopy.Count && count > 0)
+                    {
+                        var item = itemsCopy[index];
+                        result.Items.Add(new SellBuildingItem
+                        {
+                            Power = item.Power,
+                            Name = item.Name,
+                            IconPath = item.IconPath,
+                            TotalStacks = item.TotalStacks,
+                            SellValue = item.SellValue,
+                            SelectedCount = count
+                        });
+                    }
+                }
+                return result;
+            }
+        }
+
+        return null;
     }
 
     private void BuildUi()
@@ -183,9 +277,9 @@ public sealed partial class SellBuildingScreen : Control, IOverlayScreen
         _cardsRow.AddThemeConstantOverride("separation", 15);
         _scrollContainer.AddChild(_cardsRow);
 
-        foreach (var item in _buildingPowerItems)
+        foreach (var item in _items.Select((i, idx) => (Item: i, Index: idx)))
         {
-            _cardsRow.AddChild(CreatePowerButton(item.Power, item.Index));
+            _cardsRow.AddChild(CreateItemButton(item.Item, item.Index));
         }
 
         HBoxContainer buttonContainer = new()
@@ -195,6 +289,7 @@ public sealed partial class SellBuildingScreen : Control, IOverlayScreen
         };
         buttonContainer.AddThemeConstantOverride("separation", 20);
         
+        // 添加取消按钮（在左边）
         Button cancelButton = new()
         {
             Text = GetLocStringText(new LocString("card_keywords", "ui.sell_building.cancel")),
@@ -203,14 +298,15 @@ public sealed partial class SellBuildingScreen : Control, IOverlayScreen
             FocusMode = FocusModeEnum.All,
             MouseDefaultCursorShape = CursorShape.PointingHand
         };
-        cancelButton.AddThemeStyleboxOverride("normal", CreateCancelStyle());
-        cancelButton.AddThemeStyleboxOverride("hover", CreateCancelStyle(new Color(0.6f, 0.15f, 0.15f, 0.9f)));
+        cancelButton.AddThemeStyleboxOverride("normal", CreateCancelStyle(new Color(0.45f, 0.1f, 0.1f, 0.85f)));
+        cancelButton.AddThemeStyleboxOverride("hover", CreateCancelStyle(new Color(0.55f, 0.15f, 0.15f, 0.9f)));
         cancelButton.AddThemeStyleboxOverride("pressed", CreateCancelStyle(new Color(0.35f, 0.08f, 0.08f, 0.95f)));
-        cancelButton.AddThemeColorOverride("font_color", new Color(1f, 0.85f, 0.85f));
+        cancelButton.AddThemeColorOverride("font_color", new Color(1f, 0.9f, 0.9f));
         cancelButton.AddThemeFontSizeOverride("font_size", 20);
         cancelButton.Pressed += OnCancelClicked;
         buttonContainer.AddChild(cancelButton);
 
+        // 添加确认按钮（在右边）
         Button confirmButton = new()
         {
             Text = GetLocStringText(new LocString("card_keywords", "ui.sell_building.confirm")),
@@ -230,11 +326,11 @@ public sealed partial class SellBuildingScreen : Control, IOverlayScreen
         root.AddChild(buttonContainer);
     }
 
-    private Button CreatePowerButton(PowerModel power, int index)
+    private Button CreateItemButton(SellBuildingItem item, int index)
     {
         Button button = new()
         {
-            Name = $"PowerButton_{power.Id.Entry}_{index}",
+            Name = $"ItemButton_{index}",
             CustomMinimumSize = new Vector2(260f, 280f),
             FocusMode = FocusModeEnum.All,
             MouseDefaultCursorShape = CursorShape.PointingHand
@@ -252,16 +348,27 @@ public sealed partial class SellBuildingScreen : Control, IOverlayScreen
         contentMargin.AddThemeConstantOverride("margin_bottom", 12);
         button.AddChild(contentMargin);
 
+        // 使用VBoxContainer填充整个按钮，数量控件固定在底部
         VBoxContainer content = new()
         {
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
-            SizeFlagsVertical = SizeFlags.ShrinkBegin,
+            SizeFlagsVertical = SizeFlags.ExpandFill,
             Alignment = BoxContainer.AlignmentMode.Center
         };
         content.AddThemeConstantOverride("separation", 4);
         contentMargin.AddChild(content);
 
-        string iconPath = GetPowerIconPath(power);
+        // 卡牌内容区域（图片、名称、出售价值、总层数）
+        VBoxContainer cardContent = new()
+        {
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            SizeFlagsVertical = SizeFlags.ExpandFill,
+            Alignment = BoxContainer.AlignmentMode.Center
+        };
+        cardContent.AddThemeConstantOverride("separation", 4);
+        content.AddChild(cardContent);
+
+        string iconPath = item.IconPath;
         if (!string.IsNullOrEmpty(iconPath) && ResourceLoader.Exists(iconPath))
         {
             TextureRect texture = new()
@@ -272,13 +379,13 @@ public sealed partial class SellBuildingScreen : Control, IOverlayScreen
                 SizeFlagsHorizontal = SizeFlags.ExpandFill,
                 SizeFlagsVertical = SizeFlags.ShrinkCenter
             };
-            content.AddChild(texture);
+            cardContent.AddChild(texture);
         }
 
-        string titleText = GetLocStringText(power.Title);
+        string titleText = GetLocStringText(item.Power.Title);
         if (string.IsNullOrEmpty(titleText))
         {
-            titleText = power.Id.Entry.Replace("_", " ");
+            titleText = item.Name;
         }
         Label name = new()
         {
@@ -288,11 +395,9 @@ public sealed partial class SellBuildingScreen : Control, IOverlayScreen
         };
         name.AddThemeFontSizeOverride("font_size", 18);
         name.AddThemeColorOverride("font_color", new Color(0.9f, 0.95f, 1f));
-        content.AddChild(name);
+        cardContent.AddChild(name);
 
-        int dollarValue = GetPowerBuildCost(power);
-        int sellValue = dollarValue / 2;
-        string sellValueText = $"{GetLocStringText(new LocString("card_keywords", "ui.sell_building.sell_value"))}: ${sellValue}";
+        string sellValueText = $"{GetLocStringText(new LocString("card_keywords", "ui.sell_building.sell_value"))}: ${item.SellValue}";
         Label sellValueLabel = new()
         {
             Text = sellValueText,
@@ -301,11 +406,247 @@ public sealed partial class SellBuildingScreen : Control, IOverlayScreen
             Modulate = new Color(0.8f, 0.9f, 0.6f)
         };
         sellValueLabel.AddThemeFontSizeOverride("font_size", 14);
-        content.AddChild(sellValueLabel);
+        cardContent.AddChild(sellValueLabel);
 
-        button.Pressed += () => OnPowerSelected(index);
+        // 显示总层数
+        Label totalStacks = new()
+        {
+            Text = $"总层数: {item.TotalStacks}",
+            HorizontalAlignment = HorizontalAlignment.Center,
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            Modulate = new Color(0.7f, 0.7f, 0.8f)
+        };
+        totalStacks.AddThemeFontSizeOverride("font_size", 14);
+        cardContent.AddChild(totalStacks);
+
+        // 添加数量选择控件（固定在底部）
+        HBoxContainer quantityRow = new()
+        {
+            Alignment = BoxContainer.AlignmentMode.Center,
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            SizeFlagsVertical = SizeFlags.ShrinkCenter
+        };
+        quantityRow.AddThemeConstantOverride("separation", 8);
+
+        Button minusBtn = new()
+        {
+            Text = "-",
+            CustomMinimumSize = new Vector2(36f, 36f),
+            FocusMode = FocusModeEnum.All
+        };
+        minusBtn.AddThemeFontSizeOverride("font_size", 22);
+        minusBtn.Pressed += () => AdjustQuantity(index, -1);
+        quantityRow.AddChild(minusBtn);
+
+        // 使用LineEdit支持直接输入
+        LineEdit quantityInput = new()
+        {
+            Text = "1",
+            SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
+            CustomMinimumSize = new Vector2(40f, 36f),
+            FocusMode = FocusModeEnum.All
+        };
+        quantityInput.AddThemeConstantOverride("align", (int)HorizontalAlignment.Center);
+        quantityInput.Name = $"QuantityInput_{index}";
+        quantityInput.AddThemeFontSizeOverride("font_size", 20);
+        quantityInput.AddThemeColorOverride("font_color", new Color(0.9f, 0.9f, 1f));
+        quantityInput.FocusExited += () => OnQuantityInputFocusExited(index);
+        quantityInput.TextChanged += (text) => OnQuantityInputTextChanged(index, text);
+        quantityRow.AddChild(quantityInput);
+        
+        // 保存LineEdit和Button引用
+        _quantityInputs[index] = quantityInput;
+        _itemButtons[index] = button;
+
+        Button plusBtn = new()
+        {
+            Text = "+",
+            CustomMinimumSize = new Vector2(36f, 36f),
+            FocusMode = FocusModeEnum.All
+        };
+        plusBtn.AddThemeFontSizeOverride("font_size", 22);
+        plusBtn.Pressed += () => AdjustQuantity(index, 1);
+        quantityRow.AddChild(plusBtn);
+
+        content.AddChild(quantityRow);
+
+        button.Pressed += () => ToggleCardSelection(index);
 
         return button;
+    }
+
+    private void ToggleCardSelection(int index)
+    {
+        if (_choiceLocked) return;
+
+        bool isSelected = _selectionOrder.Contains(index);
+        
+        if (isSelected)
+        {
+            // 已选中，点击后取消选中
+            _selectionOrder.Remove(index);
+            UpdateButtonSelectionStyle(index, false);
+        }
+        else
+        {
+            // 未选中，点击后选中
+            _selectionOrder.Add(index);
+            // 确保数量至少为1
+            if (_selectedCounts.TryGetValue(index, out int count) && count < 1)
+            {
+                _selectedCounts[index] = 1;
+            }
+            UpdateQuantityDisplay(index);
+            UpdateButtonSelectionStyle(index, true);
+        }
+    }
+
+    private void AdjustQuantity(int index, int delta)
+    {
+        if (_choiceLocked) return;
+
+        if (_selectedCounts.TryGetValue(index, out int currentCount))
+        {
+            var item = _items[index];
+            int maxCount = Math.Min(_maxSelection, item.TotalStacks);
+            int newCount = Math.Max(1, Math.Min(maxCount, currentCount + delta));
+            _selectedCounts[index] = newCount;
+
+            UpdateQuantityDisplay(index);
+        }
+    }
+
+    private void OnQuantityInputFocusExited(int index)
+    {
+        if (_choiceLocked) return;
+
+        if (_quantityInputs.TryGetValue(index, out LineEdit input))
+        {
+            if (int.TryParse(input.Text, out int value))
+            {
+                var item = _items[index];
+                int maxCount = Math.Min(_maxSelection, item.TotalStacks);
+                
+                if (value <= 0)
+                {
+                    _selectedCounts[index] = 1; // 数量至少为1
+                }
+                else
+                {
+                    value = Math.Min(maxCount, value);
+                    _selectedCounts[index] = value;
+                }
+                UpdateQuantityDisplay(index);
+            }
+            else
+            {
+                UpdateQuantityDisplay(index);
+            }
+        }
+    }
+
+    private void OnQuantityInputTextChanged(int index, string text)
+    {
+        if (_choiceLocked) return;
+
+        if (_quantityInputs.TryGetValue(index, out LineEdit input))
+        {
+            // 过滤非数字字符
+            string filtered = new string(text.Where(c => char.IsDigit(c)).ToArray());
+            if (filtered != text)
+            {
+                input.Text = filtered;
+                return;
+            }
+
+            if (int.TryParse(filtered, out int value))
+            {
+                var item = _items[index];
+                int maxCount = Math.Min(_maxSelection, item.TotalStacks);
+                
+                if (value > maxCount)
+                {
+                    input.Text = maxCount.ToString();
+                    _selectedCounts[index] = maxCount;
+                }
+                else if (value > 0)
+                {
+                    _selectedCounts[index] = value;
+                }
+            }
+        }
+    }
+
+    private void UpdateQuantityDisplay(int index)
+    {
+        if (_selectedCounts.TryGetValue(index, out int count) && _quantityInputs.TryGetValue(index, out LineEdit input))
+        {
+            input.Text = count.ToString();
+        }
+    }
+
+    private void UpdateButtonSelectionStyle(int index, bool isSelected)
+    {
+        if (_itemButtons.TryGetValue(index, out Button button))
+        {
+            if (isSelected)
+            {
+                button.AddThemeStyleboxOverride("normal", CreateCardStyle(new Color(0.15f, 0.35f, 0.15f)));
+                button.AddThemeStyleboxOverride("hover", CreateCardStyle(new Color(0.2f, 0.45f, 0.2f)));
+                button.AddThemeStyleboxOverride("pressed", CreateCardStyle(new Color(0.12f, 0.3f, 0.12f)));
+            }
+            else
+            {
+                button.AddThemeStyleboxOverride("normal", CreateCardStyle(new Color(0.1f, 0.15f, 0.2f, 0.8f)));
+                button.AddThemeStyleboxOverride("hover", CreateCardStyle(new Color(0.15f, 0.2f, 0.28f, 0.9f)));
+                button.AddThemeStyleboxOverride("pressed", CreateCardStyle(new Color(0.08f, 0.12f, 0.18f, 0.95f)));
+            }
+        }
+    }
+
+    private void OnCancelClicked()
+    {
+        Close();
+    }
+
+    public void Close()
+    {
+        if (_choiceLocked) return;
+        _choiceLocked = true;
+        _completionSource.TrySetResult(null);
+        NOverlayStack.Instance?.Remove(this);
+    }
+
+    private void OnConfirmClicked()
+    {
+        if (_choiceLocked) return;
+
+        // 收集所有数量>0的选择
+        List<SellBuildingItem> selectedItems = new();
+        foreach (int index in _selectionOrder)
+        {
+            if (_selectedCounts.TryGetValue(index, out int count) && count > 0 && index >= 0 && index < _items.Count)
+            {
+                var item = _items[index];
+                selectedItems.Add(new SellBuildingItem
+                {
+                    Power = item.Power,
+                    Name = item.Name,
+                    IconPath = item.IconPath,
+                    TotalStacks = item.TotalStacks,
+                    SellValue = item.SellValue,
+                    SelectedCount = count
+                });
+            }
+        }
+
+        _choiceLocked = true;
+        // 空选时返回空结果（直接打出卡牌），而非调用Close()返回null
+        _completionSource.TrySetResult(new SellBuildingResult
+        {
+            Items = selectedItems
+        });
+        NOverlayStack.Instance?.Remove(this);
     }
 
     private string GetPowerIconPath(PowerModel power)
@@ -336,11 +677,6 @@ public sealed partial class SellBuildingScreen : Control, IOverlayScreen
             return iconPath;
 
         return string.Empty;
-    }
-
-    private int GetPowerBuildCost(PowerModel power)
-    {
-        return RedAlert2ModCode.Common.Cards.CommonCardValues.GetSellablePowerDollarValue(power.GetType());
     }
 
     private Color GetBorderColor()
@@ -399,68 +735,6 @@ public sealed partial class SellBuildingScreen : Control, IOverlayScreen
         style.BorderWidthBottom = 2;
         style.BorderColor = GetBorderColor();
         return style;
-    }
-
-    private void OnPowerSelected(int index)
-    {
-        if (_choiceLocked) return;
-
-        if (_selectedIndices.Contains(index))
-        {
-            _selectedIndices.Remove(index);
-            UpdatePowerButtonStyle(index, false);
-        }
-        else if (_selectedIndices.Count < _maxSelection)
-        {
-            _selectedIndices.Add(index);
-            UpdatePowerButtonStyle(index, true);
-        }
-    }
-
-    private void UpdatePowerButtonStyle(int index, bool isSelected)
-    {
-        var item = _buildingPowerItems[index];
-        string buttonName = $"PowerButton_{item.Power.Id.Entry}_{index}";
-        foreach (var child in _cardsRow.GetChildren())
-        {
-            if (child is Button button && button.Name == buttonName)
-            {
-                if (isSelected)
-                {
-                    button.AddThemeStyleboxOverride("normal", CreateCardStyle(new Color(0.15f, 0.35f, 0.15f)));
-                    button.AddThemeStyleboxOverride("hover", CreateCardStyle(new Color(0.2f, 0.45f, 0.2f)));
-                }
-                else
-                {
-                    button.AddThemeStyleboxOverride("normal", CreateCardStyle(new Color(0.1f, 0.15f, 0.2f, 0.8f)));
-                    button.AddThemeStyleboxOverride("hover", CreateCardStyle(new Color(0.15f, 0.2f, 0.28f, 0.9f)));
-                }
-                break;
-            }
-        }
-    }
-
-    private void OnCancelClicked()
-    {
-        Close();
-    }
-
-    public void Close()
-    {
-        if (_choiceLocked) return;
-        _choiceLocked = true;
-        
-        _completionSource.TrySetResult(null);
-        NOverlayStack.Instance?.Remove(this);
-    }
-
-    private void OnConfirmClicked()
-    {
-        if (_choiceLocked) return;
-        
-        _choiceLocked = true;
-        _completionSource.TrySetResult(new List<int>(_selectedIndices));
-        NOverlayStack.Instance?.Remove(this);
     }
 
     public void AfterOverlayOpened() { Visible = true; }

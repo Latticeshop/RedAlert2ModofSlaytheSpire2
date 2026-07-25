@@ -17,10 +17,20 @@ using RedAlert2ModCode.Soviet.Cards;
 
 namespace RedAlert2ModCode.UI;
 
+/// <summary>
+/// 卡牌选择结果，包含卡牌和数量
+/// </summary>
+public class CardSelectionResult
+{
+    public CardModel Card { get; set; }
+    public int Count { get; set; }
+}
+
 public sealed partial class CardSelectionScreen : Control, IOverlayScreen
 {
     private readonly TaskCompletionSource<CardModel?> _completionSource = new();
     private readonly TaskCompletionSource<List<CardModel>?> _multiCompletionSource = new();
+    private readonly TaskCompletionSource<List<CardSelectionResult>?> _quantityCompletionSource = new();
     private readonly List<CardModel> _cards;
     private readonly Dictionary<string, CardValueStore.CardValues> _cardValuesMap;
     private readonly FactionType _faction;
@@ -29,9 +39,14 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     private Button _cancelButton;
     private bool _choiceLocked;
     private bool _isMultiSelect = false;
+    private bool _isQuantitySelect = false;
     private int _maxSelection = 1;
     private int _minSelection = 1;
     private List<CardModel> _selectedCards = new();
+    private Dictionary<int, int> _cardQuantities = new(); // 存储每个卡牌的数量 (index -> count)
+    private Dictionary<int, LineEdit> _quantityInputs = new(); // 存储每个卡牌的LineEdit引用 (index -> LineEdit)
+    private Dictionary<int, Button> _cardButtons = new(); // 存储每个卡牌的Button引用 (index -> Button)
+    private List<int> _selectionOrder = new(); // 存储选择顺序（按点击顺序排列的卡牌索引）
 
     public NetScreenType ScreenType => NetScreenType.Rewards;
     public bool UseSharedBackstop => true;
@@ -107,19 +122,38 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     }
 
     private CardSelectionScreen(List<CardModel> cards, int maxSelect, int minSelect, Dictionary<string, CardValueStore.CardValues> cardValuesMap = null, FactionType faction = FactionType.Allied)
-    {
-        _cards = cards;
-        _cardValuesMap = cardValuesMap ?? new Dictionary<string, CardValueStore.CardValues>();
-        _isMultiSelect = true;
-        _maxSelection = maxSelect;
-        _minSelection = minSelect;
-        _faction = faction;
-        Name = nameof(CardSelectionScreen);
-        SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
-        MouseFilter = MouseFilterEnum.Stop;
-        FocusMode = FocusModeEnum.All;
-        BuildUi();
-    }
+        {
+            _cards = cards;
+            _cardValuesMap = cardValuesMap ?? new Dictionary<string, CardValueStore.CardValues>();
+            _isMultiSelect = true;
+            _maxSelection = maxSelect;
+            _minSelection = minSelect;
+            _faction = faction;
+            Name = nameof(CardSelectionScreen);
+            SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+            MouseFilter = MouseFilterEnum.Stop;
+            FocusMode = FocusModeEnum.All;
+            BuildUi();
+        }
+
+        private CardSelectionScreen(List<CardModel> cards, Dictionary<string, CardValueStore.CardValues> cardValuesMap, FactionType faction, bool isQuantitySelect)
+        {
+            _cards = cards;
+            _cardValuesMap = cardValuesMap ?? new Dictionary<string, CardValueStore.CardValues>();
+            _isQuantitySelect = isQuantitySelect;
+            _faction = faction;
+            Name = nameof(CardSelectionScreen);
+            SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+            MouseFilter = MouseFilterEnum.Stop;
+            FocusMode = FocusModeEnum.All;
+            // 初始化每个卡牌的数量为1（默认为1，但未选中）
+            for (int i = 0; i < _cards.Count; i++)
+            {
+                _cardQuantities[i] = 1;
+                // 选择顺序列表默认为空，由玩家主动选择
+            }
+            BuildUi();
+        }
 
     public static async Task<CardModel?> ShowSelection(List<CardModel> cards, Player player, FactionType faction = FactionType.Allied)
     {
@@ -175,6 +209,20 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         }
         
         return await screen._multiCompletionSource.Task;
+    }
+
+    public static async Task<List<CardSelectionResult>?> ShowSelectionWithQuantity(List<CardModel> cards, Player player, Dictionary<string, CardValueStore.CardValues> cardValuesMap, FactionType faction = FactionType.Allied)
+    {
+        var screen = new CardSelectionScreen(cards, cardValuesMap, faction, true);
+        NOverlayStack.Instance?.Push(screen);
+        
+        if (!MultiplayerSyncHelper.IsLocalPlayer(player))
+        {
+            screen.Close();
+            return null;
+        }
+        
+        return await screen._quantityCompletionSource.Task;
     }
 
     private void BuildUi()
@@ -260,8 +308,8 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             _cardsRow.AddChild(CreateCardButton(card.Card, card.Index));
         }
 
-        // 多选模式下添加按钮容器（并排展示）
-        if (_isMultiSelect)
+        // 数量选择模式或多选模式下添加按钮容器（并排展示）
+        if (_isQuantitySelect || _isMultiSelect)
         {
             HBoxContainer buttonContainer = new()
             {
@@ -348,7 +396,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         Button button = new()
         {
             Name = $"CardButton_{card.Id.Entry}_{index}",
-            CustomMinimumSize = new Vector2(260f, 280f),
+            CustomMinimumSize = new Vector2(280f, 320f),
             FocusMode = FocusModeEnum.All,
             MouseDefaultCursorShape = CursorShape.PointingHand
         };
@@ -365,14 +413,25 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         contentMargin.AddThemeConstantOverride("margin_bottom", 12);
         button.AddChild(contentMargin);
 
+        // 使用VBoxContainer填充整个按钮，数量控件固定在底部
         VBoxContainer content = new()
         {
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
-            SizeFlagsVertical = SizeFlags.ShrinkBegin,
+            SizeFlagsVertical = SizeFlags.ExpandFill,
             Alignment = BoxContainer.AlignmentMode.Center
         };
         content.AddThemeConstantOverride("separation", 4);
         contentMargin.AddChild(content);
+
+        // 卡牌内容区域（图片、费用、名称、描述），会自动扩展填充
+        VBoxContainer cardContent = new()
+        {
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            SizeFlagsVertical = SizeFlags.ExpandFill,
+            Alignment = BoxContainer.AlignmentMode.Center
+        };
+        cardContent.AddThemeConstantOverride("separation", 4);
+        content.AddChild(cardContent);
 
         if (!string.IsNullOrEmpty(card.PortraitPath) && ResourceLoader.Exists(card.PortraitPath))
         {
@@ -384,7 +443,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
                 SizeFlagsHorizontal = SizeFlags.ExpandFill,
                 SizeFlagsVertical = SizeFlags.ShrinkCenter
             };
-            content.AddChild(texture);
+            cardContent.AddChild(texture);
         }
 
         // 获取能量费用和价格
@@ -401,7 +460,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             Modulate = new Color(1f, 0.9f, 0.2f)
         };
         cost.AddThemeFontSizeOverride("font_size", 16);
-        content.AddChild(cost);
+        cardContent.AddChild(cost);
 
         // 正确获取卡牌名称
         string titleText = GetCardTitle(card);
@@ -413,7 +472,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         };
         name.AddThemeFontSizeOverride("font_size", 18);
         name.AddThemeColorOverride("font_color", new Color(0.9f, 0.95f, 1f));
-        content.AddChild(name);
+        cardContent.AddChild(name);
 
         // 正确获取卡牌描述（包含动态变量转义和IfUpgraded处理）
         string descText = GetCardDescription(card, card.IsUpgraded);
@@ -433,13 +492,190 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         };
         descLabel.AddThemeFontSizeOverride("font_size", 14);
         descLabel.AddThemeColorOverride("font_color", new Color(0.85f, 0.85f, 0.9f));
-        content.AddChild(descLabel);
+        cardContent.AddChild(descLabel);
+
+        // 数量选择模式：添加数量选择控件（固定在底部）
+        if (_isQuantitySelect)
+        {
+            HBoxContainer quantityRow = new()
+            {
+                Alignment = BoxContainer.AlignmentMode.Center,
+                SizeFlagsHorizontal = SizeFlags.ExpandFill,
+                SizeFlagsVertical = SizeFlags.ShrinkCenter
+            };
+            quantityRow.AddThemeConstantOverride("separation", 8);
+
+            Button minusBtn = new()
+            {
+                Text = "-",
+                CustomMinimumSize = new Vector2(36f, 36f),
+                FocusMode = FocusModeEnum.All
+            };
+            minusBtn.AddThemeFontSizeOverride("font_size", 22);
+            minusBtn.Pressed += () => AdjustQuantity(index, -1);
+            quantityRow.AddChild(minusBtn);
+
+            // 使用LineEdit支持直接输入
+            LineEdit quantityInput = new()
+            {
+                Text = "1", // 初始值为1
+                SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
+                CustomMinimumSize = new Vector2(40f, 36f),
+                FocusMode = FocusModeEnum.All
+            };
+            quantityInput.AddThemeConstantOverride("align", (int)HorizontalAlignment.Center);
+            quantityInput.Name = $"QuantityInput_{index}";
+            quantityInput.AddThemeFontSizeOverride("font_size", 20);
+            quantityInput.AddThemeColorOverride("font_color", new Color(0.9f, 0.9f, 1f));
+            quantityInput.FocusExited += () => OnQuantityInputFocusExited(index, quantityInput);
+            quantityInput.TextChanged += (text) => OnQuantityInputTextChanged(index, text);
+            quantityRow.AddChild(quantityInput);
+            
+            // 保存LineEdit引用，方便后续更新
+            _quantityInputs[index] = quantityInput;
+
+            Button plusBtn = new()
+            {
+                Text = "+",
+                CustomMinimumSize = new Vector2(36f, 36f),
+                FocusMode = FocusModeEnum.All
+            };
+            plusBtn.AddThemeFontSizeOverride("font_size", 22);
+            plusBtn.Pressed += () => AdjustQuantity(index, 1);
+            quantityRow.AddChild(plusBtn);
+
+            content.AddChild(quantityRow);
+        }
 
         button.Pressed += () => OnCardSelected(card);
         
-        // 不需要存储卡牌元数据，通过按钮名称匹配
+        // 保存Button引用，方便后续更新样式
+        _cardButtons[index] = button;
 
         return button;
+    }
+
+    private void AdjustQuantity(int index, int delta)
+    {
+        if (_choiceLocked) return;
+
+        if (_cardQuantities.TryGetValue(index, out int currentCount))
+        {
+            // 数量范围：1-99
+            int newCount = Math.Max(1, Math.Min(99, currentCount + delta));
+            
+            // 如果数量没有变化，不更新
+            if (newCount == currentCount) return;
+            
+            _cardQuantities[index] = newCount;
+
+            // 更新UI上的数量显示
+            UpdateQuantityDisplay(index, newCount);
+        }
+    }
+
+    private void UpdateQuantityDisplay(int index, int count)
+    {
+        // 使用保存的引用直接更新，避免遍历查找
+        if (_quantityInputs.TryGetValue(index, out LineEdit input))
+        {
+            input.Text = count.ToString();
+        }
+        
+        // 更新按钮样式（根据选中状态，而非数量）
+        bool isSelected = _selectionOrder.Contains(index);
+        if (_cardButtons.TryGetValue(index, out Button button))
+        {
+            if (isSelected)
+            {
+                // 选中状态：绿色边框/背景
+                button.AddThemeStyleboxOverride("normal", CreateCardStyle(new Color(0.15f, 0.35f, 0.15f)));
+                button.AddThemeStyleboxOverride("hover", CreateCardStyle(new Color(0.2f, 0.45f, 0.2f)));
+                button.AddThemeStyleboxOverride("pressed", CreateCardStyle(new Color(0.12f, 0.3f, 0.12f)));
+            }
+            else
+            {
+                // 未选中状态：默认蓝色边框/背景
+                button.AddThemeStyleboxOverride("normal", CreateCardStyle(new Color(0.1f, 0.15f, 0.2f, 0.8f)));
+                button.AddThemeStyleboxOverride("hover", CreateCardStyle(new Color(0.15f, 0.2f, 0.28f, 0.9f)));
+                button.AddThemeStyleboxOverride("pressed", CreateCardStyle(new Color(0.08f, 0.12f, 0.18f, 0.95f)));
+            }
+        }
+    }
+
+    private void OnQuantityInputFocusExited(int index, LineEdit input)
+    {
+        if (_choiceLocked) return;
+
+        if (int.TryParse(input.Text, out int count))
+        {
+            // 限制范围1-99
+            int newCount = Math.Max(1, Math.Min(99, count));
+            
+            if (newCount != count)
+            {
+                input.Text = newCount.ToString();
+            }
+            
+            _cardQuantities[index] = newCount;
+        }
+        else
+        {
+            // 无效输入，恢复为当前值
+            input.Text = _cardQuantities.TryGetValue(index, out int current) ? current.ToString() : "1";
+        }
+    }
+
+    private void OnQuantityInputTextChanged(int index, string text)
+    {
+        if (_choiceLocked) return;
+
+        // 只允许输入数字
+        if (!string.IsNullOrEmpty(text) && !int.TryParse(text, out _))
+        {
+            // 过滤非数字字符
+            string filtered = new string(text.Where(char.IsDigit).ToArray());
+            if (filtered != text)
+            {
+                // 使用保存的引用直接更新
+                if (_quantityInputs.TryGetValue(index, out LineEdit input))
+                {
+                    input.Text = filtered;
+                }
+            }
+        }
+    }
+
+    private void UpdateQuantityFromInput(int index, int count)
+    {
+        if (_cardQuantities.TryGetValue(index, out int currentCount))
+        {
+            _cardQuantities[index] = count;
+
+            // 维护选择顺序：输入数量>0时自动选中
+            if (!_selectionOrder.Contains(index) && count > 0)
+            {
+                _selectionOrder.Add(index);
+            }
+
+            // 使用保存的引用更新按钮样式（根据选中状态）
+            bool isSelected = _selectionOrder.Contains(index);
+            if (_cardButtons.TryGetValue(index, out Button button))
+            {
+                if (isSelected)
+                {
+                    button.AddThemeStyleboxOverride("normal", CreateCardStyle(new Color(0.15f, 0.35f, 0.15f)));
+                    button.AddThemeStyleboxOverride("hover", CreateCardStyle(new Color(0.2f, 0.45f, 0.2f)));
+                    button.AddThemeStyleboxOverride("pressed", CreateCardStyle(new Color(0.12f, 0.3f, 0.12f)));
+                }
+                else
+                {
+                    button.AddThemeStyleboxOverride("normal", CreateCardStyle(new Color(0.1f, 0.15f, 0.2f, 0.8f)));
+                    button.AddThemeStyleboxOverride("hover", CreateCardStyle(new Color(0.15f, 0.2f, 0.28f, 0.9f)));
+                    button.AddThemeStyleboxOverride("pressed", CreateCardStyle(new Color(0.08f, 0.12f, 0.18f, 0.95f)));
+                }
+            }
+        }
     }
 
     private string GetEnergyCostText(CardModel card)
@@ -858,11 +1094,42 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         return style;
     }
 
+    private void ToggleCardSelection(int index)
+    {
+        bool isCurrentlySelected = _selectionOrder.Contains(index);
+        
+        if (isCurrentlySelected)
+        {
+            // 取消选中
+            _selectionOrder.Remove(index);
+        }
+        else
+        {
+            // 选中，添加到选择顺序末尾
+            _selectionOrder.Add(index);
+            // 确保数量至少为1
+            if (!_cardQuantities.ContainsKey(index) || _cardQuantities[index] < 1)
+            {
+                _cardQuantities[index] = 1;
+            }
+        }
+        
+        // 更新UI显示
+        int count = _cardQuantities.TryGetValue(index, out int c) ? c : 1;
+        UpdateQuantityDisplay(index, count);
+    }
+
     private void OnCardSelected(CardModel card)
     {
         if (_choiceLocked) return;
         
-        if (_isMultiSelect)
+        if (_isQuantitySelect)
+        {
+            // 数量选择模式：点击卡牌切换选中状态
+            int index = _cards.IndexOf(card);
+            ToggleCardSelection(index);
+        }
+        else if (_isMultiSelect)
         {
             // 多选模式：切换选中状态
             if (_selectedCards.Contains(card))
@@ -913,17 +1180,51 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
 
     private void OnCancelClicked()
     {
-        Close();
+        // 点击取消按钮，传递false表示取消操作
+        Close(false);
     }
 
-    public void Close()
+    public void Close(bool isConfirmed = false)
     {
         if (_choiceLocked) return;
         _choiceLocked = true;
         
-        if (_isMultiSelect)
+        if (_isQuantitySelect)
         {
-            _multiCompletionSource.TrySetResult(null);
+            if (isConfirmed)
+            {
+                // 确认按钮点击：收集选择结果（支持空选）
+                List<CardSelectionResult> results = new();
+                foreach (int index in _selectionOrder)
+                {
+                    if (_cardQuantities.TryGetValue(index, out int count) && count > 0 && index >= 0 && index < _cards.Count)
+                    {
+                        results.Add(new CardSelectionResult
+                        {
+                            Card = _cards[index],
+                            Count = count
+                        });
+                    }
+                }
+                // 空选时返回空列表，表示确认但未选择任何卡牌
+                _quantityCompletionSource.TrySetResult(results);
+            }
+            else
+            {
+                // 取消按钮点击：返回null
+                _quantityCompletionSource.TrySetResult(null);
+            }
+        }
+        else if (_isMultiSelect)
+        {
+            if (isConfirmed && _selectedCards.Count >= _minSelection)
+            {
+                _multiCompletionSource.TrySetResult(new List<CardModel>(_selectedCards));
+            }
+            else
+            {
+                _multiCompletionSource.TrySetResult(null);
+            }
         }
         else
         {
@@ -937,11 +1238,14 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     {
         if (_choiceLocked) return;
         
-        if (_selectedCards.Count >= _minSelection)
+        // 点击确认按钮，传递true表示确认操作
+        if (_isQuantitySelect)
         {
-            _choiceLocked = true;
-            _multiCompletionSource.TrySetResult(new List<CardModel>(_selectedCards));
-            NOverlayStack.Instance?.Remove(this);
+            Close(true);
+        }
+        else if (_selectedCards.Count >= _minSelection)
+        {
+            Close(true);
         }
     }
 
@@ -953,6 +1257,8 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
     public override void _ExitTree()
     {
         _completionSource.TrySetCanceled();
+        _multiCompletionSource.TrySetCanceled();
+        _quantityCompletionSource.TrySetCanceled();
         base._ExitTree();
     }
 }

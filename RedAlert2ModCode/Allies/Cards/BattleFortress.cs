@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +17,7 @@ using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies;
+using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Soviet;
@@ -93,7 +94,7 @@ public sealed class BattleFortress : CardModel
 		}
 
 		var storeCount = ((IntVar)DynamicVars["StoreCount"]).IntValue;
-		var selectPrompt = new LocString("cards", "BATTLE_FORTRESS.select_prompt");
+		var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_BATTLE_FORTRESS.select_prompt");
 		selectPrompt.Add("0", 0);
 		selectPrompt.Add("1", storeCount);
 		var prefs = new CardSelectorPrefs(selectPrompt, 0, storeCount)
@@ -207,20 +208,35 @@ public sealed class BattleFortress : CardModel
 		var handCards = handPile.Cards.ToList();
 
 		var soldierTypes = new HashSet<Type>();
+		
+		// 包含盟军所有士兵（基础、雷达解锁、高科技、遗物解锁）
 		foreach (var soldierFunc in AlliedCardRegistry.Soldiers)
-		{
-			var card = soldierFunc();
-			soldierTypes.Add(card.GetType());
-		}
+			soldierTypes.Add(soldierFunc().GetType());
+		foreach (var soldierFunc in AlliedCardRegistry.RadarSoldiers)
+			soldierTypes.Add(soldierFunc().GetType());
+		foreach (var soldierFunc in AlliedCardRegistry.HighTechSoldiers)
+			soldierTypes.Add(soldierFunc().GetType());
+		foreach (var soldierFunc in AlliedCardRegistry.RelicUnlockedSoldiers)
+			soldierTypes.Add(soldierFunc().GetType());
+		
+		// 包含苏军所有士兵（基础、雷达解锁、遗物解锁）
 		foreach (var soldierFunc in SovietCardRegistry.Soldiers)
-		{
-			var card = soldierFunc();
-			soldierTypes.Add(card.GetType());
-		}
+			soldierTypes.Add(soldierFunc().GetType());
+		foreach (var soldierFunc in SovietCardRegistry.RadarSoldiers)
+			soldierTypes.Add(soldierFunc().GetType());
+		foreach (var soldierFunc in SovietCardRegistry.RelicUnlockedSoldiers)
+			soldierTypes.Add(soldierFunc().GetType());
+		
+		// 包含尤里所有士兵
 		foreach (var soldierFunc in YuriCardRegistry.Soldiers)
+			soldierTypes.Add(soldierFunc().GetType());
+		
+		// 包含尤里特殊卡（尤里改等）
+		foreach (var specialFunc in SovietCardRegistry.SpecialCards)
 		{
-			var card = soldierFunc();
-			soldierTypes.Add(card.GetType());
+			var card = specialFunc();
+			if (card is YuriCard or YuriPrimeCard)
+				soldierTypes.Add(card.GetType());
 		}
 
 		return handCards.Where(c => c != this && soldierTypes.Contains(c.GetType())).ToList();

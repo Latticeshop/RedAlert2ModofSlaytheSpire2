@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -60,13 +60,10 @@ public sealed class AlliesShipyardCard : CardModel
 			if (!CardUtils.HasMcvPower(Owner.Creature))
 				return false;
 
-			bool hasPower = Owner.Creature.Powers.OfType<AlliedShipyardPower>().Any();
-			if (!hasPower)
-			{
-				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-				if (dollarPower == null || dollarPower.DollarValue < AlliesCardValues.Shipyard.DollarValue)
-					return false;
-			}
+			// 每次打出都需要花费建筑资金
+			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+			if (dollarPower == null || dollarPower.DollarValue < AlliesCardValues.Shipyard.DollarValue)
+				return false;
 
 			return true;
 		}
@@ -84,57 +81,67 @@ public sealed class AlliesShipyardCard : CardModel
 		
 		GD.Print($"[AlliesShipyardCard] 可用卡牌数量: {availableCards.Count}");
 
-		// 使用自定义选择面板
+		// 使用自定义选择面板，支持多选和数量选择
 		var cardValuesMap = AlliesCardValues.CreateShipValuesMap();
-		CardModel? selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(availableCards, Owner, cardValuesMap, FactionType.Allied);
+		var selectedResults = await CardSelectionSyncHelper.ShowSelectionWithQuantitySync(availableCards, Owner, cardValuesMap, FactionType.Allied);
 
-		GD.Print($"[AlliesShipyardCard] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
+		GD.Print($"[AlliesShipyardCard] 选择结果数量: {(selectedResults != null ? selectedResults.Count : 0)}");
 
-		// 如果玩家选择了卡牌，才执行能力效果
-		if (selectedCard != null)
+		// 如果取消选择（selectedResults == null），返还能量，卡牌返回手中
+		if (selectedResults == null)
 		{
-			bool hasPower = Owner.Creature.Powers.OfType<AlliedShipyardPower>().Any();
-			if (!hasPower)
-			{
-				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-				if (dollarPower != null)
-				{
-					dollarPower.AddDollar(-(int)AlliesCardValues.Shipyard.DollarValue);
-					GD.Print($"[AlliesShipyardCard] 扣除建筑资金 {AlliesCardValues.Shipyard.DollarValue}");
-				}
-			}
-			else
-			{
-				GD.Print("[AlliesShipyardCard] 已有船厂能力，不扣除建筑资金");
-			}
+			GD.Print("[AlliesShipyardCard] 取消选择，返还能量，卡牌返回手中");
+			await CardUtils.HandleCardCancellation(play, this, Owner);
+			return;
+		}
 
-			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
-			
-			await PowerCmd.Apply<AlliedShipyardPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
-			GD.Print("[AlliesShipyardCard] 添加船厂能力");
-			
-			// 获取单位价格
-			int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
-			
-			// 使用统一的训练队列能力应用方法
-			await TrainingQueuePower.ApplyTrainingQueue(
-				owner: Owner.Creature,
-				cardId: selectedCard.Id.Entry,
-				unitName: selectedCard.Title.ToString(),
-				iconPath: selectedCard.PortraitPath,
-				unitPrice: unitPrice,
-				isUpgraded: base.IsUpgraded,
-				sourceCard: this
-			);
+		// 选择确认后才扣除资金（空选也消耗资金）
+		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+		if (dollarPower != null)
+		{
+			dollarPower.AddDollar(-(int)AlliesCardValues.Shipyard.DollarValue);
+			GD.Print($"[AlliesShipyardCard] 扣除建筑资金 {AlliesCardValues.Shipyard.DollarValue}");
+		}
 
-			// 打出后抽一张牌
-			await CardPileCmd.Draw(ctx, 1, Owner);
+		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+		
+		await PowerCmd.Apply<AlliedShipyardPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+		GD.Print("[AlliesShipyardCard] 添加船厂能力");
+
+		// 如果玩家选择了卡牌，创建对应的生产序列能力（同一批相同单位叠层）
+		if (selectedResults.Count > 0)
+		{
+			foreach (var result in selectedResults)
+			{
+				CardModel selectedCard = result.Card;
+				int count = result.Count;
+				
+				GD.Print($"[AlliesShipyardCard] 创建生产序列 - CardId={selectedCard.Id.Entry}, Count={count}");
+				
+				// 获取单位价格
+				int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
+				
+				// 同一批相同单位合并为一个能力（叠层）
+				await TrainingQueuePower.ApplyTrainingQueue(
+					owner: Owner.Creature,
+					cardId: selectedCard.Id.Entry,
+					unitName: selectedCard.Title.ToString(),
+					iconPath: selectedCard.PortraitPath,
+					unitPrice: unitPrice,
+					isUpgraded: base.IsUpgraded,
+					sourceCard: this,
+					amount: count
+				);
+			}
 		}
 		else
-			{
-				// 取消选择：返还费用并将卡牌放回手牌
-				await CardUtils.HandleCardCancellation(play, this, Owner);
-			}
+		{
+			// 空选：仅获得建筑能力，不创建生产序列
+			GD.Print("[AlliesShipyardCard] 空选，仅获得建筑能力");
+		}
+
+		// 无论是否选择了兵种，打出后都抽一张牌
+		await CardPileCmd.Draw(ctx, 1, Owner);
 	}
 
 	protected override void OnUpgrade()

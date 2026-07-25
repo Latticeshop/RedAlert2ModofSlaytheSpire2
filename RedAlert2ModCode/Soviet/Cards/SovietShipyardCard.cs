@@ -56,13 +56,10 @@ public sealed class SovietShipyardCard : CardModel
 			if (!CardUtils.HasMcvPower(Owner.Creature))
 				return false;
 
-			bool hasPower = Owner.Creature.Powers.OfType<SovietShipyardPower>().Any();
-			if (!hasPower)
-			{
-				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-				if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
-					return false;
-			}
+			// 每次打出都需要花费建筑资金
+			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+			if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
+				return false;
 
 			return true;
 		}
@@ -78,50 +75,64 @@ public sealed class SovietShipyardCard : CardModel
 		GD.Print($"[SovietShipyardCard] 可用卡牌数量: {availableCards.Count}");
 
 		var cardValuesMap = SovietCardValues.CreateShipValuesMap();
-		CardModel? selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(availableCards, Owner, cardValuesMap, FactionType.Soviet);
+		var selectedResults = await CardSelectionSyncHelper.ShowSelectionWithQuantitySync(availableCards, Owner, cardValuesMap, FactionType.Soviet);
 
-		GD.Print($"[SovietShipyardCard] 选择的卡牌: {(selectedCard != null ? selectedCard.Id.Entry : "null")}");
+		GD.Print($"[SovietShipyardCard] 选择结果数量: {(selectedResults != null ? selectedResults.Count : 0)}");
 
-		if (selectedCard != null)
+		// 如果取消选择（selectedResults == null），返还能量，卡牌返回手中
+		if (selectedResults == null)
 		{
-			bool hasPower = Owner.Creature.Powers.OfType<SovietShipyardPower>().Any();
-			if (!hasPower)
-			{
-				var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-				if (dollarPower != null)
-				{
-					dollarPower.AddDollar(-(int)Values.DollarValue);
-					GD.Print($"[SovietShipyardCard] 扣除建筑资金 {Values.DollarValue}");
-				}
-			}
-			else
-			{
-				GD.Print("[SovietShipyardCard] 已有船厂能力，不扣除建筑资金");
-			}
+			GD.Print("[SovietShipyardCard] 取消选择，返还能量，卡牌返回手中");
+			await CardUtils.HandleCardCancellation(play, this, Owner);
+			return;
+		}
 
-			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
-			
-			await PowerCmd.Apply<SovietShipyardPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
-			GD.Print("[SovietShipyardCard] 添加船厂能力");
-			
-			int unitPrice = SovietCardValues.GetDollarValue(selectedCard.Id.Entry);
-			
-			await TrainingQueuePower.ApplyTrainingQueue(
-				owner: Owner.Creature,
-				cardId: selectedCard.Id.Entry,
-				unitName: selectedCard.Title.ToString(),
-				iconPath: selectedCard.PortraitPath,
-				unitPrice: unitPrice,
-				isUpgraded: base.IsUpgraded,
-				sourceCard: this
-			);
+		// 选择确认后才扣除资金（空选也消耗资金）
+		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+		if (dollarPower != null)
+		{
+			dollarPower.AddDollar(-(int)Values.DollarValue);
+			GD.Print($"[SovietShipyardCard] 扣除建筑资金 {Values.DollarValue}");
+		}
 
-			await CardPileCmd.Draw(ctx, 1, Owner);
+		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+			
+		await PowerCmd.Apply<SovietShipyardPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+		GD.Print("[SovietShipyardCard] 添加船厂能力");
+
+		// 如果玩家选择了卡牌，创建对应的生产序列能力（同一批相同单位叠层）
+		if (selectedResults.Count > 0)
+		{
+			foreach (var result in selectedResults)
+			{
+				CardModel selectedCard = result.Card;
+				int count = result.Count;
+				
+				GD.Print($"[SovietShipyardCard] 创建生产序列 - CardId={selectedCard.Id.Entry}, Count={count}");
+				
+				int unitPrice = SovietCardValues.GetDollarValue(selectedCard.Id.Entry);
+				
+				// 同一批相同单位合并为一个能力（叠层）
+				await TrainingQueuePower.ApplyTrainingQueue(
+					owner: Owner.Creature,
+					cardId: selectedCard.Id.Entry,
+					unitName: selectedCard.Title.ToString(),
+					iconPath: selectedCard.PortraitPath,
+					unitPrice: unitPrice,
+					isUpgraded: base.IsUpgraded,
+					sourceCard: this,
+					amount: count
+				);
+			}
 		}
 		else
 		{
-			await CardUtils.HandleCardCancellation(play, this, Owner);
+			// 空选：仅获得建筑能力，不创建生产序列
+			GD.Print("[SovietShipyardCard] 空选，仅获得建筑能力");
 		}
+
+		// 无论是否选择了兵种，打出后都抽一张牌
+		await CardPileCmd.Draw(ctx, 1, Owner);
 	}
 
 	protected override void OnUpgrade()

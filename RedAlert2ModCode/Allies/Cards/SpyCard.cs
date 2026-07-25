@@ -37,8 +37,8 @@ public sealed class SpyCard : CardModel
     private const int POWER_PLANT_DAMAGE_UPGRADED = 7;
     private const int RADAR_WEAK = 2;
     private const int RADAR_WEAK_UPGRADED = 3;
-    private const int ORE_REFINERY_CREDITS = 1500;
-    private const int ORE_REFINERY_CREDITS_UPGRADED = 2000;
+    private const int ORE_REFINERY_CREDITS = 2000;
+    private const int ORE_REFINERY_CREDITS_UPGRADED = 2500;
     private const int POWER_PLANT_ENERGY_GAIN = 2;
     private const int POWER_PLANT_ENERGY_GAIN_UPGRADED = 3;
     private const int RADAR_TARGET_VULNERABLE = 2;

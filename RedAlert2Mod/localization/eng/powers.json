@@ -18,7 +18,7 @@
     "SOVIET_BATTLE_LAB_POWER.title": "Soviet Battle Lab",
     "SOVIET_BATTLE_LAB_POWER.description": "Advanced technology unlocked.",
     "TRAINING_QUEUE_POWER.title": "Production Queue",
-    "TRAINING_QUEUE_POWER.description": "Spends [gold]${UnitPrice}[/gold] each turn, adding a 0-cost {ExhaustText} {UnitName} card.{StoppedMarker}",
+    "TRAINING_QUEUE_POWER.description": "Spends [gold]${UnitPrice}[/gold] each turn, adding a 0-cost {ExhaustText} {UnitName} card, and reduces its own stacks by 1.{StoppedMarker}",
     "POWER_PLANT_POWER.title": "Power Plant",
     "POWER_PLANT_POWER.description": "Gains 1 energy for every {BaseCards} cards drawn.",
     "POWER_PLANT_POWER.smartDescription": "Gains [blue]{BaseCards}[/blue] energy per [blue]{Amount:energyIcons()}[/blue] cards drawn.",

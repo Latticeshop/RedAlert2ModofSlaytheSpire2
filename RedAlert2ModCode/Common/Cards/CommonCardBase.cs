@@ -16,11 +16,12 @@ public abstract class CommonCardBase : CardModel
         : base(cost, type, rarity, target) { }
 
     /// <summary>
-    /// 运行时卡池：当卡牌有所有者时，返回所有者角色的卡池；否则返回TokenCardPool
+    /// 运行时卡池：当卡牌有所有者时，返回所有者角色的卡池；否则返回基类默认值
+    /// 不再返回TokenCardPool，以避免影响原版token卡牌
     /// </summary>
     public override CardPoolModel Pool => IsMutable && Owner != null
         ? Owner.Character.CardPool
-        : ModelDb.CardPool<TokenCardPool>();
+        : base.Pool;
 
     /// <summary>
     /// 视觉卡池：用于确定卡牌的边框颜色等视觉表现

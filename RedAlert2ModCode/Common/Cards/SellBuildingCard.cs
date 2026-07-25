@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
@@ -23,6 +23,7 @@ using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Soviet.Cards;
 using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Soviet;
+
 namespace RedAlert2ModCode.Common.Cards;
 
 public class SellBuildingCard : CardModel
@@ -31,22 +32,15 @@ public class SellBuildingCard : CardModel
 
     public SellBuildingCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
 
-    /// <summary>
-    /// 运行时卡池：当卡牌有所有者时，返回所有者角色的卡池；否则返回TokenCardPool
-    /// </summary>
     public override CardPoolModel Pool => IsMutable && Owner != null
         ? Owner.Character.CardPool
         : ModelDb.CardPool<TokenCardPool>();
 
-    /// <summary>
-    /// 视觉卡池：用于确定卡牌的边框颜色等视觉表现
-    /// 运行时与Pool相同，卡池查看器中通过重写AllCards属性实现显示
-    /// </summary>
     public override CardPoolModel VisualCardPool => Pool;
 
     public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/sellBuilding.png";
 
-            protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
         ModCardKeywords.Building.CreateHoverTip()
     ];
@@ -65,62 +59,112 @@ public class SellBuildingCard : CardModel
     {
         await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
-        List<(PowerModel Power, int Index)> buildingPowerItems = GetAllBuildingPowersWithStacks();
+        List<SellBuildingItem> buildingItems = GetDeduplicatedBuildingItems();
 
-        if (buildingPowerItems.Count == 0)
+        if (buildingItems.Count == 0)
         {
             GD.Print("[SellBuildingCard] 没有可出售的建筑能力");
             return;
         }
 
-        int maxSelection = IsUpgraded ? buildingPowerItems.Count : (int)Values.Repeat;
-        if (maxSelection > buildingPowerItems.Count)
-            maxSelection = buildingPowerItems.Count;
+        int maxSelection = IsUpgraded ? 99 : (int)Values.Repeat;
 
         FactionType faction = Owner.Character.Id.Entry?.Contains("SOVIET") ?? false
             ? FactionType.Soviet
             : FactionType.Allied;
 
-        List<int> selectedIndices = await SellBuildingScreen.ShowSelectionWithSync(buildingPowerItems, maxSelection, Owner, faction);
+        SellBuildingResult? selectedResult = await SellBuildingScreen.ShowSelectionWithSync(buildingItems, maxSelection, Owner, faction);
 
-        if (selectedIndices.Count == 0)
+        // 空选时直接打出卡牌（不返还），只有返回null时才取消
+        if (selectedResult == null)
         {
             await CardUtils.HandleCardCancellation(play, this, Owner);
             return;
         }
 
-        foreach (var index in selectedIndices)
+        foreach (var item in selectedResult.Items)
         {
-            await ProcessSoldPower(buildingPowerItems[index].Power);
+            await ProcessSoldPower(item.Power, item.SelectedCount);
         }
     }
 
-    private List<(PowerModel Power, int Index)> GetAllBuildingPowersWithStacks()
+    private List<SellBuildingItem> GetDeduplicatedBuildingItems()
     {
-        List<(PowerModel Power, int Index)> result = new();
+        List<SellBuildingItem> result = new();
         var powers = Owner.Creature.Powers;
         var sellablePowerTypes = CommonCardValues.GetSellablePowerTypes();
 
-        foreach (var power in powers)
+        // 按能力类型分组，合并相同建筑的层数
+        var groupedPowers = powers
+            .Where(p => sellablePowerTypes.Contains(p.GetType()) && p.Amount > 0)
+            .GroupBy(p => p.GetType());
+
+        foreach (var group in groupedPowers)
         {
-            if (sellablePowerTypes.Contains(power.GetType()) && power.Amount > 0)
+            var firstPower = group.First();
+            int totalAmount = group.Sum(p => p.Amount);
+            int dollarValue = CommonCardValues.GetSellablePowerDollarValue(firstPower.GetType());
+            int sellValue = dollarValue / 2;
+            
+            // 获取图标路径
+            string iconPath = GetPowerIconPath(firstPower);
+
+            result.Add(new SellBuildingItem
             {
-                for (int i = 0; i < power.Amount; i++)
-                {
-                    result.Add((power, result.Count));
-                }
-            }
+                Power = firstPower,
+                Name = firstPower.Id.Entry.Replace("_", " "),
+                IconPath = iconPath,
+                TotalStacks = totalAmount,
+                SellValue = sellValue,
+                SelectedCount = 0
+            });
+
+            GD.Print($"[SellBuildingCard] 建筑能力: {firstPower.Id.Entry}, 总层数: {totalAmount}, 出售价值: {sellValue}");
         }
 
         return result;
     }
 
-    private async Task ProcessSoldPower(PowerModel power)
+    private string GetPowerIconPath(PowerModel power)
     {
-        int dollarValue = GetPowerDollarValue(power);
-        int sellValue = dollarValue / 2;
+        Type powerType = power.GetType();
+        
+        if (powerType == typeof(AlliedRefineryPower))
+            return "res://RedAlert2ModResources/images/packed/card_portraits/allies/reficon.png";
+        if (powerType == typeof(SovietRefineryPower))
+            return "res://RedAlert2ModResources/images/packed/card_portraits/soviet/nreficon.png";
+        if (powerType == typeof(AlliedWarFactoryPower))
+            return "res://RedAlert2ModResources/images/packed/card_portraits/allies/gwepicon.png";
+        if (powerType == typeof(SovietWarFactoryPower))
+            return "res://RedAlert2ModResources/images/packed/card_portraits/soviet/nwepicon.png";
+        if (powerType == typeof(BattleLabPower))
+            return "res://RedAlert2ModResources/images/packed/card_portraits/allies/techicon.png";
+        if (powerType == typeof(SovietBattleLabPower))
+            return "res://RedAlert2ModResources/images/packed/card_portraits/soviet/ntchicon.png";
+        if (powerType == typeof(SovietRadarPower))
+            return "res://RedAlert2ModResources/images/packed/card_portraits/soviet/nradicon.png";
+        if (powerType == typeof(AlliedMCVPower))
+            return "res://RedAlert2ModResources/images/packed/card_portraits/allies/mcvicon.png";
+        if (powerType == typeof(SovietMCVPower))
+            return "res://RedAlert2ModResources/images/packed/card_portraits/soviet/smcvicon.png";
 
-        await PowerCmd.Decrement(power);
+        string iconPath = power.PackedIconPath;
+        if (!string.IsNullOrEmpty(iconPath) && ResourceLoader.Exists(iconPath))
+            return iconPath;
+
+        return string.Empty;
+    }
+
+    private async Task ProcessSoldPower(PowerModel power, int count)
+    {
+        int dollarValue = CommonCardValues.GetSellablePowerDollarValue(power.GetType());
+        int sellValue = dollarValue / 2 * count;
+
+        // 批量减少层数
+        for (int i = 0; i < count; i++)
+        {
+            await PowerCmd.Decrement(power);
+        }
 
         BuildingSoundHelper.PlayBuildingSellSound();
 
@@ -131,99 +175,102 @@ public class SellBuildingCard : CardModel
             GD.Print($"[SellBuildingCard] 出售建筑获得资金: {sellValue}");
         }
 
-        await CheckAndStopProductionQueues();
+        await CheckAndRemoveProductionQueues();
         
         await UnitPriceCalculator.RecalculateAllTrainingQueuePrices(Owner.Creature);
     }
 
-    private async Task CheckAndStopProductionQueues()
+    private async Task CheckAndRemoveProductionQueues()
     {
-        GD.Print("[SellBuildingCard] 检查生产序列是否需要停产");
+        GD.Print("[SellBuildingCard] 检查生产序列是否需要移除");
 
-        bool hasAlliedBarracks = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(AlliedBarracksPower).Name);
-        bool hasSovietBarracks = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(SovietBarracksPower).Name);
-        bool hasAlliedWarFactory = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(AlliedWarFactoryPower).Name);
-        bool hasSovietWarFactory = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(SovietWarFactoryPower).Name);
-        bool hasAlliedShipyard = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(AlliedShipyardPower).Name);
-        bool hasSovietShipyard = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(SovietShipyardPower).Name);
-        bool hasSovietRadar = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(SovietRadarPower).Name);
-        bool hasAlliedAirForceCommand = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(AlliedAirForceCommandPower).Name);
+        // 计算建筑能力的总层数（而非是否存在）
+        int alliedBarracksStacks = Owner.Creature.Powers.OfType<AlliedBarracksPower>().Sum(p => p.Amount);
+        int sovietBarracksStacks = Owner.Creature.Powers.OfType<SovietBarracksPower>().Sum(p => p.Amount);
+        int alliedWarFactoryStacks = Owner.Creature.Powers.OfType<AlliedWarFactoryPower>().Sum(p => p.Amount);
+        int sovietWarFactoryStacks = Owner.Creature.Powers.OfType<SovietWarFactoryPower>().Sum(p => p.Amount);
+        int alliedShipyardStacks = Owner.Creature.Powers.OfType<AlliedShipyardPower>().Sum(p => p.Amount);
+        int sovietShipyardStacks = Owner.Creature.Powers.OfType<SovietShipyardPower>().Sum(p => p.Amount);
+        int sovietRadarStacks = Owner.Creature.Powers.OfType<SovietRadarPower>().Sum(p => p.Amount);
+        int alliedAirForceCommandStacks = Owner.Creature.Powers.OfType<AlliedAirForceCommandPower>().Sum(p => p.Amount);
 
-        GD.Print($"[SellBuildingCard] 兵营(盟军): {hasAlliedBarracks}, 兵营(苏联): {hasSovietBarracks}");
-        GD.Print($"[SellBuildingCard] 重工(盟军): {hasAlliedWarFactory}, 重工(苏联): {hasSovietWarFactory}");
-        GD.Print($"[SellBuildingCard] 船厂(盟军): {hasAlliedShipyard}, 船厂(苏联): {hasSovietShipyard}");
-        GD.Print($"[SellBuildingCard] 雷达(苏联): {hasSovietRadar}, 空指部(盟军): {hasAlliedAirForceCommand}");
+        GD.Print($"[SellBuildingCard] 兵营(盟军): {alliedBarracksStacks}层, 兵营(苏联): {sovietBarracksStacks}层");
+        GD.Print($"[SellBuildingCard] 重工(盟军): {alliedWarFactoryStacks}层, 重工(苏联): {sovietWarFactoryStacks}层");
+        GD.Print($"[SellBuildingCard] 船厂(盟军): {alliedShipyardStacks}层, 船厂(苏联): {sovietShipyardStacks}层");
+        GD.Print($"[SellBuildingCard] 雷达(苏联): {sovietRadarStacks}层, 空指部(盟军): {alliedAirForceCommandStacks}层");
 
         foreach (var trainingPower in Owner.Creature.Powers.OfType<TrainingQueuePower>().ToList())
         {
-            if (trainingPower.IsStopped)
-                continue;
-
-            bool shouldStop = false;
+            // 停产状态的序列也需要检查（如果建筑能力清空，停产序列也应移除）
+            bool shouldRemove = false;
 
             string cardId = trainingPower.TrainedCardId;
 
             if (IsSoldierCard(cardId))
             {
-                bool hasAnyBarracks = hasAlliedBarracks || hasSovietBarracks;
-                if (!hasAnyBarracks)
+                // 士兵单位需要任意兵营能力（总层数 > 0）
+                int totalBarracksStacks = alliedBarracksStacks + sovietBarracksStacks;
+                if (totalBarracksStacks <= 0)
                 {
-                    shouldStop = true;
-                    GD.Print($"[SellBuildingCard] 无兵营能力，停产士兵单位: {trainingPower.UnitName}");
+                    shouldRemove = true;
+                    GD.Print($"[SellBuildingCard] 兵营能力已清空(总层数: {totalBarracksStacks})，移除士兵生产序列: {trainingPower.UnitName}");
                 }
             }
             else if (IsAlliedVehicleCard(cardId))
             {
-                if (!hasAlliedWarFactory)
+                if (alliedWarFactoryStacks <= 0)
                 {
-                    shouldStop = true;
-                    GD.Print($"[SellBuildingCard] 无盟军重工能力，停产盟军车辆: {trainingPower.UnitName}");
+                    shouldRemove = true;
+                    GD.Print($"[SellBuildingCard] 盟军重工能力已清空(总层数: {alliedWarFactoryStacks})，移除盟军车辆生产序列: {trainingPower.UnitName}");
                 }
             }
             else if (IsSovietVehicleCard(cardId))
             {
-                if (!hasSovietWarFactory)
+                if (sovietWarFactoryStacks <= 0)
                 {
-                    shouldStop = true;
-                    GD.Print($"[SellBuildingCard] 无苏联重工能力，停产苏联车辆: {trainingPower.UnitName}");
+                    shouldRemove = true;
+                    GD.Print($"[SellBuildingCard] 苏联重工能力已清空(总层数: {sovietWarFactoryStacks})，移除苏联车辆生产序列: {trainingPower.UnitName}");
                 }
             }
             else if (IsAlliedAircraftCard(cardId))
             {
-                if (!hasAlliedAirForceCommand)
+                if (alliedAirForceCommandStacks <= 0)
                 {
-                    shouldStop = true;
-                    GD.Print($"[SellBuildingCard] 无盟军空指部能力，停产盟军飞机: {trainingPower.UnitName}");
+                    shouldRemove = true;
+                    GD.Print($"[SellBuildingCard] 盟军空指部能力已清空(总层数: {alliedAirForceCommandStacks})，移除盟军飞机生产序列: {trainingPower.UnitName}");
                 }
             }
             else if (IsSovietAircraftCard(cardId))
             {
-                if (!hasSovietWarFactory || !hasSovietRadar)
+                // 苏联飞机需要重工和雷达都存在（总层数 > 0）
+                if (sovietWarFactoryStacks <= 0 || sovietRadarStacks <= 0)
                 {
-                    shouldStop = true;
-                    GD.Print($"[SellBuildingCard] 无苏联重工或雷达能力，停产苏联飞机: {trainingPower.UnitName}");
+                    shouldRemove = true;
+                    GD.Print($"[SellBuildingCard] 苏联重工({sovietWarFactoryStacks}层)或雷达({sovietRadarStacks}层)能力已清空，移除苏联飞机生产序列: {trainingPower.UnitName}");
                 }
             }
             else if (IsAlliedShipCard(cardId))
             {
-                if (!hasAlliedShipyard)
+                if (alliedShipyardStacks <= 0)
                 {
-                    shouldStop = true;
-                    GD.Print($"[SellBuildingCard] 无盟军船厂能力，停产盟军舰船: {trainingPower.UnitName}");
+                    shouldRemove = true;
+                    GD.Print($"[SellBuildingCard] 盟军船厂能力已清空(总层数: {alliedShipyardStacks})，移除盟军舰船生产序列: {trainingPower.UnitName}");
                 }
             }
             else if (IsSovietShipCard(cardId))
             {
-                if (!hasSovietShipyard)
+                if (sovietShipyardStacks <= 0)
                 {
-                    shouldStop = true;
-                    GD.Print($"[SellBuildingCard] 无苏联船厂能力，停产苏联舰船: {trainingPower.UnitName}");
+                    shouldRemove = true;
+                    GD.Print($"[SellBuildingCard] 苏联船厂能力已清空(总层数: {sovietShipyardStacks})，移除苏联舰船生产序列: {trainingPower.UnitName}");
                 }
             }
 
-            if (shouldStop)
+            if (shouldRemove)
             {
-                await StopTrainingQueue(trainingPower);
+                // 直接移除生产序列能力，而非停产
+                Owner.Creature.RemovePowerInternal(trainingPower);
+                GD.Print($"[SellBuildingCard] 已移除生产序列能力: {trainingPower.UnitName}");
             }
         }
     }
@@ -309,7 +356,7 @@ public class SellBuildingCard : CardModel
 
         bool newStopped = !wasStopped;
 
-        var newPower = await TrainingQueuePower.ApplyTrainingQueue(
+        await TrainingQueuePower.ApplyTrainingQueue(
             owner: owner,
             cardId: cardId,
             unitName: unitName,
@@ -318,14 +365,9 @@ public class SellBuildingCard : CardModel
             isUpgraded: isUpgraded,
             sourceCard: this,
             exhaustWhenPlayed: exhaustWhenPlayed,
-            isStopped: newStopped
+            isStopped: newStopped,
+            amount: amount
         );
-
-        if (newPower != null && amount > 1)
-        {
-            await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), newPower, amount - 1, owner, this);
-            GD.Print($"[SellBuildingCard] 恢复训练队列层数: {newPower.Amount}");
-        }
 
         GD.Print($"[SellBuildingCard] 训练队列 {unitName} 停产状态反转: {newStopped}");
     }
@@ -334,5 +376,4 @@ public class SellBuildingCard : CardModel
     {
         return CommonCardValues.GetSellablePowerDollarValue(power.GetType());
     }
-
-    }
+}

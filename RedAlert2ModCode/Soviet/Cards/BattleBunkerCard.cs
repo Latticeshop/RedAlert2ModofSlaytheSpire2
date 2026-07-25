@@ -97,7 +97,7 @@ public sealed class BattleBunkerCard : CardModel
 		if (soldierCards.Count == 0)
 			return;
 
-		var selectPrompt = new LocString("cards", "BATTLE_BUNKER.select_prompt");
+		var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_BATTLE_BUNKER.select_prompt");
 		selectPrompt.Add("0", 0);
 		selectPrompt.Add("1", maxSelect);
 		var prefs = new CardSelectorPrefs(selectPrompt, 0, maxSelect)
@@ -141,10 +141,30 @@ public sealed class BattleBunkerCard : CardModel
 
 	private bool IsSoldierCard(CardModel card)
 	{
-		var cardType = card.GetType().Name.ToUpper();
-		return AlliedCardRegistry.Soldiers.Any(f => f().GetType().Name.ToUpper() == cardType) ||
-			   SovietCardRegistry.Soldiers.Any(f => f().GetType().Name.ToUpper() == cardType) ||
-			   YuriCardRegistry.Soldiers.Any(f => f().GetType().Name.ToUpper() == cardType);
+		var cardType = card.GetType();
+		
+		// 检查盟军所有士兵（基础、雷达解锁、高科技、遗物解锁）
+		bool isAlliedSoldier = AlliedCardRegistry.Soldiers.Any(f => f().GetType() == cardType) ||
+							   AlliedCardRegistry.RadarSoldiers.Any(f => f().GetType() == cardType) ||
+							   AlliedCardRegistry.HighTechSoldiers.Any(f => f().GetType() == cardType) ||
+							   AlliedCardRegistry.RelicUnlockedSoldiers.Any(f => f().GetType() == cardType);
+		
+		// 检查苏军所有士兵（基础、雷达解锁、遗物解锁）
+		bool isSovietSoldier = SovietCardRegistry.Soldiers.Any(f => f().GetType() == cardType) ||
+							   SovietCardRegistry.RadarSoldiers.Any(f => f().GetType() == cardType) ||
+							   SovietCardRegistry.RelicUnlockedSoldiers.Any(f => f().GetType() == cardType);
+		
+		// 检查尤里所有士兵
+		bool isYuriSoldier = YuriCardRegistry.Soldiers.Any(f => f().GetType() == cardType);
+		
+		// 检查尤里特殊卡（尤里改等）
+		bool isYuriSpecial = SovietCardRegistry.SpecialCards.Any(f => 
+		{
+			var c = f();
+			return c is YuriCard or YuriPrimeCard && c.GetType() == cardType;
+		});
+		
+		return isAlliedSoldier || isSovietSoldier || isYuriSoldier || isYuriSpecial;
 	}
 
 	private void UpdateStoredCardsVar()

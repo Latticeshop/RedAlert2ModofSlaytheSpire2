@@ -18,7 +18,7 @@
     "SOVIET_BATTLE_LAB_POWER.title": "作戦実験室",
     "SOVIET_BATTLE_LAB_POWER.description": "作戦実験室を展開した。",
     "TRAINING_QUEUE_POWER.title": "生産シーケンス",
-    "TRAINING_QUEUE_POWER.description": "毎ターン[gold]${UnitPrice}[/gold]を消費し、0費用{ExhaustText}の{UnitName}カードを加える。{StoppedMarker}",
+    "TRAINING_QUEUE_POWER.description": "毎ターン[gold]${UnitPrice}[/gold]を消費し、0費用{ExhaustText}の{UnitName}カードを加え、自身の層数を-1する。{StoppedMarker}",
     "POWER_PLANT_POWER.title": "発電所",
     "POWER_PLANT_POWER.description": "{BaseCards}枚引くごとに1エナジーを獲得する。",
     "POWER_PLANT_POWER.smartDescription": "[blue]{BaseCards}[/blue]枚引くごとに{Amount:energyIcons()}を獲得する。",

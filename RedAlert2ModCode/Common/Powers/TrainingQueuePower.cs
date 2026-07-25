@@ -66,36 +66,15 @@ public sealed class TrainingQueuePower : PowerModel
         PowerIconManager.SetIcon(this, iconPath);
     }
 
-    public static async Task<TrainingQueuePower?> ApplyTrainingQueue(Creature owner, string cardId, string unitName, string iconPath, int unitPrice = 0, bool isUpgraded = false, CardModel? sourceCard = null, bool exhaustWhenPlayed = true, bool isStopped = false)
+    public static async Task<TrainingQueuePower?> ApplyTrainingQueue(Creature owner, string cardId, string unitName, string iconPath, int unitPrice = 0, bool isUpgraded = false, CardModel? sourceCard = null, bool exhaustWhenPlayed = true, bool isStopped = false, int amount = 1)
     {
-        GD.Print($"[TrainingQueuePower] ApplyTrainingQueue 被调用 - CardId={cardId}, UnitName={unitName}, UnitPrice={unitPrice}, IsUpgraded={isUpgraded}, IsStopped={isStopped}");
+        GD.Print($"[TrainingQueuePower] ApplyTrainingQueue 被调用 - CardId={cardId}, UnitName={unitName}, UnitPrice={unitPrice}, IsUpgraded={isUpgraded}, IsStopped={isStopped}, Amount={amount}");
 
-        TrainingQueuePower? existingPower = null;
-        if (owner?.Powers != null)
-        {
-            existingPower = owner.Powers
-                .OfType<TrainingQueuePower>()
-                .FirstOrDefault(p => p.TrainedCardId == cardId && p.IsUpgraded == isUpgraded && p.IsStopped == isStopped);
-        }
-
-        if (existingPower != null)
-        {
-            GD.Print($"[TrainingQueuePower] 发现相同兵种的能力，增加层数 - 当前层数: {existingPower.Amount}");
-            await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), existingPower, 1m, owner, sourceCard);
-            GD.Print($"[TrainingQueuePower] 增加后层数: {existingPower.Amount}");
-            
-            int finalPrice = UnitPriceCalculator.CalculateFinalUnitPrice(owner, existingPower.OriginalUnitPrice, (int)existingPower.Amount);
-            existingPower.UnitPrice = finalPrice;
-            GD.Print($"[TrainingQueuePower] 叠加后重新计算价格: 原始={existingPower.OriginalUnitPrice}, 最终价格={finalPrice}");
-            
-            return existingPower;
-        }
-
-        GD.Print($"[TrainingQueuePower] 创建新的训练队列能力");
+        GD.Print($"[TrainingQueuePower] 创建新的训练队列能力（独立能力，不叠加）");
 
         PowerIconManager.SetCurrentIconPath(iconPath);
 
-        var trainingPower = await PowerCmd.Apply<TrainingQueuePower>(new ThrowingPlayerChoiceContext(), owner, 1m, owner, sourceCard);
+        var trainingPower = await PowerCmd.Apply<TrainingQueuePower>(new ThrowingPlayerChoiceContext(), owner, amount, owner, sourceCard);
 
         if (trainingPower != null)
         {
@@ -108,14 +87,14 @@ public sealed class TrainingQueuePower : PowerModel
             trainingPower.IsStopped = isStopped;
             trainingPower.OriginalUnitPrice = unitPrice;
             
-            int finalPrice = UnitPriceCalculator.CalculateFinalUnitPrice(owner, unitPrice, 1);
+            int finalPrice = UnitPriceCalculator.CalculateFinalUnitPrice(owner, unitPrice, amount);
             trainingPower.UnitPrice = finalPrice;
             
             GD.Print($"[TrainingQueuePower] 应用大生产和工业工厂效果后价格: 原始={unitPrice}, 最终价格={finalPrice}");
 
             PowerIconManager.SetIcon(trainingPower, iconPath);
 
-            GD.Print($"[TrainingQueuePower] 属性设置完成 - TrainedCardId={trainingPower.TrainedCardId}, TrainedUnitIconPath={trainingPower.TrainedUnitIconPath}, UnitPrice={trainingPower.UnitPrice}, OriginalUnitPrice={trainingPower.OriginalUnitPrice}, ExhaustWhenPlayed={trainingPower.ExhaustWhenPlayed}, IsStopped={trainingPower.IsStopped}");
+            GD.Print($"[TrainingQueuePower] 属性设置完成 - TrainedCardId={trainingPower.TrainedCardId}, TrainedUnitIconPath={trainingPower.TrainedUnitIconPath}, UnitPrice={trainingPower.UnitPrice}, OriginalUnitPrice={trainingPower.OriginalUnitPrice}, ExhaustWhenPlayed={trainingPower.ExhaustWhenPlayed}, IsStopped={trainingPower.IsStopped}, Amount={trainingPower.Amount}");
         }
 
         return trainingPower;
@@ -212,6 +191,12 @@ public sealed class TrainingQueuePower : PowerModel
         int stacks = (int)base.Amount;
         GD.Print($"[TrainingQueuePower] 回合开始触发 - 层数={stacks}, TrainedCardId={TrainedCardId}, UnitPrice={UnitPrice}");
 
+        if (stacks <= 0)
+        {
+            GD.Print($"[TrainingQueuePower] 层数为0，跳过生产");
+            return;
+        }
+
         var dollarPower = Owner.Powers.OfType<DollarPower>().FirstOrDefault();
         if (dollarPower == null)
         {
@@ -219,55 +204,58 @@ public sealed class TrainingQueuePower : PowerModel
             return;
         }
 
-        for (int i = 0; i < stacks; i++)
+        // 资金不够时跳过生产，且不掉层数
+        if (dollarPower.DollarValue < UnitPrice)
         {
-            if (dollarPower.DollarValue < UnitPrice)
-            {
-                GD.Print($"[TrainingQueuePower] 资金不足，停止生产 - 当前资金={dollarPower.DollarValue}, 所需资金={UnitPrice}");
-                break;
-            }
-
-            dollarPower.AddDollar(-UnitPrice);
-            GD.Print($"[TrainingQueuePower] 扣除资金 {UnitPrice}，剩余资金 {dollarPower.DollarValue}");
-
-            CardModel tempCard = combatState.CreateCard(cardModel, base.Owner.Player);
-
-            if (IsUpgraded)
-            {
-                CardCmd.Upgrade(tempCard);
-            }
-
-            tempCard.EnergyCost.SetCustomBaseCost(0);
-
-            if (ExhaustWhenPlayed)
-            {
-                tempCard.AddKeyword(CardKeyword.Exhaust);
-                GD.Print($"[TrainingQueuePower] 单位消耗: 是 - UnitName={UnitName}");
-            }
-            else
-            {
-                GD.Print($"[TrainingQueuePower] 单位消耗: 否 - UnitName={UnitName}");
-            }
-
-            GD.Print($"[TrainingQueuePower] 检查语音播放 - TrainedCardId={TrainedCardId}");
-
-            if (TrainedCardId.Contains("KIROV"))
-            {
-                PlayKirovDeploySound();
-            }
-
-            if (TrainedCardId.Contains("DEMOLITION_TRUCK"))
-            {
-                PlayDemolitionTruckDeploySound();
-            }
-
-            if (TrainedCardId.Contains("CHRONO_COMMANDOS"))
-            {
-                PlayChronoCommandosDeploySound();
-            }
-
-            await CardPileCmd.AddGeneratedCardToCombat(tempCard, PileType.Hand, Owner.Player);
+            GD.Print($"[TrainingQueuePower] 资金不足，跳过生产 - 当前资金={dollarPower.DollarValue}, 所需资金={UnitPrice}");
+            return;
         }
+
+        // 生产成功后层数-1（层数为0游戏自动结束能力）
+        dollarPower.AddDollar(-UnitPrice);
+        GD.Print($"[TrainingQueuePower] 扣除资金 {UnitPrice}，剩余资金 {dollarPower.DollarValue}");
+
+        CardModel tempCard = combatState.CreateCard(cardModel, base.Owner.Player);
+
+        if (IsUpgraded)
+        {
+            CardCmd.Upgrade(tempCard);
+        }
+
+        tempCard.EnergyCost.SetCustomBaseCost(0);
+
+        if (ExhaustWhenPlayed)
+        {
+            tempCard.AddKeyword(CardKeyword.Exhaust);
+            GD.Print($"[TrainingQueuePower] 单位消耗: 是 - UnitName={UnitName}");
+        }
+        else
+        {
+            GD.Print($"[TrainingQueuePower] 单位消耗: 否 - UnitName={UnitName}");
+        }
+
+        GD.Print($"[TrainingQueuePower] 检查语音播放 - TrainedCardId={TrainedCardId}");
+
+        if (TrainedCardId.Contains("KIROV"))
+        {
+            PlayKirovDeploySound();
+        }
+
+        if (TrainedCardId.Contains("DEMOLITION_TRUCK"))
+        {
+            PlayDemolitionTruckDeploySound();
+        }
+
+        if (TrainedCardId.Contains("CHRONO_COMMANDOS"))
+        {
+            PlayChronoCommandosDeploySound();
+        }
+
+        await CardPileCmd.AddGeneratedCardToCombat(tempCard, PileType.Hand, Owner.Player);
+
+        // 生产成功后层数-1
+        await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), this, -1m, Owner, null);
+        GD.Print($"[TrainingQueuePower] 生产完成，层数-1，剩余层数={(int)base.Amount}");
     }
 
     private static AudioStreamPlayer? _kirovDeployAudioPlayer;

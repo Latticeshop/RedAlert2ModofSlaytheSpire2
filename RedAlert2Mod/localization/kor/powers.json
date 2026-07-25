@@ -102,7 +102,7 @@
     "STRATEGY_TOWER_DEFENSE_POWER.title": "타워 디펜스",
     "TARGET_LOCKED_POWER.description": "공격의 대상입니다.",
     "TARGET_LOCKED_POWER.title": "표적 고정",
-    "TRAINING_QUEUE_POWER.description": "매 턴 [gold]${UnitPrice}[/gold]를 소비하여 0코스트 {ExhaustText} {UnitName} 카드를 추가합니다.{StoppedMarker}",
+    "TRAINING_QUEUE_POWER.description": "매 턴 [gold]${UnitPrice}[/gold]를 소비하여 0코스트 {ExhaustText} {UnitName} 카드를 추가하고, 자신의 중첩을 -1합니다.{StoppedMarker}",
     "TRAINING_QUEUE_POWER.title": "생산 대기열",
     "V3_ROCKET_POWER.description": "턴 시작 시 [gold]표적 고정[/gold]된 적에게 피해를 {Damage} 줍니다.",
     "V3_ROCKET_POWER.title": "V3 로켓",

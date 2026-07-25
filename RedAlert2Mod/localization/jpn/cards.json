@@ -1,6 +1,8 @@
 {
     "AIRBORNE_DIVISION.title": "空挺部隊",
     "AIRBORNE_DIVISION.description": "[gold]消耗[/gold]付きの[gold]アメリカ兵[/gold]4枚と[gold]ガーディアンGI[/gold]1枚を獲得する。",
+    "RED_ALERT2_MOD_CARD_AIRBORNE_DIVISION.title": "空挺部隊",
+    "RED_ALERT2_MOD_CARD_AIRBORNE_DIVISION.description": "[gold]消耗[/gold]付きの[gold]アメリカ兵[/gold]4枚と[gold]ガーディアンGI[/gold]1枚を獲得する。",
     "YURI_CARD.title": "ユーリ",
     "YURI_CARD.description": "[gold]${DollarNumber}[/gold]消費する。ランダムなT1/T2{IfUpgraded:show:/T3|}[gold]ユニット[/gold]カード1枚を[gold]消耗[/gold]付きで獲得する。",
     "YURI_PRIME_CARD.title": "ユーリ・プライム",
@@ -9,6 +11,8 @@
     "PARATROOPER.description": "いくつかの[gold]虚无[/gold]な基礎兵士カードを手札に加える。",
     "SELL_MCV.title": "基地売却",
     "SELL_MCV.description": "[gold]基地[/gold]を売却して{DollarValue}資金を獲得する。{IfUpgraded:show:エンジニアを1人獲得する。|}",
+    "RED_ALERT2_MOD_CARD_SELL_MC_V.title": "基地売却",
+    "RED_ALERT2_MOD_CARD_SELL_MC_V.description": "[gold]基地[/gold]を売却して{DollarValue}資金を獲得する。{IfUpgraded:show:エンジニアを1人獲得する。|}",
     "SELL_BUILDING_CARD.title": "売却",
     "SELL_BUILDING_CARD.description": "{IfUpgraded:show:任意の|{MaxSellCount}個の}[gold]建物[/gold]を売却する。",
     "OIL_DERRICK_CARD.title": "オイルデリック",

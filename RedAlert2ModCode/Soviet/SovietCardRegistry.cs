@@ -19,11 +19,11 @@ public static class SovietCardRegistry
         () => ModelDb.Card<Conscript>(),
         () => ModelDb.Card<SovietEngineer>(),
         () => ModelDb.Card<SovietAttackDog>(),
+        () => ModelDb.Card<SovietFlakTrooper>(), // 防空步兵 - T1基础单位
     };
 
     public static List<Func<CardModel>> RadarSoldiers { get; } = new()
     {
-        () => ModelDb.Card<SovietFlakTrooper>(),
         () => ModelDb.Card<SovietTeslaTrooper>(),
         () => ModelDb.Card<Desolator>(),
         () => ModelDb.Card<TerrorMan>(),
