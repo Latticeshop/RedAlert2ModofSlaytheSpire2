@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,31 +11,35 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.MonsterMoves.Intents;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
-using STS2RitsuLib.Interop.AutoRegistration;
-
 namespace RedAlert2ModCode.Common.Cards;
 
-[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
-[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public sealed class PsiCommandoCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = CommonCardValues.PsiCommando;
 
 	public PsiCommandoCard() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
+    /// <summary>
+    /// 运行时卡池：当卡牌有所有者时，返回所有者角色的卡池；否则返回TokenCardPool
+    /// </summary>
+    public override CardPoolModel Pool => IsMutable && Owner != null
+        ? Owner.Character.CardPool
+        : ModelDb.CardPool<TokenCardPool>();
+
+    /// <summary>
+    /// 视觉卡池：用于确定卡牌的边框颜色等视觉表现
+    /// 运行时与Pool相同，卡池查看器中通过重写AllCards属性实现显示
+    /// </summary>
+    public override CardPoolModel VisualCardPool => Pool;
+
 	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/other/Psi_Commando.png";
 
-	public override CardPoolModel Pool => IsMutable && Owner != null
-		? Owner.Character.CardPool
-		: ModelDb.CardPool<TokenCardPool>();
-
-	public override CardPoolModel VisualCardPool => ModelDb.CardPool<TokenCardPool>();
-
-	public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[0];
+			public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[0];
 
 	protected override List<DynamicVar> CanonicalVars => new()
 	{

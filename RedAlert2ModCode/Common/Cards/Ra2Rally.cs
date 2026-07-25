@@ -1,4 +1,4 @@
-using Godot;
+﻿using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -7,33 +7,38 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using System.Collections.Generic;
 using System.Linq;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Soviet;
 using RedAlert2ModCode.Yuri;
-using STS2RitsuLib.Interop.AutoRegistration;
-
 namespace RedAlert2ModCode.Common.Cards;
 
-[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
-[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public class Ra2Rally : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = CommonCardValues.Ra2Rally;
 
 	public Ra2Rally() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
 
-	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/rallyicon.png";
-
+    /// <summary>
+    /// 运行时卡池：当卡牌有所有者时，返回所有者角色的卡池；否则返回TokenCardPool
+    /// </summary>
     public override CardPoolModel Pool => IsMutable && Owner != null
         ? Owner.Character.CardPool
         : ModelDb.CardPool<TokenCardPool>();
 
+    /// <summary>
+    /// 视觉卡池：用于确定卡牌的边框颜色等视觉表现
+    /// 运行时与Pool相同，卡池查看器中通过重写AllCards属性实现显示
+    /// </summary>
     public override CardPoolModel VisualCardPool => Pool;
 
-	protected override List<DynamicVar> CanonicalVars => new()
+	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/rallyicon.png";
+
+        	protected override List<DynamicVar> CanonicalVars => new()
 	{
 		new IntVar("MagicNumber", Values.MagicNumber)
 	};

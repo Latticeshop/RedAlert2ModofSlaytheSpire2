@@ -42,7 +42,8 @@ public sealed class SovietBattleLab : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		ModCardKeywords.TechLevelT3.CreateHoverTip()
+		ModCardKeywords.TechLevelT3.CreateHoverTip(),
+		HoverTipFactory.FromCard<ForceField>()
 	];
 
 	protected override bool IsPlayable

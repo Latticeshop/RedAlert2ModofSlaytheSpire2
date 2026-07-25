@@ -36,6 +36,8 @@ public sealed class SovietFortifiedWall : CardModel
         new IntVar("DollarNumber", Values.DollarValue)
     };
 
+    protected override HashSet<CardTag> CanonicalTags => new() { CardTag.Defend };
+
     public override IEnumerable<CardKeyword> CanonicalKeywords
     {
         get

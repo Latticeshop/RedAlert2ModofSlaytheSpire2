@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -35,6 +35,8 @@ public sealed class FortifiedWall : CardModel
         new BlockVar(Values.Block, ValueProp.Move),
         new IntVar("DollarNumber", Values.DollarValue)
     };
+
+    protected override HashSet<CardTag> CanonicalTags => new() { CardTag.Defend };
 
     public override IEnumerable<CardKeyword> CanonicalKeywords
     {

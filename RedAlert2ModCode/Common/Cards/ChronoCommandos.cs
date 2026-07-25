@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -14,7 +14,6 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.MonsterMoves.Intents;
 using RedAlert2ModCode.Common.Utils;
-
 namespace RedAlert2ModCode.Common.Cards;
 
 public sealed class ChronoCommandos : ChronoCardModel
@@ -25,13 +24,7 @@ public sealed class ChronoCommandos : ChronoCardModel
 
 	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/other/ccomicon.png";
 
-	public override CardPoolModel Pool => IsMutable && Owner != null
-		? Owner.Character.CardPool
-		: ModelDb.CardPool<TokenCardPool>();
-
-	public override CardPoolModel VisualCardPool => ModelDb.CardPool<TokenCardPool>();
-
-	public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[0];
+			public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[0];
 
 	protected override List<IHoverTip> GetExtraHoverTips()
 	{

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -7,8 +7,8 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.CardPools;
+using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Common.Cards;
@@ -28,15 +28,15 @@ public abstract class ChronoCardModel : CardModel
 		: base(cost, cardType, cardRarity, targetType) { }
 
 	/// <summary>
-	/// 获取卡牌所属的卡池
-	/// 如果卡牌是可变的且有拥有者，返回拥有者角色的卡池；否则返回Token卡池
+	/// 运行时卡池：当卡牌有所有者时，返回所有者角色的卡池；否则返回TokenCardPool
 	/// </summary>
 	public override CardPoolModel Pool => IsMutable && Owner != null
 		? Owner.Character.CardPool
 		: ModelDb.CardPool<TokenCardPool>();
 
 	/// <summary>
-	/// 获取卡牌视觉上所属的卡池（与Pool相同）
+	/// 视觉卡池：用于确定卡牌的边框颜色等视觉表现
+	/// 运行时与Pool相同，卡池查看器中通过重写AllCards属性实现显示
 	/// </summary>
 	public override CardPoolModel VisualCardPool => Pool;
 

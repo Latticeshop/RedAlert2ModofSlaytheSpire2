@@ -1,5 +1,8 @@
 using System.Reflection;
 using MegaCrit.Sts2.Core.Logging;
+using MegaCrit.Sts2.Core.Modding;
+using MegaCrit.Sts2.Core.Models.CardPools;
+using RedAlert2ModCode.Common.Cards;
 using STS2RitsuLib;
 using STS2RitsuLib.Interop;
 using STS2RitsuLib.Patching.Core;
@@ -45,8 +48,10 @@ public static class RitsuLibInitializer
             // 3. 开始mod数据注册
             RitsuLibFramework.BeginModDataRegistration(ModId);
             
-            // 4. 获取内容注册表（后续逐步迁移内容时使用）
-            // var contentRegistry = RitsuLibFramework.GetContentRegistry(ModId);
+            // 4. 使用BaseLib的ModHelper将公共卡牌注册到TokenCardPool
+            // 这样公共卡牌能被所有角色使用，且运行时根据持有者动态显示卡框颜色
+            // 卡池查看器和奖励中的显示通过重写AllCards属性实现
+            RegisterCommonCardsToTokenPool();
             
             // 5. 创建补丁器（渐进式迁移：先创建，后续逐步注册补丁）
             if (Logger != null)
@@ -90,5 +95,47 @@ public static class RitsuLibInitializer
     private static void DisableMod()
     {
         ModInitializer.Logger.Error("RitsuLib补丁失败，Mod已禁用！");
+    }
+    
+    /// <summary>
+    /// 将公共卡牌注册到TokenCardPool
+    /// 这样公共卡牌能被所有角色使用，且运行时根据持有者动态显示卡框颜色
+    /// 卡池查看器和奖励中的显示通过重写AllCards属性实现
+    /// </summary>
+    private static void RegisterCommonCardsToTokenPool()
+    {
+        try
+        {
+            // 使用BaseLib的ModHelper将公共卡牌注册到TokenCardPool
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(ChronoCommandos));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(ChronoIvanCard));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(Eagle500kg));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(EagleAirStrike));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(EagleMachineGun));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(F2A));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(ForceField));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(GemMineCard));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(GoldMineCard));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(GoldMineColumnCard));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(KitingCard));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(MassProductionCard));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(MineRaid));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(OilDerrickCard));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(Paratrooper));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(PsiCommandoCard));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(Ra2Rally));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(SellBuildingCard));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(SellMCV));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(StopProductionCard));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(SupportCard));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(YuriCard));
+            ModHelper.AddModelToPool(typeof(TokenCardPool), typeof(YuriPrimeCard));
+            
+            ModInitializer.Logger.Info("公共卡牌注册完成！已将23张公共卡牌注册到TokenCardPool");
+        }
+        catch (Exception ex)
+        {
+            ModInitializer.Logger.Error($"公共卡牌注册失败: {ex.Message}");
+        }
     }
 }

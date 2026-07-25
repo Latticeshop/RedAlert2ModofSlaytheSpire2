@@ -36,6 +36,8 @@ public sealed class SovietWallCard : CardModel
 		new IntVar("DollarNumber", Values.DollarValue)
 	};
 
+	protected override HashSet<CardTag> CanonicalTags => new() { CardTag.Defend };
+
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip()

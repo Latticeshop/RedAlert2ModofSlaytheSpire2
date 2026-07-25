@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -10,32 +10,36 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
-using STS2RitsuLib.Interop.AutoRegistration;
-
 namespace RedAlert2ModCode.Common.Cards;
 
-[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
-[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public class StopProductionCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = CommonCardValues.StopProduction;
 
 	public StopProductionCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
 
-	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/stop_production.png";
-
+    /// <summary>
+    /// 运行时卡池：当卡牌有所有者时，返回所有者角色的卡池；否则返回TokenCardPool
+    /// </summary>
     public override CardPoolModel Pool => IsMutable && Owner != null
         ? Owner.Character.CardPool
         : ModelDb.CardPool<TokenCardPool>();
 
+    /// <summary>
+    /// 视觉卡池：用于确定卡牌的边框颜色等视觉表现
+    /// 运行时与Pool相同，卡池查看器中通过重写AllCards属性实现显示
+    /// </summary>
     public override CardPoolModel VisualCardPool => Pool;
 
-    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/stop_production.png";
+
+            protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.ProductionQueue.CreateHoverTip()
 	];

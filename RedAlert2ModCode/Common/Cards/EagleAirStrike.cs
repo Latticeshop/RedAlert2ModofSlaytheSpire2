@@ -1,5 +1,6 @@
-using MegaCrit.Sts2.Core.Models;
+﻿using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions;
@@ -15,8 +16,6 @@ using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 using Godot;
-using STS2RitsuLib.Interop.AutoRegistration;
-
 namespace RedAlert2ModCode.Common.Cards;
 
 /// <summary>
@@ -25,8 +24,7 @@ namespace RedAlert2ModCode.Common.Cards;
 /// 效果：获得飞鹰空袭能力
 /// 描述：[gold]绝地战备[/gold]。\n对全部敌人造成8点(升级12点)伤害。
 /// </summary>
-[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
-[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
+
 public sealed class EagleAirStrike : CardModel
 {
 	// 数值引用
@@ -34,15 +32,22 @@ public sealed class EagleAirStrike : CardModel
 
 	public EagleAirStrike() : base((int)Values.Cost, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies) { }
 
-	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/EagleAirStrike.png";
-
+    /// <summary>
+    /// 运行时卡池：当卡牌有所有者时，返回所有者角色的卡池；否则返回TokenCardPool
+    /// </summary>
     public override CardPoolModel Pool => IsMutable && Owner != null
         ? Owner.Character.CardPool
         : ModelDb.CardPool<TokenCardPool>();
 
+    /// <summary>
+    /// 视觉卡池：用于确定卡牌的边框颜色等视觉表现
+    /// 运行时与Pool相同，卡池查看器中通过重写AllCards属性实现显示
+    /// </summary>
     public override CardPoolModel VisualCardPool => Pool;
 
-    protected override List<DynamicVar> CanonicalVars => new()
+	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/EagleAirStrike.png";
+
+            protected override List<DynamicVar> CanonicalVars => new()
 	{
 		new DamageVar(Values.Damage + (IsUpgraded ? Values.DamageUpgraded : 0m), ValueProp.Move)
 	};

@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +17,8 @@ using MegaCrit.Sts2.Core.Models.CardPools;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet.Powers;
 using RedAlert2ModCode.UI;
-using STS2RitsuLib.Interop.AutoRegistration;
-
 namespace RedAlert2ModCode.Common.Cards;
 
-[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
-[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public sealed class ChronoIvanCard : ChronoCardModel
 {
     private static readonly CardValueStore.CardValues Values = CommonCardValues.ChronoIvan;
@@ -31,13 +27,7 @@ public sealed class ChronoIvanCard : ChronoCardModel
 
     public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/other/ivncicon.png";
 
-    public override CardPoolModel Pool => IsMutable && Owner != null
-        ? Owner.Character.CardPool
-        : ModelDb.CardPool<TokenCardPool>();
-
-    public override CardPoolModel VisualCardPool => ModelDb.CardPool<TokenCardPool>();
-
-    public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[0];
+            public override IEnumerable<CardKeyword> CanonicalKeywords => new CardKeyword[0];
 
     protected override List<IHoverTip> GetExtraHoverTips()
     {

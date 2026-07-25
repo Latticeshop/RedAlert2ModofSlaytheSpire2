@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +42,8 @@ public sealed class AlliedBattleLab : CardModel
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
 		ModCardKeywords.Building.CreateHoverTip(),
-		ModCardKeywords.TechLevelT3.CreateHoverTip()
+		ModCardKeywords.TechLevelT3.CreateHoverTip(),
+		HoverTipFactory.FromCard<ForceField>()
 	];
 
 	protected override bool IsPlayable

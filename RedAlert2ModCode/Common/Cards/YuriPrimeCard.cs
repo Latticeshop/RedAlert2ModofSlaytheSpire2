@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,31 +9,35 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
-using STS2RitsuLib.Interop.AutoRegistration;
-
 namespace RedAlert2ModCode.Common.Cards;
 
-[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
-[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public sealed class YuriPrimeCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = CommonCardValues.YuriPrime;
 
 	public YuriPrimeCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Token, TargetType.Self) { }
 
+    /// <summary>
+    /// 运行时卡池：当卡牌有所有者时，返回所有者角色的卡池；否则返回TokenCardPool
+    /// </summary>
+    public override CardPoolModel Pool => IsMutable && Owner != null
+        ? Owner.Character.CardPool
+        : ModelDb.CardPool<TokenCardPool>();
+
+    /// <summary>
+    /// 视觉卡池：用于确定卡牌的边框颜色等视觉表现
+    /// 运行时与Pool相同，卡池查看器中通过重写AllCards属性实现显示
+    /// </summary>
+    public override CardPoolModel VisualCardPool => Pool;
+
 	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/other/yurpicon.png";
 
-	public override CardPoolModel Pool => IsMutable && Owner != null
-		? Owner.Character.CardPool
-		: ModelDb.CardPool<TokenCardPool>();
-
-	public override CardPoolModel VisualCardPool => Pool;
-
-	protected override List<DynamicVar> CanonicalVars => new()
+			protected override List<DynamicVar> CanonicalVars => new()
 	{
 		new IntVar("CardCount", Values.MagicNumber)
 	};

@@ -15,12 +15,12 @@ public static class SovietCardValues
 {
 	// ==================== 士兵单位 ====================
 	
-	/// <summary>动员兵 - 0费3伤害1次，升级后4伤害1次，价格100</summary>
+	/// <summary>动员兵 - 0费3伤害1次，升级后5伤害1次，价格100</summary>
 	public static CardValueStore.CardValues Conscript => new()
 	{
 		Cost = 0,
 		Damage = 3,
-		DamageUpgraded = 1,
+		DamageUpgraded = 2,
 		Repeat = 1,
 		DollarValue = 100
 	};
@@ -347,7 +347,7 @@ public static class SovietCardValues
 	
 	// ==================== 防御建筑 ====================
 	
-	/// <summary>苏军围墙 - 0费5护盾，升级后8护盾，价格100</summary>
+	/// <summary>苏军围墙 - 0费1护盾，升级后2护盾，价格100</summary>
 	public static CardValueStore.CardValues SovietWall => new()
 	{
 		Cost = 0,

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
@@ -7,33 +7,37 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Soviet.Cards;
 using RedAlert2ModCode.Common.Utils;
 using Godot;
-using STS2RitsuLib.Interop.AutoRegistration;
-
 namespace RedAlert2ModCode.Common.Cards;
 
-[RegisterCard(typeof(RedAlert2ModCode.Allies.AlliesCardPool))]
-[RegisterCard(typeof(RedAlert2ModCode.Soviet.SovietCardPool))]
 public class Paratrooper : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = CommonCardValues.Paratrooper;
 
 	public Paratrooper() : base((int)Values.Cost, CardType.Attack, CardRarity.Common, TargetType.Self) { }
 
-	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/aparicon.png";
-
+    /// <summary>
+    /// 运行时卡池：当卡牌有所有者时，返回所有者角色的卡池；否则返回TokenCardPool
+    /// </summary>
     public override CardPoolModel Pool => IsMutable && Owner != null
         ? Owner.Character.CardPool
         : ModelDb.CardPool<TokenCardPool>();
 
+    /// <summary>
+    /// 视觉卡池：用于确定卡牌的边框颜色等视觉表现
+    /// 运行时与Pool相同，卡池查看器中通过重写AllCards属性实现显示
+    /// </summary>
     public override CardPoolModel VisualCardPool => Pool;
 
-    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? Array.Empty<CardKeyword>() : new CardKeyword[] { CardKeyword.Exhaust };
+	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/aparicon.png";
+
+            public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? Array.Empty<CardKeyword>() : new CardKeyword[] { CardKeyword.Exhaust };
 
 	protected override List<DynamicVar> CanonicalVars => new() { };
 
