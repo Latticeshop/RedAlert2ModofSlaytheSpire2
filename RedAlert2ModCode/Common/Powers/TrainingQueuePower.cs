@@ -383,6 +383,32 @@ public sealed class TrainingQueuePower : PowerModel
         string typeName = string.Concat(parts.Select(p => char.ToUpper(p[0]) + p.Substring(1).ToLower()));
         GD.Print($"[TrainingQueuePower] 生成类型名称: {typeName}");
         
+        // 尝试标准命名（PascalCase）
+        Type? cardType = FindCardType(typeName);
+        
+        // 如果没找到，尝试缩写全大写的变体（如 MCV -> Mcv 失败时，尝试 MCV）
+        if (cardType == null && parts.Length > 0)
+        {
+            string upperTypeName = string.Concat(parts.Select(p => p.Length <= 3 ? p.ToUpper() : char.ToUpper(p[0]) + p.Substring(1).ToLower()));
+            GD.Print($"[TrainingQueuePower] 尝试全大写缩写类型名称: {upperTypeName}");
+            cardType = FindCardType(upperTypeName);
+        }
+        
+        if (cardType != null)
+        {
+            var method = typeof(ModelDb).GetMethod("Card", System.Type.EmptyTypes)
+                ?.MakeGenericMethod(cardType);
+            CardModel? result = method?.Invoke(null, null) as CardModel;
+            GD.Print($"[TrainingQueuePower] 成功获取卡牌模型: {result?.Id.Entry}");
+            return result;
+        }
+        
+        GD.PrintErr($"[TrainingQueuePower] 无法找到卡牌类型: {typeName}");
+        return null;
+    }
+
+    private Type? FindCardType(string typeName)
+    {
         var cardType = Assembly.GetExecutingAssembly()
             .GetType($"RedAlert2ModCode.Allies.Cards.{typeName}");
         
@@ -403,17 +429,7 @@ public sealed class TrainingQueuePower : PowerModel
             cardType = typeof(CardModel).Assembly.GetType($"MegaCrit.Sts2.Core.Models.Cards.{typeName}");
         }
         
-        if (cardType != null)
-        {
-            var method = typeof(ModelDb).GetMethod("Card", System.Type.EmptyTypes)
-                ?.MakeGenericMethod(cardType);
-            CardModel? result = method?.Invoke(null, null) as CardModel;
-            GD.Print($"[TrainingQueuePower] 成功获取卡牌模型: {result?.Id.Entry}");
-            return result;
-        }
-        
-        GD.PrintErr($"[TrainingQueuePower] 无法找到卡牌类型: {typeName}");
-        return null;
+        return cardType;
     }
     
     /// <summary>

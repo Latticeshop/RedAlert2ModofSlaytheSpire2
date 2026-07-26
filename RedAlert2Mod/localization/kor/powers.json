@@ -119,5 +119,9 @@
     "ERASING_POWER.title": "지우는 중...",
     "ERASING_POWER.description": "중첩 수가 적의 HP를 초과하면 즉시 [red]처형[/red]합니다.",
     "GRAND_CANNON_POWER.title": "그랜드 캐논",
-    "GRAND_CANNON_POWER.description": "턴 종료 시 적에게 {Damage}의 피해를 입힙니다."
+    "GRAND_CANNON_POWER.description": "턴 종료 시 적에게 {Damage}의 피해를 입힙니다.",
+    "ALLIED_REPAIR_DEPOT_POWER.title": "연합군 수리 공장",
+    "ALLIED_REPAIR_DEPOT_POWER.description": "수리 공장이 전개되었습니다.",
+    "SOVIET_REPAIR_DEPOT_POWER.title": "소련 수리 공장",
+    "SOVIET_REPAIR_DEPOT_POWER.description": "수리 공장이 전개되었습니다."
 }

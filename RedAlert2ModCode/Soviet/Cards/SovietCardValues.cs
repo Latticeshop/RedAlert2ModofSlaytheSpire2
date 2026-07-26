@@ -149,17 +149,17 @@ public static class SovietCardValues
 		DollarValue = 1200
 	};
 	
-	/// <summary>天启坦克 - 2费9伤害2次5防御+2易伤，升级后12伤害2次7防御+3易伤，价格1750</summary>
+	/// <summary>天启坦克 - 2费5伤害2次10防御+1易伤，升级后7伤害2次12防御+2易伤，价格1750</summary>
 	public static CardValueStore.CardValues ApocalypseTank => new()
 	{
 		Cost = 2,
-		Damage = 9,
-		DamageUpgraded = 3,
+		Damage = 5,
+		DamageUpgraded = 2,
 		Repeat = 2,
 		RepeatUpgraded = 0,
-		Block = 5,
+		Block = 10,
 		BlockUpgraded = 2,
-		MagicNumber = 2,      // 易伤层数
+		MagicNumber = 1,      // 易伤层数
 		MagicNumberUpgraded = 1,
 		DollarValue = 1750
 	};
@@ -557,7 +557,8 @@ public static class SovietCardValues
 			{ typeof(RedAlert2ModCode.Soviet.Powers.SovietPowerPlantPower), NuclearReactor.DollarValue },
 			{ typeof(RedAlert2ModCode.Soviet.Powers.IndustrialPlantPower), IndustrialPlant.DollarValue },
 			{ typeof(RedAlert2ModCode.Soviet.Powers.IronCurtainPower), IronCurtainCard.DollarValue },
-			{ typeof(RedAlert2ModCode.Soviet.Powers.NuclearMissileSiloPower), NuclearMissileSiloCard.DollarValue }
+			{ typeof(RedAlert2ModCode.Soviet.Powers.NuclearMissileSiloPower), NuclearMissileSiloCard.DollarValue },
+			{ typeof(RedAlert2ModCode.Soviet.Powers.SovietRepairDepotPower), RepairDepot.DollarValue }
 		};
 	}
 

@@ -1,4 +1,4 @@
-﻿using RedAlert2ModCode.Common.Cards;
+using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Utils;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -658,7 +658,8 @@ public static class AlliesCardValues
 			{ typeof(RedAlert2ModCode.Allies.Powers.PowerPlantPower), PowerPlant.DollarValue },
 			{ typeof(RedAlert2ModCode.Allies.Powers.OreRefineryPower), OreRefinery.DollarValue },
 			{ typeof(RedAlert2ModCode.Allies.Powers.ChronoSpherePower), ChronoSphere.DollarValue },
-			{ typeof(RedAlert2ModCode.Allies.Powers.WeatherControllerPower), WeatherController.DollarValue }
+			{ typeof(RedAlert2ModCode.Allies.Powers.WeatherControllerPower), WeatherController.DollarValue },
+			{ typeof(RedAlert2ModCode.Allies.Powers.AlliedRepairDepotPower), RepairDepot.DollarValue }
 		};
 	}
 

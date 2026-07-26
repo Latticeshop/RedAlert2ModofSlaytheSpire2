@@ -64,6 +64,14 @@ public static class EngineerChoiceValues
 		Weight = 5
 	};
 
+	public static Choice SurveyMineField => new()
+	{
+		Type = ChoiceSelectionScreen.ChoiceType.SurveyMineField,
+		Title = new LocString("card_keywords", "engineer_choice.survey_mine_field.title"),
+		Description = new LocString("card_keywords", "engineer_choice.survey_mine_field.description"),
+		Weight = 5
+	};
+
 	public static List<Choice> AllChoices => new()
 	{
 		CaptureOilDerrick,
@@ -72,6 +80,7 @@ public static class EngineerChoiceValues
 		CaptureHospital,
 		CaptureWorkshop,
 		CaptureTechOutpost,
-		RepairBridge
+		RepairBridge,
+		SurveyMineField
 	};
 }

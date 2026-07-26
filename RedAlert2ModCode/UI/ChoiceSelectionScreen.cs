@@ -33,7 +33,8 @@ public sealed partial class ChoiceSelectionScreen : Control, IOverlayScreen
 		CaptureHospital,        // 占领市民医院
 		CaptureWorkshop,        // 占领机械商店
 		CaptureTechOutpost,     // 占领科技前哨站
-		RepairBridge            // 维修桥梁
+		RepairBridge,           // 维修桥梁
+		SurveyMineField         // 勘测矿区
 	}
 
 	/// <summary>

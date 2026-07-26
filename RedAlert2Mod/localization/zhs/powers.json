@@ -121,5 +121,9 @@
     "GRAND_CANNON_POWER.title": "巨炮",
     "GRAND_CANNON_POWER.description": "回合结束时对敌人造成 {Damage} 点伤害。自动更换目标需要一回合。",
     "TIMED_BOMB_POWER.title": "定时炸弹",
-    "TIMED_BOMB_POWER.description": "每回合减少1层，层数为0时爆炸，造成15点伤害。"
+    "TIMED_BOMB_POWER.description": "每回合减少1层，层数为0时爆炸，造成15点伤害。",
+    "ALLIED_REPAIR_DEPOT_POWER.title": "盟军维修厂",
+    "ALLIED_REPAIR_DEPOT_POWER.description": "已部署维修厂。",
+    "SOVIET_REPAIR_DEPOT_POWER.title": "苏联维修厂",
+    "SOVIET_REPAIR_DEPOT_POWER.description": "已部署维修厂。"
 }

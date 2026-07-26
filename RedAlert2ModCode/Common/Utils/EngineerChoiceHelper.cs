@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -107,6 +108,20 @@ public static class EngineerChoiceHelper
                         await CardPileCmd.Draw(ctx, 2, card.Owner);
                     }
                 }
+                break;
+
+            case ChoiceSelectionScreen.ChoiceType.SurveyMineField:
+                // 随机获得一张矿卡牌（宝石矿、黄金矿、黄金矿柱）
+                var mineCardTypes = new List<Func<CardModel>>
+                {
+                    () => ModelDb.Card<GoldMineCard>(),
+                    () => ModelDb.Card<GemMineCard>(),
+                    () => ModelDb.Card<GoldMineColumnCard>()
+                };
+                int mineIndex = card.Owner.RunState.Rng.CombatCardSelection.NextInt(mineCardTypes.Count);
+                var mineCard = card.Owner.Creature.CombatState.CreateCard(mineCardTypes[mineIndex](), card.Owner);
+                await CardPileCmd.AddGeneratedCardToCombat(mineCard, PileType.Hand, card.Owner);
+                GD.Print($"[EngineerChoiceHelper] 勘测矿区：获得矿卡牌 {mineCard.Id.Entry}");
                 break;
         }
     }

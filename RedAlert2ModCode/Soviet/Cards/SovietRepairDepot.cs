@@ -2,9 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -12,6 +15,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Soviet.Powers;
 using RedAlert2ModCode.UI;
 
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -73,20 +77,36 @@ public sealed class SovietRepairDepot : CardModel
 
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
-		int statusCount = base.IsUpgraded ? UPGRADED_STATUS_COUNT : BASE_STATUS_COUNT;
-		var handPile = PileType.Hand.GetPile(Owner);
-		var statusCards = handPile?.Cards.Where(c => c.Rarity == CardRarity.Status).ToList() ?? new List<CardModel>();
+		// 添加维修厂能力（用于出售检测和重工MCV选项解锁）
+		await PowerCmd.Apply<SovietRepairDepotPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+		GD.Print("[SovietRepairDepot] 添加苏联维修厂能力");
 
-		int actualCount = Math.Min(statusCards.Count, statusCount);
-		if (actualCount > 0)
+		int exhaustCount = base.IsUpgraded ? UPGRADED_STATUS_COUNT : BASE_STATUS_COUNT;
+
+		// 使用原版手牌选择UI，让玩家选择要消耗的卡牌（0到exhaustCount张）
+		var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_SOVIET_REPAIR_DEPOT.select_prompt");
+		selectPrompt.Add("0", 0);
+		selectPrompt.Add("1", exhaustCount);
+		var prefs = new CardSelectorPrefs(selectPrompt, 0, exhaustCount)
 		{
-			var selectedCards = statusCards.Take(actualCount).ToList();
-			foreach (var card in selectedCards)
-			{
-				await CardPileCmd.Add(card, PileType.Exhaust);
-				GD.Print($"[SovietRepairDepot] 消耗状态牌: {card.Id.Entry}");
-			}
+			RequireManualConfirmation = true
+		};
+
+		var selectedCards = (await CardSelectCmd.FromHand(
+			ctx,
+			base.Owner,
+			prefs,
+			c => c != this,
+			this
+		)).ToList();
+
+		foreach (var card in selectedCards)
+		{
+			await CardPileCmd.Add(card, PileType.Exhaust);
+			GD.Print($"[SovietRepairDepot] 消耗手牌: {card.Id.Entry}");
 		}
+
+		GD.Print($"[SovietRepairDepot] 共消耗 {selectedCards.Count} 张手牌");
 	}
 
 	protected override void OnUpgrade()

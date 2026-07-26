@@ -119,5 +119,9 @@
     "ERASING_POWER.title": "Erasing...",
     "ERASING_POWER.description": "When stacks exceed enemy HP, immediately [red]execute[/red] them.",
     "GRAND_CANNON_POWER.title": "Grand Cannon",
-    "GRAND_CANNON_POWER.description": "At the end of turn, deal {Damage} damage to an enemy."
+    "GRAND_CANNON_POWER.description": "At the end of turn, deal {Damage} damage to an enemy.",
+    "ALLIED_REPAIR_DEPOT_POWER.title": "Allied Repair Depot",
+    "ALLIED_REPAIR_DEPOT_POWER.description": "Repair Depot deployed.",
+    "SOVIET_REPAIR_DEPOT_POWER.title": "Soviet Repair Depot",
+    "SOVIET_REPAIR_DEPOT_POWER.description": "Repair Depot deployed."
 }

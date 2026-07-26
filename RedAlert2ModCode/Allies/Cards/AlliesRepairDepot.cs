@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
+using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.UI;
@@ -68,6 +70,10 @@ public sealed class AlliesRepairDepot : CardModel
 		}
 
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+
+		// 添加维修厂能力（用于出售检测和重工MCV选项解锁）
+		await PowerCmd.Apply<AlliedRepairDepotPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
+		GD.Print("[AlliesRepairDepot] 添加盟军维修厂能力");
 
 		var exhaustPile = PileType.Exhaust.GetPile(Owner);
 		if (exhaustPile != null && exhaustPile.Cards.Count > 0)

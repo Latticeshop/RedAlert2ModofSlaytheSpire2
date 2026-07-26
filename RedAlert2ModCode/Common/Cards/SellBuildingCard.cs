@@ -147,6 +147,10 @@ public class SellBuildingCard : CardModel
             return "res://RedAlert2ModResources/images/packed/card_portraits/allies/mcvicon.png";
         if (powerType == typeof(SovietMCVPower))
             return "res://RedAlert2ModResources/images/packed/card_portraits/soviet/smcvicon.png";
+        if (powerType == typeof(AlliedRepairDepotPower))
+            return "res://RedAlert2ModResources/images/packed/card_portraits/allies/fixicon.png";
+        if (powerType == typeof(SovietRepairDepotPower))
+            return "res://RedAlert2ModResources/images/packed/card_portraits/soviet/rfixicon.png";
 
         string iconPath = power.PackedIconPath;
         if (!string.IsNullOrEmpty(iconPath) && ResourceLoader.Exists(iconPath))

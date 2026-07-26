@@ -83,6 +83,8 @@ public static class PowerIconPatch
         { typeof(MineRaidPower), "res://RedAlert2ModResources/images/packed/powers/mine_raid_power.png" },
         { typeof(ErasingPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/clegicon.png" },
         { typeof(GrandCannonPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/gcanicon.png" },
+        { typeof(AlliedRepairDepotPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/fixicon.png" },
+        { typeof(RedAlert2ModCode.Soviet.Powers.SovietRepairDepotPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/rfixicon.png" },
         };
 
     /// <summary>

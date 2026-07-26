@@ -119,5 +119,9 @@
     "ERASING_POWER.title": "消去中...",
     "ERASING_POWER.description": "層数が敵のHPを超えた時、即座に[red]処刑[/red]する。",
     "GRAND_CANNON_POWER.title": "グランドキャノン",
-    "GRAND_CANNON_POWER.description": "ターン終了時に敵に{Damage}ダメージを与える。"
+    "GRAND_CANNON_POWER.description": "ターン終了時に敵に{Damage}ダメージを与える。",
+    "ALLIED_REPAIR_DEPOT_POWER.title": "連合軍修理工場",
+    "ALLIED_REPAIR_DEPOT_POWER.description": "修理工場を展開した。",
+    "SOVIET_REPAIR_DEPOT_POWER.title": "ソ連修理工場",
+    "SOVIET_REPAIR_DEPOT_POWER.description": "修理工場を展開した。"
 }

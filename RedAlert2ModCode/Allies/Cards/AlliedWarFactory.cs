@@ -80,6 +80,19 @@ public sealed class AlliedWarFactory : CardModel
 		List<CardModel> availableCards = AlliedCardRegistry.CreateVehicles(Owner);
 		GD.Print($"[AlliedWarFactory] 可用卡牌数量: {availableCards.Count}");
 
+		// 检测是否有盟军维修厂能力，有则添加盟军MCV选项
+		bool hasRepairDepot = Owner.Creature.Powers.OfType<AlliedRepairDepotPower>().Any();
+		if (hasRepairDepot)
+		{
+			var mcvCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<AlliedMCV>(), Owner);
+			if (base.IsUpgraded)
+			{
+				CardCmd.Upgrade(mcvCard);
+			}
+			availableCards.Add(mcvCard);
+			GD.Print("[AlliedWarFactory] 检测到盟军维修厂能力，添加盟军MCV选项");
+		}
+
 		// 如果没有德国国旗，移除坦克杀手选项
 		if (!FlagManager.HasGermany(Owner))
 		{
@@ -144,8 +157,8 @@ public sealed class AlliedWarFactory : CardModel
 				// 获取单位价格
 				int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
 				
-				// 超时空矿车不消耗（exhaustWhenPlayed: false）
-				bool exhaustWhenPlayed = selectedCard is not ChronoMiner;
+				// 超时空矿车和基地车不消耗（exhaustWhenPlayed: false）
+				bool exhaustWhenPlayed = selectedCard is not ChronoMiner and not AlliedMCV;
 				
 				// 同一批相同单位合并为一个能力（叠层）
 				await TrainingQueuePower.ApplyTrainingQueue(

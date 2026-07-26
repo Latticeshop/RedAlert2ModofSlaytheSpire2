@@ -77,6 +77,19 @@ public sealed class SovietWarFactory : CardModel
 		List<CardModel> availableCards = SovietCardRegistry.CreateVehicles(Owner);
 		GD.Print($"[SovietWarFactory] 可用卡牌数量: {availableCards.Count}");
 
+		// 检测是否有苏联维修厂能力，有则添加苏联MCV选项
+		bool hasRepairDepot = Owner.Creature.Powers.OfType<SovietRepairDepotPower>().Any();
+		if (hasRepairDepot)
+		{
+			var mcvCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<SovietMCV>(), Owner);
+			if (base.IsUpgraded)
+			{
+				CardCmd.Upgrade(mcvCard);
+			}
+			availableCards.Add(mcvCard);
+			GD.Print("[SovietWarFactory] 检测到苏联维修厂能力，添加苏联MCV选项");
+		}
+
 		// 如果没有苏联国旗，移除磁能坦克选项
 		if (!FlagManager.HasUSSR(Owner))
 		{
@@ -130,7 +143,7 @@ public sealed class SovietWarFactory : CardModel
 				
 				int unitPrice = SovietCardValues.GetDollarValue(selectedCard.Id.Entry);
 				
-				bool exhaustWhenPlayed = selectedCard is not WarMiner;
+				bool exhaustWhenPlayed = selectedCard is not WarMiner and not SovietMCV;
 				
 				// 同一批相同单位合并为一个能力（叠层）
 				await TrainingQueuePower.ApplyTrainingQueue(
