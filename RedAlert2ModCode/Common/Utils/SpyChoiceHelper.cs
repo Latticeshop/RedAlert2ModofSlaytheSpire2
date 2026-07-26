@@ -286,8 +286,7 @@ public static class SpyChoiceHelper
             await ExecutePowerPlantAttackEffect(ctx, card, target, upgraded);
         }
         else if (powerTypeName == "AlliedRefineryPower" ||
-                 powerTypeName == "SovietRefineryPower" ||
-                 powerTypeName == "OreRefineryPower")
+                 powerTypeName == "SovietRefineryPower")
         {
             await ExecuteOreRefineryAttackEffect(ctx, card, target, upgraded);
         }

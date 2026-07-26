@@ -115,7 +115,8 @@ public static class CommonCardValues
 	{
 		Cost = 3,
 		CostUpgraded = 0,           // 升级后费用不变（仍为3费）
-		Stars = 100                 // 每层减少的价格
+		Stars = 100,                // 每层减少的价格（未升级）
+		StarsUpgraded = 50          // 升级后额外减少的价格（总减少150）
 	};
 
 	/// <summary>F2A钢铁洪流 - 1费能力卡（升级后0费），手牌中的单位卡将自动打出</summary>

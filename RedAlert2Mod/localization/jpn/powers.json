@@ -57,7 +57,7 @@
     "EAGLE_AIR_STRIKE_POWER.description": "全ての敵に{Damage}ダメージを与える。",
     "MASS_PRODUCTION_POWER.title": "大量生産",
     "MASS_PRODUCTION_POWER.description": "ユニット価格が[gold]${Reduction}[/gold]減少する。",
-    "MASS_PRODUCTION_POWER.description_upgraded": "[gold]生産シーケンス[/gold]が1層あるごとに、そのユニット価格が[gold]${Reduction}[/gold]減少する。",
+    "MASS_PRODUCTION_POWER.description_upgraded": "ユニット価格が[gold]${Reduction}[/gold]減少する。",
     "GOLD_MINE_POWER.title": "金鉱",
     "GOLD_MINE_POWER.description": "現在のリザーブ {Reserve}。\n[gold]鉱車[/gold]を使用したとき、リザーブ1000を消費して[gold]$1000[/gold]を獲得する。",
     "GEM_MINE_POWER.title": "宝石鉱",

@@ -28,7 +28,6 @@ public sealed class AlliesCardPool : TypeListCardPoolModel
     private static readonly List<System.Type> CommonCardTypes = new()
     {
         typeof(ChronoCommandos),
-        typeof(ChronoIvanCard),
         typeof(Eagle500kg),
         typeof(EagleAirStrike),
         typeof(EagleMachineGun),
@@ -47,8 +46,6 @@ public sealed class AlliesCardPool : TypeListCardPoolModel
         typeof(SellMCV),
         typeof(StopProductionCard),
         typeof(SupportCard),
-        typeof(YuriCard),
-        typeof(YuriPrimeCard),
     };
     
     /// <summary>

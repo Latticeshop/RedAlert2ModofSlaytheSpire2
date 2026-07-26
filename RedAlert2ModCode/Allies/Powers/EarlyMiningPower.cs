@@ -1,6 +1,7 @@
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -29,6 +30,9 @@ public sealed class EarlyMiningPower : PowerModel
 
     public new string PackedIconPath => "res://RedAlert2ModResources/images/packed/powers/early_mining_power.png";
     public new AbstractModel OriginModel => ModelDb.Card<AlliedEarlyMining>();
+
+    public override LocString Title => new LocString("powers", "EARLY_MINING_POWER.title");
+    public override LocString Description => new LocString("powers", "EARLY_MINING_POWER.description");
 
     protected override List<DynamicVar> CanonicalVars => new()
     {

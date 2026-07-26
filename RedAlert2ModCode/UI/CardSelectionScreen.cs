@@ -243,7 +243,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         PanelContainer panel = new()
         {
             Name = "ContentPanel",
-            CustomMinimumSize = new Vector2(1200f, 450f)
+            CustomMinimumSize = new Vector2(1200f, 520f) // 保持宽度，增加高度以显示完整文案和数量控件
         };
         panel.AddThemeStyleboxOverride("panel", CreatePanelStyle());
         center.AddChild(panel);
@@ -286,8 +286,8 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             Name = "CardScroll",
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
             SizeFlagsVertical = SizeFlags.ExpandFill,
-            CustomMinimumSize = new Vector2(1100f, 320f),
-            MouseFilter = MouseFilterEnum.Pass,
+            CustomMinimumSize = new Vector2(1190f, 380f), // 1200-30×2=1140，与内部可用宽度一致，保证左右间隙对称
+            MouseFilter = MouseFilterEnum.Stop,
             HorizontalScrollMode = ScrollContainer.ScrollMode.Auto,
             VerticalScrollMode = ScrollContainer.ScrollMode.Disabled
         };
@@ -396,7 +396,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         Button button = new()
         {
             Name = $"CardButton_{card.Id.Entry}_{index}",
-            CustomMinimumSize = new Vector2(280f, 320f),
+            CustomMinimumSize = new Vector2(280f, 380f), // 增加高度以显示完整描述和数量控件
             FocusMode = FocusModeEnum.All,
             MouseDefaultCursorShape = CursorShape.PointingHand
         };
@@ -413,24 +413,34 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         contentMargin.AddThemeConstantOverride("margin_bottom", 12);
         button.AddChild(contentMargin);
 
-        // 使用VBoxContainer填充整个按钮，数量控件固定在底部
-        VBoxContainer content = new()
+        // 使用Control作为容器，支持锚点布局
+        Control content = new()
         {
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
             SizeFlagsVertical = SizeFlags.ExpandFill,
-            Alignment = BoxContainer.AlignmentMode.Center
+            MouseFilter = MouseFilterEnum.Ignore // 忽略鼠标事件，让事件穿透到父级Button
         };
-        content.AddThemeConstantOverride("separation", 4);
+        content.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
         contentMargin.AddChild(content);
 
-        // 卡牌内容区域（图片、费用、名称、描述），会自动扩展填充
+        // 卡牌内容区域（图片、费用、名称、描述），从顶部开始排列
         VBoxContainer cardContent = new()
         {
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
-            SizeFlagsVertical = SizeFlags.ExpandFill,
-            Alignment = BoxContainer.AlignmentMode.Center
+            SizeFlagsVertical = SizeFlags.ShrinkCenter,
+            Alignment = BoxContainer.AlignmentMode.Begin // 从顶部开始
         };
         cardContent.AddThemeConstantOverride("separation", 4);
+        cardContent.MouseFilter = MouseFilterEnum.Ignore; // 忽略鼠标事件，让事件穿透到父级Button
+        // 设置锚点：顶部填充，不覆盖底部数量控件区域
+        cardContent.AnchorTop = 0.0f;
+        cardContent.AnchorBottom = _isQuantitySelect ? 0.88f : 1.0f;
+        cardContent.AnchorLeft = 0.0f;
+        cardContent.AnchorRight = 1.0f;
+        cardContent.OffsetTop = 0f;
+        cardContent.OffsetBottom = 0f;
+        cardContent.OffsetLeft = 0f;
+        cardContent.OffsetRight = 0f;
         content.AddChild(cardContent);
 
         if (!string.IsNullOrEmpty(card.PortraitPath) && ResourceLoader.Exists(card.PortraitPath))
@@ -441,7 +451,8 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
                 CustomMinimumSize = new Vector2(140f, 140f),
                 StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
                 SizeFlagsHorizontal = SizeFlags.ExpandFill,
-                SizeFlagsVertical = SizeFlags.ShrinkCenter
+                SizeFlagsVertical = SizeFlags.ShrinkCenter,
+                MouseFilter = MouseFilterEnum.Ignore // 忽略鼠标事件，让事件穿透到父级Button
             };
             cardContent.AddChild(texture);
         }
@@ -457,7 +468,8 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             Text = costText,
             HorizontalAlignment = HorizontalAlignment.Center,
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
-            Modulate = new Color(1f, 0.9f, 0.2f)
+            Modulate = new Color(1f, 0.9f, 0.2f),
+            MouseFilter = MouseFilterEnum.Ignore // 忽略鼠标事件，让事件穿透到父级Button
         };
         cost.AddThemeFontSizeOverride("font_size", 16);
         cardContent.AddChild(cost);
@@ -468,7 +480,8 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         {
             Text = titleText,
             HorizontalAlignment = HorizontalAlignment.Center,
-            SizeFlagsHorizontal = SizeFlags.ExpandFill
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            MouseFilter = MouseFilterEnum.Ignore // 忽略鼠标事件，让事件穿透到父级Button
         };
         name.AddThemeFontSizeOverride("font_size", 18);
         name.AddThemeColorOverride("font_color", new Color(0.9f, 0.95f, 1f));
@@ -488,28 +501,42 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             HorizontalAlignment = HorizontalAlignment.Left,
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
-            SizeFlagsVertical = SizeFlags.ShrinkCenter
+            SizeFlagsVertical = SizeFlags.ShrinkCenter,
+            MouseFilter = MouseFilterEnum.Ignore // 忽略鼠标事件，让事件穿透到父级Button
         };
         descLabel.AddThemeFontSizeOverride("font_size", 14);
         descLabel.AddThemeColorOverride("font_color", new Color(0.85f, 0.85f, 0.9f));
         cardContent.AddChild(descLabel);
 
-        // 数量选择模式：添加数量选择控件（固定在底部）
+        // 数量选择模式：添加数量选择控件（使用锚点固定在底部）
         if (_isQuantitySelect)
         {
             HBoxContainer quantityRow = new()
             {
                 Alignment = BoxContainer.AlignmentMode.Center,
-                SizeFlagsHorizontal = SizeFlags.ExpandFill,
-                SizeFlagsVertical = SizeFlags.ShrinkCenter
+                SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
+                SizeFlagsVertical = SizeFlags.ShrinkCenter,
+                CustomMinimumSize = new Vector2(120f, 40f),
+                MouseFilter = MouseFilterEnum.Stop
             };
             quantityRow.AddThemeConstantOverride("separation", 8);
+
+            // 设置锚点：固定在底部水平居中
+            quantityRow.AnchorTop = 0.88f;
+            quantityRow.AnchorBottom = 1.0f;
+            quantityRow.AnchorLeft = 0.0f;
+            quantityRow.AnchorRight = 1.0f;
+            quantityRow.OffsetTop = 0f;
+            quantityRow.OffsetBottom = 0f;
+            quantityRow.OffsetLeft = 0f;
+            quantityRow.OffsetRight = 0f;
 
             Button minusBtn = new()
             {
                 Text = "-",
                 CustomMinimumSize = new Vector2(36f, 36f),
-                FocusMode = FocusModeEnum.All
+                FocusMode = FocusModeEnum.All,
+                MouseFilter = MouseFilterEnum.Stop
             };
             minusBtn.AddThemeFontSizeOverride("font_size", 22);
             minusBtn.Pressed += () => AdjustQuantity(index, -1);
@@ -521,7 +548,8 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
                 Text = "1", // 初始值为1
                 SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
                 CustomMinimumSize = new Vector2(40f, 36f),
-                FocusMode = FocusModeEnum.All
+                FocusMode = FocusModeEnum.All,
+                MouseFilter = MouseFilterEnum.Stop
             };
             quantityInput.AddThemeConstantOverride("align", (int)HorizontalAlignment.Center);
             quantityInput.Name = $"QuantityInput_{index}";
@@ -538,7 +566,8 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             {
                 Text = "+",
                 CustomMinimumSize = new Vector2(36f, 36f),
-                FocusMode = FocusModeEnum.All
+                FocusMode = FocusModeEnum.All,
+                MouseFilter = MouseFilterEnum.Stop
             };
             plusBtn.AddThemeFontSizeOverride("font_size", 22);
             plusBtn.Pressed += () => AdjustQuantity(index, 1);
@@ -1241,12 +1270,124 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         // 点击确认按钮，传递true表示确认操作
         if (_isQuantitySelect)
         {
+            // 数量选择模式：检查是否有选中的单位
+            if (_selectionOrder.Count == 0)
+            {
+                ShowEmptySelectionConfirmDialog();
+                return;
+            }
             Close(true);
         }
         else if (_selectedCards.Count >= _minSelection)
         {
             Close(true);
         }
+        else if (_selectedCards.Count == 0)
+        {
+            // 多选模式但未选中任何单位
+            ShowEmptySelectionConfirmDialog();
+        }
+    }
+
+    private void ShowEmptySelectionConfirmDialog()
+    {
+        // 创建弹窗背景
+        ColorRect dialogBackdrop = new()
+        {
+            Name = "EmptySelectionDialogBackdrop",
+            Color = new Color(0.0f, 0.0f, 0.0f, 0.7f),
+            MouseFilter = MouseFilterEnum.Stop
+        };
+        dialogBackdrop.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+        AddChild(dialogBackdrop);
+
+        // 创建弹窗容器
+        CenterContainer dialogCenter = new() { Name = "EmptySelectionDialogCenter" };
+        dialogCenter.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+        dialogBackdrop.AddChild(dialogCenter);
+
+        PanelContainer dialogPanel = new()
+        {
+            Name = "EmptySelectionDialogPanel",
+            CustomMinimumSize = new Vector2(400f, 200f)
+        };
+        dialogPanel.AddThemeStyleboxOverride("panel", CreatePanelStyle());
+        dialogCenter.AddChild(dialogPanel);
+
+        MarginContainer dialogMargin = new();
+        dialogMargin.AddThemeConstantOverride("margin_left", 30);
+        dialogMargin.AddThemeConstantOverride("margin_right", 30);
+        dialogMargin.AddThemeConstantOverride("margin_top", 30);
+        dialogMargin.AddThemeConstantOverride("margin_bottom", 30);
+        dialogPanel.AddChild(dialogMargin);
+
+        VBoxContainer dialogContent = new()
+        {
+            Alignment = BoxContainer.AlignmentMode.Center,
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            SizeFlagsVertical = SizeFlags.ExpandFill
+        };
+        dialogContent.AddThemeConstantOverride("separation", 20);
+        dialogMargin.AddChild(dialogContent);
+
+        // 提示文本
+        string message = GetLocStringText(new LocString("card_keywords", "ui.card_select.empty_confirm"));
+        Label messageLabel = new()
+        {
+            Text = message,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            SizeFlagsHorizontal = SizeFlags.ExpandFill
+        };
+        messageLabel.AddThemeFontSizeOverride("font_size", 18);
+        messageLabel.AddThemeColorOverride("font_color", new Color(0.9f, 0.9f, 0.9f));
+        dialogContent.AddChild(messageLabel);
+
+        // 按钮容器
+        HBoxContainer buttonContainer = new()
+        {
+            Alignment = BoxContainer.AlignmentMode.Center,
+            SizeFlagsHorizontal = SizeFlags.ShrinkCenter
+        };
+        buttonContainer.AddThemeConstantOverride("separation", 20);
+        dialogContent.AddChild(buttonContainer);
+
+        // 取消按钮
+        Button cancelBtn = new()
+        {
+            Text = GetLocStringText(new LocString("card_keywords", "ui.production_queue.cancel")),
+            CustomMinimumSize = new Vector2(120f, 40f),
+            SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
+            FocusMode = FocusModeEnum.All,
+            MouseDefaultCursorShape = CursorShape.PointingHand
+        };
+        cancelBtn.AddThemeStyleboxOverride("normal", CreateCancelStyle());
+        cancelBtn.AddThemeStyleboxOverride("hover", CreateCancelStyle(new Color(0.6f, 0.15f, 0.15f, 0.9f)));
+        cancelBtn.AddThemeStyleboxOverride("pressed", CreateCancelStyle(new Color(0.35f, 0.08f, 0.08f, 0.95f)));
+        cancelBtn.AddThemeColorOverride("font_color", new Color(1f, 0.85f, 0.85f));
+        cancelBtn.AddThemeFontSizeOverride("font_size", 18);
+        cancelBtn.Pressed += () => dialogBackdrop.QueueFree();
+        buttonContainer.AddChild(cancelBtn);
+
+        // 确认按钮
+        Button confirmBtn = new()
+        {
+            Text = GetLocStringText(new LocString("card_keywords", "ui.production_queue.confirm")),
+            CustomMinimumSize = new Vector2(120f, 40f),
+            SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
+            FocusMode = FocusModeEnum.All,
+            MouseDefaultCursorShape = CursorShape.PointingHand
+        };
+        confirmBtn.AddThemeStyleboxOverride("normal", CreateCardStyle(new Color(0.1f, 0.3f, 0.15f)));
+        confirmBtn.AddThemeStyleboxOverride("hover", CreateCardStyle(new Color(0.15f, 0.4f, 0.2f)));
+        confirmBtn.AddThemeStyleboxOverride("pressed", CreateCardStyle(new Color(0.08f, 0.25f, 0.12f)));
+        confirmBtn.AddThemeColorOverride("font_color", new Color(0.9f, 1f, 0.9f));
+        confirmBtn.AddThemeFontSizeOverride("font_size", 18);
+        confirmBtn.Pressed += () =>
+        {
+            dialogBackdrop.QueueFree();
+            Close(true);
+        };
+        buttonContainer.AddChild(confirmBtn);
     }
 
     public void AfterOverlayOpened() { Visible = true; }

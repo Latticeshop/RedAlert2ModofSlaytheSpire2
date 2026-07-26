@@ -194,5 +194,6 @@
     "ui.spy.attack.superweapon_title": "Super Weapon",
     "ui.spy.attack.superweapon_desc_base": "Ally's superweapon counter -1, if counter reaches 0 reset it, gain a 0-cost exhausted superweapon",
     "ui.spy.attack.superweapon_desc_upgraded": "Ally's superweapon counter -1, if counter reaches 0 reset it, gain a 0-cost exhausted superweapon",
-    "ui.spy.attack.unknown_desc": "Unknown building effect"
+    "ui.spy.attack.unknown_desc": "Unknown building effect",
+    "ui.card_select.empty_confirm": "No units selected. Continue anyway?"
 }

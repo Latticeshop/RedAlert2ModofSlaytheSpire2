@@ -57,7 +57,7 @@
     "EAGLE_AIR_STRIKE_POWER.description": "对全部敌人造成 {Damage} 点伤害。",
     "MASS_PRODUCTION_POWER.title": "大生产",
     "MASS_PRODUCTION_POWER.description": "单位价格减少[gold]${Reduction}[/gold]。",
-    "MASS_PRODUCTION_POWER.description_upgraded": "每有一层[gold]生产序列[/gold]，其单位价格减少[gold]${Reduction}[/gold]。",
+    "MASS_PRODUCTION_POWER.description_upgraded": "单位价格减少[gold]${Reduction}[/gold]。",
     "GOLD_MINE_POWER.title": "黄金矿",
     "GOLD_MINE_POWER.description": "当前储备 {Reserve}。\n当你打出[gold]矿车[/gold]时，消耗1000储备，额外增加[gold]$1000[/gold]。",
     "GEM_MINE_POWER.title": "宝石矿",

@@ -20,10 +20,22 @@ public class MassProductionPower : PowerModel
 
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    public int PriceReductionPerStack { get; set; } = (int)Values.Stars;
+    /// <summary>
+    /// 设置为 Instanced 允许相同类型但不同数值的能力独立存在
+    /// 参考 IronCurtainPower 和 WeatherControllerPower 的实现
+    /// </summary>
+    public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
 
     public bool IsUpgraded { get; set; } = false;
 
+    /// <summary>
+    /// 当前每层减少的价格（升级后150，未升级100）
+    /// </summary>
+    public int PriceReductionPerStack => IsUpgraded ? (int)Values.StarsUpgraded : (int)Values.Stars;
+
+    /// <summary>
+    /// 总价格减少量
+    /// </summary>
     public int TotalPriceReduction => (int)Amount * PriceReductionPerStack;
 
     public override LocString Description
@@ -47,89 +59,43 @@ public class MassProductionPower : PowerModel
     {
         GD.Print($"[MassProductionPower] ApplyMassProduction 被调用 - isUpgraded={isUpgraded}");
 
-        var allPowers = owner.Powers.OfType<MassProductionPower>().ToList();
+        // 计算当前要添加的能力数值（未升级100，升级150）
+        int targetReductionPerStack = isUpgraded ? (int)Values.StarsUpgraded : (int)Values.Stars;
         
-        if (allPowers.Count > 0)
+        GD.Print($"[MassProductionPower] 目标数值={targetReductionPerStack}, 当前拥有的大生产能力数量={owner.Powers.OfType<MassProductionPower>().Count()}");
+
+        // 按数值查找现有能力：若存在数值相同的则叠加层数，否则创建新的能力
+        var existingPower = owner.Powers
+            .OfType<MassProductionPower>()
+            .FirstOrDefault(p => p.PriceReductionPerStack == targetReductionPerStack);
+
+        if (existingPower != null)
         {
-            GD.Print($"[MassProductionPower] 发现现有大生产能力，当前数量={allPowers.Count}");
-            
-            if (isUpgraded)
-            {
-                var upgradedPower = allPowers.FirstOrDefault(p => p.IsUpgraded);
-                var unupgradedPowers = allPowers.Where(p => !p.IsUpgraded).ToList();
-                
-                int totalUnupgradedStacks = unupgradedPowers.Sum(p => (int)p.Amount);
-                
-                GD.Print($"[MassProductionPower] 升级版本叠加逻辑 - 升级能力存在={upgradedPower != null}, 未升级能力数量={unupgradedPowers.Count}, 未升级总层数={totalUnupgradedStacks}");
-                
-                foreach (var unupgradedPower in unupgradedPowers)
-                {
-                    owner.RemovePowerInternal(unupgradedPower);
-                    GD.Print($"[MassProductionPower] 移除未升级大生产能力");
-                }
-                
-                if (upgradedPower != null)
-                {
-                    int oldAmount = (int)upgradedPower.Amount;
-                    await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), upgradedPower, totalUnupgradedStacks, owner, null);
-                    GD.Print($"[MassProductionPower] 升级能力叠加未升级层数 - 旧层数={oldAmount}, 叠加层数={totalUnupgradedStacks}, 新层数={upgradedPower.Amount}");
-                }
-                else
-                {
-                    var power = await PowerCmd.Apply<MassProductionPower>(new ThrowingPlayerChoiceContext(), owner, 1m, owner, null);
-                    if (power != null)
-                    {
-                        power.IsUpgraded = true;
-                        power.PriceReductionPerStack = (int)Values.Stars;
-                        
-                        if (totalUnupgradedStacks > 0)
-                        {
-                            await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), power, totalUnupgradedStacks, owner, null);
-                            GD.Print($"[MassProductionPower] 新建升级能力并叠加未升级层数 - 新层数={power.Amount}");
-                        }
-                    }
-                }
-            }
-            else
-            {
-                var upgradedPower = allPowers.FirstOrDefault(p => p.IsUpgraded);
-                var targetPower = upgradedPower ?? allPowers.First();
-                
-                GD.Print($"[MassProductionPower] 叠加层数到 {(targetPower.IsUpgraded ? "升级" : "未升级")} 能力 - 当前层数={targetPower.Amount}");
-                
-                await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), targetPower, 1m, owner, null);
-                GD.Print($"[MassProductionPower] 层数增加完成 - 新层数={targetPower.Amount}");
-            }
-            
-            await CreatureCmd.TriggerAnim(owner, "Cast", 0.3f);
-            
-            await RecalculateAllTrainingQueuePrices(owner);
-            
-            GD.Print($"[MassProductionPower] 重新计算所有生产序列价格完成");
-            
-            return allPowers.FirstOrDefault(p => p.IsUpgraded) ?? allPowers.First();
+            // 存在相同数值的能力，增加层数
+            GD.Print($"[MassProductionPower] 发现相同数值的能力，增加层数 - 当前层数={existingPower.Amount}, 每层减少={existingPower.PriceReductionPerStack}");
+            await PowerCmd.ModifyAmount(new ThrowingPlayerChoiceContext(), existingPower, 1m, owner, null);
+            GD.Print($"[MassProductionPower] 层数增加完成 - 新层数={existingPower.Amount}");
         }
         else
         {
-            GD.Print($"[MassProductionPower] 创建新大生产能力 - isUpgraded={isUpgraded}");
-            
-            var power = await PowerCmd.Apply<MassProductionPower>(new ThrowingPlayerChoiceContext(), owner, 1m, owner, null);
-            
-            if (power != null)
+            // 不存在相同数值的能力，创建新能力
+            GD.Print($"[MassProductionPower] 未发现相同数值的能力，创建新能力 - 每层减少={targetReductionPerStack}");
+            var newPower = await PowerCmd.Apply<MassProductionPower>(new ThrowingPlayerChoiceContext(), owner, 1m, owner, null);
+            if (newPower != null)
             {
-                power.IsUpgraded = isUpgraded;
-                power.PriceReductionPerStack = (int)Values.Stars;
-                GD.Print($"[MassProductionPower] 创建成功 - 层数={power.Amount}, IsUpgraded={power.IsUpgraded}, 价格减少={power.TotalPriceReduction}");
-                
-                await CreatureCmd.TriggerAnim(owner, "Cast", 0.3f);
-                
-                await RecalculateAllTrainingQueuePrices(owner);
-                
-                GD.Print($"[MassProductionPower] 计算所有生产序列价格完成");
+                newPower.IsUpgraded = isUpgraded;
+                GD.Print($"[MassProductionPower] 创建成功 - 层数={newPower.Amount}, IsUpgraded={newPower.IsUpgraded}, 每层减少={newPower.PriceReductionPerStack}");
             }
-            
-            return power;
         }
+        
+        await CreatureCmd.TriggerAnim(owner, "Cast", 0.3f);
+        
+        await RecalculateAllTrainingQueuePrices(owner);
+        
+        GD.Print($"[MassProductionPower] 重新计算所有生产序列价格完成");
+        
+        // 返回最新的对应数值的能力
+        return owner.Powers.OfType<MassProductionPower>().FirstOrDefault(p => p.PriceReductionPerStack == targetReductionPerStack);
     }
 
     public static async Task RecalculateAllTrainingQueuePrices(Creature owner)
@@ -155,8 +121,8 @@ public class MassProductionPower : PowerModel
         return trainingPower.UnitPrice;
     }
 
-    public static int CalculateUnitPrice(Creature owner, int originalPrice, int trainingQueueStacks = 1)
+    public static int CalculateUnitPrice(Creature owner, int originalPrice)
     {
-        return UnitPriceCalculator.ApplyMassProductionReduction(owner, originalPrice, trainingQueueStacks);
+        return UnitPriceCalculator.ApplyMassProductionReduction(owner, originalPrice);
     }
 }

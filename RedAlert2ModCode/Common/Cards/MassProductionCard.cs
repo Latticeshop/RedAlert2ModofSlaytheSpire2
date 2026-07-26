@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -42,6 +42,8 @@ public class MassProductionCard : CardModel
     protected override void OnUpgrade()
     {
         base.EnergyCost.UpgradeBy((int)Values.CostUpgraded);
+        // 升级后每层减少的价格从100增加到150
+        DynamicVars["Reduction"].UpgradeValueBy((int)Values.StarsUpgraded);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)

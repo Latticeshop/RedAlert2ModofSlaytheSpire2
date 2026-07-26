@@ -58,7 +58,18 @@ public sealed class OreRefineryCard : CardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
+        // 播放建筑释放音效
+        BuildingSoundHelper.PlayBuildingPlaceSound();
+        
         await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+        
+        // 扣除建筑资金
+        var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+        if (dollarPower != null)
+        {
+            dollarPower.AddDollar(-(int)Values.DollarValue);
+            GD.Print($"[OreRefineryCard] 扣除建筑资金 {Values.DollarValue}");
+        }
         
         var existingPower = Owner.Creature.Powers.OfType<OreRefineryPower>().FirstOrDefault();
         if (existingPower != null)
@@ -80,6 +91,9 @@ public sealed class OreRefineryCard : CardModel
                 oreRefineryPower.IsUpgraded = IsUpgraded;
             }
         }
+        
+        // 打出后抽一张牌
+        await CardPileCmd.Draw(ctx, 1, Owner);
     }
 
     protected override void OnUpgrade()

@@ -27,7 +27,6 @@ public sealed class SovietCardPool : TypeListCardPoolModel
     /// </summary>
     private static readonly List<System.Type> CommonCardTypes = new()
     {
-        typeof(ChronoCommandos),
         typeof(ChronoIvanCard),
         typeof(F2A),
         typeof(ForceField),
@@ -39,7 +38,6 @@ public sealed class SovietCardPool : TypeListCardPoolModel
         typeof(MineRaid),
         typeof(OilDerrickCard),
         typeof(Paratrooper),
-        typeof(PsiCommandoCard),
         typeof(Ra2Rally),
         typeof(SellBuildingCard),
         typeof(SellMCV),

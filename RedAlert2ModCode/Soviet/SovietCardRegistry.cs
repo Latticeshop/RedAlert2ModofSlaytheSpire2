@@ -312,10 +312,15 @@ public static class SovietCardRegistry
         return RadarVehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
     }
 
+    /// <summary>
+    /// 检查是否有雷达/空指部能力（T2科技）或作战实验室能力（T3科技）
+    /// 作战实验室(T3)也能解锁T2单位
+    /// </summary>
     public static bool HasRadarPower(Creature creature)
     {
         return creature.Powers.Any(p => p.GetType().Name == typeof(SovietRadarPower).Name) ||
-               creature.Powers.Any(p => p.GetType().Name == typeof(RedAlert2ModCode.Allies.Powers.AlliedAirForceCommandPower).Name);
+               creature.Powers.Any(p => p.GetType().Name == typeof(RedAlert2ModCode.Allies.Powers.AlliedAirForceCommandPower).Name) ||
+               creature.Powers.Any(p => p.GetType().Name == typeof(SovietBattleLabPower).Name);
     }
 
     public static bool HasBattleLabPower(Creature creature)

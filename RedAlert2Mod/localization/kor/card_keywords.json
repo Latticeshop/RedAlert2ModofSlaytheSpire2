@@ -194,5 +194,6 @@
   "ui.spy.attack.superweapon_title": "슈퍼 웨폰",
   "ui.spy.attack.superweapon_desc_base": "아군 슈퍼 웨폰 카운터-1, 카운터가 0이 되면 초기화, 0 코스트 소멸 슈퍼 웨폰을 얻습니다",
   "ui.spy.attack.superweapon_desc_upgraded": "아군 슈퍼 웨폰 카운터-1, 카운터가 0이 되면 초기화, 0 코스트 소멸 슈퍼 웨폰을 얻습니다",
-  "ui.spy.attack.unknown_desc": "알 수 없는 건물 효과"
+  "ui.spy.attack.unknown_desc": "알 수 없는 건물 효과",
+  "ui.card_select.empty_confirm": "유닛이 선택되지 않았습니다. 계속하시겠습니까?"
 }

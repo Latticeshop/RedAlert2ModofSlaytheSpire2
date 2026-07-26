@@ -194,5 +194,6 @@
     "ui.spy.attack.superweapon_title": "スーパーウェポン",
     "ui.spy.attack.superweapon_desc_base": "味方のスーパーウェポンカウンター-1、カウンターが0になった場合リセット、0費用で消費されるスーパーウェポンを獲得",
     "ui.spy.attack.superweapon_desc_upgraded": "味方のスーパーウェポンカウンター-1、カウンターが0になった場合リセット、0費用で消費されるスーパーウェポンを獲得",
-    "ui.spy.attack.unknown_desc": "不明な建物効果"
+    "ui.spy.attack.unknown_desc": "不明な建物効果",
+    "ui.card_select.empty_confirm": "ユニットが選択されていません。続行しますか？"
 }

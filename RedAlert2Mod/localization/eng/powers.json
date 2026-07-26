@@ -57,7 +57,7 @@
     "EAGLE_AIR_STRIKE_POWER.description": "Deals {Damage} damage to all enemies.",
     "MASS_PRODUCTION_POWER.title": "Mass Production",
     "MASS_PRODUCTION_POWER.description": "Reduces unit cost by [gold]${Reduction}[/gold].",
-    "MASS_PRODUCTION_POWER.description_upgraded": "For each [gold]Production Queue[/gold] stack, reduces unit cost by [gold]${Reduction}[/gold].",
+    "MASS_PRODUCTION_POWER.description_upgraded": "Reduces unit cost by [gold]${Reduction}[/gold].",
     "GOLD_MINE_POWER.title": "Gold Mine",
     "GOLD_MINE_POWER.description": "Current reserve: {Reserve}.\nWhen you play a [gold]miner[/gold], spend 1000 reserves to gain [gold]$1000[/gold].",
     "GEM_MINE_POWER.title": "Gem Mine",

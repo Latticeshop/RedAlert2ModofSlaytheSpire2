@@ -477,12 +477,14 @@ public static class AlliedCardRegistry
     }
 
     /// <summary>
-    /// 检查是否有空指部或雷达能力（T2科技解锁）
+    /// 检查是否有空指部/雷达能力（T2科技）或作战实验室能力（T3科技）
+    /// 作战实验室(T3)也能解锁T2单位
     /// </summary>
     public static bool HasAirForceCommandPower(Creature creature)
     {
         return creature.Powers.Any(p => p.GetType().Name == typeof(AlliedAirForceCommandPower).Name) ||
-               creature.Powers.Any(p => p.GetType().Name == typeof(RedAlert2ModCode.Soviet.Powers.SovietRadarPower).Name);
+               creature.Powers.Any(p => p.GetType().Name == typeof(RedAlert2ModCode.Soviet.Powers.SovietRadarPower).Name) ||
+               creature.Powers.Any(p => p.GetType().Name == typeof(BattleLabPower).Name);
     }
 
     public static List<CardModel> CreateAircraft(Player owner)

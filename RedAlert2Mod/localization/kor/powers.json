@@ -44,7 +44,7 @@
     "KITING_POWER.smartDescription": "이번 턴, [gold]유닛[/gold] 카드를 사용할 때마다 방어도를 {Amount} 얻습니다.",
     "KITING_POWER.title": "카이팅",
     "MASS_PRODUCTION_POWER.description": "유닛 비용을 [gold]${Reduction}[/gold]만큼 줄입니다.",
-    "MASS_PRODUCTION_POWER.description_upgraded": "[gold]생산 대기열[/gold] 중첩마다 유닛 비용을 [gold]${Reduction}[/gold]만큼 줄입니다.",
+    "MASS_PRODUCTION_POWER.description_upgraded": "유닛 비용을 [gold]${Reduction}[/gold]만큼 줄입니다.",
     "MASS_PRODUCTION_POWER.title": "대량 생산",
     "NUCLEAR_MISSILE_SILO_POWER.description": "[gold]{TurnsRemaining}[/gold]턴 후, 손에 0코스트 휘발성 [gold]{NuclearAttackName}[/gold] 카드를 추가합니다.",
     "NUCLEAR_MISSILE_SILO_POWER.title": "핵미사일 사일로",
