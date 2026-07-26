@@ -45,7 +45,9 @@ public static class FlagSelectionPatches
 
 	private static void StartRunPostfix(RunState runState, ref Task __result)
 	{
-		__result = StartRunAfterOriginal(__result, runState);
+		// 不要修改 __result，让原始任务正常完成
+		// 将国旗选择作为独立任务运行，避免阻塞游戏开始流程
+		_ = StartRunAfterOriginal(__result, runState);
 	}
 
 	private static async Task StartRunAfterOriginal(Task original, RunState runState)
@@ -187,6 +189,7 @@ public static class FlagSelectionPatches
 			uint choiceId = synchronizer.ReserveChoiceId(player);
 			bool isLocal = IsLocalPlayer(runManager, player);
 			pendingSelections.Add(new PendingFlagSelection(player, options, choiceId, isLocal));
+			GD.Print($"[RedAlert2Mod] Multiplayer: reserved choiceId={choiceId} for player={player.NetId}, isLocal={isLocal}, faction={faction}");
 		}
 
 		if (pendingSelections.Count == 0)
@@ -194,21 +197,26 @@ public static class FlagSelectionPatches
 			return changed;
 		}
 
-		// 同时启动所有选择任务
+		// 分离本地玩家和远程玩家的选择
+		List<PendingFlagSelection> localSelections = pendingSelections.Where(s => s.IsLocal).ToList();
+		List<PendingFlagSelection> remoteSelections = pendingSelections.Where(s => !s.IsLocal).ToList();
+
+		GD.Print($"[RedAlert2Mod] Multiplayer: {localSelections.Count} local selections, {remoteSelections.Count} remote selections");
+
+		// 同时启动所有选择任务（本地玩家并行处理UI）
 		List<FlagSelectionScreen> localScreens = new();
 		try
 		{
-			Task<RelicModel?>[] selectionTasks = pendingSelections
-				.Select(selection => SelectFlagMultiplayer(selection, synchronizer, localScreens))
+			Task<(PendingFlagSelection, RelicModel?)>[] selectionTasks = pendingSelections
+				.Select(selection => SelectFlagMultiplayer(selection, synchronizer, localScreens, runManager))
 				.ToArray();
 
 			// 等待所有玩家选择完成
-			RelicModel?[] selectedFlags = await Task.WhenAll(selectionTasks);
+			(PendingFlagSelection, RelicModel?)[] selectedResults = await Task.WhenAll(selectionTasks);
 
-			for (int i = 0; i < pendingSelections.Count; i++)
+			for (int i = 0; i < selectedResults.Length; i++)
 			{
-				PendingFlagSelection selection = pendingSelections[i];
-				RelicModel? selectedFlag = selectedFlags[i];
+				var (selection, selectedFlag) = selectedResults[i];
 
 				if (selectedFlag != null)
 				{
@@ -236,10 +244,11 @@ public static class FlagSelectionPatches
 		return changed;
 	}
 
-	private static async Task<RelicModel?> SelectFlagMultiplayer(
+	private static async Task<(PendingFlagSelection, RelicModel?)> SelectFlagMultiplayer(
 		PendingFlagSelection selection,
 		PlayerChoiceSynchronizer synchronizer,
-		ICollection<FlagSelectionScreen> localScreens)
+		ICollection<FlagSelectionScreen> localScreens,
+		RunManager runManager)
 	{
 		if (selection.IsLocal)
 		{
@@ -253,16 +262,58 @@ public static class FlagSelectionPatches
 				? selection.Options.FindIndex(f => f.Id == selectedFlag.Id)
 				: -1;
 
-			// 同步选择结果
-			synchronizer.SyncLocalChoice(selection.Player, selection.ChoiceId, PlayerChoiceResult.FromIndex(selectedIndex));
-			return selectedFlag;
+			// 同步选择结果（带连接状态检查）
+			if (IsNetServiceConnected(runManager))
+			{
+				synchronizer.SyncLocalChoice(selection.Player, selection.ChoiceId, PlayerChoiceResult.FromIndex(selectedIndex));
+				GD.Print($"[RedAlert2Mod] Multiplayer: synced choiceId={selection.ChoiceId}, index={selectedIndex} for player={selection.Player.NetId}");
+			}
+			else
+			{
+				GD.Print($"[RedAlert2Mod] Multiplayer: skipped syncing choice (not connected) for player={selection.Player.NetId}");
+			}
+			return (selection, selectedFlag);
 		}
 		else
 		{
 			// 远程玩家：等待同步
-			PlayerChoiceResult remoteChoice = await synchronizer.WaitForRemoteChoice(selection.Player, selection.ChoiceId);
-			int index = remoteChoice.AsIndex();
-			return index >= 0 && index < selection.Options.Count ? selection.Options[index] : null;
+			try
+			{
+				PlayerChoiceResult remoteChoice = await synchronizer.WaitForRemoteChoice(selection.Player, selection.ChoiceId);
+				int index = remoteChoice.AsIndex();
+				RelicModel? result = index >= 0 && index < selection.Options.Count ? selection.Options[index] : null;
+				GD.Print($"[RedAlert2Mod] Multiplayer: received remote choice for player={selection.Player.NetId}, choiceId={selection.ChoiceId}, index={index}");
+				return (selection, result);
+			}
+			catch (Exception ex)
+			{
+				GD.PrintErr($"[RedAlert2Mod] Multiplayer remote selection error for player={selection.Player.NetId}: {ex}");
+				return (selection, null);
+			}
+		}
+	}
+
+	private static bool IsNetServiceConnected(RunManager runManager)
+	{
+		try
+		{
+			if (runManager.NetService == null)
+				return false;
+
+			// 检查 NetService 的连接状态
+			PropertyInfo? isConnectedProp = runManager.NetService.GetType().GetProperty("IsConnected");
+			if (isConnectedProp != null)
+			{
+				object? value = isConnectedProp.GetValue(runManager.NetService);
+				if (value is bool connected)
+					return connected;
+			}
+
+			return true;
+		}
+		catch
+		{
+			return false;
 		}
 	}
 
