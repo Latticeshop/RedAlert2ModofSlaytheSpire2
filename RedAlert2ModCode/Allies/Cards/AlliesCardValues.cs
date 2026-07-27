@@ -339,7 +339,7 @@ public static class AlliesCardValues
 		MagicNumberUpgraded = 1    // 升级后增加1张
 	};
 
-	/// <summary>策略：塔防 - 2费能力卡，升级后1费</summary>
+	/// <summary>策略：塔防 - 3费能力卡，升级后2费</summary>
 	public static CardValueStore.CardValues StrategyTowerDefense => new()
 	{
 		Cost = 3,

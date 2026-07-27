@@ -19,6 +19,7 @@
     "SOVIET_BATTLE_LAB_POWER.description": "已部署作战实验室。",
     "TRAINING_QUEUE_POWER.title": "生产序列",
     "TRAINING_QUEUE_POWER.description": "每回合花费[gold]${UnitPrice}[/gold]，加入一张0费{ExhaustText}的{UnitName}卡牌，并使自身层数-1。{StoppedMarker}",
+    "TRAINING_QUEUE_POWER.exhaust_text": "且消耗",
     "POWER_PLANT_POWER.title": "发电厂",
     "POWER_PLANT_POWER.description": "每抽 {BaseCards} 张牌获得 1 点能量。",
     "POWER_PLANT_POWER.smartDescription": "每抽 [blue]{BaseCards}[/blue] 张牌获得 {Amount:energyIcons()}。",

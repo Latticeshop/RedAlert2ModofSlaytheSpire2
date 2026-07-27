@@ -17,8 +17,8 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
-/// 策略：塔防 - 运转卡（能力卡）
-/// 2费，升级后1费
+/// 策略：塔防 - 技能卡（消耗）
+/// 3费，升级后2费
 /// 效果：获得"策略：塔防"能力，加入一张带消耗的光棱塔
 /// 策略：塔防能力效果：打出围墙时，若有光棱塔能力则获得1回合残影
 /// </summary>
@@ -27,7 +27,12 @@ public sealed class StrategyTowerDefense : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.StrategyTowerDefense;
 
-	public StrategyTowerDefense() : base((int)Values.Cost, CardType.Power, CardRarity.Rare, TargetType.Self) { }
+	public StrategyTowerDefense() : base((int)Values.Cost, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
+
+	/// <summary>
+	/// 添加消耗词条
+	/// </summary>
+	public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Exhaust };
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/strategy_tower_defense.png";
 

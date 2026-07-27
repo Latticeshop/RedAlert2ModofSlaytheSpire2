@@ -47,10 +47,9 @@ public sealed class LightningStorm : CardModel
     [
         ModCardKeywords.AlliedSuperWeapon.CreateHoverTip(),
         HoverTipFactory.Static(StaticHoverTip.Channeling),
-        HoverTipFactory.FromOrb<LightningOrb>()
-    ];
-
-    protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+        HoverTipFactory.FromOrb<LightningOrb>(),
+        HoverTipFactory.FromCard<Voltaic>()
+    ];async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         GD.Print("[LightningStorm] OnPlay 被调用");
 

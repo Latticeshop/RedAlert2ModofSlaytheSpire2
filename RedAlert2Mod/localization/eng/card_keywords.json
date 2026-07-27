@@ -72,6 +72,7 @@
     "engineer_choice.capture_tech_outpost.description": "Gain Patriot Missile and Repair abilities",
     "engineer_choice.repair_bridge.title": "Repair Bridge",
     "engineer_choice.repair_bridge.description": "Discard a card to draw 2 cards",
+    "engineer_choice.repair_bridge.select_prompt": "Select {0}-{1} cards to exhaust.",
     "engineer_choice.survey_mine_field.title": "Survey Mine Field",
     "engineer_choice.survey_mine_field.description": "Gain a random Mine card",
     "ui.chrono_warp.title": "Choose a Pile",

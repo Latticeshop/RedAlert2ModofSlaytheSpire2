@@ -72,6 +72,7 @@
   "engineer_choice.capture_tech_outpost.description": "패트리어트 미사일과 수리 능력을 얻습니다",
   "engineer_choice.repair_bridge.title": "다리 수리",
   "engineer_choice.repair_bridge.description": "카드 1장을 버리고 2장을 뽑습니다",
+  "engineer_choice.repair_bridge.select_prompt": "소멸시킬 카드 {0}~{1}장을 선택하세요.",
   "engineer_choice.survey_mine_field.title": "광구 탐사",
   "engineer_choice.survey_mine_field.description": "무작위 광산 카드 1장을 얻습니다",
   "ui.chrono_warp.title": "더미 선택",

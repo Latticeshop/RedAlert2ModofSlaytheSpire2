@@ -104,7 +104,7 @@ public sealed class TrainingQueuePower : PowerModel
     {
         base.DeepCloneFields();
         
-        GD.Print($"[TrainingQueuePower] DeepCloneFields 被调用 - InstanceId={_instanceId}, TrainedCardId='{TrainedCardId}', TrainedUnitIconPath='{TrainedUnitIconPath}'");
+        GD.Print($"[TrainingQueuePower] DeepCloneFields 被调用 - InstanceId={_instanceId}, TrainedCardId='{TrainedCardId}', TrainedUnitIconPath='{TrainedUnitIconPath}', ExhaustWhenPlayed={ExhaustWhenPlayed}");
         
         // 注册能力哈希码以保留图标路径
         PowerIconManager.RegisterPowerHashCode(this);
@@ -155,7 +155,15 @@ public sealed class TrainingQueuePower : PowerModel
             locString.Add("UnitName", displayName);
             locString.Add("UnitPrice", UnitPrice.ToString());
             
-            locString.Add("ExhaustText", ExhaustWhenPlayed ? new LocString("card_keywords", "exhaust_text").GetFormattedText() : "");
+            if (ExhaustWhenPlayed)
+            {
+                var exhaustText = new LocString("powers", base.Id.Entry + ".exhaust_text").GetFormattedText();
+                locString.Add("ExhaustText", exhaustText);
+            }
+            else
+            {
+                locString.Add("ExhaustText", "");
+            }
             
             if (IsStopped)
             {

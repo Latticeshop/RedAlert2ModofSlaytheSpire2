@@ -72,6 +72,7 @@
     "engineer_choice.capture_tech_outpost.description": "「パトリオットミサイル」と「修理工場」能力を獲得",
     "engineer_choice.repair_bridge.title": "橋修理",
     "engineer_choice.repair_bridge.description": "手札を1枚消費し、2枚引く",
+    "engineer_choice.repair_bridge.select_prompt": "消費するカードを{0}-{1}枚選択する。",
     "engineer_choice.survey_mine_field.title": "鉱区調査",
     "engineer_choice.survey_mine_field.description": "ランダムに鉱山カードを1枚獲得",
     "ui.chrono_warp.title": "パイルを選択",

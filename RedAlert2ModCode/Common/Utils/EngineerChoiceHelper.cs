@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -92,21 +94,33 @@ public static class EngineerChoiceHelper
                 break;
 
             case ChoiceSelectionScreen.ChoiceType.RepairBridge:
-                var handPile = PileType.Hand.GetPile(card.Owner);
-                var handCards = handPile.Cards.ToList();
-                
-                if (handCards.Any())
+                // 使用原版手牌选择UI，让玩家选择1张牌来消耗（参考苏联维修厂实现）
+                var repairSelectPrompt = new LocString("card_keywords", "engineer_choice.repair_bridge.select_prompt");
+                repairSelectPrompt.Add("0", 1);
+                repairSelectPrompt.Add("1", 1);
+                var repairPrefs = new CardSelectorPrefs(repairSelectPrompt, 1, 1)
                 {
-                    var selectedCards = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(handCards, 1, 1, card.Owner);
-                    
-                    if (selectedCards != null && selectedCards.Any())
-                    {
-                        foreach (var selectedCard in selectedCards)
-                        {
-                            await CardPileCmd.Add(selectedCard, PileType.Exhaust);
-                        }
-                        await CardPileCmd.Draw(ctx, 2, card.Owner);
-                    }
+                    RequireManualConfirmation = true
+                };
+
+                var repairSelectedCards = (await CardSelectCmd.FromHand(
+                    ctx,
+                    card.Owner,
+                    repairPrefs,
+                    c => true,
+                    card
+                )).ToList();
+
+                foreach (var repairCard in repairSelectedCards)
+                {
+                    await CardPileCmd.Add(repairCard, PileType.Exhaust);
+                    GD.Print($"[EngineerChoiceHelper] 维修桥梁：消耗手牌 {repairCard.Id.Entry}");
+                }
+
+                if (repairSelectedCards.Any())
+                {
+                    await CardPileCmd.Draw(ctx, 2, card.Owner);
+                    GD.Print("[EngineerChoiceHelper] 维修桥梁：抽2张牌");
                 }
                 break;
 
