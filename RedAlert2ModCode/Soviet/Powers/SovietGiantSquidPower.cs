@@ -42,7 +42,7 @@ public sealed class SovietGiantSquidPower : PowerModel
     public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
     {
         if (side != CombatSide.Enemy) return;
-        if (Owner == null) return;
+        if (Owner == null || !Owner.IsAlive) return;
 
         int squidStacks = (int)Amount;
         if (squidStacks <= 0) return;
@@ -60,7 +60,7 @@ public sealed class SovietGiantSquidPower : PowerModel
     public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
     {
         if (side != CombatSide.Enemy) return;
-        if (Owner == null) return;
+        if (Owner == null || !Owner.IsAlive) return;
         
         int damage = (int)Amount;
         if (damage <= 0) return;

@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Combat;
+using MegaCrit.Sts2.Core.ValueProps;
 using RedAlert2ModCode.Common.Utils;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -33,7 +34,7 @@ public sealed class ErasingPower : PowerModel
     public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
     {
         if (side != CombatSide.Enemy) return;
-        if (Owner == null) return;
+        if (Owner == null || !Owner.IsAlive) return;
 
         await CheckErase(choiceContext, combatState);
     }
@@ -80,7 +81,7 @@ public sealed class ErasingPower : PowerModel
         int eraseStacks = (int)Amount;
         if (eraseStacks <= 0) return;
 
-        if (Owner == null) return;
+        if (Owner == null || !Owner.IsAlive) return;
 
         if (eraseStacks > (int)Owner.CurrentHp)
         {
