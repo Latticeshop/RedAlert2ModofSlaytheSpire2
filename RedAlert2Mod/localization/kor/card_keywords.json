@@ -92,7 +92,7 @@
   "ui.flak_track.title": "플락 트랙 행동 선택",
   "ui.flak_track.deploy_title": "전개",
   "ui.flak_track.deploy_desc": "손에 있는 보병 유닛을 저장합니다",
-  "ui.flak_track.defend_title": "방어",
+  "ui.flak_track.defend_title": "뽑기",
   "ui.flak_track.defend_desc": "카드를 뽑고 카드를 버립니다",
   "ui.tesla_trooper.title": "테슬라 트루퍼 행동 선택",
   "ui.tesla_trooper.deploy_title": "전개",
@@ -198,5 +198,10 @@
   "ui.spy.attack.superweapon_desc_base": "아군 슈퍼 웨폰 카운터-1, 카운터가 0이 되면 초기화, 0 코스트 소멸 슈퍼 웨폰을 얻습니다",
   "ui.spy.attack.superweapon_desc_upgraded": "아군 슈퍼 웨폰 카운터-1, 카운터가 0이 되면 초기화, 0 코스트 소멸 슈퍼 웨폰을 얻습니다",
   "ui.spy.attack.unknown_desc": "알 수 없는 건물 효과",
-  "ui.card_select.empty_confirm": "유닛이 선택되지 않았습니다. 계속하시겠습니까?"
+  "ui.card_select.empty_confirm": "유닛이 선택되지 않았습니다. 계속하시겠습니까?",
+  "ui.battle_fortress.title": "배틀 포트레스 행동 선택",
+  "ui.battle_fortress.attack_title": "공격",
+  "ui.battle_fortress.attack_desc": "방어도를 얻고 융합 효과를 발동합니다",
+  "ui.battle_fortress.deploy_title": "전개",
+  "ui.battle_fortress.deploy_desc": "보병 유닛을 저장하거나 인출합니다"
 }

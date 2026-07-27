@@ -49,7 +49,9 @@ public sealed class LightningStorm : CardModel
         HoverTipFactory.Static(StaticHoverTip.Channeling),
         HoverTipFactory.FromOrb<LightningOrb>(),
         HoverTipFactory.FromCard<Voltaic>()
-    ];async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+    ];
+
+    protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         GD.Print("[LightningStorm] OnPlay 被调用");
 

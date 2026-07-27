@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -88,7 +88,7 @@ public sealed class AlliedTransportShip : CardModel
         
         GD.Print($"[AlliedTransportShip] 准备存储最多 {countToStore} 张卡牌");
 
-        var selectPrompt = new LocString("cards", "ALLIED_TRANSPORT_SHIP.select_prompt");
+        var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_ALLIED_TRANSPORT_SHIP.select_prompt");
         selectPrompt.Add("0", 0);
         selectPrompt.Add("1", countToStore);
         var prefs = new CardSelectorPrefs(selectPrompt, 0, countToStore)

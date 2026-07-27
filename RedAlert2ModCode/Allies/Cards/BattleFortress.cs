@@ -136,18 +136,20 @@ public sealed class BattleFortress : CardModel
 			new DeployChoiceScreen.ChoiceOption
 			{
 				Id = "attack",
-				Title = new LocString("cards", "BATTLE_FORTRESS.attack_option"),
-				Description = new LocString("cards", "BATTLE_FORTRESS.attack_option")
+				Title = new LocString("card_keywords", "ui.battle_fortress.attack_title"),
+				Description = new LocString("card_keywords", "ui.battle_fortress.attack_desc"),
+				IconPath = "res://RedAlert2ModResources/images/ui/attack.png"
 			},
 			new DeployChoiceScreen.ChoiceOption
 			{
 				Id = "deploy",
-				Title = new LocString("cards", "BATTLE_FORTRESS.deploy_option"),
-				Description = new LocString("cards", "BATTLE_FORTRESS.deploy_option")
+				Title = new LocString("card_keywords", "ui.battle_fortress.deploy_title"),
+				Description = new LocString("card_keywords", "ui.battle_fortress.deploy_desc"),
+				IconPath = "res://RedAlert2ModResources/images/ui/deploy.png"
 			}
 		};
 
-		var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, new LocString("cards", "BATTLE_FORTRESS.action_prompt"), options, FactionType.Allied);
+		var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, new LocString("card_keywords", "ui.battle_fortress.title"), options, FactionType.Allied);
 
 		if (selectedIndex.HasValue)
 		{

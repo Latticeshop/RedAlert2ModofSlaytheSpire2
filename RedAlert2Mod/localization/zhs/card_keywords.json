@@ -92,7 +92,7 @@
     "ui.flak_track.title": "选择防空履带车的行动",
     "ui.flak_track.deploy_title": "部署",
     "ui.flak_track.deploy_desc": "存储当前手牌中的士兵单位",
-    "ui.flak_track.defend_title": "防御",
+    "ui.flak_track.defend_title": "抽牌",
     "ui.flak_track.defend_desc": "抽牌并获弃牌",
     "ui.tesla_trooper.title": "选择磁暴步兵的行动",
     "ui.tesla_trooper.deploy_title": "部署",
@@ -198,5 +198,10 @@
     "ui.spy.attack.superweapon_desc_base": "队友超武计数-1，若计数为0则重置队友计数，自己获得一张0费消耗的超级武器",
     "ui.spy.attack.superweapon_desc_upgraded": "队友超武计数-1，若计数为0则重置队友计数，自己获得一张0费消耗的超级武器",
     "ui.spy.attack.unknown_desc": "未知建筑效果",
-    "ui.card_select.empty_confirm": "当前没有选中单位，是否继续？"
+    "ui.card_select.empty_confirm": "当前没有选中单位，是否继续？",
+    "ui.battle_fortress.title": "选择战斗要塞的行动",
+    "ui.battle_fortress.attack_title": "攻击",
+    "ui.battle_fortress.attack_desc": "获得格挡并触发融合效果",
+    "ui.battle_fortress.deploy_title": "部署",
+    "ui.battle_fortress.deploy_desc": "存储或取出士兵单位"
 }

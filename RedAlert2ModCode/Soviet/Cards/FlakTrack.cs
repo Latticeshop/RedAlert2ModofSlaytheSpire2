@@ -87,17 +87,17 @@ public sealed partial class FlakTrack : CardModel
         {
             new DeployChoiceScreen.ChoiceOption
             {
-                Id = "deploy",
-                Title = new LocString("card_keywords", "ui.flak_track.deploy_title"),
-                Description = new LocString("card_keywords", "ui.flak_track.deploy_desc"),
-                IconPath = "res://RedAlert2ModResources/images/ui/deploy.png"
-            },
-            new DeployChoiceScreen.ChoiceOption
-            {
                 Id = "attack",
                 Title = new LocString("card_keywords", "ui.flak_track.defend_title"),
                 Description = new LocString("card_keywords", "ui.flak_track.defend_desc"),
                 IconPath = "res://RedAlert2ModResources/images/ui/attack.png"
+            },
+            new DeployChoiceScreen.ChoiceOption
+            {
+                Id = "deploy",
+                Title = new LocString("card_keywords", "ui.flak_track.deploy_title"),
+                Description = new LocString("card_keywords", "ui.flak_track.deploy_desc"),
+                IconPath = "res://RedAlert2ModResources/images/ui/deploy.png"
             }
         };
 
@@ -105,11 +105,11 @@ public sealed partial class FlakTrack : CardModel
 
         if (selectedIndex == 0)
         {
-            await ExecuteDeploy(ctx, play);
+            await ExecuteAttack(ctx, play);
         }
         else
         {
-            await ExecuteAttack(ctx, play);
+            await ExecuteDeploy(ctx, play);
         }
     }
 
@@ -148,7 +148,7 @@ public sealed partial class FlakTrack : CardModel
     {
         var soldierCards = GetSoldierCardsFromHand();
 
-        var selectPrompt = new LocString("cards", "FLAK_TRACK.select_prompt");
+        var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_FLAK_TRACK.select_prompt");
         selectPrompt.Add("0", 0);
         selectPrompt.Add("1", 5);
         var prefs = new CardSelectorPrefs(selectPrompt, 0, 5)

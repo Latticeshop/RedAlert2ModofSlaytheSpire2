@@ -92,7 +92,7 @@
     "ui.flak_track.title": "フラックトラックの行動を選択",
     "ui.flak_track.deploy_title": "展開",
     "ui.flak_track.deploy_desc": "手札中の兵士ユニットを保存",
-    "ui.flak_track.defend_title": "防御",
+    "ui.flak_track.defend_title": "ドロー",
     "ui.flak_track.defend_desc": "カードを引き、カードを捨てる",
     "ui.tesla_trooper.title": "テスラ兵の行動を選択",
     "ui.tesla_trooper.deploy_title": "展開",
@@ -198,5 +198,10 @@
     "ui.spy.attack.superweapon_desc_base": "味方のスーパーウェポンカウンター-1、カウンターが0になった場合リセット、0費用で消費されるスーパーウェポンを獲得",
     "ui.spy.attack.superweapon_desc_upgraded": "味方のスーパーウェポンカウンター-1、カウンターが0になった場合リセット、0費用で消費されるスーパーウェポンを獲得",
     "ui.spy.attack.unknown_desc": "不明な建物効果",
-    "ui.card_select.empty_confirm": "ユニットが選択されていません。続行しますか？"
+    "ui.card_select.empty_confirm": "ユニットが選択されていません。続行しますか？",
+    "ui.battle_fortress.title": "バトルフォートレスの行動を選択",
+    "ui.battle_fortress.attack_title": "攻撃",
+    "ui.battle_fortress.attack_desc": "ブロックを獲得し、融合効果を発動",
+    "ui.battle_fortress.deploy_title": "展開",
+    "ui.battle_fortress.deploy_desc": "兵士ユニットを保存または取り出す"
 }

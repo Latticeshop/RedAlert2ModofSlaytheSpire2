@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -58,22 +58,27 @@ public sealed class GuardianGi : CardModel
             {
                 new DeployChoiceScreen.ChoiceOption
                 {
+                    Id = "defend",
+                    Title = new LocString("card_keywords", "ui.guardian_gi.defend_title"),
+                    Description = defendDesc,
+                    IconPath = "res://RedAlert2ModResources/images/ui/attack.png"
+                },
+                new DeployChoiceScreen.ChoiceOption
+                {
                     Id = "deploy",
                     Title = new LocString("card_keywords", "ui.guardian_gi.deploy_title"),
                     Description = deployDesc,
                     IconPath = "res://RedAlert2ModResources/images/ui/deploy.png"
-                },
-                new DeployChoiceScreen.ChoiceOption
-                {
-                    Id = "defend",
-                    Title = new LocString("card_keywords", "ui.guardian_gi.defend_title"),
-                    Description = defendDesc
                 }
             };
 
         var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, new LocString("card_keywords", "ui.guardian_gi.title"), options, FactionType.Allied);
 
         if (selectedIndex == 0)
+        {
+            await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
+        }
+        else
         {
             UnitVoiceHelper.PlayUnitVoice("GuardianGiDeploy", "Allies");
             await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
@@ -88,10 +93,6 @@ public sealed class GuardianGi : CardModel
                 Owner.Creature,
                 this
             );
-        }
-        else
-        {
-            await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
         }
     }
 

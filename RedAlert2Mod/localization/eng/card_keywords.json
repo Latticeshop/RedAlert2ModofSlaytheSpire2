@@ -92,7 +92,7 @@
     "ui.flak_track.title": "Choose Flak Track Action",
     "ui.flak_track.deploy_title": "Deploy",
     "ui.flak_track.deploy_desc": "Store infantry units in hand",
-    "ui.flak_track.defend_title": "Defend",
+    "ui.flak_track.defend_title": "Draw",
     "ui.flak_track.defend_desc": "Draw cards and discard",
     "ui.tesla_trooper.title": "Choose Tesla Trooper Action",
     "ui.tesla_trooper.deploy_title": "Deploy",
@@ -198,5 +198,10 @@
     "ui.spy.attack.superweapon_desc_base": "Ally's superweapon counter -1, if counter reaches 0 reset it, gain a 0-cost exhausted superweapon",
     "ui.spy.attack.superweapon_desc_upgraded": "Ally's superweapon counter -1, if counter reaches 0 reset it, gain a 0-cost exhausted superweapon",
     "ui.spy.attack.unknown_desc": "Unknown building effect",
-    "ui.card_select.empty_confirm": "No units selected. Continue anyway?"
+    "ui.card_select.empty_confirm": "No units selected. Continue anyway?",
+    "ui.battle_fortress.title": "Choose Battle Fortress Action",
+    "ui.battle_fortress.attack_title": "Attack",
+    "ui.battle_fortress.attack_desc": "Gain Block and trigger fused effects",
+    "ui.battle_fortress.deploy_title": "Deploy",
+    "ui.battle_fortress.deploy_desc": "Store or retrieve soldier units"
 }

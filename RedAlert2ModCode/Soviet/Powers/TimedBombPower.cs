@@ -36,30 +36,66 @@ public sealed class TimedBombPower : PowerModel
         }
     }
 
-    private static AudioStreamPlayer? _countdownAudioPlayer;
-    private static bool _isCountdownPlaying;
+    private AudioStreamPlayer? _countdownAudioPlayer;
+    private Godot.Timer? _countdownTimer;
+    private bool _isAudioInitialized;
 
-    private static void EnsureCountdownAudioPlayer()
+    private void InitializeAudio()
     {
-        if (_countdownAudioPlayer != null && GodotObject.IsInstanceValid(_countdownAudioPlayer))
+        if (_isAudioInitialized)
             return;
 
         _countdownAudioPlayer = new AudioStreamPlayer();
-        _countdownAudioPlayer.Name = "TimedBombCountdownAudioPlayer";
+        _countdownAudioPlayer.Name = $"TimedBombCountdownAudioPlayer_{GetHashCode()}";
         var root = Engine.GetMainLoop() as SceneTree;
         root?.Root.AddChild(_countdownAudioPlayer);
-        
-        // 监听音效播放完毕信号，实现循环播放
-        _countdownAudioPlayer.Finished += OnCountdownFinished;
+
+        var soundFile = GD.Load<AudioStream>("res://RedAlert2ModResources/audio/CommonSFX/timed_bomb/Icraloop_countdown.mp3");
+        if (soundFile != null)
+        {
+            _countdownAudioPlayer.Stream = soundFile;
+            _countdownAudioPlayer.VolumeDb = -25;
+        }
+
+        _countdownTimer = new Godot.Timer();
+        _countdownTimer.Name = $"TimedBombCountdownTimer_{GetHashCode()}";
+        _countdownTimer.WaitTime = 0.5f;
+        _countdownTimer.Autostart = false;
+        _countdownTimer.OneShot = false;
+        _countdownTimer.Timeout += OnCountdownTick;
+        root?.Root.AddChild(_countdownTimer);
+
+        _isAudioInitialized = true;
+        GD.Print($"[TimedBombPower] 音频组件初始化完成");
     }
 
-    private static void OnCountdownFinished()
+    private void OnCountdownTick()
     {
-        // 如果应该继续播放，则重新播放
-        if (_isCountdownPlaying && _countdownAudioPlayer != null && GodotObject.IsInstanceValid(_countdownAudioPlayer))
+        if (!IsPowerActive())
+        {
+            StopCountdownSound();
+            return;
+        }
+
+        if (_countdownAudioPlayer != null && GodotObject.IsInstanceValid(_countdownAudioPlayer) && !_countdownAudioPlayer.Playing)
         {
             _countdownAudioPlayer.Play();
-            GD.Print("[TimedBombPower] 倒计时音效循环播放");
+            GD.Print($"[TimedBombPower] 倒计时音效触发播放");
+        }
+    }
+
+    private bool IsPowerActive()
+    {
+        if (Owner == null || !Owner.IsAlive)
+            return false;
+
+        try
+        {
+            return Owner.Powers.Contains(this);
+        }
+        catch
+        {
+            return false;
         }
     }
 
@@ -67,22 +103,11 @@ public sealed class TimedBombPower : PowerModel
     {
         try
         {
-            EnsureCountdownAudioPlayer();
-            if (_countdownAudioPlayer == null) return;
-
-            // 如果已经在播放，先停止
-            if (_countdownAudioPlayer.Playing)
+            InitializeAudio();
+            
+            if (_countdownTimer != null && GodotObject.IsInstanceValid(_countdownTimer))
             {
-                _countdownAudioPlayer.Stop();
-            }
-
-            var soundFile = GD.Load<AudioStream>("res://RedAlert2ModResources/audio/CommonSFX/timed_bomb/Icraloop_countdown.mp3");
-            if (soundFile != null)
-            {
-                _countdownAudioPlayer.Stream = soundFile;
-                _countdownAudioPlayer.VolumeDb = -25;
-                _isCountdownPlaying = true;
-                _countdownAudioPlayer.Play();
+                _countdownTimer.Start();
                 GD.Print("[TimedBombPower] 开始播放炸弹倒计时音效");
             }
         }
@@ -96,12 +121,17 @@ public sealed class TimedBombPower : PowerModel
     {
         try
         {
-            _isCountdownPlaying = false;
+            if (_countdownTimer != null && GodotObject.IsInstanceValid(_countdownTimer))
+            {
+                _countdownTimer.Stop();
+            }
+
             if (_countdownAudioPlayer != null && GodotObject.IsInstanceValid(_countdownAudioPlayer))
             {
                 _countdownAudioPlayer.Stop();
-                GD.Print("[TimedBombPower] 停止播放炸弹倒计时音效");
             }
+
+            GD.Print("[TimedBombPower] 停止播放炸弹倒计时音效");
         }
         catch (Exception ex)
         {
@@ -160,7 +190,6 @@ public sealed class TimedBombPower : PowerModel
 
                     GD.Print("[TimedBombPower] 炸弹爆炸，造成15点伤害");
 
-                    // 直接移除能力，确保伤害已触发
                     await PowerCmd.Remove(this);
                     GD.Print("[TimedBombPower] 移除定时炸弹能力");
                 }
@@ -186,9 +215,6 @@ public sealed class TimedBombPower : PowerModel
         StopCountdownSound();
     }
 
-    /// <summary>
-    /// 当所有者死亡时停止倒计时音效
-    /// </summary>
     public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature target, bool wasRemovalPrevented, float deathAnimLength)
     {
         if (target == Owner)
