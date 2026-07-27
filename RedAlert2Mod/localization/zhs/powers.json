@@ -76,7 +76,7 @@
     "SOVIET_FLAK_CANNON_POWER.title": "防空炮",
     "SOVIET_FLAK_CANNON_POWER.description": "回合结束时，每有一个攻击意图的敌人，获得 {Block} 点格挡。",
     "SOVIET_TERROR_DRONE_POWER.title": "恐怖机器人",
-    "SOVIET_TERROR_DRONE_POWER.description": "每回合受到 {Count} 点伤害。当目标回血时清除。",
+    "SOVIET_TERROR_DRONE_POWER.description": "每回合受到 {Count} 点伤害。获得一回合的[gold]迟缓[/gold]。当目标回血时清除。",
     "SOVIET_GIANT_SQUID_POWER.title": "巨型乌贼",
     "SOVIET_GIANT_SQUID_POWER.description": "缠绕拍打，回合结束造成 {Count} 点伤害。回合开始若层数大于生命值则斩杀。",
     "ERASING_POWER.title": "抹除中...",

@@ -19,7 +19,7 @@ namespace RedAlert2ModCode.Soviet.Powers;
 
 /// <summary>
 /// 恐怖机器人 - 敌人debuff能力
-/// 每回合受到层数数值的伤害，回血时清除
+/// 每回合受到层数数值的伤害，获得一回合迟缓，回血时清除
 /// </summary>
 public sealed class SovietTerrorDronePower : PowerModel
 {
@@ -47,25 +47,62 @@ public sealed class SovietTerrorDronePower : PowerModel
         }
     }
 
-    /// <summary>敌人回合开始时触发伤害</summary>
+    /// <summary>能力应用时，检查并施加迟缓</summary>
+    public override async Task BeforeApplied(Creature target, decimal amount, Creature? applier, CardModel? cardSource)
+    {
+        bool hasSlow = target.Powers?.Any(p => p is SlowPower) ?? false;
+        if (!hasSlow)
+        {
+            await PowerCmd.Apply<SlowPower>(new ThrowingPlayerChoiceContext(), target, 1, applier, cardSource, silent: true);
+        }
+    }
+
+    /// <summary>能力层数变化时，检查并施加迟缓</summary>
+    public override async Task AfterPowerAmountChanged(PlayerChoiceContext choiceContext, PowerModel power, decimal amount, Creature? applier, CardModel? cardSource)
+    {
+        if (power != this) return;
+        
+        bool hasSlow = Owner.Powers?.Any(p => p is SlowPower) ?? false;
+        if (!hasSlow)
+        {
+            await PowerCmd.Apply<SlowPower>(choiceContext, Owner, 1, applier, cardSource, silent: true);
+        }
+    }
+
+    /// <summary>敌人回合开始时触发伤害（按层数循环）</summary>
     public override async Task AfterSideTurnStart(CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
     {
         if (side != CombatSide.Enemy) return;
         if (Owner == null) return;
         
-        int totalDamage = (int)Amount * DamagePerStack;
-        if (totalDamage <= 0) return;
+        int stacks = (int)Amount;
+        if (stacks <= 0) return;
 
         Flash();
         PlayDamageTriggerSound();
         
-        await CreatureCmd.Damage(
-            new ThrowingPlayerChoiceContext(),
-            Owner,
-            (decimal)DamagePerStack,
-            ValueProp.Move,
-            null,
-            null);
+        for (int i = 0; i < stacks; i++)
+        {
+            await CreatureCmd.Damage(
+                new ThrowingPlayerChoiceContext(),
+                Owner,
+                (decimal)DamagePerStack,
+                ValueProp.Move,
+                null,
+                null);
+        }
+    }
+
+    /// <summary>敌人回合结束时移除迟缓</summary>
+    public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
+    {
+        if (!participants.Contains(base.Owner)) return;
+
+        var slowPower = Owner.Powers?.FirstOrDefault(p => p is SlowPower) as SlowPower;
+        if (slowPower != null)
+        {
+            await PowerCmd.Apply<SlowPower>(choiceContext, Owner, -1, Owner, null);
+        }
     }
 
     private static AudioStreamPlayer? _audioPlayer;
@@ -134,7 +171,6 @@ public sealed class SovietTerrorDronePower : PowerModel
         }
     }
 
-    /// <summary>当目标回血时被清除</summary>
     public async Task OnOwnerHealed()
     {
         if (Owner == null) return;
@@ -145,16 +181,13 @@ public sealed class SovietTerrorDronePower : PowerModel
         if (slowPower != null)
         {
             await PowerCmd.Remove(slowPower);
-            GD.Print("[SovietTerrorDronePower] 移除缓慢debuff");
+            GD.Print("[SovietTerrorDronePower] 移除迟缓debuff");
         }
         
         await PowerCmd.Remove(this);
     }
 }
 
-/// <summary>
-/// Harmony补丁：监听回血事件，清除恐怖机器人
-/// </summary>
 [HarmonyPatch]
 public static class SovietTerrorDroneHealPatch
 {

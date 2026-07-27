@@ -7,7 +7,6 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
-using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet.Powers;
@@ -39,8 +38,7 @@ public sealed class TerrorDrone : CardModel
 	[
 		ModCardKeywords.TechLevelT1.CreateHoverTip(),
 		ModCardKeywords.Vehicle.CreateHoverTip(),
-		HoverTipFactory.FromPower<SovietTerrorDronePower>(),
-		HoverTipFactory.FromPower<SlowPower>()
+		HoverTipFactory.FromPower<SovietTerrorDronePower>()
 	];
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
@@ -53,14 +51,6 @@ public sealed class TerrorDrone : CardModel
             new ThrowingPlayerChoiceContext(),
             play.Target,
             terrorDroneStacks,
-            Owner.Creature,
-            this
-        );
-
-        await PowerCmd.Apply<SlowPower>(
-            new ThrowingPlayerChoiceContext(),
-            play.Target,
-            1,
             Owner.Creature,
             this
         );

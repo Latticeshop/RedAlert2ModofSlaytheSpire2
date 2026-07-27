@@ -76,7 +76,7 @@
     "SOVIET_FLAK_CANNON_POWER.title": "Flak Cannon",
     "SOVIET_FLAK_CANNON_POWER.description": "At the end of each turn, for each enemy with Attack intent, gains {Block} Block.",
     "SOVIET_TERROR_DRONE_POWER.title": "Terror Drone",
-    "SOVIET_TERROR_DRONE_POWER.description": "Takes {Count} damage each turn. Removed when the target heals.",
+    "SOVIET_TERROR_DRONE_POWER.description": "Takes {Count} damage each turn. Gain [gold]Slow[/gold] for the turn. Removed when the target heals.",
     "SOVIET_GIANT_SQUID_POWER.title": "Giant Squid",
     "SOVIET_GIANT_SQUID_POWER.description": "Wrap and slap, deals {Count} damage.",
     "SOVIET_TESLA_COIL_POWER.title": "Tesla Coil",
