@@ -46,6 +46,7 @@ public sealed class AlliesCardPool : TypeListCardPoolModel
         typeof(SellMCV),
         typeof(StopProductionCard),
         typeof(SupportCard),
+        typeof(UrbanizationCard),
     };
     
     /// <summary>

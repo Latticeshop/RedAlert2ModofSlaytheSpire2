@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -27,7 +27,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 升级后：获得的卡牌为升级版本
 /// </summary>
 [RegisterCard(typeof(AlliesCardPool))]
-public sealed class AlliedMCV : CardModel
+public sealed class AlliedMCV : CardModel, ICancellableCardPlay
 {
 	public AlliedMCV() : base((int)AlliesCardValues.AlliedMCV.Cost, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
 
@@ -98,6 +98,9 @@ public sealed class AlliedMCV : CardModel
 
 			// 将选择的卡牌加入手牌
 			await CardPileCmd.AddGeneratedCardToCombat(selectedCard, PileType.Hand, Owner);
+
+			// 触发城市化能力（仅在确认选择后）
+			await UrbanizationPower.TriggerOnSuccessfulPlay(ctx, Owner, this);
 
 			GD.Print("[AlliedMCV] 玩家选择了建筑，基地车将正常进入弃牌堆");
 		}

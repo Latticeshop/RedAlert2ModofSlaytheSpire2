@@ -85,6 +85,7 @@ public static class PowerIconPatch
         { typeof(GrandCannonPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/gcanicon.png" },
         { typeof(AlliedRepairDepotPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/fixicon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.SovietRepairDepotPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/rfixicon.png" },
+        { typeof(UrbanizationPower), "res://RedAlert2ModResources/images/packed/card_portraits/urbanization_power.png" },
         };
 
     /// <summary>

@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Common;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
@@ -22,7 +23,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace RedAlert2ModCode.Allies.Cards;
 
 [RegisterCard(typeof(AlliesCardPool))]
-public sealed class AlliesBarracksCard : CardModel
+public sealed class AlliesBarracksCard : CardModel, ICancellableCardPlay
 	{
 		private static readonly CardValueStore.CardValues Values = AlliesCardValues.Barracks;
 		
@@ -159,6 +160,9 @@ public sealed class AlliesBarracksCard : CardModel
 
 		// 无论是否选择了兵种，打出后都抽一张牌
 		await CardPileCmd.Draw(ctx, 1, Owner);
+
+		// 触发城市化能力（仅在确认选择后）
+		await UrbanizationPower.TriggerOnSuccessfulPlay(ctx, Owner, this);
 	}
 
 		protected override void OnUpgrade()

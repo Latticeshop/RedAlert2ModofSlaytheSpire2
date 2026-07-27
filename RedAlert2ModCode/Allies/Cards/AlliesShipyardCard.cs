@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Common;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Common.Utils;
@@ -26,7 +27,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// 0费，选择一张海军单位，创建对应的生产序列
 /// </summary>
 [RegisterCard(typeof(AlliesCardPool))]
-public sealed class AlliesShipyardCard : CardModel
+public sealed class AlliesShipyardCard : CardModel, ICancellableCardPlay
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.Shipyard;
 	
@@ -142,6 +143,9 @@ public sealed class AlliesShipyardCard : CardModel
 
 		// 无论是否选择了兵种，打出后都抽一张牌
 		await CardPileCmd.Draw(ctx, 1, Owner);
+
+		// 触发城市化能力（仅在确认选择后）
+		await UrbanizationPower.TriggerOnSuccessfulPlay(ctx, Owner, this);
 	}
 
 	protected override void OnUpgrade()

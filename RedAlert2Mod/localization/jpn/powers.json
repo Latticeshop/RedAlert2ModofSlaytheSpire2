@@ -124,5 +124,7 @@
     "ALLIED_REPAIR_DEPOT_POWER.title": "連合軍修理工場",
     "ALLIED_REPAIR_DEPOT_POWER.description": "修理工場を展開した。",
     "SOVIET_REPAIR_DEPOT_POWER.title": "ソ連修理工場",
-    "SOVIET_REPAIR_DEPOT_POWER.description": "修理工場を展開した。"
+    "SOVIET_REPAIR_DEPOT_POWER.description": "修理工場を展開した。",
+    "URBANIZATION_POWER.title": "都市化",
+    "URBANIZATION_POWER.description": "[gold]建築[/gold]または[gold]防衛塔[/gold]カードをプレイするたび、[gold]建築[/gold]または[gold]防衛塔[/gold]カードを1枚ドローする。"
 }

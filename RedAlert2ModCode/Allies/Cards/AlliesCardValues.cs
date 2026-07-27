@@ -678,7 +678,8 @@ public static class AlliesCardValues
 			() => ModelDb.Card<AlliesShipyardCard>(),
 			() => ModelDb.Card<AlliedBattleLab>(),
 			() => ModelDb.Card<ChronoSphere>(),
-			() => ModelDb.Card<WeatherController>()
+			() => ModelDb.Card<WeatherController>(),
+			() => ModelDb.Card<AlliesRepairDepot>()
 		};
 	}
 
@@ -721,7 +722,8 @@ public static class AlliesCardValues
 		{ typeof(PatriotMissile), () => ModelDb.Card<PatriotMissile>() },
 		{ typeof(AlliedBattleLab), () => ModelDb.Card<AlliedBattleLab>() },
 		{ typeof(ChronoSphere), () => ModelDb.Card<ChronoSphere>() },
-		{ typeof(WeatherController), () => ModelDb.Card<WeatherController>() }
+		{ typeof(WeatherController), () => ModelDb.Card<WeatherController>() },
+		{ typeof(AlliesRepairDepot), () => ModelDb.Card<AlliesRepairDepot>() }
 	};
 	
 	public static System.Collections.Generic.Dictionary<string, CardValueStore.CardValues> CreateAllValuesMap()

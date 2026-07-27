@@ -63,4 +63,11 @@ public static class CommonPowerValues
 		Stars = 1,              // 每层抽取的矿车数量
 		StarsUpgraded = 1       // 升级后增加的层数（总共2层）
 	};
+
+	/// <summary>城市化能力 - 每打出一张建筑或防御塔牌，抽取一张建筑或防御塔牌</summary>
+	public static CardValueStore.CardValues UrbanizationPower => new()
+	{
+		Damage = 1,              // 每层抽取的数量
+		DamageUpgraded = 0       // 升级后每层抽取数量不变
+	};
 }

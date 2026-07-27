@@ -126,5 +126,7 @@
     "ALLIED_REPAIR_DEPOT_POWER.title": "盟军维修厂",
     "ALLIED_REPAIR_DEPOT_POWER.description": "已部署维修厂。",
     "SOVIET_REPAIR_DEPOT_POWER.title": "苏联维修厂",
-    "SOVIET_REPAIR_DEPOT_POWER.description": "已部署维修厂。"
+    "SOVIET_REPAIR_DEPOT_POWER.description": "已部署维修厂。",
+    "URBANIZATION_POWER.title": "城市化",
+    "URBANIZATION_POWER.description": "每打出一张[gold]建筑[/gold]或[gold]防御塔[/gold]牌，抽取一张[gold]建筑[/gold]或[gold]防御塔[/gold]牌。"
 }

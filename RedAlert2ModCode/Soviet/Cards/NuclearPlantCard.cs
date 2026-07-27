@@ -24,7 +24,7 @@ public sealed class NuclearPlantCard : CardModel
 {
     private static readonly CardValueStore.CardValues Values = SovietCardValues.NuclearPlant;
 
-    public NuclearPlantCard() : base((int)Values.Cost, CardType.Power, CardRarity.Rare, TargetType.Self) { }
+    public NuclearPlantCard() : base((int)Values.Cost, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
 
     public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/soviet/nrcticon.png";
 

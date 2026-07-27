@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Common;
+using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Powers;
 using RedAlert2ModCode.Soviet.Utils;
 using RedAlert2ModCode.UI;
@@ -23,7 +24,7 @@ namespace RedAlert2ModCode.Soviet.Cards;
 /// 升级后：获得的卡牌为升级版本
 /// </summary>
 [RegisterCard(typeof(SovietCardPool))]
-public sealed class SovietMCV : CardModel
+public sealed class SovietMCV : CardModel, ICancellableCardPlay
 {
 	public SovietMCV() : base(0, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
 
@@ -86,6 +87,9 @@ public sealed class SovietMCV : CardModel
 
 			// 将选择的卡牌加入手牌
 			await CardPileCmd.AddGeneratedCardToCombat(selectedCard, PileType.Hand, Owner);
+
+			// 触发城市化能力（仅在确认选择后）
+			await UrbanizationPower.TriggerOnSuccessfulPlay(ctx, Owner, this);
 
 			GD.Print("[SovietMCV] 玩家选择了建筑，基地车将正常进入弃牌堆");
 		}

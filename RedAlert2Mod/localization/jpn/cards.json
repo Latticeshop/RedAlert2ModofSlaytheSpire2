@@ -246,5 +246,7 @@
     "RED_ALERT2_MOD_CARD_CRAZY_IVAN_CARD.title": "クレイジーイワン",
     "RED_ALERT2_MOD_CARD_CRAZY_IVAN_CARD.description": "敵に{BombStacks}層の[gold]タイムドボム[/gold]を付与する。敵が既に[gold]タイムドボム[/gold]を持っている場合はカウントダウンを減少させる。[gold]配備[/gold]：手札から[gold]ユニット[/gold]カードを選択し、[gold]「タイムドボム」[/gold]キーワードを追加する。カード使用前に{DeployVigor}の[gold]ビガー[/gold]を獲得し、消費される。",
     "CHRONO_IVAN_CARD.title": "クロノイワン",
-    "CHRONO_IVAN_CARD.description": "{ChronoTitle}敵に{BombStacks}層の[gold]タイムドボム[/gold]を付与する。敵が既に[gold]タイムドボム[/gold]を持っている場合はカウントダウンを減少させる。[gold]配備[/gold]：手札から[gold]ユニット[/gold]カードを選択し、[gold]「タイムドボム」[/gold]キーワードを追加する。カード使用前に{DeployVigor}の[gold]ビガー[/gold]を獲得し、消費される。"
+    "CHRONO_IVAN_CARD.description": "{ChronoTitle}敵に{BombStacks}層の[gold]タイムドボム[/gold]を付与する。敵が既に[gold]タイムドボム[/gold]を持っている場合はカウントダウンを減少させる。[gold]配備[/gold]：手札から[gold]ユニット[/gold]カードを選択し、[gold]「タイムドボム」[/gold]キーワードを追加する。カード使用前に{DeployVigor}の[gold]ビガー[/gold]を獲得し、消費される。",
+    "URBANIZATION_CARD.title": "都市化",
+    "URBANIZATION_CARD.description": "[gold]建築[/gold]または[gold]防衛塔[/gold]カードをプレイするたび、[gold]建築[/gold]または[gold]防衛塔[/gold]カードを1枚ドローする。"
 }

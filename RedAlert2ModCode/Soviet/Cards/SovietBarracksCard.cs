@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Common;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Powers;
 using RedAlert2ModCode.UI;
@@ -28,7 +29,7 @@ namespace RedAlert2ModCode.Soviet.Cards;
 /// 0费，选择一张士兵单位，创建对应的生产序列
 /// </summary>
 [RegisterCard(typeof(SovietCardPool))]
-public sealed class SovietBarracksCard : CardModel
+public sealed class SovietBarracksCard : CardModel, ICancellableCardPlay
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.Barracks;
 	
@@ -167,6 +168,9 @@ public sealed class SovietBarracksCard : CardModel
 
 		// 无论是否选择了兵种，打出后都抽一张牌
 		await CardPileCmd.Draw(ctx, 1, Owner);
+
+		// 触发城市化能力（仅在确认选择后）
+		await UrbanizationPower.TriggerOnSuccessfulPlay(ctx, Owner, this);
 	}
 
 	protected override void OnUpgrade()

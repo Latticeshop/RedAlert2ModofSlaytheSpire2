@@ -196,6 +196,15 @@ public static class CommonCardValues
 		DollarValue = 2000
 	};
 
+	/// <summary>城市化 - 3费能力卡，每打出一张建筑或防御塔牌，抽取一张建筑或防御塔牌（升级添加固有词条）</summary>
+	public static CardValueStore.CardValues Urbanization => new()
+	{
+		Cost = 3,
+		CostUpgraded = 0,        // 升级后添加固有词条（费用不变）
+		Damage = 1,              // 每次抽取的数量
+		DamageUpgraded = 0       // 升级后单次抽取数量不变
+	};
+
 	private static Dictionary<Type, decimal> _sellablePowerDollarMap;
 
 	public static Dictionary<Type, decimal> GetSellablePowerDollarMap()

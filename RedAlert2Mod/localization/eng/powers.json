@@ -124,5 +124,7 @@
     "ALLIED_REPAIR_DEPOT_POWER.title": "Allied Repair Depot",
     "ALLIED_REPAIR_DEPOT_POWER.description": "Repair Depot deployed.",
     "SOVIET_REPAIR_DEPOT_POWER.title": "Soviet Repair Depot",
-    "SOVIET_REPAIR_DEPOT_POWER.description": "Repair Depot deployed."
+    "SOVIET_REPAIR_DEPOT_POWER.description": "Repair Depot deployed.",
+    "URBANIZATION_POWER.title": "Urbanization",
+    "URBANIZATION_POWER.description": "Whenever you play a [gold]Building[/gold] or [gold]Defense Tower[/gold] card, draw a [gold]Building[/gold] or [gold]Defense Tower[/gold] card."
 }

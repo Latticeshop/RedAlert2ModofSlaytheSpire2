@@ -43,6 +43,7 @@ public sealed class SovietCardPool : TypeListCardPoolModel
         typeof(SellMCV),
         typeof(StopProductionCard),
         typeof(SupportCard),
+        typeof(UrbanizationCard),
         typeof(YuriCard),
         typeof(YuriPrimeCard),
     };

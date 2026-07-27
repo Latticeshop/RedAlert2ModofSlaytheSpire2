@@ -248,5 +248,7 @@
     "CHRONO_IVAN_CARD.title": "Chrono Ivan",
     "CHRONO_IVAN_CARD.description": "{ChronoTitle}Apply {BombStacks} stacks of [gold]Timed Bomb[/gold] to an enemy. If enemy already has [gold]Timed Bomb[/gold], reduce countdown. [gold]Deploy[/gold]: Select a [gold]Unit[/gold] card from your hand and add the [gold]\"Timed Bomb\"[/gold] keyword. Before playing the card, gain {DeployVigor} [gold]Vigor[/gold] and Exhaust.",
     "RED_ALERT2_MOD_CARD_SPY_CARD.title": "Spy",
-    "RED_ALERT2_MOD_CARD_SPY_CARD.description": "Infiltrate buildings. Choose 1 command from {IfUpgraded:show:3|2} options.\nCan infiltrate ally buildings."
+    "RED_ALERT2_MOD_CARD_SPY_CARD.description": "Infiltrate buildings. Choose 1 command from {IfUpgraded:show:3|2} options.\nCan infiltrate ally buildings.",
+    "URBANIZATION_CARD.title": "Urbanization",
+    "URBANIZATION_CARD.description": "Whenever you play a [gold]Building[/gold] or [gold]Defense Tower[/gold] card, draw a [gold]Building[/gold] or [gold]Defense Tower[/gold] card."
 }
