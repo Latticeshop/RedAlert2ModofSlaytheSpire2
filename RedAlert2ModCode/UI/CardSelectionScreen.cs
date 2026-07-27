@@ -590,15 +590,25 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
 
         if (_cardQuantities.TryGetValue(index, out int currentCount))
         {
-            // 数量范围：1-99
-            int newCount = Math.Max(1, Math.Min(99, currentCount + delta));
+            int newCount;
             
-            // 如果数量没有变化，不更新
+            if (delta < 0 && currentCount == 1)
+            {
+                newCount = 99;
+            }
+            else if (delta > 0 && currentCount == 99)
+            {
+                newCount = 1;
+            }
+            else
+            {
+                newCount = Math.Max(1, Math.Min(99, currentCount + delta));
+            }
+            
             if (newCount == currentCount) return;
             
             _cardQuantities[index] = newCount;
 
-            // 更新UI上的数量显示
             UpdateQuantityDisplay(index, newCount);
         }
     }

@@ -141,11 +141,11 @@ public static class CommonCardValues
 		RepeatUpgraded = 0         // 升级后最大数量不变，改为"任意"数量
 	};
 
-	/// <summary>尤里 - 0费技能卡，花费1200资金获得一张随机带消耗的T2(升级T3)单位卡牌</summary>
+	/// <summary>尤里 - 0费技能卡，花费800资金获得一张随机带消耗的T2(升级T3)单位卡牌</summary>
 	public static CardValueStore.CardValues Yuri => new()
 	{
 		Cost = 0,
-		DollarValue = 1200
+		DollarValue = 800
 	};
 
 	/// <summary>尤里改 - 1费技能卡，token，获得10张随机带消耗的T1/T2(升级T3)不同单位卡牌</summary>
@@ -163,12 +163,12 @@ public static class CommonCardValues
 		MagicNumberUpgraded = 2
 	};
 
-	/// <summary>超时空伊文 - 1费攻击卡，Token，赋予3(升级5)层定时炸弹，部署给单位卡牌添加消耗并获得3(升级5)活力，超时空效果，价格1000</summary>
+	/// <summary>超时空伊文 - 1费攻击卡，Token，赋予3(升级2)层定时炸弹，部署给单位卡牌添加消耗并获得3(升级5)活力，超时空效果，价格1000</summary>
 	public static CardValueStore.CardValues ChronoIvan => new()
 	{
 		Cost = 1,
 		Damage = 3,
-		DamageUpgraded = 2,
+		DamageUpgraded = -1,
 		MagicNumber = 5,
 		DollarValue = 1000,
 		DeployVigor = 3,

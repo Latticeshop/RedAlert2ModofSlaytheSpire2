@@ -285,4 +285,32 @@ public static class AudioHelper
             GD.PrintErr($"[AudioHelper] 播放C4语音失败: {ex.Message}");
         }
     }
+
+    public static void PlayHornetMissileSound(object target)
+    {
+        try
+        {
+            EnsureEffectPlayer();
+            if (_effectPlayer == null) return;
+
+            string soundPath = "res://RedAlert2ModResources/audio/AlliedUnits/IFV/missile.wav";
+            var sound = GD.Load<AudioStream>(soundPath);
+            if (sound != null)
+            {
+                if (_effectPlayer.Playing) _effectPlayer.Stop();
+                _effectPlayer.Stream = sound;
+                _effectPlayer.VolumeDb = -5;
+                _effectPlayer.Play();
+                GD.Print($"[AudioHelper] 播放黄蜂导弹音效");
+            }
+            else
+            {
+                GD.PrintErr($"[AudioHelper] 无法加载音效: {soundPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[AudioHelper] 播放黄蜂导弹音效失败: {ex.Message}");
+        }
+    }
 }

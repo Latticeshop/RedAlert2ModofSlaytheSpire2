@@ -198,6 +198,9 @@ public class HornetPower : PowerModel
             // 播放下砸动画
             await PlaySmashAnimation(target);
 
+            // 播放导弹音效
+            AudioHelper.PlayHornetMissileSound(target);
+
             // 造成伤害
             await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(),
                 target,

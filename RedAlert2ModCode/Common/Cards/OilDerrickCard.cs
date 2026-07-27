@@ -53,7 +53,12 @@ public class OilDerrickCard : CardModel
         await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
         var dollarPower = Owner.Creature.Powers.OfType<DollarPower>().FirstOrDefault();
-        if (dollarPower != null)
+        if (dollarPower == null)
+        {
+            dollarPower = await PowerCmd.Apply<DollarPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, (decimal)Values.DollarValue, Owner.Creature, null);
+            GD.Print($"[OilDerrickCard] 未找到DollarPower，已创建并添加资金 {Values.DollarValue}");
+        }
+        else
         {
             dollarPower.AddDollar((int)Values.DollarValue);
             GD.Print($"[OilDerrickCard] 立即获得资金 {Values.DollarValue}");

@@ -406,12 +406,12 @@ public static class AlliesCardValues
 		DollarValue = 1000
 	};
 
-	/// <summary>神盾巡洋舰 - 1费技能卡，获得8格挡（升级12）。若敌人意图攻击，多获得1轮，价格1200</summary>
+	/// <summary>神盾巡洋舰 - 1费技能卡，获得7格挡（升级10）。若敌人意图攻击，多获得1轮，价格1200</summary>
 	public static CardValueStore.CardValues Agisicon => new()
 	{
 		Cost = 1,
-		Block = 8,                 // 基础格挡
-		BlockUpgraded = 4,         // 升级后12 = 8 + 4
+		Block = 7,                 // 基础格挡
+		BlockUpgraded = 3,         // 升级后10 = 7 + 3
 		DollarValue = 1200
 	};
 

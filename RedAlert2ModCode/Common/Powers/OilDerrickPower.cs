@@ -98,14 +98,15 @@ public class OilDerrickPower : PowerModel
         GD.Print($"[OilDerrickPower] 计算总资金 - {CurrentDollarPerTurn} x {stacks} = {totalDollar}");
 
         var dollarPower = Owner.Powers.OfType<DollarPower>().FirstOrDefault();
-        if (dollarPower != null)
+        if (dollarPower == null)
         {
-            dollarPower.AddDollar(totalDollar);
-            GD.Print($"[OilDerrickPower] 油井产出资金 {totalDollar}，当前总资金 {dollarPower.DollarValue}");
+            dollarPower = await PowerCmd.Apply<DollarPower>(new ThrowingPlayerChoiceContext(), Owner, totalDollar, Owner, null);
+            GD.Print($"[OilDerrickPower] 未找到DollarPower，已创建并添加资金 {totalDollar}");
         }
         else
         {
-            GD.PrintErr($"[OilDerrickPower] 未找到 DollarPower，资金无法添加");
+            dollarPower.AddDollar(totalDollar);
+            GD.Print($"[OilDerrickPower] 油井产出资金 {totalDollar}，当前总资金 {dollarPower.DollarValue}");
         }
     }
 }

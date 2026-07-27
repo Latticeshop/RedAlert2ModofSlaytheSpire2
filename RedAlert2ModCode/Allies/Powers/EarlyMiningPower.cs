@@ -32,7 +32,15 @@ public sealed class EarlyMiningPower : PowerModel
     public new AbstractModel OriginModel => ModelDb.Card<AlliedEarlyMining>();
 
     public override LocString Title => new LocString("powers", "EARLY_MINING_POWER.title");
-    public override LocString Description => new LocString("powers", "EARLY_MINING_POWER.description");
+    public override LocString Description
+    {
+        get
+        {
+            var locString = new LocString("powers", "EARLY_MINING_POWER.description");
+            locString.Add("MiningMultiplierPercent", DynamicVars["MiningMultiplierPercent"].IntValue);
+            return locString;
+        }
+    }
 
     protected override List<DynamicVar> CanonicalVars => new()
     {

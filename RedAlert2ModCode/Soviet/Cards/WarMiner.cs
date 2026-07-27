@@ -58,6 +58,21 @@ public sealed class WarMiner : CardModel
 		new IntVar("DollarValue", Values.DollarValue)
 	};
 
+	protected override bool IsPlayable
+	{
+		get
+		{
+			if (!base.IsPlayable)
+				return false;
+
+			var refineryPower = Owner.Creature.Powers.OfType<SovietRefineryPower>().FirstOrDefault();
+			if (refineryPower == null)
+				return false;
+
+			return true;
+		}
+	}
+
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Soviet");
@@ -83,46 +98,50 @@ public sealed class WarMiner : CardModel
 			GD.Print($"[WarMiner] 攻击 {play.Target} 造成 {DynamicVars.Damage.BaseValue} 点伤害");
 		}
 		
-		// 检查是否有MCV能力获取资金
-		var dollarPower = Owner.Creature.Powers.OfType<RedAlert2ModCode.Common.Powers.DollarPower>().FirstOrDefault();
-		if (dollarPower != null)
+		int amount = base.DynamicVars["DollarValue"].IntValue;
+		GD.Print($"[WarMiner] 基础资金 {amount}");
+
+		// 挖矿逻辑：优先挖宝石矿(2倍价值)，再挖黄金矿
+		int miningBonus = MineResources();
+		GD.Print($"[WarMiner] 挖矿额外获得 {miningBonus} 资金");
+
+		// 计算总资金（矿车基础 + 挖矿收益）
+		int totalAmount = amount + miningBonus;
+
+		// 检查矿石精炼器加成（对总收益生效）
+		var oreRefineryPower = Owner.Creature.Powers.OfType<Allies.Powers.OreRefineryPower>().FirstOrDefault();
+		if (oreRefineryPower != null && totalAmount > 0)
 		{
-			int amount = base.DynamicVars["DollarValue"].IntValue;
-			GD.Print($"[WarMiner] 基础资金 {amount}");
+			float oreMultiplier = oreRefineryPower.GetOreMultiplier();
+			totalAmount = Mathf.FloorToInt(totalAmount * oreMultiplier);
+			GD.Print($"[WarMiner] 矿石精炼器加成 {oreMultiplier}，总资金从 {amount + miningBonus} 变为 {totalAmount}");
+		}
 
-			// 挖矿逻辑：优先挖宝石矿(2倍价值)，再挖黄金矿
-			int miningBonus = MineResources();
-			GD.Print($"[WarMiner] 挖矿额外获得 {miningBonus} 资金");
+		// 检查是否有提前倒矿debuff（本回合矿车收益为80%）
+		var earlyMiningPower = Owner.Creature.Powers.OfType<EarlyMiningPower>().FirstOrDefault();
+		var sovietEarlyMiningPower = Owner.Creature.Powers.OfType<SovietEarlyMiningPower>().FirstOrDefault();
+		
+		if (earlyMiningPower != null)
+		{
+			float multiplier = earlyMiningPower.GetMiningMultiplier();
+			totalAmount = Mathf.FloorToInt(totalAmount * multiplier);
+			GD.Print($"[WarMiner] 检测到提前倒矿debuff，总资金 * {multiplier} = {totalAmount}");
+		}
+		else if (sovietEarlyMiningPower != null)
+		{
+			float multiplier = sovietEarlyMiningPower.GetMiningMultiplier();
+			totalAmount = Mathf.FloorToInt(totalAmount * multiplier);
+			GD.Print($"[WarMiner] 检测到苏联提前倒矿debuff，总资金 * {multiplier} = {totalAmount}");
+		}
 
-			// 计算总资金（矿车基础 + 挖矿收益）
-			int totalAmount = amount + miningBonus;
-
-			// 检查矿石精炼器加成（对总收益生效）
-			var oreRefineryPower = Owner.Creature.Powers.OfType<Allies.Powers.OreRefineryPower>().FirstOrDefault();
-			if (oreRefineryPower != null && totalAmount > 0)
-			{
-				float oreMultiplier = oreRefineryPower.GetOreMultiplier();
-				totalAmount = Mathf.FloorToInt(totalAmount * oreMultiplier);
-				GD.Print($"[WarMiner] 矿石精炼器加成 {oreMultiplier}，总资金从 {amount + miningBonus} 变为 {totalAmount}");
-			}
-
-			// 检查是否有提前倒矿debuff（本回合矿车收益为80%）
-			var earlyMiningPower = Owner.Creature.Powers.OfType<EarlyMiningPower>().FirstOrDefault();
-			var sovietEarlyMiningPower = Owner.Creature.Powers.OfType<SovietEarlyMiningPower>().FirstOrDefault();
-			
-			if (earlyMiningPower != null)
-			{
-				float multiplier = earlyMiningPower.GetMiningMultiplier();
-				totalAmount = Mathf.FloorToInt(totalAmount * multiplier);
-				GD.Print($"[WarMiner] 检测到提前倒矿debuff，总资金 * {multiplier} = {totalAmount}");
-			}
-			else if (sovietEarlyMiningPower != null)
-			{
-				float multiplier = sovietEarlyMiningPower.GetMiningMultiplier();
-				totalAmount = Mathf.FloorToInt(totalAmount * multiplier);
-				GD.Print($"[WarMiner] 检测到苏联提前倒矿debuff，总资金 * {multiplier} = {totalAmount}");
-			}
-
+		var dollarPower = Owner.Creature.Powers.OfType<RedAlert2ModCode.Common.Powers.DollarPower>().FirstOrDefault();
+		if (dollarPower == null)
+		{
+			dollarPower = await PowerCmd.Apply<RedAlert2ModCode.Common.Powers.DollarPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, totalAmount, Owner.Creature, null);
+			GD.Print($"[WarMiner] 未找到DollarPower，已创建并添加资金 {totalAmount}");
+		}
+		else
+		{
 			dollarPower.AddDollar(totalAmount);
 			GD.Print($"[WarMiner] 总共获得 {totalAmount} 资金");
 		}

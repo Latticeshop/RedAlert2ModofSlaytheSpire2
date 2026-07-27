@@ -54,7 +54,7 @@ public class Paratrooper : CardModel
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Attack", Owner.Character.CastAnimDelay);
 
 		bool isSoviet = Owner.Character?.Id?.Entry?.Contains("SOVIET") ?? false;
-		bool isAllies = !isSoviet && (Owner.Character?.Id?.Entry?.Contains("REDALERT") ?? false);
+		bool isAllies = Owner.Character?.Id?.Entry?.Contains("ALLIES") ?? false;
 		
 		// 获得的士兵数量
 		int soldierCount = isSoviet ? 4 : 3;

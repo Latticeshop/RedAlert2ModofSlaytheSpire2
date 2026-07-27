@@ -86,7 +86,7 @@ public static class SovietCardValues
 	{
 		Cost = 1,
 		Damage = 3,
-		DamageUpgraded = 2,
+		DamageUpgraded = -1,
 		MagicNumber = 5,
 		DollarValue = 600,
 		DeployVigor = 3,
