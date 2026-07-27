@@ -59,8 +59,6 @@ public sealed class ChronoLegionnaire : ChronoCardModel
         int eraseAmount = (int)Math.Ceiling(target.MaxHp * erasePercent / 100m);
         eraseAmount = Math.Min(eraseAmount, maxErase);
 
-        bool hasDebuffBefore = target.Powers.Any(p => p.Type == PowerType.Debuff);
-
         var existingPower = target.Powers.OfType<ErasingPower>().FirstOrDefault();
         if (existingPower != null)
         {
@@ -76,10 +74,7 @@ public sealed class ChronoLegionnaire : ChronoCardModel
                 this
             );
 
-            if (!hasDebuffBefore)
-            {
-                await CreatureCmd.Stun(target);
-            }
+            await CreatureCmd.Stun(target);
         }
     }
 
