@@ -27,7 +27,7 @@ internal static class SovietCharacterAssets
         })
         .WithUi(new(
             IconTexturePath: "res://RedAlert2ModResources/images/ui/soviet_icon.png",
-            IconOutlineTexturePath: "",
+            IconOutlineTexturePath: "res://RedAlert2ModResources/images/ui/soviet_icon.png",
             IconPath: "res://RedAlert2ModResources/scenes/ui/character_icons/soviet_icon.tscn",
             CharacterSelectBgPath: "res://RedAlert2ModResources/scenes/soviet_bg.tscn",
             CharacterSelectIconPath: "res://RedAlert2ModResources/images/charui/soviet_character_select.png",

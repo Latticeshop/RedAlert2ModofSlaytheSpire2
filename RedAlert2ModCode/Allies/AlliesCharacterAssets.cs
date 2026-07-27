@@ -27,7 +27,7 @@ internal static class AlliesCharacterAssets
         })
         .WithUi(new(
             IconTexturePath: "res://RedAlert2ModResources/images/ui/allies_icon.png",
-            IconOutlineTexturePath: "",
+            IconOutlineTexturePath: "res://RedAlert2ModResources/images/ui/allies_icon.png",
             IconPath: "res://RedAlert2ModResources/scenes/ui/character_icons/allies_icon.tscn",
             CharacterSelectBgPath: "res://RedAlert2ModResources/scenes/allies_bg.tscn",
             CharacterSelectIconPath: "res://RedAlert2ModResources/images/charui/allies_character_select.png",
