@@ -93,7 +93,7 @@
     "ui.flak_track.deploy_title": "部署",
     "ui.flak_track.deploy_desc": "存储当前手牌中的士兵单位",
     "ui.flak_track.defend_title": "防御",
-    "ui.flak_track.defend_desc": "抽牌并获得格挡",
+    "ui.flak_track.defend_desc": "抽牌并获弃牌",
     "ui.tesla_trooper.title": "选择磁暴步兵的行动",
     "ui.tesla_trooper.deploy_title": "部署",
     "ui.tesla_trooper.deploy_desc": "给磁暴线圈充能，下次伤害提升50%",

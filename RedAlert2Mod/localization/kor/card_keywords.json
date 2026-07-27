@@ -93,7 +93,7 @@
   "ui.flak_track.deploy_title": "전개",
   "ui.flak_track.deploy_desc": "손에 있는 보병 유닛을 저장합니다",
   "ui.flak_track.defend_title": "방어",
-  "ui.flak_track.defend_desc": "카드를 뽑고 방어도를 얻습니다",
+  "ui.flak_track.defend_desc": "카드를 뽑고 카드를 버립니다",
   "ui.tesla_trooper.title": "테슬라 트루퍼 행동 선택",
   "ui.tesla_trooper.deploy_title": "전개",
   "ui.tesla_trooper.deploy_desc": "테슬라 코일을 충전하여 다음 피해가 50% 증가합니다",

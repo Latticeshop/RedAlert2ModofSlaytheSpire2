@@ -93,7 +93,7 @@
     "ui.flak_track.deploy_title": "展開",
     "ui.flak_track.deploy_desc": "手札中の兵士ユニットを保存",
     "ui.flak_track.defend_title": "防御",
-    "ui.flak_track.defend_desc": "カードを引き、ブロックを獲得",
+    "ui.flak_track.defend_desc": "カードを引き、カードを捨てる",
     "ui.tesla_trooper.title": "テスラ兵の行動を選択",
     "ui.tesla_trooper.deploy_title": "展開",
     "ui.tesla_trooper.deploy_desc": "テスラコイルに充電し、次のダメージを50%アップ",

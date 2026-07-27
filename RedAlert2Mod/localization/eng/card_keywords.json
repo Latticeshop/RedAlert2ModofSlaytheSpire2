@@ -93,7 +93,7 @@
     "ui.flak_track.deploy_title": "Deploy",
     "ui.flak_track.deploy_desc": "Store infantry units in hand",
     "ui.flak_track.defend_title": "Defend",
-    "ui.flak_track.defend_desc": "Draw cards and gain Block",
+    "ui.flak_track.defend_desc": "Draw cards and discard",
     "ui.tesla_trooper.title": "Choose Tesla Trooper Action",
     "ui.tesla_trooper.deploy_title": "Deploy",
     "ui.tesla_trooper.deploy_desc": "Charge Tesla Coil, next damage increased by 50%",

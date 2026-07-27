@@ -40,8 +40,8 @@ public sealed partial class FlakTrack : CardModel
 
     protected override List<DynamicVar> CanonicalVars => new()
     {
-        new BlockVar(Values.Block, ValueProp.Unpowered),
         new IntVar("DrawCount", Values.MagicNumber),
+        new IntVar("DiscardCount", Values.Stars),
         new StringVar("StoredCards"),
         new IntVar("StoreCount", 5)
     };
@@ -115,8 +115,33 @@ public sealed partial class FlakTrack : CardModel
 
     private async Task ExecuteAttack(PlayerChoiceContext ctx, CardPlay play)
     {
+        // 抽牌
         await CardPileCmd.Draw(ctx, (int)DynamicVars["DrawCount"].BaseValue, Owner);
-        await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
+        
+        // 弃牌选择：参考苏联维修厂的原版UI
+        int maxDiscard = (int)DynamicVars["DiscardCount"].BaseValue;
+        var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_FLAK_TRACK.discard_prompt");
+        selectPrompt.Add("0", 0);
+        selectPrompt.Add("1", maxDiscard);
+        var prefs = new CardSelectorPrefs(selectPrompt, 0, maxDiscard)
+        {
+            RequireManualConfirmation = true
+        };
+
+        var selectedCards = (await CardSelectCmd.FromHand(
+            ctx,
+            Owner,
+            prefs,
+            c => c != this,
+            this
+        )).ToList();
+
+        // 弃掉选中的牌
+        foreach (var card in selectedCards)
+        {
+            await CardPileCmd.Add(card, PileType.Discard);
+            GD.Print($"[FlakTrack] 弃牌: {card.Title}");
+        }
     }
 
     private async Task ExecuteDeploy(PlayerChoiceContext ctx, CardPlay play)
@@ -205,6 +230,6 @@ public sealed partial class FlakTrack : CardModel
     protected override void OnUpgrade()
     {
         DynamicVars["DrawCount"].UpgradeValueBy(Values.MagicNumberUpgraded);
-        DynamicVars.Block.UpgradeValueBy(Values.BlockUpgraded);
+        DynamicVars["DiscardCount"].UpgradeValueBy(Values.StarsUpgraded);
     }
 }
