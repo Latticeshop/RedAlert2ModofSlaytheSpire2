@@ -8,6 +8,8 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Rooms;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using System;
 using System.Collections.Generic;
@@ -39,6 +41,7 @@ public sealed class TimedBombPower : PowerModel
     private AudioStreamPlayer? _countdownAudioPlayer;
     private Godot.Timer? _countdownTimer;
     private bool _isAudioInitialized;
+    private bool _isExploding;
 
     private void InitializeAudio()
     {
@@ -104,7 +107,7 @@ public sealed class TimedBombPower : PowerModel
         try
         {
             InitializeAudio();
-            
+
             if (_countdownTimer != null && GodotObject.IsInstanceValid(_countdownTimer))
             {
                 _countdownTimer.Start();
@@ -165,6 +168,57 @@ public sealed class TimedBombPower : PowerModel
         }
     }
 
+    private void PlayExplosionVfx()
+    {
+        try
+        {
+            if (Owner == null) return;
+
+            VfxCmd.PlayOnCreatureCenter(Owner, "vfx/vfx_bloody_impact");
+
+            var fireVfx = NFireBurningVfx.Create(Owner, 1.5f, goingRight: true);
+            if (fireVfx != null)
+            {
+                NCombatRoom.Instance?.CombatVfxContainer.AddChild(fireVfx);
+            }
+
+            GD.Print("[TimedBombPower] 播放爆炸特效");
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[TimedBombPower] 播放爆炸特效失败: {ex.Message}");
+        }
+    }
+
+    public async Task Explode()
+    {
+        if (_isExploding) return;
+        _isExploding = true;
+
+        try
+        {
+            StopCountdownSound();
+            PlayExplosionSound();
+            PlayExplosionVfx();
+
+            await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(),
+                Owner,
+                15m,
+                ValueProp.Move,
+                null,
+                null);
+
+            GD.Print("[TimedBombPower] 炸弹爆炸，造成15点伤害");
+
+            await PowerCmd.Remove(this);
+            GD.Print("[TimedBombPower] 移除定时炸弹能力");
+        }
+        finally
+        {
+            _isExploding = false;
+        }
+    }
+
     public override async Task AfterSideTurnStart(CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
     {
         if (side == CombatSide.Enemy && Owner != null && Owner.IsAlive)
@@ -175,23 +229,10 @@ public sealed class TimedBombPower : PowerModel
             if (currentStacks > 0)
             {
                 int newStacks = currentStacks - 1;
-                
+
                 if (newStacks == 0)
                 {
-                    StopCountdownSound();
-                    PlayExplosionSound();
-
-                    await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(),
-                        Owner,
-                        15m,
-                        ValueProp.Move,
-                        null,
-                        null);
-
-                    GD.Print("[TimedBombPower] 炸弹爆炸，造成15点伤害");
-
-                    await PowerCmd.Remove(this);
-                    GD.Print("[TimedBombPower] 移除定时炸弹能力");
+                    await Explode();
                 }
                 else
                 {

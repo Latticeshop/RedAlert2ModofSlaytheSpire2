@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -87,7 +87,12 @@ public sealed class ChronoIvanCard : ChronoCardModel
                 if (existingBomb != null)
                 {
                     await PowerCmd.ModifyAmount(ctx, existingBomb, -1m, target, this);
-                    GD.Print($"[ChronoIvanCard] 敌人已有定时炸弹，减少1层倒计时");
+                    GD.Print($"[ChronoIvanCard] 敌人已有定时炸弹，减少1层倒计时，当前剩余: {existingBomb.Amount}");
+
+                    if ((int)existingBomb.Amount <= 0)
+                    {
+                        await existingBomb.Explode();
+                    }
                 }
                 else
                     {

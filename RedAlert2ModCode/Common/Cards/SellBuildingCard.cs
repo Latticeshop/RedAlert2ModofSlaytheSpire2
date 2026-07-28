@@ -82,9 +82,24 @@ public class SellBuildingCard : CardModel
             return;
         }
 
+        int maxTotalSell = IsUpgraded ? int.MaxValue : (int)Values.Repeat;
+        int totalSold = 0;
+
         foreach (var item in selectedResult.Items)
         {
-            await ProcessSoldPower(item.Power, item.SelectedCount);
+            if (totalSold >= maxTotalSell)
+            {
+                GD.Print($"[SellBuildingCard] 已达到最大出售层数 {maxTotalSell}，停止执行");
+                break;
+            }
+
+            int remainingQuota = maxTotalSell - totalSold;
+            int countToSell = Math.Min(item.SelectedCount, remainingQuota);
+
+            if (countToSell <= 0) break;
+
+            await ProcessSoldPower(item.Power, countToSell);
+            totalSold += countToSell;
         }
     }
 
