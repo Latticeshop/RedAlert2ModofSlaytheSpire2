@@ -193,7 +193,7 @@ public sealed class Ifv : CardModel
 
 		if (selectedCard is AlliesEngineer or SovietEngineer)
 		{
-			await DeployEngineer(ctx, selectedCard);
+			await DeploySpecialVehicle<RepairVehicle>(ctx, selectedCard);
 			return;
 		}
 
@@ -219,24 +219,30 @@ public sealed class Ifv : CardModel
 		await CardPileCmd.Add(this, PileType.Hand, CardPilePosition.Bottom, this);
 	}
 
-	private async Task DeployEngineer(PlayerChoiceContext ctx, CardModel engineerCard)
+	private async Task DeploySpecialVehicle<TVehicle>(PlayerChoiceContext ctx, CardModel soldierCard) where TVehicle : IfvVehicleBase
 	{
-		GD.Print($"[Ifv] 驻扎工程师 {engineerCard.Title}，生成维修车");
+		GD.Print($"[Ifv] 驻扎 {soldierCard.Title}，生成 {typeof(TVehicle).Name}");
 
-		var repairVehicleTemplate = ModelDb.Card<RepairVehicle>();
-		var repairVehicleCard = Owner.Creature.CombatState.CreateCard(repairVehicleTemplate, Owner);
+		var vehicleTemplate = ModelDb.Card<TVehicle>();
+		var vehicleCard = Owner.Creature.CombatState.CreateCard(vehicleTemplate, Owner);
 
-		if (repairVehicleCard is RepairVehicle rv)
+		if (IsUpgraded)
 		{
-			var ifvHasExhaust = Keywords.Contains(CardKeyword.Exhaust);
-			rv.SetStoredCards(this, engineerCard, ifvHasExhaust);
+			CardCmd.Upgrade(vehicleCard);
+			GD.Print($"[Ifv] IFV已升级，{typeof(TVehicle).Name} 也获得升级");
 		}
 
-		await CardPileCmd.RemoveFromCombat(engineerCard);
+		if (vehicleCard is IfvVehicleBase rv)
+		{
+			var ifvHasExhaust = Keywords.Contains(CardKeyword.Exhaust);
+			rv.SetStoredCards(this, soldierCard, ifvHasExhaust);
+		}
+
+		await CardPileCmd.RemoveFromCombat(soldierCard);
 		await CardPileCmd.RemoveFromCombat(this);
 
-		await CardPileCmd.AddGeneratedCardToCombat(repairVehicleCard, PileType.Hand, Owner);
-		GD.Print($"[Ifv] 维修车已加入手牌，携带 IFV + {engineerCard.Title}");
+		await CardPileCmd.AddGeneratedCardToCombat(vehicleCard, PileType.Hand, Owner);
+		GD.Print($"[Ifv] {typeof(TVehicle).Name} 已加入手牌，携带 IFV + {soldierCard.Title}");
 	}
 
 	private async Task ExecuteAttack(PlayerChoiceContext ctx, CardPlay play)

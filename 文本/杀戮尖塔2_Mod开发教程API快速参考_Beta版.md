@@ -2300,7 +2300,7 @@ protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 
 ---
 
-## 🚀 卡牌存储与消耗机制（IFV / 维修车）
+## 🚀 卡牌存储与消耗机制（IFV / 步兵车系列）
 
 ### IFV 存储普通士兵的消耗逻辑
 
@@ -2314,18 +2314,386 @@ protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 > **关键实现**：通过 `GetPlayTargetPile()` 方法根据 `CardKeyword.Exhaust` 词条动态决定卡牌去向。
 > 存储士兵时 `CanonicalKeywords` 动态添加 `CardKeyword.Exhaust`，使卡牌显示消耗视觉指示器。
 
-### IFV 存储工程师 → 维修车的消耗逻辑
+### IFV 存储特殊士兵 → 特殊步兵车的转化机制
 
-| IFV 状态 | 维修车获得 | 维修选项效果 | 部署选项效果 |
-|----------|-----------|-------------|-------------|
-| 无消耗词条 | 维修车(无消耗) | 赋予Replay → 维修车进弃牌堆 | 释放工程师到手牌+IFV进弃牌堆+维修车消耗 |
-| 有消耗词条 | 维修车(有消耗) | 赋予Replay → 维修车消耗 | 释放工程师到手牌+IFV消耗+维修车消耗 |
+#### 一、转化总览
 
-> **关键实现**：
-> - `SetStoredCards(ifvCard, soldierCard, inheritedExhaust)` 接收 IFV 的消耗状态
-> - `CanonicalKeywords` 根据 `_inheritedExhaust` 动态添加 `CardKeyword.Exhaust`
-> - `ReleaseStoredCards()` 根据 `_inheritedExhaust` 决定 IFV 去向（消耗堆/弃牌堆）
-> - 维修选项在 `_inheritedExhaust && _hasStored` 时也触发存储释放
+IFV 在部署时识别手牌中的**特殊士兵卡牌**，转化为对应的**特殊步兵车卡牌**。步兵车继承 IFV 的消耗词条，拥有两条行动路径。
+
+| 特殊士兵 | 转化结果 | 特殊效果 |
+|---------|---------|---------|
+| 工程师 (Engineer) | 维修车 (RepairVehicle) | 维修：赋予手牌卡牌Replay |
+| (待扩展) 磁暴步兵 → 磁暴步兵车 |
+| (待扩展) 海豹突击队 → 海豹步兵车 |
+| (待扩展) 尤里新兵 → 尤里步兵车 |
+| ... | ... |
+
+#### 二、转化流程
+
+```
+IFV部署 → 选择士兵
+    ↓
+判断是否为特殊士兵类型
+    ├── 普通士兵 → 存储（IFV获得Exhaust词条，可释放）
+    └── 特殊士兵 → 转化流程：
+        1. IFV自身携带的Exhaust状态 → 传递给新步兵车
+        2. 从战斗中移除 IFV + 特殊士兵
+        3. 创建新的步兵车卡牌（携带存储的IFV和士兵）
+        4. 步兵车加入手牌，继承消耗词条
+```
+
+#### 三、步兵车通用消耗规则
+
+| IFV 状态 | 步兵车获得 | 路径A（特殊效果） | 路径B（释放） |
+|----------|-----------|-----------------|-------------|
+| 无消耗词条 | 步兵车(无消耗) | 执行效果 → 步兵车进弃牌堆 | 释放士兵到手牌+IFV进弃牌堆+步兵车消耗 |
+| 有消耗词条 | 步兵车(有消耗) | 执行效果 → IFV+士兵+步兵车全消耗 | 释放士兵到手牌+IFV消耗+步兵车消耗 |
+
+#### 四、核心机制详解
+
+##### 1. 消耗词条继承（关键）
+
+**问题**：`CardModel.LocalKeywords` 会缓存 `CanonicalKeywords` 的结果。首次访问后，即使 `CanonicalKeywords` 返回值变化，UI 读取的仍是旧缓存。
+
+**正确做法**：使用 `AddKeyword(CardKeyword.Exhaust)` 动态修改关键词缓存：
+
+```csharp
+// ❌ 错误：CanonicalKeywords 动态返回值不会刷新缓存
+public override IEnumerable<CardKeyword> CanonicalKeywords
+{
+    get
+    {
+        var keywords = new List<CardKeyword>();
+        if (_inheritedExhaust)
+            keywords.Add(CardKeyword.Exhaust);
+        return keywords;
+    }
+}
+
+// ✅ 正确：用 AddKeyword 直接修改缓存的 _keywords 集合
+public void SetStoredCards(CardModel ifvCard, CardModel soldierCard, bool inheritedExhaust = false)
+{
+    _storedCards.Clear();
+    _storedCards.Add(ifvCard);
+    _storedCards.Add(soldierCard);
+    _hasStored = true;
+    _inheritedExhaust = inheritedExhaust;
+
+    if (inheritedExhaust)
+    {
+        AddKeyword(CardKeyword.Exhaust);  // 直接修改缓存+触发UI刷新
+    }
+}
+```
+
+##### 2. 克隆状态保留
+
+`DeepCloneFields` 必须复制/重置所有动态状态字段：
+
+```csharp
+protected override void DeepCloneFields()
+{
+    base.DeepCloneFields();
+    _storedCards = new List<CardModel>(_storedCards);
+    _hasStored = false;        // 重置：克隆体不应继承存储状态
+    _inheritedExhaust = false; // 重置：由 SetStoredCards 重新设置
+}
+```
+
+> 注意：`_keywords` 的克隆由 `base.DeepCloneFields()` 负责（基类已正确实现）。
+
+##### 3. 双路径消耗逻辑
+
+```csharp
+// 路径A：执行特殊效果
+if (_inheritedExhaust && _hasStored)
+{
+    // 消耗 IFV + 士兵 + 步兵车（全进消耗堆）
+    await CardPileCmd.Add(engineerCard, PileType.Exhaust, ...);
+    await CardPileCmd.Add(ifvCard, PileType.Exhaust, ...);
+    await CardPileCmd.Add(this, PileType.Exhaust, ...);
+}
+else
+{
+    // 无消耗：步兵车进弃牌堆
+    await CardPileCmd.Add(this, PileType.Discard, ...);
+}
+
+// 路径B：释放存储
+// 士兵 → 始终返回手牌
+await CardPileCmd.Add(soldierCard, PileType.Hand, ...);
+// IFV → 消耗堆(有消耗) 或 弃牌堆(无消耗)
+var ifvTargetPile = _inheritedExhaust ? PileType.Exhaust : PileType.Discard;
+await CardPileCmd.Add(ifvCard, ifvTargetPile, ...);
+// 步兵车 → 始终消耗
+await CardPileCmd.Add(this, PileType.Exhaust, ...);
+```
+
+#### 五、新增步兵车卡牌模板（基类方案）
+
+由于所有步兵车共享相同的存储/消耗继承/双路径释放逻辑，推荐使用**基类模式**消除重复代码。
+
+##### Step 0：创建 IfvVehicleBase 基类
+
+```csharp
+// Allies/Cards/IfvVehicleBase.cs
+public abstract class IfvVehicleBase : CardModel
+{
+    protected List<CardModel> _storedCards = new();
+    protected bool _hasStored;
+    protected bool _inheritedExhaust;
+
+    protected IfvVehicleBase(int cost, CardType type, CardRarity rarity, TargetType target)
+        : base(cost, type, rarity, target) { }
+
+    protected override IEnumerable<CardKeyword> CanonicalKeywords => Array.Empty<CardKeyword>();
+
+    protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
+    {
+        new IntVar("ReplayCount", 1),
+        new StringVar("StoredCards"),
+        new IntVar("StoreCount", 1)
+    };
+
+    protected override void DeepCloneFields()
+    {
+        base.DeepCloneFields();
+        _storedCards = new List<CardModel>(_storedCards);
+        _hasStored = false;
+        _inheritedExhaust = false;
+    }
+
+    public void SetStoredCards(CardModel ifvCard, CardModel soldierCard, bool inheritedExhaust = false)
+    {
+        _storedCards.Clear();
+        _storedCards.Add(ifvCard);
+        _storedCards.Add(soldierCard);
+        _hasStored = true;
+        _inheritedExhaust = inheritedExhaust;
+
+        if (inheritedExhaust)
+        {
+            AddKeyword(CardKeyword.Exhaust);
+        }
+
+        var storedText = new LocString("cards", $"{CardId}.stored_info");
+        storedText.Add("0", soldierCard.Title);
+        ((StringVar)DynamicVars["StoredCards"]).StringValue = GetLocStringText(storedText);
+    }
+
+    protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+    {
+        var options = new List<DeployChoiceScreen.ChoiceOption>
+        {
+            new()
+            {
+                Id = "attack",
+                Title = new LocString("card_keywords", $"{CardId}.attack_title"),
+                Description = new LocString("card_keywords", $"{CardId}.attack_desc"),
+                IconPath = "res://RedAlert2ModResources/images/ui/attack.png"
+            },
+            new()
+            {
+                Id = "deploy",
+                Title = new LocString("card_keywords", $"{CardId}.deploy_title"),
+                Description = new LocString("card_keywords", $"{CardId}.stored_deploy_desc"),
+                IconPath = "res://RedAlert2ModResources/images/ui/deploy.png"
+            }
+        };
+
+        var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(
+            Owner, new LocString("card_keywords", $"{CardId}.title"), options, FactionType.Allied);
+
+        if (selectedIndex.HasValue)
+        {
+            if (options[selectedIndex.Value].Id == "attack")
+                await ExecuteEffect(ctx, play);
+            else
+                await ExecuteDeployRelease(ctx, play);
+        }
+    }
+
+    // 子类实现：特殊效果（如维修、磁暴等）
+    protected abstract Task ExecuteEffect(PlayerChoiceContext ctx, CardPlay play);
+
+    // 通用释放逻辑（所有步兵车相同）
+    protected async Task ExecuteDeployRelease(PlayerChoiceContext ctx, CardPlay play)
+    {
+        if (!_hasStored || _storedCards.Count == 0)
+        {
+            await CardPileCmd.Add(this, PileType.Exhaust, CardPilePosition.Bottom, this);
+            return;
+        }
+
+        await ReleaseStoredCards();
+        await CardPileCmd.Add(this, PileType.Exhaust, CardPilePosition.Bottom, this);
+    }
+
+    protected async Task ReleaseStoredCards()
+    {
+        var ifvCard = _storedCards[0];
+        var soldierCard = _storedCards[1];
+
+        soldierCard.HasBeenRemovedFromState = false;
+        await CardPileCmd.Add(soldierCard, PileType.Hand, CardPilePosition.Bottom, this);
+
+        ifvCard.HasBeenRemovedFromState = false;
+        var ifvTargetPile = _inheritedExhaust ? PileType.Exhaust : PileType.Discard;
+        await CardPileCmd.Add(ifvCard, ifvTargetPile, CardPilePosition.Bottom, this);
+
+        _storedCards.Clear();
+        _hasStored = false;
+        ((StringVar)DynamicVars["StoredCards"]).StringValue = string.Empty;
+    }
+
+    protected string CardId => GetType().Name.ToUpperInvariant();
+
+    protected static string GetLocStringText(object locStringObj)
+    {
+        if (locStringObj == null) return string.Empty;
+        if (locStringObj is string str) return str;
+        var method = locStringObj.GetType().GetMethod("GetFormattedText", Type.EmptyTypes);
+        if (method != null)
+        {
+            try
+            {
+                var result = method.Invoke(locStringObj, null);
+                if (result is string text && !string.IsNullOrEmpty(text)) return text;
+            }
+            catch { }
+        }
+        return string.Empty;
+    }
+}
+```
+
+##### Step 1：IFV 中添加特殊士兵识别
+
+在 `Ifv.ExecuteDeploy` 中添加新的类型判断分支：
+
+```csharp
+if (selectedCard is AlliesEngineer or SovietEngineer)
+{
+    await DeployEngineer(ctx, selectedCard);
+    return;
+}
+// 新增：磁暴步兵 → 磁暴步兵车
+if (selectedCard is TeslaTrooper or SovietTeslaTrooper)
+{
+    await DeploySpecialVehicle<TeslaVehicle>(ctx, selectedCard);
+    return;
+}
+```
+
+##### Step 2：IFV 中添加通用 DeploySpecialVehicle 方法
+
+```csharp
+private async Task DeploySpecialVehicle<TVehicle>(PlayerChoiceContext ctx, CardModel soldierCard)
+    where TVehicle : CardModel
+{
+    var vehicleTemplate = ModelDb.Card<TVehicle>();
+    var vehicleCard = Owner.Creature.CombatState.CreateCard(vehicleTemplate, Owner);
+
+    if (vehicleCard is IfvVehicleBase vh)
+    {
+        var ifvHasExhaust = Keywords.Contains(CardKeyword.Exhaust);
+        vh.SetStoredCards(this, soldierCard, ifvHasExhaust);
+    }
+
+    await CardPileCmd.RemoveFromCombat(soldierCard);
+    await CardPileCmd.RemoveFromCombat(this);
+    await CardPileCmd.AddGeneratedCardToCombat(vehicleCard, PileType.Hand, Owner);
+}
+```
+
+##### Step 3：创建新步兵车（继承基类，只需 ~30 行）
+
+```csharp
+[RegisterCard(typeof(AlliesCardPool))]
+public sealed class TeslaVehicle : IfvVehicleBase
+{
+    public TeslaVehicle() : base(1, CardType.Skill, CardRarity.Token, TargetType.Self) { }
+
+    public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/allies/tesla_vehicle.png";
+
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        ModCardKeywords.TechLevelT2.CreateHoverTip(),
+        ModCardKeywords.Vehicle.CreateHoverTip(),
+        ModCardKeywords.Deploy.CreateHoverTip(),
+        ModCardKeywords.Unit.CreateHoverTip(),
+        HoverTipFactory.Static(StaticHoverTip.ReplayStatic)
+    ];
+
+    protected override async Task ExecuteEffect(PlayerChoiceContext ctx, CardPlay play)
+    {
+        // 特殊效果：赋予Replay给选中的手牌单位卡
+        // ... 具体效果逻辑 ...
+
+        // 消耗判断（与RepairVehicle一致）
+        if (_inheritedExhaust && _hasStored)
+        {
+            var ifvCard = _storedCards[0];
+            var soldierCard = _storedCards[1];
+            soldierCard.HasBeenRemovedFromState = false;
+            await CardPileCmd.Add(soldierCard, PileType.Exhaust, CardPilePosition.Bottom, this);
+            ifvCard.HasBeenRemovedFromState = false;
+            await CardPileCmd.Add(ifvCard, PileType.Exhaust, CardPilePosition.Bottom, this);
+            _storedCards.Clear();
+            _hasStored = false;
+            ((StringVar)DynamicVars["StoredCards"]).StringValue = string.Empty;
+            await CardPileCmd.Add(this, PileType.Exhaust, CardPilePosition.Bottom, this);
+        }
+        else
+        {
+            await CardPileCmd.Add(this, PileType.Discard, CardPilePosition.Bottom, this);
+        }
+    }
+}
+```
+
+> **注意**：`ExecuteEffect` 中的消耗逻辑虽然在基类中已有释放版本，但因每个步兵车的"效果路径"结束后的消耗行为可能不同（有的全消耗、有的仅步兵车进弃牌堆），所以仍由子类实现。可进一步抽取 `ExecuteEffectConsumption()` 辅助方法。
+
+##### Step 4：注册到卡池
+
+在 `AlliesCardPool.GenerateAllCards()` 或 `AlliedCardRegistry` 中注册新卡牌。
+
+##### Step 5：本地化
+
+在 4 语言的 `cards.json` 和 `card_keywords.json` 中添加对应条目。
+
+```json
+// card_keywords.json 示例
+{
+    "ui.tesla_vehicle.title": "选择磁暴步兵车的行动",
+    "ui.tesla_vehicle.attack_title": "磁暴",
+    "ui.tesla_vehicle.attack_desc": "赋予手牌中单位卡Replay",
+    "ui.tesla_vehicle.deploy_title": "部署",
+    "ui.tesla_vehicle.stored_deploy_desc": "释放驻扎的士兵"
+}
+```
+
+#### 六、关键代码位置
+
+| 文件 | 功能 |
+|------|------|
+| `Allies/Cards/Ifv.cs` | IFV 卡牌逻辑，特殊士兵识别与转化 |
+| `Allies/Cards/IfvVehicleBase.cs` | 步兵车基类，封装存储/消耗/释放/双路径逻辑 |
+| `Allies/Cards/RepairVehicle.cs` | 维修车（参考模板），继承基类实现特殊效果 |
+| `Allies/Cards/AlliesCardValues.cs` | 数值配置 |
+| `localization/*/card_keywords.json` | UI 选项本地化 |
+
+#### 七、新增特殊士兵检查清单
+
+在添加新步兵车前，确保：
+
+- [ ] 特殊士兵类型已注册到对应阵营 `CardRegistry` 的士兵列表（`Soldiers`/`RadarSoldiers`/`HighTechSoldiers`）
+- [ ] IFV 的 `GetSoldierCardsFromHand()` 能识别该士兵类型
+- [ ] 已创建 `IfvVehicleBase` 子类并注册到卡池
+- [ ] 已完成 4 语言本地化（`cards.json` + `card_keywords.json`）
+- [ ] 卡牌肖像图片已放置到正确路径
+
+---
 
 ### 无士兵时的降级行为
 
@@ -2338,13 +2706,6 @@ if (soldierCards.Count == 0)
     return;
 }
 ```
-
-### 核心代码位置
-
-| 文件 | 功能 |
-|------|------|
-| `Allies/Cards/Ifv.cs` | IFV 卡牌逻辑，存储/释放/消耗判断 |
-| `Allies/Cards/RepairVehicle.cs` | 维修车卡牌逻辑，继承消耗词条，双路径释放 |
 
 ---
 
