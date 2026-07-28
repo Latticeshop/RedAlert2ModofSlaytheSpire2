@@ -203,5 +203,17 @@
     "ui.battle_fortress.attack_title": "攻击",
     "ui.battle_fortress.attack_desc": "获得格挡并触发融合效果",
     "ui.battle_fortress.deploy_title": "部署",
-    "ui.battle_fortress.deploy_desc": "存储或取出士兵单位"
+    "ui.battle_fortress.deploy_desc": "存储或取出士兵单位",
+    "ui.ifv.title": "选择IFV的行动",
+    "ui.ifv.normal_title": "常规",
+    "ui.ifv.normal_desc": "抽牌并选择弃牌",
+    "ui.ifv.deploy_title": "部署",
+    "ui.ifv.deploy_desc": "驻扎士兵",
+    "ui.ifv.stored_attack_desc": "执行抽牌弃牌效果",
+    "ui.ifv.stored_deploy_desc": "释放驻扎的士兵",
+    "ui.repair_vehicle.title": "选择维修车的行动",
+    "ui.repair_vehicle.repair_title": "维修",
+    "ui.repair_vehicle.repair_desc": "赋予手牌中卡牌重放",
+    "ui.repair_vehicle.deploy_title": "部署",
+    "ui.repair_vehicle.stored_deploy_desc": "释放驻扎的士兵"
 }

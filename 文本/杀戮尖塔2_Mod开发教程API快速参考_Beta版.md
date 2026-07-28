@@ -2300,6 +2300,54 @@ protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 
 ---
 
+## 🚀 卡牌存储与消耗机制（IFV / 维修车）
+
+### IFV 存储普通士兵的消耗逻辑
+
+| IFV 状态 | 操作 | 存储卡牌去向 | IFV 去向 |
+|----------|------|-------------|----------|
+| 无消耗词条 | 攻击（抽牌弃牌+格挡） | 存储 | 弃牌堆 |
+| 无消耗词条 | 部署（释放存储） | 士兵返回手牌 | 弃牌堆 |
+| 有消耗词条 | 攻击（抽牌弃牌+格挡） | 无 | 消耗堆 |
+| 有消耗词条 | 部署（释放存储） | 士兵返回手牌 | 消耗堆 |
+
+> **关键实现**：通过 `GetPlayTargetPile()` 方法根据 `CardKeyword.Exhaust` 词条动态决定卡牌去向。
+> 存储士兵时 `CanonicalKeywords` 动态添加 `CardKeyword.Exhaust`，使卡牌显示消耗视觉指示器。
+
+### IFV 存储工程师 → 维修车的消耗逻辑
+
+| IFV 状态 | 维修车获得 | 维修选项效果 | 部署选项效果 |
+|----------|-----------|-------------|-------------|
+| 无消耗词条 | 维修车(无消耗) | 赋予Replay → 维修车进弃牌堆 | 释放工程师到手牌+IFV进弃牌堆+维修车消耗 |
+| 有消耗词条 | 维修车(有消耗) | 赋予Replay → 维修车消耗 | 释放工程师到手牌+IFV消耗+维修车消耗 |
+
+> **关键实现**：
+> - `SetStoredCards(ifvCard, soldierCard, inheritedExhaust)` 接收 IFV 的消耗状态
+> - `CanonicalKeywords` 根据 `_inheritedExhaust` 动态添加 `CardKeyword.Exhaust`
+> - `ReleaseStoredCards()` 根据 `_inheritedExhaust` 决定 IFV 去向（消耗堆/弃牌堆）
+> - 维修选项在 `_inheritedExhaust && _hasStored` 时也触发存储释放
+
+### 无士兵时的降级行为
+
+当 IFV 选择部署但手牌无士兵卡牌时，卡牌**正常打出**（进弃牌堆/消耗堆）而非返回手牌：
+
+```csharp
+if (soldierCards.Count == 0)
+{
+    await CardPileCmd.Add(this, GetPlayTargetPile(), CardPilePosition.Bottom, this);
+    return;
+}
+```
+
+### 核心代码位置
+
+| 文件 | 功能 |
+|------|------|
+| `Allies/Cards/Ifv.cs` | IFV 卡牌逻辑，存储/释放/消耗判断 |
+| `Allies/Cards/RepairVehicle.cs` | 维修车卡牌逻辑，继承消耗词条，双路径释放 |
+
+---
+
 ## ✨ 攻击特效（VFX）
 
 ### 特效类型速查

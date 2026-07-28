@@ -223,6 +223,18 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvsee.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvsef.mp3",
         },
+        ["IfvDeploy"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvtran-deploy.mp3",
+        },
+        ["IfvAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvat2b_attack.mp3",
+        },
+        ["IfvRepair"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvrepa_repair.mp3",
+        },
         ["GuardianGi"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/GuardianGI/Iggiate.mp3",
@@ -356,10 +368,6 @@ public static class UnitVoiceConfig
         ["PatriotMissile"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/PatriotMissile/patriot_missile.wav",
-        },
-        ["ChronoMiner"] = new List<string>
-        {
-            "res://RedAlert2ModResources/audio/AlliedUnits/ChronoMiner/miner_return.wav",
         },
         ["ForceShieldOn"] = new List<string>
         {

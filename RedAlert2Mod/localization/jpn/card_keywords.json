@@ -203,5 +203,17 @@
     "ui.battle_fortress.attack_title": "攻撃",
     "ui.battle_fortress.attack_desc": "ブロックを獲得し、融合効果を発動",
     "ui.battle_fortress.deploy_title": "展開",
-    "ui.battle_fortress.deploy_desc": "兵士ユニットを保存または取り出す"
+    "ui.battle_fortress.deploy_desc": "兵士ユニットを保存または取り出す",
+    "ui.ifv.title": "IFVの行動を選択",
+    "ui.ifv.normal_title": "通常",
+    "ui.ifv.normal_desc": "カードを引いて捨てるカードを選択",
+    "ui.ifv.deploy_title": "展開",
+    "ui.ifv.deploy_desc": "兵士を駐屯させる",
+    "ui.ifv.stored_attack_desc": "カードを引いて捨てる",
+    "ui.ifv.stored_deploy_desc": "駐屯した兵士を解放する",
+    "ui.repair_vehicle.title": "修理車の行動を選択",
+    "ui.repair_vehicle.repair_title": "修理",
+    "ui.repair_vehicle.repair_desc": "手札のカードにリプレイを付与",
+    "ui.repair_vehicle.deploy_title": "展開",
+    "ui.repair_vehicle.stored_deploy_desc": "駐屯した兵士を解放"
 }

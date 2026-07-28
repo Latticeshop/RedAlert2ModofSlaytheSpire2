@@ -203,5 +203,17 @@
     "ui.battle_fortress.attack_title": "Attack",
     "ui.battle_fortress.attack_desc": "Gain Block and trigger fused effects",
     "ui.battle_fortress.deploy_title": "Deploy",
-    "ui.battle_fortress.deploy_desc": "Store or retrieve soldier units"
+    "ui.battle_fortress.deploy_desc": "Store or retrieve soldier units",
+    "ui.ifv.title": "Choose IFV Action",
+    "ui.ifv.normal_title": "Normal",
+    "ui.ifv.normal_desc": "Draw cards and select discards",
+    "ui.ifv.deploy_title": "Deploy",
+    "ui.ifv.deploy_desc": "Garrison soldier",
+    "ui.ifv.stored_attack_desc": "Draw and discard",
+    "ui.ifv.stored_deploy_desc": "Release garrisoned soldiers",
+    "ui.repair_vehicle.title": "Choose Repair Vehicle Action",
+    "ui.repair_vehicle.repair_title": "Repair",
+    "ui.repair_vehicle.repair_desc": "Grant Replay to cards in hand",
+    "ui.repair_vehicle.deploy_title": "Deploy",
+    "ui.repair_vehicle.stored_deploy_desc": "Release garrisoned soldier"
 }

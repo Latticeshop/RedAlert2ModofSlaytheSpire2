@@ -393,22 +393,22 @@ public static class SovietCardValues
 		DollarValue = 1500
 	};
 	
-	/// <summary>铁幕装置 - 0费能力卡，金卡，价格2500，每3回合（升级后2回合）获得一张虚无铁幕卡</summary>
+	/// <summary>铁幕装置 - 0费能力卡，金卡，价格2500，每4回合（升级后3回合）获得一张虚无铁幕卡</summary>
 	public static CardValueStore.CardValues IronCurtainCard => new()
 	{
 		Cost = 0,
 		DollarValue = 2500,
-		Repeat = 3,
-		RepeatUpgraded = 2
+		Repeat = 4,
+		RepeatUpgraded = 3
 	};
 	
-	/// <summary>核弹井 - 0费能力卡，金卡，价格5000，每3回合获得一张虚无核弹攻击卡</summary>
+	/// <summary>核弹井 - 0费能力卡，金卡，价格5000，每4回合获得一张虚无核弹攻击卡</summary>
 	public static CardValueStore.CardValues NuclearMissileSiloCard => new()
 	{
 		Cost = 0,
 		DollarValue = 5000,
-		Repeat = 3,
-		RepeatUpgraded = 3
+		Repeat = 4,
+		RepeatUpgraded = 4
 	};
 	
 	// ==================== 超级武器运转卡 ====================

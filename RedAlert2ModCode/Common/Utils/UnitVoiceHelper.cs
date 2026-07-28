@@ -39,7 +39,7 @@ public static class UnitVoiceHelper
         }
     }
 
-    private static void PlaySound(string path)
+    public static void PlaySound(string path)
     {
         var sound = GD.Load<AudioStream>(path);
         if (sound != null)

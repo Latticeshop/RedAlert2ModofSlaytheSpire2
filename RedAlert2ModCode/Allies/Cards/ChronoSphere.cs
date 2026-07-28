@@ -22,7 +22,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// <summary>
 /// 超时空传送仪 - 盟军建筑卡（高科技T2）
 /// 0费能力卡，金卡，需要作战实验室解锁
-/// 效果：每过3回合（升级后2回合），将一张"虚无"词条的"超时空传送"加入手牌
+/// 效果：每过4回合（升级后3回合），将一张"虚无"词条的"超时空传送"加入手牌
 /// </summary>
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class ChronoSphere : CardModel

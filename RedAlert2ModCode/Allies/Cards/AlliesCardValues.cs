@@ -143,7 +143,7 @@ public static class AlliesCardValues
 		DollarValue = 700
 	};
 	
-	/// <summary>IFV步兵战车 - 1费，抽2/3张牌，弃0-2/3张牌，价格600</summary>
+	/// <summary>IFV步兵战车 - 1费，抽2/3张牌，弃0-2/3张牌，部署存储1士兵获得5/7格挡，价格600</summary>
 	public static CardValueStore.CardValues Ifv => new()
 	{
 		Cost = 1,
@@ -151,6 +151,8 @@ public static class AlliesCardValues
 		MagicNumberUpgraded = 1,   // 升级后3 = 2 + 1
 		Stars = 2,                 // 弃牌数上限
 		StarsUpgraded = 1,         // 升级后3 = 2 + 1
+		Block = 5,
+		BlockUpgraded = 2,         // 升级后7 = 5 + 2
 		DollarValue = 600
 	};
 	
@@ -536,8 +538,8 @@ public static class AlliesCardValues
 	{
 		Cost = 0,
 		DollarValue = 3000,
-		Repeat = 3,                    // 基础间隔回合
-		RepeatUpgraded = 2             // 升级后间隔回合
+		Repeat = 4,                    // 基础间隔回合
+		RepeatUpgraded = 3             // 升级后间隔回合
 	};
 
 	/// <summary>超时空传送 - 1费技能卡（升级后0费），金卡，消耗，高科技运转卡，需要作战实验室</summary>
@@ -553,8 +555,8 @@ public static class AlliesCardValues
 	{
 		Cost = 0,
 		DollarValue = 5000,
-		Repeat = 3,                    // 基础间隔回合
-		RepeatUpgraded = 2,            // 升级后间隔回合
+		Repeat = 4,                    // 基础间隔回合
+		RepeatUpgraded = 3,            // 升级后间隔回合
 		Block = 3                      // 触发时获得的电球数量
 	};
 

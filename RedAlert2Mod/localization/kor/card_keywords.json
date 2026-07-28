@@ -203,5 +203,17 @@
   "ui.battle_fortress.attack_title": "공격",
   "ui.battle_fortress.attack_desc": "방어도를 얻고 융합 효과를 발동합니다",
   "ui.battle_fortress.deploy_title": "전개",
-  "ui.battle_fortress.deploy_desc": "보병 유닛을 저장하거나 인출합니다"
+  "ui.battle_fortress.deploy_desc": "보병 유닛을 저장하거나 인출합니다",
+  "ui.ifv.title": "IFV 행동 선택",
+  "ui.ifv.normal_title": "일반",
+  "ui.ifv.normal_desc": "카드를 뽑고 버릴 카드를 선택",
+  "ui.ifv.deploy_title": "전개",
+  "ui.ifv.deploy_desc": "보병을 수비시키다",
+  "ui.ifv.stored_attack_desc": "카드를 뽑고 버리기",
+  "ui.ifv.stored_deploy_desc": "수비된 보병 해제",
+  "ui.repair_vehicle.title": "수리 차량 행동 선택",
+  "ui.repair_vehicle.repair_title": "수리",
+  "ui.repair_vehicle.repair_desc": "손의 카드에 리플레이 부여",
+  "ui.repair_vehicle.deploy_title": "전개",
+  "ui.repair_vehicle.stored_deploy_desc": "수비된 병사 해제"
 }

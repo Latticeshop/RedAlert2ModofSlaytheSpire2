@@ -68,7 +68,6 @@ public sealed class ChronoMiner : ChronoCardModel
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		UnitVoiceHelper.PlayUnitVoice(this.GetType());
-		UnitVoiceHelper.PlayUnitVoice("ChronoMiner", "Allied");
 
 		int amount = base.DynamicVars["DollarValue"].IntValue;
 		GD.Print($"[ChronoMiner] 基础资金 {amount}");
