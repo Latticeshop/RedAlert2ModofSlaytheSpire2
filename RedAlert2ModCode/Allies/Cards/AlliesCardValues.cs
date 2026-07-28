@@ -155,7 +155,116 @@ public static class AlliesCardValues
 		BlockUpgraded = 2,         // 升级后7 = 5 + 2
 		DollarValue = 600
 	};
-	
+
+	// ==================== IFV 特殊步兵车 ====================
+
+	/// <summary>维修车 - 1费技能卡，赋予手牌单位卡重放1次，Token，只能通过IFV合成</summary>
+	public static CardValueStore.CardValues RepairVehicle => new()
+	{
+		Cost = 1,
+		MagicNumber = 1,          // 重放次数
+		MagicNumberUpgraded = 0,   // 升级后重放次数不变
+		DollarValue = 0
+	};
+
+	/// <summary>小机枪步兵车 - 1费攻击卡，造成2(升级3)点伤害5次，Token，只能通过IFV合成</summary>
+	public static CardValueStore.CardValues MinigunVehicle => new()
+	{
+		Cost = 1,
+		Damage = 2,
+		DamageUpgraded = 1,
+		Repeat = 5,
+		DollarValue = 0
+	};
+
+	/// <summary>防空步兵车 - 1费攻击卡，对全体敌人造成3(升级5)点伤害，Token，只能通过IFV合成</summary>
+	public static CardValueStore.CardValues AaVehicle => new()
+	{
+		Cost = 1,
+		Damage = 3,
+		DamageUpgraded = 2,
+		DollarValue = 0
+	};
+
+	/// <summary>重装步兵车 - 1费攻击卡，造成3(升级5)点伤害2次，获得5(升级8)格挡，赋予1层易伤，Token</summary>
+	public static CardValueStore.CardValues HeavyVehicle => new()
+	{
+		Cost = 1,
+		Damage = 3,
+		DamageUpgraded = 2,
+		Repeat = 2,
+		Block = 5,
+		BlockUpgraded = 3,
+		MagicNumber = 1,          // 易伤层数
+		MagicNumberUpgraded = 0,   // 升级后易伤层数不变
+		DollarValue = 0
+	};
+
+	/// <summary>磁暴步兵车 - 1费技能卡，获得2(升级3)个闪电球，Token</summary>
+	public static CardValueStore.CardValues TeslaVehicle => new()
+	{
+		Cost = 1,
+		MagicNumber = 2,
+		MagicNumberUpgraded = 1,
+		DollarValue = 0
+	};
+
+	/// <summary>辐射步兵车 - 1费攻击卡，赋予10(升级12)层中毒，Token</summary>
+	public static CardValueStore.CardValues RadVehicle => new()
+	{
+		Cost = 1,
+		MagicNumber = 10,
+		MagicNumberUpgraded = 2,
+		DollarValue = 0
+	};
+
+	/// <summary>自爆步兵车 - 1费攻击卡，对全体敌人造成5伤害和8(升级12)层中毒，Token</summary>
+	public static CardValueStore.CardValues DemoVehicle => new()
+	{
+		Cost = 1,
+		Damage = 5,
+		MagicNumber = 8,
+		MagicNumberUpgraded = 4,
+		DollarValue = 0
+	};
+
+	/// <summary>狙击车 - 1费攻击卡，无视格挡造成14(升级17)点伤害，Token</summary>
+	public static CardValueStore.CardValues SniperVehicle => new()
+	{
+		Cost = 1,
+		Damage = 14,
+		DamageUpgraded = 3,
+		DollarValue = 0
+	};
+
+	/// <summary>机枪步兵车 - 1费攻击卡，造成2点伤害8(升级10)次，Token</summary>
+	public static CardValueStore.CardValues HmgVehicle => new()
+	{
+		Cost = 1,
+		Damage = 2,
+		Repeat = 8,
+		RepeatUpgraded = 2,
+		DollarValue = 0
+	};
+
+	/// <summary>震荡波步兵车 - 1费攻击卡，对全体敌人造成8(升级12)点伤害，Token</summary>
+	public static CardValueStore.CardValues ShockwaveVehicle => new()
+	{
+		Cost = 1,
+		Damage = 8,
+		DamageUpgraded = 4,
+		DollarValue = 0
+	};
+
+	/// <summary>超时空步兵车 - 1费攻击卡，赋予敌人血量10%(升级15%)层数的抹除，首次眩晕敌人，Token</summary>
+	public static CardValueStore.CardValues ChronoVehicle => new()
+	{
+		Cost = 1,
+		MagicNumber = 10,
+		MagicNumberUpgraded = 5,
+		DollarValue = 0
+	};
+
 	/// <summary>坦克杀手 - 1费攻击卡，赋予自身1层虚弱，造成16(升级20)点伤害，价格900，需要空指部/雷达解锁</summary>
 	public static CardValueStore.CardValues TankDestroyer => new()
 	{

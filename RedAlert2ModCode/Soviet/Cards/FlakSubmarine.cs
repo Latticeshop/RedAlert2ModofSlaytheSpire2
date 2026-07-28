@@ -43,6 +43,7 @@ public sealed class FlakSubmarine : CardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Soviet");
+        UnitVoiceHelper.PlaySovietAaSfx();
 
         int attackIntentCount = 0;
         foreach (var enemy in Owner.Creature.CombatState.Enemies.Where(e => e.IsAlive))

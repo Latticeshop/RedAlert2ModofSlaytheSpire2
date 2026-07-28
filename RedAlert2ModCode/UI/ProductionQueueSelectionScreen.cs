@@ -258,6 +258,8 @@ public sealed partial class ProductionQueueSelectionScreen : Control, IOverlaySc
             _itemsRow.AddChild(CreateItemButton(item.Item, item.Index));
         }
 
+        ScrollDragHelper.EnableDragScroll(_scrollContainer);
+
         // 添加按钮容器（取消、停止/恢复、取消队列）
         HBoxContainer buttonContainer = new()
         {

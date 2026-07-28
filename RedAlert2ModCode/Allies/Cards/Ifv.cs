@@ -197,6 +197,66 @@ public sealed class Ifv : CardModel
 			return;
 		}
 
+		if (selectedCard is AmericanSoldier or Conscript or SpyCard)
+		{
+			await DeploySpecialVehicle<MinigunVehicle>(ctx, selectedCard);
+			return;
+		}
+
+		if (selectedCard is SovietFlakTrooper)
+		{
+			await DeploySpecialVehicle<AaVehicle>(ctx, selectedCard);
+			return;
+		}
+
+		if (selectedCard is GuardianGi)
+		{
+			await DeploySpecialVehicle<HeavyVehicle>(ctx, selectedCard);
+			return;
+		}
+
+		if (selectedCard is SovietTeslaTrooper)
+		{
+			await DeploySpecialVehicle<TeslaVehicle>(ctx, selectedCard);
+			return;
+		}
+
+		if (selectedCard is Desolator)
+		{
+			await DeploySpecialVehicle<RadVehicle>(ctx, selectedCard);
+			return;
+		}
+
+		if (selectedCard is TerrorMan or CrazyIvanCard or ChronoIvanCard)
+		{
+			await DeploySpecialVehicle<DemoVehicle>(ctx, selectedCard);
+			return;
+		}
+
+		if (selectedCard is Sniper)
+		{
+			await DeploySpecialVehicle<SniperVehicle>(ctx, selectedCard);
+			return;
+		}
+
+		if (selectedCard is SealCommandos or ChronoCommandos or PsiCommandoCard)
+		{
+			await DeploySpecialVehicle<HmgVehicle>(ctx, selectedCard);
+			return;
+		}
+
+		if (selectedCard is YuriCard)
+		{
+			await DeploySpecialVehicle<ShockwaveVehicle>(ctx, selectedCard);
+			return;
+		}
+
+		if (selectedCard is ChronoLegionnaire)
+		{
+			await DeploySpecialVehicle<ChronoVehicle>(ctx, selectedCard);
+			return;
+		}
+
 		_storedCards.Add(selectedCard);
 		GD.Print($"[Ifv] 存储士兵卡牌: {selectedCard.Title}");
 

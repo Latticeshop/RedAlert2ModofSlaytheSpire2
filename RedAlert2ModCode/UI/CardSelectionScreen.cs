@@ -308,6 +308,8 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             _cardsRow.AddChild(CreateCardButton(card.Card, card.Index));
         }
 
+        ScrollDragHelper.EnableDragScroll(_scrollContainer);
+
         // 数量选择模式或多选模式下添加按钮容器（并排展示）
         if (_isQuantitySelect || _isMultiSelect)
         {

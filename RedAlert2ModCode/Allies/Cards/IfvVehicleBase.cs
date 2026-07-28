@@ -33,6 +33,7 @@ public abstract class IfvVehicleBase : CardModel
 
 	protected virtual string DeploySoundPath => "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvtran-deploy.mp3";
 	protected virtual string AttackSoundPath => string.Empty;
+	protected virtual IEnumerable<string>? AttackSoundPaths => null;
 
 	protected string UiTitleKey => $"ui.{LocKeyPrefix}.title";
 	protected string UiActionTitleKey => $"ui.{LocKeyPrefix}.{ActionKeyName}_title";
@@ -101,6 +102,15 @@ public abstract class IfvVehicleBase : CardModel
 		{
 			if (options[selectedIndex.Value].Id == "attack")
 			{
+				if (AttackSoundPaths != null)
+				{
+					UnitVoiceHelper.PlayRandomSound(AttackSoundPaths);
+				}
+				else if (!string.IsNullOrEmpty(AttackSoundPath))
+				{
+					UnitVoiceHelper.PlaySound(AttackSoundPath);
+				}
+				UnitVoiceHelper.PlayUnitVoice("Ifv", "Allied");
 				await ExecuteEffect(ctx, play);
 			}
 			else
@@ -121,6 +131,7 @@ public abstract class IfvVehicleBase : CardModel
 		}
 
 		UnitVoiceHelper.PlaySound(DeploySoundPath);
+		UnitVoiceHelper.PlayUnitVoice("Ifv", "Allied");
 
 		await ReleaseStoredCards();
 		await CardPileCmd.RemoveFromCombat(this);

@@ -282,6 +282,8 @@ public sealed partial class SellBuildingScreen : Control, IOverlayScreen
             _cardsRow.AddChild(CreateItemButton(item.Item, item.Index));
         }
 
+        ScrollDragHelper.EnableDragScroll(_scrollContainer);
+
         HBoxContainer buttonContainer = new()
         {
             Alignment = BoxContainer.AlignmentMode.Center,

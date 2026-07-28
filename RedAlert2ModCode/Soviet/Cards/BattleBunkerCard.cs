@@ -178,7 +178,9 @@ public sealed class BattleBunkerCard : CardModel
 			}
 			else
 			{
-				storedCardsVar.StringValue = string.Join(", ", _storedCards.Select(c => c.Title));
+				var storedText = new LocString("cards", $"{Id.Entry}.stored_info");
+				storedText.Add("0", string.Join(", ", _storedCards.Select(c => c.Title)));
+				storedCardsVar.StringValue = storedText.GetFormattedText();
 			}
 		}
 	}

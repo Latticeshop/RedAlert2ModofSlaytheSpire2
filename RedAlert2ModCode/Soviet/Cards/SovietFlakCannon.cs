@@ -74,6 +74,7 @@ public sealed class SovietFlakCannon : CardModel
 		}
 
 		BuildingSoundHelper.PlayBuildingPlaceSound();
+		UnitVoiceHelper.PlaySovietAaSfx();
 
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 

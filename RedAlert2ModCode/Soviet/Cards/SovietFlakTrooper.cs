@@ -45,6 +45,7 @@ public sealed class SovietFlakTrooper : CardModel
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Soviet");
+		UnitVoiceHelper.PlaySovietAaSfx();
 		
 		// 计算攻击意图的敌人数量
 		int attackIntentCount = 0;

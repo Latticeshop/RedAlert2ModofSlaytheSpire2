@@ -118,7 +118,9 @@ public sealed class SovietTransportShip : CardModel
         if (_storedCards.Count > 0)
         {
             _hasStored = true;
-            ((StringVar)DynamicVars["StoredCards"]).StringValue = string.Join(", ", _storedCards.Select(c => c.Title));
+            var storedText = new LocString("cards", $"{Id.Entry}.stored_info");
+            storedText.Add("0", string.Join(", ", _storedCards.Select(c => c.Title)));
+            ((StringVar)DynamicVars["StoredCards"]).StringValue = storedText.GetFormattedText();
             GD.Print($"[SovietTransportShip] 存储完成，已存储 {_storedCards.Count} 张卡牌");
 
             await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);

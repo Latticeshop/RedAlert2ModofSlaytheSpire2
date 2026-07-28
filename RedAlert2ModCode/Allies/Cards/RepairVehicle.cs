@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Utils;
@@ -23,13 +24,22 @@ namespace RedAlert2ModCode.Allies.Cards;
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class RepairVehicle : IfvVehicleBase
 {
-	public RepairVehicle() : base(1, CardType.Skill, CardRarity.Token, TargetType.Self) { }
+	private static readonly CardValueStore.CardValues Values = AlliesCardValues.RepairVehicle;
+
+	public RepairVehicle() : base((int)Values.Cost, CardType.Skill, CardRarity.Token, TargetType.Self) { }
 
 	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/allies/ifv_repair.png";
 
 	protected override string ActionKeyName => "repair";
 
 	protected override string AttackSoundPath => "res://RedAlert2ModResources/audio/AlliedUnits/IFV/Vifvrepa_repair.mp3";
+
+	protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
+	{
+		new IntVar("ReplayCount", Values.MagicNumber),
+		new StringVar("StoredCards"),
+		new IntVar("StoreCount", 1)
+	};
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
@@ -98,5 +108,6 @@ public sealed class RepairVehicle : IfvVehicleBase
 
 	protected override void OnUpgrade()
 	{
+		DynamicVars["ReplayCount"].UpgradeValueBy(Values.MagicNumberUpgraded);
 	}
 }

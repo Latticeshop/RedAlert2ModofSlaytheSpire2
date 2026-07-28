@@ -1,12 +1,34 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RedAlert2ModCode.Common.Utils;
 
 public static class UnitVoiceHelper
 {
     private static readonly Random _random = new();
+
+    public static readonly string[] SovietAaSfxPaths = new string[]
+    {
+        "res://RedAlert2ModResources/audio/CommonSFX/soviet_aa_sfx/aa_fire_1.wav",
+        "res://RedAlert2ModResources/audio/CommonSFX/soviet_aa_sfx/aa_fire_2.wav",
+        "res://RedAlert2ModResources/audio/CommonSFX/soviet_aa_sfx/aa_fire_3.wav",
+        "res://RedAlert2ModResources/audio/CommonSFX/soviet_aa_sfx/aa_fire_4.wav",
+    };
+
+    public static void PlayRandomSound(IEnumerable<string> paths)
+    {
+        var list = paths.ToList();
+        if (list.Count == 0) return;
+        string selected = list[_random.Next(list.Count)];
+        PlaySound(selected);
+    }
+
+    public static void PlaySovietAaSfx()
+    {
+        PlayRandomSound(SovietAaSfxPaths);
+    }
 
     public static void PlayUnitVoice(Type unitType, string faction = "Allied")
     {

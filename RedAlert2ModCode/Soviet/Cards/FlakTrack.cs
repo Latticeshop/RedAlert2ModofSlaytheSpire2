@@ -83,6 +83,8 @@ public sealed partial class FlakTrack : CardModel
             return;
         }
 
+        UnitVoiceHelper.PlaySovietAaSfx();
+
         var options = new List<DeployChoiceScreen.ChoiceOption>
         {
             new DeployChoiceScreen.ChoiceOption
@@ -178,7 +180,9 @@ public sealed partial class FlakTrack : CardModel
         if (_storedCards.Count > 0)
         {
             _hasStored = true;
-            ((StringVar)DynamicVars["StoredCards"]).StringValue = string.Join(", ", _storedCards.Select(c => c.Title));
+            var storedText = new LocString("cards", $"{Id.Entry}.stored_info");
+            storedText.Add("0", string.Join(", ", _storedCards.Select(c => c.Title)));
+            ((StringVar)DynamicVars["StoredCards"]).StringValue = storedText.GetFormattedText();
             GD.Print($"[FlakTrack] 存储完成，已存储 {_storedCards.Count} 张卡牌");
         }
 

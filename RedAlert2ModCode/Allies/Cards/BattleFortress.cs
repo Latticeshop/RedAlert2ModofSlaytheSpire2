@@ -123,7 +123,9 @@ public sealed class BattleFortress : CardModel
 		if (_storedCards.Count > 0)
 		{
 			_hasStored = true;
-			((StringVar)DynamicVars["StoredCards"]).StringValue = string.Join(", ", _storedCards.Select(c => c.Title));
+			var storedText = new LocString("cards", $"{Id.Entry}.stored_info");
+			storedText.Add("0", string.Join(", ", _storedCards.Select(c => c.Title)));
+			((StringVar)DynamicVars["StoredCards"]).StringValue = storedText.GetFormattedText();
 		}
 
 		await CardPileCmd.Add(this, PileType.Hand, CardPilePosition.Bottom, this);

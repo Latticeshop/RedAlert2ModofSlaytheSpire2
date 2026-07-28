@@ -29,6 +29,8 @@ public sealed class SovietTeslaTrooper : CardModel
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/soviet/shkicon.png";
 
+	private const string AttackSoundPath = "res://RedAlert2ModResources/audio/SovietUnits/TeslaTrooper/Itesat2b-attack.mp3";
+
 	protected override List<DynamicVar> CanonicalVars => new()
 	{
 		new IntVar("DollarNumber", Values.DollarValue)
@@ -54,6 +56,7 @@ public sealed class SovietTeslaTrooper : CardModel
 		if (!hasTeslaCoil)
 		{
 			GD.Print("[SovietTeslaTrooper] 没有磁暴线圈能力，直接获得闪电球");
+			UnitVoiceHelper.PlaySound(AttackSoundPath);
 			await OrbCmd.Channel<LightningOrb>(ctx, Owner);
 			return;
 		}
@@ -80,6 +83,7 @@ public sealed class SovietTeslaTrooper : CardModel
 
 		if (selectedIndex == 0)
 		{
+			UnitVoiceHelper.PlaySound(AttackSoundPath);
 			await OrbCmd.Channel<LightningOrb>(ctx, Owner);
 		}
 		else

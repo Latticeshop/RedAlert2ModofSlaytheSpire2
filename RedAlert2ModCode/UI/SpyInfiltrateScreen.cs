@@ -184,6 +184,8 @@ public sealed partial class SpyInfiltrateScreen : Control, IOverlayScreen
         {
             cardsRow.AddChild(CreateBuildingButton(titleText, descText, iconPath, _buildingOptions.FindIndex(o => o.PowerType == powerType)));
         }
+
+        ScrollDragHelper.EnableDragScroll(scrollContainer);
     }
 
     private Button CreateBuildingButton(string title, string description, string iconPath, int index)
