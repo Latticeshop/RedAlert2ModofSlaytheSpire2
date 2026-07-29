@@ -164,6 +164,8 @@
     "RED_ALERT2_MOD_CARD_SOVIET_ENGINEER.description": "{IfUpgraded:show:3|2}つの選択肢から1つの命令を選ぶ。",
     "RED_ALERT2_MOD_CARD_CONSCRIPT.title": "徴兵",
     "RED_ALERT2_MOD_CARD_CONSCRIPT.description": "{Damage}ダメージを与える。",
+    "RED_ALERT2_MOD_CARD_YURI_SOLDIER.title": "ユーリ新兵",
+    "RED_ALERT2_MOD_CARD_YURI_SOLDIER.description": "敵に {BurnAmount} 層の[gold]灼烧[/gold]を付与する。",
     "RED_ALERT2_MOD_CARD_SOVIET_FLAK_TROOPER.title": "フラック兵",
     "RED_ALERT2_MOD_CARD_SOVIET_FLAK_TROOPER.description": "攻撃意図の敵が1人いるごとに{Block}ブロックを獲得する。",
     "RED_ALERT2_MOD_CARD_SOVIET_TESLA_TROOPER.title": "テスラ兵",

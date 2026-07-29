@@ -408,6 +408,20 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconsec.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/Conscript/Iconfea.mp3",
         },
+        ["YuriSoldier"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/YuriUnits/YuriSoldier/Iiniate.mp3",
+            "res://RedAlert2ModResources/audio/YuriUnits/YuriSoldier/Iinimoa.mp3",
+            "res://RedAlert2ModResources/audio/YuriUnits/YuriSoldier/Iinimoc.mp3",
+            "res://RedAlert2ModResources/audio/YuriUnits/YuriSoldier/Iinisea.mp3",
+            "res://RedAlert2ModResources/audio/YuriUnits/YuriSoldier/Iiniseb.mp3",
+            "res://RedAlert2ModResources/audio/YuriUnits/YuriSoldier/Iinisec.mp3",
+            "res://RedAlert2ModResources/audio/YuriUnits/YuriSoldier/Iinisee.mp3",
+        },
+        ["YuriSoldierAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/YuriUnits/YuriSoldier/yuri_soldier_attack.wav",
+        },
         ["RhinoTank"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/SovietUnits/RhinoTank/Vgrsata.mp3",

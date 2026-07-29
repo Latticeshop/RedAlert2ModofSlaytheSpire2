@@ -164,6 +164,8 @@
     "RED_ALERT2_MOD_CARD_SOVIET_ENGINEER.description": "Choose 1 command from {IfUpgraded:show:3|2} options.",
     "RED_ALERT2_MOD_CARD_CONSCRIPT.title": "Conscript",
     "RED_ALERT2_MOD_CARD_CONSCRIPT.description": "Deals {Damage} damage.",
+    "RED_ALERT2_MOD_CARD_YURI_SOLDIER.title": "Yuri Soldier",
+    "RED_ALERT2_MOD_CARD_YURI_SOLDIER.description": "Apply {BurnAmount} stacks of [gold]Burn[/gold] to enemy.",
     "RED_ALERT2_MOD_CARD_SOVIET_FLAK_TROOPER.title": "Flak Trooper",
     "RED_ALERT2_MOD_CARD_SOVIET_FLAK_TROOPER.description": "For each enemy with Attack intent, gains {Block} Block.",
     "RED_ALERT2_MOD_CARD_SOVIET_TESLA_TROOPER.title": "Tesla Trooper",

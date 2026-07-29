@@ -29,7 +29,7 @@ public sealed class PrismTowerCard : CardModel
 	// 数值引用
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.PrismTower;
 	
-	public PrismTowerCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+	public PrismTowerCard() : base((int)Values.Cost, CardType.Attack, CardRarity.Uncommon, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/allies/prisicon.png";
 

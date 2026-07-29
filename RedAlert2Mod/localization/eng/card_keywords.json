@@ -141,6 +141,8 @@
     "paratrooper.faction_info.description": "Allies receive 3 GIs.\nSoviets receive 4 Conscripts.\nYuri receives 3 Initiates.",
     "timed_bomb.title": "Timed Bomb",
     "timed_bomb.description": "Gain [gold]Vigor[/gold] before playing. Card gains [gold]Exhaust[/gold].",
+    "burn.title": "Burn",
+    "burn.description": "Takes [gold]current HP × stacks%[/gold] burn damage each turn. Decays 10% of stacks per turn.",
     "ui.crazy_ivan.title": "Choose Crazy Ivan Action",
     "ui.crazy_ivan.attack_title": "Plant Bomb",
     "ui.crazy_ivan.attack_desc": "Apply {BombStacks} Timed Bomb to an enemy",

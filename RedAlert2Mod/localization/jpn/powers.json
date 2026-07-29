@@ -126,5 +126,7 @@
     "SOVIET_REPAIR_DEPOT_POWER.title": "ソ連修理工場",
     "SOVIET_REPAIR_DEPOT_POWER.description": "修理工場を展開した。",
     "URBANIZATION_POWER.title": "都市化",
-    "URBANIZATION_POWER.description": "[gold]建築[/gold]または[gold]防衛塔[/gold]カードをプレイするたび、[gold]建築[/gold]または[gold]防衛塔[/gold]カードを1枚ドローする。"
+    "URBANIZATION_POWER.description": "[gold]建築[/gold]または[gold]防衛塔[/gold]カードをプレイするたび、[gold]建築[/gold]または[gold]防衛塔[/gold]カードを1枚ドローする。",
+    "BURN_POWER.title": "灼烧",
+    "BURN_POWER.description": "毎ターン [gold]{SmartDamage}[/gold] の灼烧ダメージを受ける。毎ターン10%の層を減衰。"
 }

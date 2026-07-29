@@ -126,5 +126,7 @@
     "SOVIET_REPAIR_DEPOT_POWER.title": "소련 수리 공장",
     "SOVIET_REPAIR_DEPOT_POWER.description": "수리 공장이 전개되었습니다.",
     "URBANIZATION_POWER.title": "도시화",
-    "URBANIZATION_POWER.description": "[gold]건물[/gold] 또는 [gold]방어탑[/gold] 카드를 플레이할 때마다 [gold]건물[/gold] 또는 [gold]방어탑[/gold] 카드 한 장을 뽑습니다."
+    "URBANIZATION_POWER.description": "[gold]건물[/gold] 또는 [gold]방어탑[/gold] 카드를 플레이할 때마다 [gold]건물[/gold] 또는 [gold]방어탑[/gold] 카드 한 장을 뽑습니다.",
+    "BURN_POWER.title": "화상",
+    "BURN_POWER.description": "매 턴 [gold]{SmartDamage}[/gold]의 화상 피해를 받습니다. 매 턴 10%의 스택이 감소합니다."
 }

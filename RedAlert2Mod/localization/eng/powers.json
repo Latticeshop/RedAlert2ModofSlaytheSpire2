@@ -126,5 +126,7 @@
     "SOVIET_REPAIR_DEPOT_POWER.title": "Soviet Repair Depot",
     "SOVIET_REPAIR_DEPOT_POWER.description": "Repair Depot deployed.",
     "URBANIZATION_POWER.title": "Urbanization",
-    "URBANIZATION_POWER.description": "Whenever you play a [gold]Building[/gold] or [gold]Defense Tower[/gold] card, draw a [gold]Building[/gold] or [gold]Defense Tower[/gold] card."
+    "URBANIZATION_POWER.description": "Whenever you play a [gold]Building[/gold] or [gold]Defense Tower[/gold] card, draw a [gold]Building[/gold] or [gold]Defense Tower[/gold] card.",
+    "BURN_POWER.title": "Burn",
+    "BURN_POWER.description": "Takes [gold]{SmartDamage}[/gold] burn damage each turn. Decays 10% of stacks per turn."
 }

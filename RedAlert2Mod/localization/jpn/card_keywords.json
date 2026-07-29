@@ -141,6 +141,8 @@
     "paratrooper.faction_info.description": "連合軍は3人のジーアイを獲得します。\nソ連軍は4人の徴兵を獲得します。\nユーリは3人の入信者を獲得します。",
     "timed_bomb.title": "タイムドボム",
     "timed_bomb.description": "使用前に[gold]ビガー[/gold]を獲得。カードに[gold]消費[/gold]を付与。",
+    "burn.title": "灼烧",
+    "burn.description": "毎ターン [gold]現在HP×層数%[/gold] の灼烧ダメージを受ける。毎ターン10%の層を減衰。",
     "ui.crazy_ivan.title": "クレイジーイワンの行動を選択",
     "ui.crazy_ivan.attack_title": "爆弾設置",
     "ui.crazy_ivan.attack_desc": "敵1体に{BombStacks}層のタイムドボムを付与",

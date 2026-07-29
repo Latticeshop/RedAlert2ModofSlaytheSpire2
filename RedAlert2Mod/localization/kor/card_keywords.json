@@ -141,6 +141,8 @@
   "paratrooper.faction_info.description": "연합군은 GI 3명을 받습니다.\n소련군은 징병 4명을 받습니다.\n유리는 개척자 3명을 받습니다.",
   "timed_bomb.title": "타임드 폭탄",
   "timed_bomb.description": "사용 전에 [gold]비거[/gold]층을 얻습니다. 카드에 [gold]소멸[/gold]이 부여됩니다.",
+  "burn.title": "화상",
+  "burn.description": "매 턴 [gold]현재 HP×스택%[/gold]의 화상 피해를 받습니다. 매 턴 10%의 스택이 감소합니다.",
   "ui.crazy_ivan.title": "크레이지 이반 행동 선택",
   "ui.crazy_ivan.attack_title": "폭탄 설치",
   "ui.crazy_ivan.attack_desc": "적 1명에게 {BombStacks}층의 타임드 폭탄 부여",

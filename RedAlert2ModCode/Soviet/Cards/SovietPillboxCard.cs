@@ -27,7 +27,7 @@ public sealed class SovietPillboxCard : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = SovietCardValues.SovietPillbox;
 	
-	public SovietPillboxCard() : base((int)Values.Cost, CardType.Skill, CardRarity.Common, TargetType.Self) { }
+	public SovietPillboxCard() : base((int)Values.Cost, CardType.Attack, CardRarity.Common, TargetType.Self) { }
 
 	public override string PortraitPath => $"res://RedAlert2ModResources/images/packed/card_portraits/soviet/plticon.png";
 

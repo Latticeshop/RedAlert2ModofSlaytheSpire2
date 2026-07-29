@@ -49,15 +49,15 @@ public static class CommonCardValues
 		Cost = 1,
 		Damage = 3,             // 基础伤害
 		DamageUpgraded = 1,     // 升级后4 = 3 + 1
-		Repeat = 4              // 攻击次数
+		Repeat = 5              // 攻击次数
 	};
 
 	/// <summary>飞鹰空袭 - 1费攻击卡，绝地战备，对全体敌人造成8伤害（升级12伤害）</summary>
 	public static CardValueStore.CardValues EagleAirStrike => new()
 	{
 		Cost = 1,
-		Damage = 8,             // 基础伤害
-		DamageUpgraded = 4,     // 升级后12 = 8 + 4
+		Damage = 10,             // 基础伤害
+		DamageUpgraded = 5,     // 升级后12 = 8 + 4
 		Repeat = 1
 	};
 

@@ -122,6 +122,15 @@ public static class SovietCardValues
 		MagicNumberUpgraded = 2,
 		DollarValue = 0
 	};
+
+	/// <summary>尤里新兵 - 1费攻击卡，Token，赋予3(升级4)层灼烧，价格200</summary>
+	public static CardValueStore.CardValues YuriSoldier => new()
+	{
+		Cost = 1,
+		Damage = 3,
+		DamageUpgraded = 1,
+		DollarValue = 200
+	};
 	
 	// ==================== 装甲单位 ====================
 	

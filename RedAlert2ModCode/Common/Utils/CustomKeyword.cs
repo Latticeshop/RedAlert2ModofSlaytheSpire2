@@ -267,6 +267,12 @@ public static class ModCardKeywords
 		new LocString("card_keywords", "timed_bomb.description")
 	);
 
+	public static readonly CustomKeyword Burn = new(
+		"BURN",
+		new LocString("card_keywords", "burn.title"),
+		new LocString("card_keywords", "burn.description")
+	);
+
 	public static void Initialize()
     {
         CustomKeywordManager.RegisterKeyword(Mcv);
@@ -304,5 +310,6 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(Infiltrator);
         CustomKeywordManager.RegisterKeyword(ParatrooperFactionInfo);
         CustomKeywordManager.RegisterKeyword(TimedBomb);
+        CustomKeywordManager.RegisterKeyword(Burn);
     }
 }
