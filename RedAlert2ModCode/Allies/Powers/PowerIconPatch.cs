@@ -49,9 +49,9 @@ public static class PowerIconPatch
         { typeof(HornetPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/hornet.png" },
         { typeof(TargetLockedPower), "res://RedAlert2ModResources/images/packed/powers/target_locked.png" },
         { typeof(OilDerrickPower), "res://RedAlert2ModResources/images/packed/card_portraits/oil_derrick_power.png" },
-        { typeof(Eagle500kgPower), "res://RedAlert2ModResources/images/packed/powers/Eagle500kgPower.png" },
-        { typeof(EagleMachineGunPower), "res://RedAlert2ModResources/images/packed/powers/EagleMachineGunPower.png" },
-        { typeof(EagleAirStrikePower), "res://RedAlert2ModResources/images/packed/powers/EagleAirStrikePower.png" },
+        { typeof(Eagle500kgPower), "res://RedAlert2ModResources/images/packed/card_portraits/Helldivers/Eagle/Eagle500kgPower.png" },
+        { typeof(EagleMachineGunPower), "res://RedAlert2ModResources/images/packed/card_portraits/Helldivers/Eagle/EagleMachineGunPower.png" },
+        { typeof(EagleAirStrikePower), "res://RedAlert2ModResources/images/packed/card_portraits/Helldivers/Eagle/EagleAirStrikePower.png" },
         { typeof(MassProductionPower), "res://RedAlert2ModResources/images/packed/powers/MassProductionPower.png" },
         { typeof(GoldMinePower), "res://RedAlert2ModResources/images/packed/powers/gold_mine_power.png" },
         { typeof(GemMinePower), "res://RedAlert2ModResources/images/packed/powers/gem_mine_power.png" },
@@ -87,7 +87,11 @@ public static class PowerIconPatch
         { typeof(AlliedRepairDepotPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/fixicon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.SovietRepairDepotPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/rfixicon.png" },
         { typeof(UrbanizationPower), "res://RedAlert2ModResources/images/packed/card_portraits/urbanization_power.png" },
-        };
+        { typeof(RedAlert2ModCode.Soviet.Powers.OrbitalGasStrikePower), "res://RedAlert2ModResources/images/packed/card_portraits/Helldivers/Orbital/OrbitalGasStrike.png" },
+        { typeof(RedAlert2ModCode.Soviet.Powers.Orbital120mmPower), "res://RedAlert2ModResources/images/packed/card_portraits/Helldivers/Orbital/Orbital120mm.png" },
+        { typeof(RedAlert2ModCode.Soviet.Powers.Orbital380mmPower), "res://RedAlert2ModResources/images/packed/card_portraits/Helldivers/Orbital/Orbital380mm.png" },
+        { typeof(EagleSmokeStrikePower), "res://RedAlert2ModResources/images/packed/card_portraits/Helldivers/Eagle/Eagle_Smoke_Strike.png" },
+    };
 
     /// <summary>
     /// 缓存已加载的图标

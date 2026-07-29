@@ -56,6 +56,8 @@
     "EAGLE_MACHINE_GUN_POWER.description": "[gold]ターゲットロック[/gold]した敵に{Damage}ダメージを{Repeat}回与える。",
     "EAGLE_AIR_STRIKE_POWER.title": "イーグル空襲",
     "EAGLE_AIR_STRIKE_POWER.description": "全ての敵に{Damage}ダメージを与える。",
+    "EAGLE_SMOKE_STRIKE_POWER.title": "イーグルスモーク",
+    "EAGLE_SMOKE_STRIKE_POWER.description": "[gold]ターゲットロック[/gold]された敵に{MagicNumber}層の虚弱を付与する。味方全体は{Block}の防御を獲得する。",
     "MASS_PRODUCTION_POWER.title": "大量生産",
     "MASS_PRODUCTION_POWER.description": "ユニット価格が[gold]${Reduction}[/gold]減少する。",
     "MASS_PRODUCTION_POWER.description_upgraded": "ユニット価格が[gold]${Reduction}[/gold]減少する。",
@@ -128,5 +130,11 @@
     "URBANIZATION_POWER.title": "都市化",
     "URBANIZATION_POWER.description": "[gold]建築[/gold]または[gold]防衛塔[/gold]カードをプレイするたび、[gold]建築[/gold]または[gold]防衛塔[/gold]カードを1枚ドローする。",
     "BURN_POWER.title": "灼烧",
-    "BURN_POWER.description": "毎ターン [gold]{SmartDamage}[/gold] の灼烧ダメージを受ける。毎ターン10%の層を減衰。"
+    "BURN_POWER.description": "毎ターン [gold]{SmartDamage}[/gold] の灼烧ダメージを受ける。毎ターン10%の層を減衰。",
+    "ORBITAL_GAS_STRIKE_POWER.title": "軌道ガス攻撃",
+    "ORBITAL_GAS_STRIKE_POWER.description": "ターン開始時に全敵に{Poison}層の[gold]毒[/gold]を付与。",
+    "ORBITAL120MM_POWER.title": "軌道120MM",
+    "ORBITAL120MM_POWER.description": "ターン開始時に[gold]ターゲットロック[/gold]された敵に{Damage}ダメージを{Repeat}回与える。",
+    "ORBITAL380MM_POWER.title": "軌道380MM",
+    "ORBITAL380MM_POWER.description": "ターン開始時に[gold]ターゲットロック[/gold]された敵に{Damage}ダメージを{Repeat}回与える。[gold]スプラッシュ[/gold]。"
 }

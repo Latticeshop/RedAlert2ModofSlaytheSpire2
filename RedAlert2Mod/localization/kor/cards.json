@@ -108,6 +108,8 @@
     "EAGLE500KG.title": "이글 500kg",
     "EAGLE_AIR_STRIKE.description": "[gold]필사의 수단[/gold].\n모든 적에게 피해를 {Damage} 줍니다.",
     "EAGLE_AIR_STRIKE.title": "이글 공습",
+    "EAGLE_SMOKE_STRIKE.title": "이글 스모크",
+    "EAGLE_SMOKE_STRIKE.description": "[gold]필사의 수단[/gold].\n{MagicNumber}층의 허약을 부여합니다. 아군 전체가 {Block} 방어력을 얻습니다.",
     "EAGLE_MACHINE_GUN.description": "[gold]필사의 수단[/gold].\n[gold]표적 고정[/gold]된 적에게 피해를 {Damage}만큼 {Repeat}번 줍니다.",
     "EAGLE_MACHINE_GUN.title": "이글 기관총",
     "F2_A.description": "[gold]강철의 물결[/gold] 파워를 얻습니다.",
@@ -290,5 +292,11 @@
     "CHRONO_IVAN_CARD.title": "크로노 이반",
     "CHRONO_IVAN_CARD.description": "{ChronoTitle}적에게 {BombStacks}층의 [gold]시간 폭탄[/gold]을 적용합니다. 적이 이미 [gold]시간 폭탄[/gold]을 가지고 있다면 카운트다운을 감소시킵니다. [gold]배치[/gold]: 손에서 [gold]유닛[/gold] 카드를 선택하여 [gold]\"시간 폭탄\"[/gold] 키워드를 추가합니다. 카드 사용 전에 {DeployVigor}의 [gold]비거[/gold]를 획득하고 소진됩니다.",
     "URBANIZATION_CARD.title": "도시화",
-    "URBANIZATION_CARD.description": "[gold]건물[/gold] 또는 [gold]방어탑[/gold] 카드를 플레이할 때마다 [gold]건물[/gold] 또는 [gold]방어탑[/gold] 카드 한 장을 뽑습니다."
+    "URBANIZATION_CARD.description": "[gold]건물[/gold] 또는 [gold]방어탑[/gold] 카드를 낼 때마다 [gold]건물[/gold] 또는 [gold]방어탑[/gold] 카드를 한 장 뽑습니다.",
+    "ORBITAL_GAS_STRIKE.title": "궤도 가스 공격",
+    "ORBITAL_GAS_STRIKE.description": "[gold]궤도 준비[/gold].\n[gold]목표 고정[/gold]을 부여합니다. 다음 턴에 모든 적에게 {Poison}층의 [gold]독[/gold]을 부여합니다.",
+    "ORBITAL120MM.title": "궤도 120MM",
+    "ORBITAL120MM.description": "[gold]궤도 준비[/gold].\n[gold]목표 고정[/gold]을 부여합니다. 다음 턴에 대상 적에게 {Damage} 피해를 {Repeat}번 입힙니다.",
+    "ORBITAL380MM.title": "궤도 380MM",
+    "ORBITAL380MM.description": "[gold]궤도 준비[/gold].\n[gold]목표 고정[/gold]을 부여합니다. 다음 턴에 대상 적에게 {Damage} 피해를 {Repeat}번 입힙니다.\n[gold]스플래시[/gold]."
 }

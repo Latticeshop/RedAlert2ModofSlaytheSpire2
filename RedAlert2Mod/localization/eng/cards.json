@@ -147,11 +147,13 @@
     "RED_ALERT2_MOD_CARD_ALLIES_REPAIR_DEPOT.title": "Repair Depot",
     "RED_ALERT2_MOD_CARD_ALLIES_REPAIR_DEPOT.description": "[gold]Cost: ${DollarNumber}[/gold]. Choose 1 card from the Exhaust pile to add to your hand.",
     "EAGLE500KG.title": "Eagle 500kg",
-    "EAGLE500KG.description": "[gold]Desperate Measures[/gold].\n[gold]Target Locked[/gold].\n[red]↑ → ↓ ↓ ↓[/red]\n[gold]Splash[/gold].",
+    "EAGLE500KG.description": "[gold]Desperate Measures[/gold].\nApply [gold]Target Locked[/gold].\n[red]↑ → ↓ ↓ ↓[/red]\n[gold]Splash[/gold].",
     "EAGLE_MACHINE_GUN.title": "Eagle Machine Gun",
-    "EAGLE_MACHINE_GUN.description": "[gold]Desperate Measures[/gold].\nDeals {Damage} damage to enemies with [gold]Target Locked[/gold] {Repeat} times.",
+    "EAGLE_MACHINE_GUN.description": "[gold]Desperate Measures[/gold].\nApply [gold]Target Locked[/gold]. Deals {Damage} damage to the target enemy {Repeat} times.",
     "EAGLE_AIR_STRIKE.title": "Eagle Air Strike",
     "EAGLE_AIR_STRIKE.description": "[gold]Desperate Measures[/gold].\nDeals {Damage} damage to ALL enemies.",
+    "EAGLE_SMOKE_STRIKE.title": "Eagle Smoke Strike",
+    "EAGLE_SMOKE_STRIKE.description": "[gold]Desperate Measures[/gold].\nApply [gold]Target Locked[/gold]. Applies {MagicNumber} Weak to the target enemy. All allies gain {Block} Block.",
     "MASS_PRODUCTION_CARD.title": "Mass Production",
     "MASS_PRODUCTION_CARD.description": "Unit cost reduced by [gold]${Reduction}[/gold].",
     "MINE_RAID.title": "Mine Raid",
@@ -294,5 +296,11 @@
     "RED_ALERT2_MOD_CARD_SPY_CARD.title": "Spy",
     "RED_ALERT2_MOD_CARD_SPY_CARD.description": "Infiltrate buildings. Choose 1 command from {IfUpgraded:show:3|2} options.\nCan infiltrate ally buildings.",
     "URBANIZATION_CARD.title": "Urbanization",
-    "URBANIZATION_CARD.description": "Whenever you play a [gold]Building[/gold] or [gold]Defense Tower[/gold] card, draw a [gold]Building[/gold] or [gold]Defense Tower[/gold] card."
+    "URBANIZATION_CARD.description": "Whenever you play a [gold]Building[/gold] or [gold]Defense Tower[/gold] card, draw a [gold]Building[/gold] or [gold]Defense Tower[/gold] card.",
+    "ORBITAL_GAS_STRIKE.title": "Orbital Gas Strike",
+    "ORBITAL_GAS_STRIKE.description": "[gold]Orbital Readiness[/gold].\nNext turn, inflict {Poison} stacks of [gold]Poison[/gold] to all enemies.",
+    "ORBITAL120MM.title": "Orbital 120mm",
+    "ORBITAL120MM.description": "[gold]Orbital Readiness[/gold].\nApply [gold]Target Locked[/gold]. Next turn, deal {Damage} damage {Repeat} times to the target enemy.",
+    "ORBITAL380MM.title": "Orbital 380mm",
+    "ORBITAL380MM.description": "[gold]Orbital Readiness[/gold].\nApply [gold]Target Locked[/gold]. Next turn, deal {Damage} damage {Repeat} times to the target enemy.\n[gold]Splash[/gold]."
 }

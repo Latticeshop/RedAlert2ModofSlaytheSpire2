@@ -20,7 +20,6 @@ public static class SovietCardRegistry
         () => ModelDb.Card<SovietEngineer>(),
         () => ModelDb.Card<SovietAttackDog>(),
         () => ModelDb.Card<SovietFlakTrooper>(), // 防空步兵 - T1基础单位
-        () => ModelDb.Card<YuriSoldier>(), // 尤里新兵 - T1基础单位
     };
 
     public static List<Func<CardModel>> RadarSoldiers { get; } = new()
@@ -100,6 +99,9 @@ public static class SovietCardRegistry
         cards.Add(() => ModelDb.Card<ForceField>());
         cards.Add(() => ModelDb.Card<NuclearPlantCard>());
         cards.Add(() => ModelDb.Card<SupportCard>());
+        cards.Add(() => ModelDb.Card<OrbitalGasStrike>());
+        cards.Add(() => ModelDb.Card<Orbital120mm>());
+        cards.Add(() => ModelDb.Card<Orbital380mm>());
         return cards;
     }
 

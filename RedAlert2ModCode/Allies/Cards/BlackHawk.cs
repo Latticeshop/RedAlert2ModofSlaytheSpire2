@@ -1,4 +1,4 @@
-﻿using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions;
@@ -48,8 +48,17 @@ public sealed class BlackHawk : CardModel
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		UnitVoiceHelper.PlayUnitVoice(this.GetType());
-		GD.Print("[BlackHawk] 卡牌打出开始");
+		GD.Print("[BlackHawk] 卡牌打出开始 - 特殊战机（自身效果 + 飞鹰战备）");
 
+		// 黑鹰战机为特殊战机：先触发飞鹰战备（消耗一层），随后继续执行自身攻击效果
+		// 与入侵者/黄蜂等普通战机不同，飞鹰战备触发不会替换自身攻击
+		bool desperateSuccess = await DesperateMeasures.TryExecuteDesperateMeasureAttack(Owner.Creature, play.Target, ctx);
+		if (desperateSuccess)
+		{
+			GD.Print("[BlackHawk] 飞鹰战备触发成功，继续执行自身攻击效果");
+		}
+
+		// 自身攻击效果（无论飞鹰战备是否触发都执行）
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, play)
 			.Targeting(play.Target)
@@ -57,19 +66,7 @@ public sealed class BlackHawk : CardModel
 
 		await PowerCmd.Apply<VulnerablePower>(new ThrowingPlayerChoiceContext(), play.Target, DynamicVars.Repeat.IntValue, Owner.Creature, this);
 
-		await ExecuteDesperateMeasureExtra(Owner.Creature, play.Target, ctx);
-
 		GD.Print("[BlackHawk] 卡牌打出完成");
-	}
-
-	private async Task ExecuteDesperateMeasureExtra(Creature player, Creature target, PlayerChoiceContext ctx)
-	{
-		var desperateMeasure = DesperateMeasures.GetFirstDesperateMeasure(player);
-		if (desperateMeasure != null && desperateMeasure is IDesperateMeasurePower dmPower)
-		{
-			GD.Print($"[BlackHawk] 额外触发飞鹰战备: {desperateMeasure.GetType().Name}");
-			await dmPower.ExecuteDesperateMeasureAttack(target, ctx);
-		}
 	}
 
 	protected override void OnUpgrade()

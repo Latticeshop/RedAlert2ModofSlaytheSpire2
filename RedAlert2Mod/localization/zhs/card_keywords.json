@@ -52,7 +52,7 @@
     "building_tech_tree.title": "建筑科技线",
     "building_tech_tree.description": "科技线：基地车能力(解锁发电厂，兵营，矿场)->T1:矿场(解锁重工，空军，海军)->T2:空指部/雷达(解锁作战实验室)->T3:作战实验室(解锁高级兵种和超级武器等)。",
     "orbital_readiness.title": "轨道战备",
-    "orbital_readiness.description": "召唤轨道飞行器进行打击。",
+    "orbital_readiness.description": "建造苏联[gold]雷达[/gold]后使用。\n一回合后打击[gold]目标锁定[/gold]的敌人。",
     "terror_drone.title": "恐怖机器人",
     "terror_drone.description": "每回合受到层数数值的伤害。当目标回血时清除。",
     "chrono.title": "超时空.",

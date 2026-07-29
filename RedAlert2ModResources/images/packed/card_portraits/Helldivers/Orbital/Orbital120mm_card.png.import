@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://xamjkfkfnuvg"
-path="res://.godot/imported/EagleAirStrikePower.png-abbd0912861f2ae9c7787ad5f35eb77f.ctex"
+uid="uid://bnd6b22gqeva0"
+path="res://.godot/imported/Orbital120mm_card.png-7e66d5ce4d80c0641f19e396db1085ed.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://RedAlert2ModResources/images/packed/powers/EagleAirStrikePower.png"
-dest_files=["res://.godot/imported/EagleAirStrikePower.png-abbd0912861f2ae9c7787ad5f35eb77f.ctex"]
+source_file="res://RedAlert2ModResources/images/packed/card_portraits/Helldivers/Orbital/Orbital120mm_card.png"
+dest_files=["res://.godot/imported/Orbital120mm_card.png-7e66d5ce4d80c0641f19e396db1085ed.ctex"]
 
 [params]
 

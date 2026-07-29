@@ -52,7 +52,7 @@
     "building_tech_tree.title": "建物テクノロジーツリー",
     "building_tech_tree.description": "テクノロジーツリー：MCV能力（発電所、兵舎、精製所アンロック）→T1:精製所（重工場、空軍、海軍アンロック）→T2:重工場＋空指部/レーダー（作戦実験室アンロック）→T3:作戦実験室（高級兵種とスーパーウェポンなどアンロック）。",
     "orbital_readiness.title": "軌道戦備",
-    "orbital_readiness.description": "軌道飛行体を召喚して攻撃する。",
+    "orbital_readiness.description": "ソ連[gold]レーダー[/gold]建造後に使用。\n1ターン後に[gold]目標锁定[/gold]された敵を攻撃。",
     "terror_drone.title": "テロドローン",
     "terror_drone.description": "毎ターン層数分のダメージを受ける。対象が回復した時に消去される。",
     "chrono.title": "クロノ.",

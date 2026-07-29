@@ -16,6 +16,7 @@ using MegaCrit.Sts2.Core.Nodes.Combat;
 using RedAlert2ModCode.Allies.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
+using RedAlert2ModCode.Common;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Allies;
@@ -115,6 +116,14 @@ public sealed partial class NightHawkChopper : CardModel
 
     private async Task ExecuteAttack(PlayerChoiceContext ctx, CardPlay play)
     {
+        // 尝试执行绝地战备攻击（消耗一层），成功则替换普通攻击
+        bool desperateSuccess = await DesperateMeasures.TryExecuteDesperateMeasureAttack(Owner.Creature, play.Target, ctx);
+        if (desperateSuccess)
+        {
+            GD.Print("[NightHawkChopper] 绝地战备攻击成功，跳过普通攻击");
+            return;
+        }
+
         int dexterity = IsUpgraded ? Values.MagicNumber + Values.MagicNumberUpgraded : Values.MagicNumber;
         await PowerCmd.Apply<NightHawkTemporaryDexterityPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, dexterity, Owner.Creature, this);
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)

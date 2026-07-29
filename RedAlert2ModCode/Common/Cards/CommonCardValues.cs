@@ -69,6 +69,16 @@ public static class CommonCardValues
 		Repeat = 1
 	};
 
+	/// <summary>飞鹰烟雾 - 1费攻击卡，绝地战备，对目标施加虚弱并给我方全体格挡</summary>
+	public static CardValueStore.CardValues EagleSmokeStrike => new()
+	{
+		Cost = 1,
+		MagicNumber = 1,             // 基础虚弱层数
+		MagicNumberUpgraded = 1,     // 升级后2 = 1 + 1
+		Block = 16,                  // 基础格挡
+		BlockUpgraded = 4            // 升级后20 = 16 + 4
+	};
+
 	/// <summary>伞兵 - 1费攻击卡，将6张美国大兵加入手牌（升级后去掉消耗）</summary>
 	public static CardValueStore.CardValues Paratrooper => new()
 	{

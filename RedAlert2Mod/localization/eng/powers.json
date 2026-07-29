@@ -56,6 +56,8 @@
     "EAGLE_MACHINE_GUN_POWER.description": "Deals {Damage} damage to enemies with [gold]Target Locked[/gold] {Repeat} times.",
     "EAGLE_AIR_STRIKE_POWER.title": "Eagle Air Strike",
     "EAGLE_AIR_STRIKE_POWER.description": "Deals {Damage} damage to all enemies.",
+    "EAGLE_SMOKE_STRIKE_POWER.title": "Eagle Smoke Strike",
+    "EAGLE_SMOKE_STRIKE_POWER.description": "Applies {MagicNumber} Weak to [gold]Target Locked[/gold] enemies. All allies gain {Block} Block.",
     "MASS_PRODUCTION_POWER.title": "Mass Production",
     "MASS_PRODUCTION_POWER.description": "Reduces unit cost by [gold]${Reduction}[/gold].",
     "MASS_PRODUCTION_POWER.description_upgraded": "Reduces unit cost by [gold]${Reduction}[/gold].",
@@ -128,5 +130,11 @@
     "URBANIZATION_POWER.title": "Urbanization",
     "URBANIZATION_POWER.description": "Whenever you play a [gold]Building[/gold] or [gold]Defense Tower[/gold] card, draw a [gold]Building[/gold] or [gold]Defense Tower[/gold] card.",
     "BURN_POWER.title": "Burn",
-    "BURN_POWER.description": "Takes [gold]{SmartDamage}[/gold] burn damage each turn. Decays 10% of stacks per turn."
+    "BURN_POWER.description": "Takes [gold]{SmartDamage}[/gold] burn damage each turn. Decays 10% of stacks per turn.",
+    "ORBITAL_GAS_STRIKE_POWER.title": "Orbital Gas Strike",
+    "ORBITAL_GAS_STRIKE_POWER.description": "At turn start, inflict {Poison} stacks of [gold]Poison[/gold] to all enemies.",
+    "ORBITAL120MM_POWER.title": "Orbital 120mm",
+    "ORBITAL120MM_POWER.description": "At turn start, deal {Damage} damage {Repeat} times to enemies with [gold]Target Locked[/gold].",
+    "ORBITAL380MM_POWER.title": "Orbital 380mm",
+    "ORBITAL380MM_POWER.description": "At turn start, deal {Damage} damage {Repeat} times to enemies with [gold]Target Locked[/gold]. [gold]Splash[/gold]."
 }

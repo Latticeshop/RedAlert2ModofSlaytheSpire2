@@ -147,11 +147,13 @@
     "RED_ALERT2_MOD_CARD_ALLIES_REPAIR_DEPOT.title": "维修厂",
     "RED_ALERT2_MOD_CARD_ALLIES_REPAIR_DEPOT.description": "[gold]价格：${DollarNumber}[/gold]。从消耗牌堆选择一张牌加入手牌。",
     "EAGLE500KG.title": "飞鹰500KG",
-    "EAGLE500KG.description": "[gold]飞鹰战备[/gold]。\n[gold]目标锁定[/gold]。\n[red]↑ → ↓ ↓ ↓[/red]\n[gold]溅射[/gold]。",
+    "EAGLE500KG.description": "[gold]飞鹰战备[/gold]。\n赋予[gold]目标锁定[/gold]。\n[red]↑ → ↓ ↓ ↓[/red]\n[gold]溅射[/gold]。",
     "EAGLE_MACHINE_GUN.title": "飞鹰机枪扫射",
-    "EAGLE_MACHINE_GUN.description": "[gold]飞鹰战备[/gold]。\n对[gold]目标锁定[/gold]的敌人造成 {Damage} 点伤害 {Repeat} 次。",
+    "EAGLE_MACHINE_GUN.description": "[gold]飞鹰战备[/gold]。\n赋予[gold]目标锁定[/gold]。对目标敌人造成 {Damage} 点伤害 {Repeat} 次。",
     "EAGLE_AIR_STRIKE.title": "飞鹰空袭",
     "EAGLE_AIR_STRIKE.description": "[gold]飞鹰战备[/gold]。\n对全部敌人造成 {Damage} 点伤害。",
+    "EAGLE_SMOKE_STRIKE.title": "飞鹰烟雾",
+    "EAGLE_SMOKE_STRIKE.description": "[gold]飞鹰战备[/gold]。\n赋予[gold]目标锁定[/gold]。对目标敌人赋予{MagicNumber}层虚弱。我方全体获得{Block}格挡。",
     "MASS_PRODUCTION_CARD.title": "大生产",
     "MASS_PRODUCTION_CARD.description": "单位价格减少[gold]${Reduction}[/gold]。",
     "MINE_RAID.title": "扰矿",
@@ -292,5 +294,11 @@
     "RED_ALERT2_MOD_CARD_SPY_CARD.title": "间谍",
     "RED_ALERT2_MOD_CARD_SPY_CARD.description": "渗透建筑，从 {IfUpgraded:show:3|2} 个选项中选择一个指令。\n可以渗透队友建筑。",
     "URBANIZATION_CARD.title": "城市化",
-    "URBANIZATION_CARD.description": "每打出一张[gold]建筑[/gold]或[gold]防御塔[/gold]牌，抽取一张[gold]建筑[/gold]或[gold]防御塔[/gold]牌。"
+    "URBANIZATION_CARD.description": "每打出一张[gold]建筑[/gold]或[gold]防御塔[/gold]牌，抽取一张[gold]建筑[/gold]或[gold]防御塔[/gold]牌。",
+    "ORBITAL_GAS_STRIKE.title": "轨道毒气",
+    "ORBITAL_GAS_STRIKE.description": "[gold]轨道战备[/gold]。\n下回合对全体敌人赋予{Poison}层[gold]中毒[/gold]。",
+    "ORBITAL120MM.title": "轨道120MM",
+    "ORBITAL120MM.description": "[gold]轨道战备[/gold]。\n赋予[gold]目标锁定[/gold]。下回合对目标敌人造成{Damage}点伤害{Repeat}次。",
+    "ORBITAL380MM.title": "轨道380MM",
+    "ORBITAL380MM.description": "[gold]轨道战备[/gold]。\n赋予[gold]目标锁定[/gold]。下回合对目标敌人造成{Damage}点伤害{Repeat}次。\n[gold]溅射[/gold]。"
 }

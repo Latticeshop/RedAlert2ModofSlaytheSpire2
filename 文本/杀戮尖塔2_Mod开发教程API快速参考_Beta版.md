@@ -3704,6 +3704,190 @@ protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 
 ---
 
+---
+
+## 🛠️ 高级战备体系实现模式（飞鹰 & 轨道）
+
+### 一、飞鹰战备体系（盟军）
+
+#### 1. 架构设计：双基类封装
+
+飞鹰战备体系通过两个基类实现了高度的代码复用和统一的行为逻辑：
+
+-   **`DesperateMeasureCardBase<TPower>` (卡牌基类)**：统一管理卡牌的打出流程、关键词显示（Pool/VisualCardPool 切换）、升级逻辑等。
+-   **`DesperateMeasurePowerBase` (能力基类)**：统一管理回合触发流程、目标锁定判定、溅射伤害处理、独立叠层逻辑等。
+
+**核心代码模式**：
+
+```csharp
+// 卡牌基类示例
+public abstract class DesperateMeasureCardBase<TPower> : CardModel
+    where TPower : DesperateMeasurePowerBase
+{
+    // 自动处理 Pool/VisualCardPool 切换
+    public override CardPoolModel Pool => IsMutable && Owner != null
+        ? Owner.Character.CardPool
+        : ModelDb.CardPool<TokenCardPool>();
+    public override CardPoolModel VisualCardPool => Pool;
+
+    // 自动添加关键词
+    protected override IEnumerable<IHoverTip> ExtraHoverTips =>
+    [
+        ModCardKeywords.DesperateMeasure.CreateHoverTip(),
+        NeedsTargetLock ? ModCardKeywords.TargetLocked.CreateHoverTip() : null,
+        // ... 其他Tip
+    ];
+
+    // 子类只需重写核心逻辑
+    protected abstract Task<TPower?> ApplyPower(Creature owner, bool isUpgraded);
+}
+
+// 能力基类示例
+public abstract class DesperateMeasurePowerBase : PowerModel
+{
+    public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
+    public override PowerStackType StackType => PowerStackType.Counter;
+
+    // 统一的回合触发逻辑
+    public override async Task AfterSideTurnStart(...)
+    {
+        // 1. 校验 Owner/Target 有效性
+        // 2. 若 NeedsTargetLock=true 但未锁定，自动从存活敌人中随机选一个并打上锁定
+        // 3. 调用子类的 ExecuteAttackEffect 实现
+        // 4. 消耗一层 Amount
+        await ConsumeOrRemove();
+    }
+
+    // 子类实现：具体的攻击效果
+    protected abstract Task ExecuteAttackEffect(Creature target, PlayerChoiceContext ctx);
+}
+```
+
+#### 2. 独立叠层规范（强制要求）
+
+所有战备能力必须实现「**相同数值叠加层数，不同数值独立实例**」，以支持在同一张卡可以升级前后独立存在的需求。
+
+**标准模式**：按实际最终数值判断，而非 `IsUpgraded` 布尔值。
+
+```csharp
+// 在卡牌 ApplyPower 方法中
+var existingPower = owner.Powers.OfType<TPower>()
+    .FirstOrDefault(p => p.CurrentDamage == finalDamage 
+                       && p.CurrentRepeat == repeatCount); // 如果有多个自定义字段
+
+if (existingPower != null)
+{
+    // 数值完全相同 → 叠加层数
+    await PowerCmd.ModifyAmount(ctx, existingPower, 1m, owner, null);
+}
+else
+{
+    // 数值不同 → 创建新实例
+    var power = await PowerCmd.Apply<TPower>(ctx, owner, 1m, owner, null);
+    if (power != null)
+    {
+        power.CurrentDamage = finalDamage;
+        power.IsUpgraded = isUpgraded;
+        // ... 设置其他自定义字段
+    }
+}
+```
+
+> **⚠️ 禁止**使用 `IsUpgraded` 布尔值作为叠层判断的唯一依据，这会导致升级前后数值不同的情况无法正确区分。
+
+#### 3. 添加新飞鹰战备卡步骤速查
+
+| 步骤 | 文件路径 | 操作 |
+|-----|---------|------|
+| 1 | `CommonCardValues.cs` / `AlliesPowerValues.cs` | 添加数值条目 |
+| 2 | `Allies/Cards/` | 创建卡牌类，继承 `DesperateMeasureCardBase<TPower>` |
+| 3 | `Allies/Powers/` | 创建能力类，继承 `DesperateMeasurePowerBase` |
+| 4 | `Allies/Powers/PowerIconPatch.cs` | 注册能力图标 |
+| 5 | `AlliedCardRegistry.cs` | 注册卡牌到卡池 |
+| 6 | `localization/*/cards.json` & `powers.json` | 添加本地化文本 |
+
+---
+
+### 二、轨道战备体系（苏军）
+
+#### 1. 与飞鹰战备的关键差异
+
+-   **前置依赖**：轨道战备卡**必须**在拥有「雷达（Radar）」能力时才能打出或出现在卡池中。
+-   **实现方式**：无统一的卡牌/能力基类，三张轨道卡（120mm、380mm、毒气）独立实现，但遵循相同的叠层和移除规范。
+
+#### 2. 刚需雷达能力（前置约束实现）
+
+通过在 `SovietCardRegistry` 中将轨道卡放入一个独立的列表，并在构建卡池时进行条件判断来实现。
+
+```csharp
+// SovietCardRegistry.cs
+public static List<Func<CardModel>> RadarPowerCards { get; } = new()
+{
+    () => ModelDb.Card<Orbital120mm>(),
+    () => ModelDb.Card<Orbital380mm>(),
+    () => ModelDb.Card<OrbitalGasStrike>(),
+    // ... 其他依赖雷达的卡牌
+};
+
+// 构建卡池时
+public static List<CardModel> CreatePowerCards(Player owner)
+{
+    var cards = CommonCardRegistry.GetAllPowerCardsForSoviet().Select(s => s()).ToList();
+    // ... 添加其他苏军专属卡
+
+    // ★ 关键：只有当玩家拥有雷达能力时，才将轨道卡加入卡池
+    if (HasRadarPower(owner.Creature))
+        cards.AddRange(RadarPowerCards.Select(s => s()));
+
+    return cards;
+}
+
+// 雷达能力检查
+private static bool HasRadarPower(Creature creature)
+{
+    return creature.Powers.Any(p => p is SovietRadarPower);
+}
+```
+
+#### 3. 独立叠层规范（与飞鹰一致）
+
+轨道卡能力（120mm/380mm/GasStrike）同样需要按实际数值进行独立叠层。
+
+```csharp
+// 轨道120mm/380mm：Damage × Repeat 两个维度一起判定
+var existing = owner.Powers.OfType<Orbital120mmPower>()
+    .FirstOrDefault(p => p.CurrentDamage == damage 
+                       && p.CurrentRepeat == repeat);
+
+// 轨道毒气：只有 Poison 一个维度
+var existing = owner.Powers.OfType<OrbitalGasStrikePower>()
+    .FirstOrDefault(p => p.CurrentPoison == poison);
+```
+
+#### 4. 添加新轨道战备卡步骤速查
+
+| 步骤 | 文件路径 | 操作 |
+|-----|---------|------|
+| 1 | `SovietCardValues.cs` / `SovietPowerValues.cs` | 添加数值条目 |
+| 2 | `Soviet/Cards/` | 创建卡牌类，继承 `CardModel` |
+| 3 | `Soviet/Powers/` | 创建能力类，继承 `PowerModel` |
+| 4 | `Allies/Powers/PowerIconPatch.cs` | 注册能力图标 |
+| 5 | `SovietCardRegistry.cs` | **必须**将卡牌加入 `RadarPowerCards` 列表 |
+| 6 | `localization/*/cards.json` & `powers.json` | 添加本地化文本 |
+
+---
+
+### 三、战备体系常见问题排查
+
+| 现象 | 可能原因 | 解决方案 |
+|-----|---------|---------|
+| 叠层后伤害数值显示异常 | 使用了 `IsUpgraded` 而非实际数值作为叠层判断依据 | 改为按所有自定义数值字段（如 `CurrentDamage`, `CurrentWeak`）进行判断 |
+| 战备能力触发后未移除 | `AfterSideTurnStart` 方法末尾漏写移除逻辑 | 检查并添加 `await PowerCmd.Remove(this);` 或调用基类的 `ConsumeOrRemove` |
+| 苏军玩家无雷达却在奖励中拿到轨道卡 | 卡池过滤仅在 `CreatePowerCards` 中生效，未覆盖所有卡牌来源 | 在轨道卡的 `OnPlay` 方法开头增加雷达能力检查作为防御性代码 |
+| 多张战备卡只触发了一次 | `Amount` 递减和 `Remove` 的逻辑位置不对，导致提前移除实例 | 确保在触发逻辑执行完毕后再消耗 `Amount` 或移除实例 |
+
+---
+
 *本手册为快速参考，详细教程请查看完整文档。*
 
 ---

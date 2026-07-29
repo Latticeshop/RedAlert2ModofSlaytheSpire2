@@ -346,6 +346,35 @@ public static class SovietCardValues
 		MagicNumberUpgraded = 15    // 升级后增加15%，总共-40%
 	};
 
+	/// <summary>轨道毒气 - 1费能力卡，Uncommon，轨道战备卡
+	/// 效果：赋予目标锁定。下回合对全体敌人赋予8(升级12)层中毒。</summary>
+	public static CardValueStore.CardValues OrbitalGasStrike => new()
+	{
+		Cost = 1,
+		MagicNumber = 8,
+		MagicNumberUpgraded = 4
+	};
+
+	/// <summary>轨道120MM - 1费能力卡，Uncommon，轨道战备卡
+	/// 效果：赋予目标锁定。下回合对目标敌人造成6(升级8)点伤害3次。</summary>
+	public static CardValueStore.CardValues Orbital120mm => new()
+	{
+		Cost = 1,
+		Damage = 6,
+		DamageUpgraded = 2,
+		Repeat = 3
+	};
+
+	/// <summary>轨道380MM - 1费能力卡，Rare，轨道战备卡
+	/// 效果：赋予目标锁定。下回合对目标敌人造成6(升级8)点伤害3次，溅射。</summary>
+	public static CardValueStore.CardValues Orbital380mm => new()
+	{
+		Cost = 1,
+		Damage = 6,
+		DamageUpgraded = 2,
+		Repeat = 3
+	};
+
 	/// <summary>雷达 - 0费能力卡，价格1000（升级后500），解锁苏联空军和轨道战备</summary>
 	public static CardValueStore.CardValues Radar => new()
 	{

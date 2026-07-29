@@ -99,4 +99,24 @@ public static class SovietPowerValues
 		DamageUpgraded = 5,        // 升级后+5，总共15
 		Repeat = 4                // 爆炸时赋予中毒层数
 	};
+
+	public static CardValueStore.CardValues OrbitalGasStrikePower => new()
+	{
+		MagicNumber = 8,
+		MagicNumberUpgraded = 4
+	};
+
+	public static CardValueStore.CardValues Orbital120mmPower => new()
+	{
+		Damage = 6,
+		DamageUpgraded = 2,
+		Repeat = 3
+	};
+
+	public static CardValueStore.CardValues Orbital380mmPower => new()
+	{
+		Damage = 6,
+		DamageUpgraded = 2,
+		Repeat = 3
+	};
 }

@@ -152,6 +152,8 @@
     "EAGLE_MACHINE_GUN.description": "[gold]イーグル戦備[/gold]。\n[gold]ターゲットロック[/gold]した敵に{Damage}ダメージを{Repeat}回与える。",
     "EAGLE_AIR_STRIKE.title": "イーグル空襲",
     "EAGLE_AIR_STRIKE.description": "[gold]イーグル戦備[/gold]。\n全ての敵に{Damage}ダメージを与える。",
+    "EAGLE_SMOKE_STRIKE.title": "イーグルスモーク",
+    "EAGLE_SMOKE_STRIKE.description": "[gold]イーグル戦備[/gold]。\n{MagicNumber}層の虚弱を付与する。味方全体は{Block}の防御を獲得する。",
     "MASS_PRODUCTION_CARD.title": "大量生産",
     "MASS_PRODUCTION_CARD.description": "ユニット価格が[gold]${Reduction}[/gold]減少する。",
     "MINE_RAID.title": "鉱山襲撃",
@@ -292,5 +294,11 @@
     "CHRONO_IVAN_CARD.title": "クロノイワン",
     "CHRONO_IVAN_CARD.description": "{ChronoTitle}敵に{BombStacks}層の[gold]タイムドボム[/gold]を付与する。敵が既に[gold]タイムドボム[/gold]を持っている場合はカウントダウンを減少させる。[gold]配備[/gold]：手札から[gold]ユニット[/gold]カードを選択し、[gold]「タイムドボム」[/gold]キーワードを追加する。カード使用前に{DeployVigor}の[gold]ビガー[/gold]を獲得し、消費される。",
     "URBANIZATION_CARD.title": "都市化",
-    "URBANIZATION_CARD.description": "[gold]建築[/gold]または[gold]防衛塔[/gold]カードをプレイするたび、[gold]建築[/gold]または[gold]防衛塔[/gold]カードを1枚ドローする。"
+    "URBANIZATION_CARD.description": "[gold]建築[/gold]または[gold]防衛塔[/gold]カードをプレイするたび、[gold]建築[/gold]または[gold]防衛塔[/gold]カードを1枚ドローする。",
+    "ORBITAL_GAS_STRIKE.title": "軌道ガス攻撃",
+    "ORBITAL_GAS_STRIKE.description": "[gold]軌道戦備[/gold]。\n[gold]ターゲットロック[/gold]を付与。次ターンに全敵に{Poison}層の[gold]毒[/gold]を付与。",
+    "ORBITAL120MM.title": "軌道120MM",
+    "ORBITAL120MM.description": "[gold]軌道戦備[/gold]。\n[gold]ターゲットロック[/gold]を付与。次ターンに目標の敵に{Damage}ダメージを{Repeat}回与える。",
+    "ORBITAL380MM.title": "軌道380MM",
+    "ORBITAL380MM.description": "[gold]軌道戦備[/gold]。\n[gold]ターゲットロック[/gold]を付与。次ターンに目標の敵に{Damage}ダメージを{Repeat}回与える。\n[gold]スプラッシュ[/gold]。"
 }

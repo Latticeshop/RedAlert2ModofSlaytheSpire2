@@ -23,6 +23,8 @@
     "EAGLE500KG_POWER.title": "이글 500kg",
     "EAGLE_AIR_STRIKE_POWER.description": "모든 적에게 피해를 {Damage} 줍니다.",
     "EAGLE_AIR_STRIKE_POWER.title": "이글 공습",
+    "EAGLE_SMOKE_STRIKE_POWER.title": "이글 스모크",
+    "EAGLE_SMOKE_STRIKE_POWER.description": "[gold]표적 고정[/gold]된 적에게 {MagicNumber}층의 허약을 부여합니다. 아군 전체가 {Block} 방어력을 얻습니다.",
     "EAGLE_MACHINE_GUN_POWER.description": "[gold]표적 고정[/gold]된 적에게 피해를 {Damage}만큼 {Repeat}번 줍니다.",
     "EAGLE_MACHINE_GUN_POWER.title": "이글 기관총",
     "EARLY_MINING_POWER.description": "이번 턴의 채굴차 산출량은 {MiningMultiplierPercent}%입니다.",
@@ -128,5 +130,11 @@
     "URBANIZATION_POWER.title": "도시화",
     "URBANIZATION_POWER.description": "[gold]건물[/gold] 또는 [gold]방어탑[/gold] 카드를 플레이할 때마다 [gold]건물[/gold] 또는 [gold]방어탑[/gold] 카드 한 장을 뽑습니다.",
     "BURN_POWER.title": "화상",
-    "BURN_POWER.description": "매 턴 [gold]{SmartDamage}[/gold]의 화상 피해를 받습니다. 매 턴 10%의 스택이 감소합니다."
+    "BURN_POWER.description": "매 턴 [gold]{SmartDamage}[/gold]의 화상 피해를 받습니다. 매 턴 10%의 스택이 감소합니다.",
+    "ORBITAL_GAS_STRIKE_POWER.title": "궤도 가스 공격",
+    "ORBITAL_GAS_STRIKE_POWER.description": "턴 시작 시 모든 적에게 {Poison}층의 [gold]독[/gold]을 부여합니다.",
+    "ORBITAL120MM_POWER.title": "궤도 120MM",
+    "ORBITAL120MM_POWER.description": "턴 시작 시 [gold]표적 고정[/gold]된 적에게 {Damage} 피해를 {Repeat}번 입힙니다.",
+    "ORBITAL380MM_POWER.title": "궤도 380MM",
+    "ORBITAL380MM_POWER.description": "턴 시작 시 [gold]표적 고정[/gold]된 적에게 {Damage} 피해를 {Repeat}번 입힙니다. [gold]스플래시[/gold]."
 }

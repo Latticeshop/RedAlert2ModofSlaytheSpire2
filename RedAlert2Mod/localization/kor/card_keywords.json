@@ -52,7 +52,7 @@
   "building_tech_tree.title": "건물 기술 트리",
   "building_tech_tree.description": "기술 트리: MCV(발전소, 병영, 제련소 해금) -> T1: 제련소(군수공장, 공군, 해군 해금) -> T2: 군수공장 + 공군기지/레이더(전투 연구소 해금) -> T3: 전투 연구소(고급 유닛 및 슈퍼 웨폰 해금).",
   "orbital_readiness.title": "궤도 준비",
-  "orbital_readiness.description": "궤도상의 차량을 소환해 공격합니다.",
+  "orbital_readiness.description": "소련 [gold]레이더[/gold] 건설 후 사용.\n한 턴 후 [gold]목표 고정[/gold]된 적을 공격.",
   "terror_drone.title": "테러 드론",
   "terror_drone.description": "매 턴 중첩 수만큼 피해를 입습니다. 대상이 회복하면 제거됩니다.",
   "chrono.title": "크로노.",

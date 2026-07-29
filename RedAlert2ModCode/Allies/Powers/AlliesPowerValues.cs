@@ -111,6 +111,15 @@ public static class AlliesPowerValues
 		DamageUpgraded = 4      // 升级后13 = 9 + 4
 	};
 
+	/// <summary>飞鹰烟雾能力 - 对目标施加虚弱并给我方全体格挡</summary>
+	public static CardValueStore.CardValues EagleSmokeStrikePower => new()
+	{
+		MagicNumber = 1,             // 基础虚弱层数
+		MagicNumberUpgraded = 1,     // 升级后2 = 1 + 1
+		Block = 16,                  // 基础格挡
+		BlockUpgraded = 4            // 升级后20 = 16 + 4
+	};
+
 	/// <summary>黄金矿能力 - 存储黄金矿储备</summary>
 	public static CardValueStore.CardValues GoldMinePower => new()
 	{

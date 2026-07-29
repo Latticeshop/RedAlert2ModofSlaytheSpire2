@@ -114,6 +114,7 @@ public static class AlliedCardRegistry
         cards.Add(() => ModelDb.Card<EagleMachineGun>());
         cards.Add(() => ModelDb.Card<EagleAirStrike>());
         cards.Add(() => ModelDb.Card<Eagle500kg>());
+        cards.Add(() => ModelDb.Card<EagleSmokeStrike>());
         cards.Add(() => ModelDb.Card<AlliedEarlyMining>());
         cards.Add(() => ModelDb.Card<ChronoWarp>());
         cards.Add(() => ModelDb.Card<LightningStorm>());
@@ -166,6 +167,7 @@ public static class AlliedCardRegistry
             () => ModelDb.Card<EagleMachineGun>(),
             () => ModelDb.Card<EagleAirStrike>(),
             () => ModelDb.Card<Eagle500kg>(),
+            () => ModelDb.Card<EagleSmokeStrike>(),
             () => ModelDb.Card<AlliedEarlyMining>(),
             () => ModelDb.Card<ChronoWarp>(),
             () => ModelDb.Card<LightningStorm>(),

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cytoleh7p2nve"
-path="res://.godot/imported/EagleAirStrike.png-aa35971eff1e484c4c7cc1a328188462.ctex"
+uid="uid://cnp55dvvg1pgo"
+path="res://.godot/imported/Orbital120mm.png-18ecae045d1d3497b38f3a4beab184a0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://RedAlert2ModResources/images/packed/card_portraits/EagleAirStrike.png"
-dest_files=["res://.godot/imported/EagleAirStrike.png-aa35971eff1e484c4c7cc1a328188462.ctex"]
+source_file="res://RedAlert2ModResources/images/packed/card_portraits/Helldivers/Orbital/Orbital120mm.png"
+dest_files=["res://.godot/imported/Orbital120mm.png-18ecae045d1d3497b38f3a4beab184a0.ctex"]
 
 [params]
 

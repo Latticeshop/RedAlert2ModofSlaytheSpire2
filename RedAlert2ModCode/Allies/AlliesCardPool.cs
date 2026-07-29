@@ -31,6 +31,7 @@ public sealed class AlliesCardPool : TypeListCardPoolModel
         typeof(Eagle500kg),
         typeof(EagleAirStrike),
         typeof(EagleMachineGun),
+        typeof(EagleSmokeStrike),
         typeof(F2A),
         typeof(ForceField),
         typeof(GemMineCard),
