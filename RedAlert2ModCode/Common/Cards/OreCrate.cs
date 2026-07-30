@@ -50,7 +50,8 @@ public class OreCrate : CardModel
             return;
         }
 
-        int index = (int)GD.RandRange(0, oreCards.Count - 1);
+        // 使用联机同步的 RunState.Rng.CombatCardSelection（GD.RandRange 联机不同步且慢）
+        int index = Owner.RunState.Rng.CombatCardSelection.NextInt(oreCards.Count);
         var card = oreCards[index];
         await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, Owner);
         GD.Print($"[OreCrate] 获得矿区卡: {card.Title}");

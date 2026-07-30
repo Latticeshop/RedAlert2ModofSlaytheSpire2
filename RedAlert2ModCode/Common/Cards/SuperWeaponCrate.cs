@@ -53,7 +53,8 @@ public class SuperWeaponCrate : CardModel
             return;
         }
 
-        int index = (int)GD.RandRange(0, superWeapons.Count - 1);
+        // 使用联机同步的 RunState.Rng.CombatCardSelection（GD.RandRange 联机不同步且慢）
+        int index = Owner.RunState.Rng.CombatCardSelection.NextInt(superWeapons.Count);
         var card = superWeapons[index];
         await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, Owner);
         GD.Print($"[SuperWeaponCrate] 获得超武: {card.Title}");

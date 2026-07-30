@@ -52,7 +52,8 @@ public class VehicleCrate : CardModel
             return;
         }
 
-        int index = (int)GD.RandRange(0, vehicles.Count - 1);
+        // 使用联机同步的 RunState.Rng.CombatCardSelection（GD.RandRange 联机不同步且慢）
+        int index = Owner.RunState.Rng.CombatCardSelection.NextInt(vehicles.Count);
         var card = vehicles[index];
         await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, Owner);
         GD.Print($"[VehicleCrate] 获得装甲单位: {card.Title}");

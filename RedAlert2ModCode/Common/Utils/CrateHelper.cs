@@ -51,14 +51,15 @@ public static class CrateHelper
     /// <summary>
     /// 从普通箱子池中随机选择一张卡牌（不包括RandomCrate自身）
     /// </summary>
-    public static CardModel GetRandomCrateCard(FlagManager.Faction faction, bool excludeRandom = true)
+    public static CardModel GetRandomCrateCard(Player owner, FlagManager.Faction faction, bool excludeRandom = true)
     {
         var candidates = _allCrateFactories.Select(f => f()).ToList();
 
         while (true)
         {
             int totalWeight = candidates.Sum(c => _crateWeights.GetValueOrDefault(c.GetType(), 1));
-            int roll = (int)GD.RandRange(0, totalWeight - 1);
+            // 使用联机同步的 RunState.Rng.CombatCardSelection（GD.RandRange 联机不同步且慢）
+            int roll = owner.RunState.Rng.CombatCardSelection.NextInt(totalWeight);
 
             int accumulated = 0;
             foreach (var card in candidates)
@@ -76,15 +77,15 @@ public static class CrateHelper
     /// <summary>
     /// 从随机箱子池中获得一张升级的箱子卡牌
     /// </summary>
-    public static CardModel GetRandomUpgradedCrateCard(FlagManager.Faction faction)
+    public static CardModel GetRandomUpgradedCrateCard(Player owner, FlagManager.Faction faction)
     {
-        return GetRandomCrateCard(faction);
+        return GetRandomCrateCard(owner, faction);
     }
 
     /// <summary>
     /// 从Token箱子池中随机选择一张（隐身、爆炸、超武、矿石）
     /// </summary>
-    public static CardModel GetRandomTokenCrateCard()
+    public static CardModel GetRandomTokenCrateCard(Player owner)
     {
         var tokenTypes = new List<Type>
         {
@@ -95,7 +96,8 @@ public static class CrateHelper
         };
 
         int totalWeight = tokenTypes.Sum(t => _crateWeights.GetValueOrDefault(t, 1));
-        int roll = (int)GD.RandRange(0, totalWeight - 1);
+        // 使用联机同步的 RunState.Rng.CombatCardSelection（GD.RandRange 联机不同步且慢）
+        int roll = owner.RunState.Rng.CombatCardSelection.NextInt(totalWeight);
 
         int accumulated = 0;
         foreach (var type in tokenTypes)

@@ -42,7 +42,9 @@ public class MoneyCrate : CardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        int amount = GD.RandRange(2000, 5000);
+        // 使用联机同步的 RunState.Rng.CombatCardSelection（GD.RandRange 联机不同步且慢）
+        // GD.RandRange(2000, 5000) 两端闭区间 → NextInt(minInclusive, maxExclusive)
+        int amount = Owner.RunState.Rng.CombatCardSelection.NextInt(2000, 5001);
         GD.Print($"[MoneyCrate] 获得资金 ${amount}");
 
         var dollarPower = Owner.Creature.Powers.OfType<DollarPower>().FirstOrDefault();

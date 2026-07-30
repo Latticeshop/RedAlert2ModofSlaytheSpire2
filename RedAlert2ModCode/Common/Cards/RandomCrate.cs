@@ -39,7 +39,7 @@ public class RandomCrate : CardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         var faction = FlagManager.GetPlayerFaction(Owner);
-        var template = CrateHelper.GetRandomCrateCard(faction, excludeRandom: true);
+        var template = CrateHelper.GetRandomCrateCard(Owner, faction, excludeRandom: true);
 
         if (template == null)
         {
