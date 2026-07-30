@@ -36,7 +36,7 @@
   "gold_mine.title": "금광",
   "gold_mine.description": "[gold]채굴차[/gold]를 사용하면 추가로 [gold]$1000[/gold]을 얻습니다.",
   "miner.title": "채굴차",
-  "miner.description": "자금을 얻을 수 있는 유닛을 가리킵니다.",
+  "miner.description": "자금을 얻을 수 있는 장갑 유닛을 가리킵니다. [gold]제련소[/gold]가 필요합니다.",
   "gem_mine.title": "보석광",
   "gem_mine.description": "[gold]채굴차[/gold]를 사용하면 추가로 [gold]$2000[/gold]을 얻습니다.",
   "gold_mine_column.title": "금광 기둥",

@@ -138,5 +138,9 @@
     "ORBITAL120MM_POWER.title": "궤도 120MM",
     "ORBITAL120MM_POWER.description": "턴 시작 시 [gold]표적 고정[/gold]된 적에게 {Damage} 피해를 {Repeat}번 입힙니다.",
     "ORBITAL380MM_POWER.title": "궤도 380MM",
-    "ORBITAL380MM_POWER.description": "턴 시작 시 [gold]표적 고정[/gold]된 적에게 {Damage} 피해를 {Repeat}번 입힙니다. [gold]스플래시[/gold]."
+    "ORBITAL380MM_POWER.description": "턴 시작 시 [gold]표적 고정[/gold]된 적에게 {Damage} 피해를 {Repeat}번 입힙니다. [gold]스플래시[/gold].",
+    "FIREPOWER_POWER.title": "화력",
+    "FIREPOWER_POWER.description": "이번 턴 유닛 카드 피해 +50%",
+    "ARMOR_POWER.title": "장갑",
+    "ARMOR_POWER.description": "이번 턴 유닛 카드 방어 2배"
 }

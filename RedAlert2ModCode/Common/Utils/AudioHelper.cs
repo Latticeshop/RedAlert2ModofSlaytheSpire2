@@ -6,6 +6,7 @@ namespace RedAlert2ModCode.Common.Utils;
 public static class AudioHelper
 {
     private static AudioStreamPlayer? _effectPlayer;
+    private static AudioStreamPlayer? _effectPlayer2;
 
     private static void EnsureEffectPlayer()
     {
@@ -16,6 +17,17 @@ public static class AudioHelper
         _effectPlayer.Name = "EffectSoundPlayer";
         var root = Engine.GetMainLoop() as SceneTree;
         root?.Root.AddChild(_effectPlayer);
+    }
+
+    private static void EnsureEffectPlayer2()
+    {
+        if (_effectPlayer2 != null && GodotObject.IsInstanceValid(_effectPlayer2))
+            return;
+
+        _effectPlayer2 = new AudioStreamPlayer();
+        _effectPlayer2.Name = "EffectSoundPlayer2";
+        var root = Engine.GetMainLoop() as SceneTree;
+        root?.Root.AddChild(_effectPlayer2);
     }
 
     public static void PlayTeslaTrooperChargeSound(object target)
@@ -395,6 +407,174 @@ public static class AudioHelper
         catch (Exception ex)
         {
             GD.PrintErr($"[AudioHelper] 播放升级音效失败: {ex.Message}");
+        }
+    }
+
+    public static void PlayUpgradeCrateSound()
+    {
+        try
+        {
+            EnsureEffectPlayer2();
+            if (_effectPlayer2 == null) return;
+
+            string soundPath = "res://RedAlert2ModResources/audio/CommonSFX/Crates/upgrade_crate.wav";
+            var sound = GD.Load<AudioStream>(soundPath);
+            if (sound != null)
+            {
+                if (_effectPlayer2.Playing) _effectPlayer2.Stop();
+                _effectPlayer2.Stream = sound;
+                _effectPlayer2.VolumeDb = -5;
+                _effectPlayer2.Play();
+                GD.Print("[AudioHelper] 播放升级箱子音效");
+            }
+            else
+            {
+                GD.PrintErr($"[AudioHelper] 无法加载音效: {soundPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[AudioHelper] 播放升级箱子音效失败: {ex.Message}");
+        }
+    }
+
+    public static void PlayHealAllSound()
+    {
+        try
+        {
+            EnsureEffectPlayer();
+            if (_effectPlayer == null) return;
+
+            string soundPath = "res://RedAlert2ModResources/audio/CommonSFX/Crates/heal_all.wav";
+            var sound = GD.Load<AudioStream>(soundPath);
+            if (sound != null)
+            {
+                if (_effectPlayer.Playing) _effectPlayer.Stop();
+                _effectPlayer.Stream = sound;
+                _effectPlayer.VolumeDb = -5;
+                _effectPlayer.Play();
+                GD.Print("[AudioHelper] 播放回血音效");
+            }
+            else
+            {
+                GD.PrintErr($"[AudioHelper] 无法加载音效: {soundPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[AudioHelper] 播放回血音效失败: {ex.Message}");
+        }
+    }
+
+    public static void PlayFirepowerSound()
+    {
+        try
+        {
+            EnsureEffectPlayer();
+            if (_effectPlayer == null) return;
+
+            string soundPath = "res://RedAlert2ModResources/audio/CommonSFX/Crates/firepower.wav";
+            var sound = GD.Load<AudioStream>(soundPath);
+            if (sound != null)
+            {
+                if (_effectPlayer.Playing) _effectPlayer.Stop();
+                _effectPlayer.Stream = sound;
+                _effectPlayer.VolumeDb = -5;
+                _effectPlayer.Play();
+                GD.Print("[AudioHelper] 播放火力音效");
+            }
+            else
+            {
+                GD.PrintErr($"[AudioHelper] 无法加载音效: {soundPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[AudioHelper] 播放火力音效失败: {ex.Message}");
+        }
+    }
+
+    public static void PlaySpeedSound()
+    {
+        try
+        {
+            EnsureEffectPlayer();
+            if (_effectPlayer == null) return;
+
+            string soundPath = "res://RedAlert2ModResources/audio/CommonSFX/Crates/speed.wav";
+            var sound = GD.Load<AudioStream>(soundPath);
+            if (sound != null)
+            {
+                if (_effectPlayer.Playing) _effectPlayer.Stop();
+                _effectPlayer.Stream = sound;
+                _effectPlayer.VolumeDb = -5;
+                _effectPlayer.Play();
+                GD.Print("[AudioHelper] 播放移速音效");
+            }
+            else
+            {
+                GD.PrintErr($"[AudioHelper] 无法加载音效: {soundPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[AudioHelper] 播放移速音效失败: {ex.Message}");
+        }
+    }
+
+    public static void PlayArmorSound()
+    {
+        try
+        {
+            EnsureEffectPlayer();
+            if (_effectPlayer == null) return;
+
+            string soundPath = "res://RedAlert2ModResources/audio/CommonSFX/Crates/armor.wav";
+            var sound = GD.Load<AudioStream>(soundPath);
+            if (sound != null)
+            {
+                if (_effectPlayer.Playing) _effectPlayer.Stop();
+                _effectPlayer.Stream = sound;
+                _effectPlayer.VolumeDb = -5;
+                _effectPlayer.Play();
+                GD.Print("[AudioHelper] 播放装甲音效");
+            }
+            else
+            {
+                GD.PrintErr($"[AudioHelper] 无法加载音效: {soundPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[AudioHelper] 播放装甲音效失败: {ex.Message}");
+        }
+    }
+
+    public static void PlayVehicleCrateSound()
+    {
+        try
+        {
+            EnsureEffectPlayer();
+            if (_effectPlayer == null) return;
+
+            string soundPath = "res://RedAlert2ModResources/audio/CommonSFX/Crates/vehicle_crate.wav";
+            var sound = GD.Load<AudioStream>(soundPath);
+            if (sound != null)
+            {
+                if (_effectPlayer.Playing) _effectPlayer.Stop();
+                _effectPlayer.Stream = sound;
+                _effectPlayer.VolumeDb = -5;
+                _effectPlayer.Play();
+                GD.Print("[AudioHelper] 播放车辆箱子音效");
+            }
+            else
+            {
+                GD.PrintErr($"[AudioHelper] 无法加载音效: {soundPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[AudioHelper] 播放车辆箱子音效失败: {ex.Message}");
         }
     }
 }

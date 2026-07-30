@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RedAlert2ModCode.Allies.Cards;
@@ -214,6 +214,98 @@ public static class CommonCardValues
 		Damage = 1,              // 每次抽取的数量
 		DamageUpgraded = 0       // 升级后单次抽取数量不变
 	};
+
+	#region 箱子卡牌
+
+	/// <summary>金钱箱子 - 1费(升级0费)，获得随机$2000-5000</summary>
+	public static CardValueStore.CardValues MoneyCrate => new()
+	{
+		Cost = 1,
+		CostUpgraded = -1,
+		DollarValue = 3500  // 基础随机值中间值
+	};
+
+	/// <summary>车辆箱子 - 0费(升级固有)，获得随机装甲单位卡</summary>
+	public static CardValueStore.CardValues VehicleCrate => new()
+	{
+		Cost = 0,
+		CostUpgraded = 0
+	};
+
+	/// <summary>回血箱子 - 1费(升级0费)，全体回5血</summary>
+	public static CardValueStore.CardValues HealCrate => new()
+	{
+		Cost = 1,
+		CostUpgraded = -1,
+		Damage = 5  // 回血量
+	};
+
+	/// <summary>火力箱子 - 1费(升级0费)，本回合单位卡伤害+50%</summary>
+	public static CardValueStore.CardValues FirepowerCrate => new()
+	{
+		Cost = 1,
+		CostUpgraded = -1
+	};
+
+	/// <summary>移速箱子 - 1费(升级0费)，获得2敏捷</summary>
+	public static CardValueStore.CardValues SpeedCrate => new()
+	{
+		Cost = 1,
+		CostUpgraded = -1,
+		MagicNumber = 2  // 敏捷层数
+	};
+
+	/// <summary>装甲箱子 - 1费(升级0费)，本回合单位卡格挡翻倍</summary>
+	public static CardValueStore.CardValues ArmorCrate => new()
+	{
+		Cost = 1,
+		CostUpgraded = -1
+	};
+
+	/// <summary>升级箱子 - 0费(升级保留)，升级手牌单位卡</summary>
+	public static CardValueStore.CardValues UpgradeCrate => new()
+	{
+		Cost = 0,
+		CostUpgraded = 0
+	};
+
+	/// <summary>随机箱子 - 1费，随机获得一张箱子卡</summary>
+	public static CardValueStore.CardValues RandomCrate => new()
+	{
+		Cost = 1
+	};
+
+	/// <summary>隐身箱子 - 1费(升级0费)，获得伪装效果(Token)</summary>
+	public static CardValueStore.CardValues StealthCrate => new()
+	{
+		Cost = 1,
+		CostUpgraded = -1
+	};
+
+	/// <summary>爆炸箱子 - 0费(升级0费)，对自己造成5(升级10)伤害(Token)</summary>
+	public static CardValueStore.CardValues ExplosionCrate => new()
+	{
+		Cost = 0,
+		CostUpgraded = 0,
+		Damage = 5,
+		DamageUpgraded = 5  // 升级后10 = 5 + 5
+	};
+
+	/// <summary>超武箱子 - 1费(升级0费)，随机获得0费超武(Token)</summary>
+	public static CardValueStore.CardValues SuperWeaponCrate => new()
+	{
+		Cost = 1,
+		CostUpgraded = -1
+	};
+
+	/// <summary>矿石箱子 - 1费(升级0费)，随机获得矿区卡(Token)</summary>
+	public static CardValueStore.CardValues OreCrate => new()
+	{
+		Cost = 1,
+		CostUpgraded = -1
+	};
+
+	#endregion
 
 	private static Dictionary<Type, decimal> _sellablePowerDollarMap;
 

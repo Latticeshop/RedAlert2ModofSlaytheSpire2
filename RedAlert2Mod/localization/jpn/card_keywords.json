@@ -36,7 +36,7 @@
     "gold_mine.title": "金鉱",
     "gold_mine.description": "[gold]マイナー[/gold]を使用した時、[gold]$1000[/gold]追加で獲得する。",
     "miner.title": "マイナー",
-    "miner.description": "資金を獲得できるユニットのこと。",
+    "miner.description": "資金を獲得できる装甲ユニットのこと。[gold]精製所[/gold]が必要。",
     "gem_mine.title": "宝石鉱",
     "gem_mine.description": "[gold]マイナー[/gold]を使用した時、[gold]$2000[/gold]追加で獲得する。",
     "gold_mine_column.title": "金鉱柱",

@@ -70,4 +70,10 @@ public static class CommonPowerValues
 		Damage = 1,              // 每层抽取的数量
 		DamageUpgraded = 0       // 升级后每层抽取数量不变
 	};
+
+	/// <summary>火力能力 - 本回合单位卡牌伤害+50%</summary>
+	public static CardValueStore.CardValues FirepowerPower => new();
+
+	/// <summary>装甲能力 - 本回合单位卡牌格挡翻倍</summary>
+	public static CardValueStore.CardValues ArmorPower => new();
 }

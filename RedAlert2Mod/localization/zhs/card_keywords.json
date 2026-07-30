@@ -36,7 +36,7 @@
     "gold_mine.title": "黄金矿",
     "gold_mine.description": "当你打出[gold]矿车[/gold]时，额外增加[gold]$1000[/gold]。",
     "miner.title": "矿车",
-    "miner.description": "指能获取资金的单位。",
+    "miner.description": "一般指能获取资金的装甲单位。需要[gold]矿场[/gold]才能获得资金。",
     "gem_mine.title": "宝石矿",
     "gem_mine.description": "当你打出[gold]矿车[/gold]时，额外增加[gold]$2000[/gold]。",
     "gold_mine_column.title": "黄金矿柱",

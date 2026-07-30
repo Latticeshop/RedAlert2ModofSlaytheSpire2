@@ -138,5 +138,9 @@
     "ORBITAL120MM_POWER.title": "Orbital 120mm",
     "ORBITAL120MM_POWER.description": "At turn start, deal {Damage} damage {Repeat} times to enemies with [gold]Target Locked[/gold].",
     "ORBITAL380MM_POWER.title": "Orbital 380mm",
-    "ORBITAL380MM_POWER.description": "At turn start, deal {Damage} damage {Repeat} times to enemies with [gold]Target Locked[/gold]. [gold]Splash[/gold]."
+    "ORBITAL380MM_POWER.description": "At turn start, deal {Damage} damage {Repeat} times to enemies with [gold]Target Locked[/gold]. [gold]Splash[/gold].",
+    "FIREPOWER_POWER.title": "Firepower",
+    "FIREPOWER_POWER.description": "Unit card damage +50% this turn",
+    "ARMOR_POWER.title": "Armor",
+    "ARMOR_POWER.description": "Block from unit cards doubled this turn"
 }

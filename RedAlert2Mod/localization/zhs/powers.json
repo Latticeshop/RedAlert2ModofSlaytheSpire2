@@ -140,5 +140,9 @@
     "URBANIZATION_POWER.title": "城市化",
     "URBANIZATION_POWER.description": "每打出一张[gold]建筑[/gold]或[gold]防御塔[/gold]牌，抽取一张[gold]建筑[/gold]或[gold]防御塔[/gold]牌。",
     "CAMOUFLAGE_POWER.title": "伪装",
-    "CAMOUFLAGE_POWER.description": "本回合没有造成任何伤害时，获得一回合[gold]无实体[/gold]。造成伤害时移除。"
+    "CAMOUFLAGE_POWER.description": "本回合没有造成任何伤害时，获得一回合[gold]无实体[/gold]。造成伤害时移除。",
+    "FIREPOWER_POWER.title": "火力",
+    "FIREPOWER_POWER.description": "本回合单位卡牌伤害+50%",
+    "ARMOR_POWER.title": "装甲",
+    "ARMOR_POWER.description": "本回合单位卡牌格挡翻倍"
 }

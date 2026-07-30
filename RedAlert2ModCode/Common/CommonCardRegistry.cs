@@ -20,11 +20,23 @@ public static class CommonCardRegistry
         () => ModelDb.Card<GemMineCard>(),
         () => ModelDb.Card<GoldMineColumnCard>(),
         () => ModelDb.Card<SupportCard>(),
+        () => ModelDb.Card<MoneyCrate>(),
+        () => ModelDb.Card<VehicleCrate>(),
+        () => ModelDb.Card<HealCrate>(),
+        () => ModelDb.Card<FirepowerCrate>(),
+        () => ModelDb.Card<SpeedCrate>(),
+        () => ModelDb.Card<ArmorCrate>(),
+        () => ModelDb.Card<UpgradeCrate>(),
+        () => ModelDb.Card<RandomCrate>(),
     };
 
     public static List<Func<CardModel>> SharedSpecialCards { get; } = new()
     {
         () => ModelDb.Card<Paratrooper>(),
+        () => ModelDb.Card<StealthCrate>(),
+        () => ModelDb.Card<ExplosionCrate>(),
+        () => ModelDb.Card<SuperWeaponCrate>(),
+        () => ModelDb.Card<OreCrate>(),
     };
 
     public static List<CardModel> GetAllSharedPowerCards()

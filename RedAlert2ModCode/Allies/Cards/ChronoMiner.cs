@@ -40,7 +40,7 @@ public sealed class ChronoMiner : ChronoCardModel
 		return new List<IHoverTip>
 		{
 			ModCardKeywords.TechLevelT1.CreateHoverTip(),
-			ModCardKeywords.Vehicle.CreateHoverTip()
+			ModCardKeywords.Miner.CreateHoverTip(),
 		};
 	}
 
@@ -55,10 +55,6 @@ public sealed class ChronoMiner : ChronoCardModel
 		get
 		{
 			if (!base.IsPlayable)
-				return false;
-
-			var refineryPower = Owner.Creature.Powers.OfType<AlliedRefineryPower>().FirstOrDefault();
-			if (refineryPower == null)
 				return false;
 
 			return true;
@@ -76,37 +72,51 @@ public sealed class ChronoMiner : ChronoCardModel
 		int miningBonus = MineResources();
 		GD.Print($"[ChronoMiner] 挖矿额外获得 {miningBonus} 资金");
 
+		// 检查是否有矿场能力，没有矿场时不获得资金
+		var hasRefinery = Owner.Creature.Powers.Any(p => p is AlliedRefineryPower || p is OreRefineryPower);
+		
 		// 计算总资金（矿车基础 + 挖矿收益）
 		int totalAmount = amount + miningBonus;
 
-		// 检查矿石精炼器加成（对总收益生效）
-		var oreRefineryPower = Owner.Creature.Powers.OfType<OreRefineryPower>().FirstOrDefault();
-		if (oreRefineryPower != null && totalAmount > 0)
+		if (!hasRefinery)
 		{
-			float oreMultiplier = oreRefineryPower.GetOreMultiplier();
-			totalAmount = Mathf.FloorToInt(totalAmount * oreMultiplier);
-			GD.Print($"[ChronoMiner] 矿石精炼器加成 {oreMultiplier}，总资金从 {amount + miningBonus} 变为 {totalAmount}");
-		}
-
-		// 检查是否有提前倒矿debuff（本回合矿车收益为80%）
-		var earlyMiningPower = Owner.Creature.Powers.OfType<EarlyMiningPower>().FirstOrDefault();
-		if (earlyMiningPower != null)
-		{
-			float multiplier = earlyMiningPower.GetMiningMultiplier();
-			totalAmount = Mathf.FloorToInt(totalAmount * multiplier);
-			GD.Print($"[ChronoMiner] 检测到提前倒矿debuff，总资金 * {multiplier} = {totalAmount}");
-		}
-
-		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-		if (dollarPower == null)
-		{
-			dollarPower = await PowerCmd.Apply<Common.Powers.DollarPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, totalAmount, Owner.Creature, null);
-			GD.Print($"[ChronoMiner] 未找到DollarPower，已创建并添加资金 {totalAmount}");
+			GD.Print("[ChronoMiner] 无矿场能力，不获得资金");
+			totalAmount = 0;
 		}
 		else
 		{
-			dollarPower.AddDollar(totalAmount);
-			GD.Print($"[ChronoMiner] 总共获得 {totalAmount} 资金");
+			// 检查矿石精炼器加成（对总收益生效）
+			var oreRefineryPower = Owner.Creature.Powers.OfType<OreRefineryPower>().FirstOrDefault();
+			if (oreRefineryPower != null && totalAmount > 0)
+			{
+				float oreMultiplier = oreRefineryPower.GetOreMultiplier();
+				totalAmount = Mathf.FloorToInt(totalAmount * oreMultiplier);
+				GD.Print($"[ChronoMiner] 矿石精炼器加成 {oreMultiplier}，总资金从 {amount + miningBonus} 变为 {totalAmount}");
+			}
+
+			// 检查是否有提前倒矿debuff（本回合矿车收益为80%）
+			var earlyMiningPower = Owner.Creature.Powers.OfType<EarlyMiningPower>().FirstOrDefault();
+			if (earlyMiningPower != null)
+			{
+				float multiplier = earlyMiningPower.GetMiningMultiplier();
+				totalAmount = Mathf.FloorToInt(totalAmount * multiplier);
+				GD.Print($"[ChronoMiner] 检测到提前倒矿debuff，总资金 * {multiplier} = {totalAmount}");
+			}
+		}
+
+		if (totalAmount > 0)
+		{
+			var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
+			if (dollarPower == null)
+			{
+				dollarPower = await PowerCmd.Apply<Common.Powers.DollarPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, totalAmount, Owner.Creature, null);
+				GD.Print($"[ChronoMiner] 未找到DollarPower，已创建并添加资金 {totalAmount}");
+			}
+			else
+			{
+				dollarPower.AddDollar(totalAmount);
+				GD.Print($"[ChronoMiner] 总共获得 {totalAmount} 资金");
+			}
 		}
 	}
 

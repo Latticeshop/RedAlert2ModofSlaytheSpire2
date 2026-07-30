@@ -49,6 +49,18 @@ public sealed class SovietCardPool : TypeListCardPoolModel
         typeof(UrbanizationCard),
         typeof(YuriCard),
         typeof(YuriPrimeCard),
+        typeof(ArmorCrate),
+        typeof(UpgradeCrate),
+        typeof(ExplosionCrate),
+        typeof(SuperWeaponCrate),
+        typeof(OreCrate),
+        typeof(StealthCrate),
+        typeof(SpeedCrate),
+        typeof(FirepowerCrate),
+        typeof(HealCrate),
+        typeof(VehicleCrate),
+        typeof(MoneyCrate),
+        typeof(RandomCrate),
     };
     
     /// <summary>

@@ -138,5 +138,9 @@
     "ORBITAL120MM_POWER.title": "軌道120MM",
     "ORBITAL120MM_POWER.description": "ターン開始時に[gold]ターゲットロック[/gold]された敵に{Damage}ダメージを{Repeat}回与える。",
     "ORBITAL380MM_POWER.title": "軌道380MM",
-    "ORBITAL380MM_POWER.description": "ターン開始時に[gold]ターゲットロック[/gold]された敵に{Damage}ダメージを{Repeat}回与える。[gold]スプラッシュ[/gold]。"
+    "ORBITAL380MM_POWER.description": "ターン開始時に[gold]ターゲットロック[/gold]された敵に{Damage}ダメージを{Repeat}回与える。[gold]スプラッシュ[/gold]。",
+    "FIREPOWER_POWER.title": "火力",
+    "FIREPOWER_POWER.description": "本回合、ユニットカードのダメージ+50%",
+    "ARMOR_POWER.title": "装甲",
+    "ARMOR_POWER.description": "本回合、ユニットカードのブロック2倍"
 }
