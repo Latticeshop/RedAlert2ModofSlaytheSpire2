@@ -91,6 +91,7 @@ public static class PowerIconPatch
         { typeof(RedAlert2ModCode.Soviet.Powers.Orbital120mmPower), "res://RedAlert2ModResources/images/packed/card_portraits/Helldivers/Orbital/Orbital120mm.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.Orbital380mmPower), "res://RedAlert2ModResources/images/packed/card_portraits/Helldivers/Orbital/Orbital380mm.png" },
         { typeof(EagleSmokeStrikePower), "res://RedAlert2ModResources/images/packed/card_portraits/Helldivers/Eagle/Eagle_Smoke_Strike.png" },
+        { typeof(CamouflagePower), "res://RedAlert2ModResources/images/packed/powers/Camouflage.png" },
     };
 
     /// <summary>

@@ -173,10 +173,10 @@ public static class SovietCardValues
 		DollarValue = 1750
 	};
 	
-	/// <summary>防空履带车 - 1费，抽2/3张牌，弃0-2/3张牌，部署：存储士兵单位，价格500</summary>
+	/// <summary>防空履带车 - 0费，抽2/3张牌，弃0-2/3张牌，部署：存储士兵单位，价格500</summary>
 	public static CardValueStore.CardValues FlakTrack => new()
 	{
-		Cost = 1,
+		Cost = 0,
 		MagicNumber = 2,           // 抽牌数
 		MagicNumberUpgraded = 1,   // 升级后3 = 2 + 1
 		Stars = 2,                 // 弃牌数上限

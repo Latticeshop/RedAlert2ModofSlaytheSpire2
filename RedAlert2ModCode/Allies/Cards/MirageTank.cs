@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +12,9 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
-using MegaCrit.Sts2.Core.Nodes.Vfx;
-using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Helpers;
-using MegaCrit.Sts2.Core.Nodes.Rooms;
+using MegaCrit.Sts2.Core.ValueProps;
+using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Utils;
 
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -26,8 +24,7 @@ namespace RedAlert2ModCode.Allies.Cards;
 /// <summary>
 /// 幻影坦克 - 盟军高科技装甲单位卡
 /// 1费攻击卡，Token衍生卡，需要作战实验室解锁
-/// 效果：若敌人意图攻击，获得16(升级20)点格挡；否则造成10(升级15)点伤害
-/// 使用热能射线火焰特效动画
+/// 效果：[gold]伪装[/gold]（本回合未造成伤害时），或者造成8(升级12)点伤害
 /// </summary>
 [RegisterCard(typeof(AlliesCardPool))]
 public sealed class MirageTank : CardModel
@@ -40,103 +37,66 @@ public sealed class MirageTank : CardModel
 
     protected override List<DynamicVar> CanonicalVars => new()
     {
-        new DamageVar(Values.Damage, ValueProp.Move),
-        new BlockVar(Values.Block, ValueProp.Move)
+        new DamageVar(Values.Damage, ValueProp.Move)
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new IHoverTip[]
-	{
-		ModCardKeywords.TechLevelT3.CreateHoverTip(),
-		ModCardKeywords.Vehicle.CreateHoverTip(),
-		HoverTipFactory.FromPower<MegaCrit.Sts2.Core.Models.Powers.BlurPower>()
-	};
+    {
+        ModCardKeywords.TechLevelT3.CreateHoverTip(),
+        ModCardKeywords.Vehicle.CreateHoverTip(),
+        HoverTipFactory.FromPower<CamouflagePower>()
+    };
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         UnitVoiceHelper.PlayUnitVoice(this.GetType());
         GD.Print("[MirageTank] OnPlay 被调用");
 
-        // 获取目标敌人
-        Creature? target = play.Target as Creature;
-        if (target == null)
+        // 检查本回合是否已造成伤害
+        bool hasDealtDamage = Owner.Creature.Powers.Any(p => p is DamageDealtTrackerPower);
+        GD.Print($"[MirageTank] 本回合是否已造成伤害: {hasDealtDamage}");
+
+        if (!hasDealtDamage)
         {
-            GD.PrintErr("[MirageTank] 目标不是Creature");
-            return;
-        }
-
-        // 检查敌人是否意图攻击（通过MonsterModel.IntendsToAttack属性）
-        bool intendsToAttack = target.Monster?.IntendsToAttack ?? false;
-        GD.Print($"[MirageTank] 敌人意图攻击: {intendsToAttack}");
-
-        if (intendsToAttack)
-        {
-            // 敌人意图攻击：获得格挡
-            GD.Print($"[MirageTank] 敌人意图攻击，获得格挡: {DynamicVars.Block.BaseValue}");
-            await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
-
-            // 检查玩家是否已有残影能力
-            bool hasBlur = Owner.Creature.Powers.Any(p => p is MegaCrit.Sts2.Core.Models.Powers.BlurPower);
-            GD.Print($"[MirageTank] 玩家已有残影: {hasBlur}");
-
-            if (!hasBlur)
-            {
-                GD.Print("[MirageTank] 获得1层残影");
-                await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.BlurPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, 1m, Owner.Creature, this);
-            }
+            // 本回合未造成伤害：赋予伪装能力（BeforeApplied会自动赋予无实体）
+            GD.Print("[MirageTank] 赋予伪装能力");
+            AudioHelper.PlayCamouflageSound();
+            await PowerCmd.Apply<CamouflagePower>(ctx, Owner.Creature, 1m, Owner.Creature, this);
         }
         else
         {
-            // 敌人不意图攻击，造成伤害
-            GD.Print("[MirageTank] 敌人不意图攻击，造成伤害");
+            // 本回合已造成伤害：改为造成伤害
+            Creature? target = play.Target as Creature;
+            if (target == null)
+            {
+                GD.PrintErr("[MirageTank] 目标不是Creature");
+                return;
+            }
+
+            GD.Print("[MirageTank] 已造成伤害，改为造成伤害");
             await DealDamage(ctx, target, play);
         }
     }
 
     /// <summary>
-    /// 造成伤害并播放火焰特效
+    /// 造成伤害
     /// </summary>
     private async Task DealDamage(PlayerChoiceContext ctx, Creature target, CardPlay play)
     {
+        // 播放幻影坦克攻击音效
+        AudioHelper.PlayMirageTankAttackSound();
+        
         decimal damage = DynamicVars.Damage.BaseValue;
         
-        // 播放火焰特效（热能射线动画）
-        PlayFireVfx(target);
-        
-        // 造成伤害
         await DamageCmd.Attack(damage)
             .FromCard(this, play)
             .Targeting(target)
             .Execute(ctx);
     }
 
-    /// <summary>
-    /// 播放火焰特效（热能射线动画）
-    /// </summary>
-    private void PlayFireVfx(Creature target)
-    {
-        try
-        {
-            // 使用NFireBurningVfx.Create方法创建火焰特效
-            NFireBurningVfx? fireVfx = NFireBurningVfx.Create(target, scaleFactor: 1.0f, goingRight: true);
-            
-            if (fireVfx != null)
-            {
-                NCombatRoom.Instance?.CombatVfxContainer.AddChildSafely(fireVfx);
-                SfxCmd.Play("event:/sfx/characters/attack_fire");
-                GD.Print("[MirageTank] 火焰特效播放成功");
-            }
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr($"[MirageTank] 火焰特效播放失败: {ex.Message}");
-        }
-    }
-
     protected override void OnUpgrade()
     {
-        // 升级后伤害增加5（10 -> 15）
+        // 升级后伤害增加4（8 -> 12）
         DynamicVars.Damage.UpgradeValueBy(Values.DamageUpgraded);
-        // 升级后格挡增加4（16 -> 20）
-        DynamicVars.Block.UpgradeValueBy(Values.BlockUpgraded);
     }
 }

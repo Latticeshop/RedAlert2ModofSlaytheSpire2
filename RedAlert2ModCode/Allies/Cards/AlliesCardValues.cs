@@ -143,10 +143,10 @@ public static class AlliesCardValues
 		DollarValue = 700
 	};
 	
-	/// <summary>IFV步兵战车 - 1费，抽2/3张牌，弃0-2/3张牌，部署存储1士兵获得5/7格挡，价格600</summary>
+	/// <summary>IFV步兵战车 - 0费，抽2/3张牌，弃0-2/3张牌，部署存储1士兵获得5/7格挡，价格600</summary>
 	public static CardValueStore.CardValues Ifv => new()
 	{
-		Cost = 1,
+		Cost = 0,
 		MagicNumber = 2,           // 抽牌数
 		MagicNumberUpgraded = 1,   // 升级后3 = 2 + 1
 		Stars = 2,                 // 弃牌数上限
@@ -606,14 +606,12 @@ public static class AlliesCardValues
 
 	// ==================== 高科技(T2)单位 - 需要作战实验室解锁 ====================
 
-	/// <summary>幻影坦克 - 1费攻击卡，价格1000，需要作战实验室</summary>
+	/// <summary>幻影坦克 - 1费攻击卡，价格1000，需要作战实验室。伪装或造成伤害</summary>
 	public static CardValueStore.CardValues MirageTank => new()
 	{
 		Cost = 1,
-		Damage = 10,
-		DamageUpgraded = 5,  // 升级后15 = 10 + 5
-		Block = 12,  // 攻击意图时的格挡
-		BlockUpgraded = 3,  // 升级后15 = 12 + 3
+		Damage = 8,
+		DamageUpgraded = 4,  // 升级后12 = 8 + 4
 		DollarValue = 1000
 	};
 

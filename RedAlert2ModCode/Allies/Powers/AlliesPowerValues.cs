@@ -147,4 +147,12 @@ public static class AlliesPowerValues
 	{
 		MagicNumber = 80          // 矿车收益百分比：80%
 	};
+
+	// ==================== 高科技(T2)单位能力 ====================
+
+	/// <summary>伪装能力 - 本回合未造成伤害则获得一回合无实体</summary>
+	public static CardValueStore.CardValues CamouflagePower => new()
+	{
+		// 伪装能力本身无额外数值，效果由IntangiblePower提供
+	};
 }

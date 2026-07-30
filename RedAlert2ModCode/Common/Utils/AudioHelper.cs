@@ -313,4 +313,88 @@ public static class AudioHelper
             GD.PrintErr($"[AudioHelper] 播放黄蜂导弹音效失败: {ex.Message}");
         }
     }
+
+    public static void PlayMirageTankAttackSound()
+    {
+        try
+        {
+            EnsureEffectPlayer();
+            if (_effectPlayer == null) return;
+
+            string soundPath = "res://RedAlert2ModResources/audio/AlliedUnits/MirageTank/MirageTank_attack.wav";
+            var sound = GD.Load<AudioStream>(soundPath);
+            if (sound != null)
+            {
+                if (_effectPlayer.Playing) _effectPlayer.Stop();
+                _effectPlayer.Stream = sound;
+                _effectPlayer.VolumeDb = -5;
+                _effectPlayer.Play();
+                GD.Print("[AudioHelper] 播放幻影坦克攻击音效");
+            }
+            else
+            {
+                GD.PrintErr($"[AudioHelper] 无法加载音效: {soundPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[AudioHelper] 播放幻影坦克攻击音效失败: {ex.Message}");
+        }
+    }
+
+    public static void PlayCamouflageSound()
+    {
+        try
+        {
+            EnsureEffectPlayer();
+            if (_effectPlayer == null) return;
+
+            string soundPath = "res://RedAlert2ModResources/audio/CommonSFX/camouflage.wav";
+            var sound = GD.Load<AudioStream>(soundPath);
+            if (sound != null)
+            {
+                if (_effectPlayer.Playing) _effectPlayer.Stop();
+                _effectPlayer.Stream = sound;
+                _effectPlayer.VolumeDb = -5;
+                _effectPlayer.Play();
+                GD.Print("[AudioHelper] 播放伪装音效");
+            }
+            else
+            {
+                GD.PrintErr($"[AudioHelper] 无法加载音效: {soundPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[AudioHelper] 播放伪装音效失败: {ex.Message}");
+        }
+    }
+
+    public static void PlayUpgradeSound()
+    {
+        try
+        {
+            EnsureEffectPlayer();
+            if (_effectPlayer == null) return;
+
+            string soundPath = "res://RedAlert2ModResources/audio/CommonSFX/upgrade.wav";
+            var sound = GD.Load<AudioStream>(soundPath);
+            if (sound != null)
+            {
+                if (_effectPlayer.Playing) _effectPlayer.Stop();
+                _effectPlayer.Stream = sound;
+                _effectPlayer.VolumeDb = -5;
+                _effectPlayer.Play();
+                GD.Print("[AudioHelper] 播放升级音效");
+            }
+            else
+            {
+                GD.PrintErr($"[AudioHelper] 无法加载音效: {soundPath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[AudioHelper] 播放升级音效失败: {ex.Message}");
+        }
+    }
 }

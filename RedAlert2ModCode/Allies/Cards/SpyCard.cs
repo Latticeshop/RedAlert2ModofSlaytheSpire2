@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 using System.Linq;
@@ -80,6 +80,7 @@ public sealed class SpyCard : CardModel
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
         UnitVoiceConfig.PlayUnitVoice("Spy", "Camouflage");
+        AudioHelper.PlayCamouflageSound();
 
         if (!MultiplayerSyncHelper.IsMultiplayerGame())
         {
