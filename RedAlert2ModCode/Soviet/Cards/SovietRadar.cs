@@ -84,8 +84,6 @@ public sealed class SovietRadar : CardModel
 		}
 		await CardPileCmd.Add(spyPlaneCard, PileType.Hand, CardPilePosition.Bottom, this);
 		GD.Print("[SovietRadar] 添加侦察机卡牌到手牌");
-
-		await CardPileCmd.Draw(ctx, 1, Owner);
 	}
 
 	protected override void OnUpgrade()

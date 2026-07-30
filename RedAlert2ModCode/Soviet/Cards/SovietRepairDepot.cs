@@ -107,6 +107,7 @@ public sealed class SovietRepairDepot : CardModel
 		}
 
 		GD.Print($"[SovietRepairDepot] 共消耗 {selectedCards.Count} 张手牌");
+
 	}
 
 	protected override void OnUpgrade()

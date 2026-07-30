@@ -85,6 +85,7 @@ public sealed class AlliesRepairDepot : CardModel
 				GD.Print($"[AlliesRepairDepot] 从消耗牌堆选择卡牌加入手牌: {selectedCard.Id.Entry}");
 			}
 		}
+
 	}
 
 	protected override void OnUpgrade()

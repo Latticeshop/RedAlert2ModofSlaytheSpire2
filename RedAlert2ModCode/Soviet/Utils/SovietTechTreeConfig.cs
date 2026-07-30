@@ -18,8 +18,14 @@ public static class SovietTechTreeConfig
             new(typeof(SovietWarFactory), TechLevel.T2, powerType: typeof(SovietWarFactoryPower)),
             new(typeof(SovietShipyardCard), TechLevel.T2),
             new(typeof(SovietRadar), TechLevel.T2, powerType: typeof(SovietRadarPower)),
+            new(typeof(SovietTeslaCoilCard), TechLevel.T2),
+            new(typeof(BattleBunkerCard), TechLevel.T2),
             
-            new(typeof(SovietBattleLab), TechLevel.T2, requiredPowers: new[] { typeof(SovietRadarPower) }),
+            new(typeof(SovietBattleLab), TechLevel.T3, requiredPowers: new[] { typeof(SovietRadarPower) }, powerType: typeof(SovietBattleLabPower)),
+            new(typeof(NuclearPlantCard), TechLevel.T3, requiredPowers: new[] { typeof(SovietBattleLabPower) }),
+            new(typeof(IndustrialPlantCard), TechLevel.T3, requiredPowers: new[] { typeof(SovietBattleLabPower) }, powerType: typeof(IndustrialPlantPower)),
+            new(typeof(IronCurtainCard), TechLevel.T3, requiredPowers: new[] { typeof(SovietBattleLabPower) }, powerType: typeof(IronCurtainPower)),
+            new(typeof(NuclearMissileSiloCard), TechLevel.T3, requiredPowers: new[] { typeof(SovietBattleLabPower) }, powerType: typeof(NuclearMissileSiloPower)),
         };
 
         return new BuildingTechTree(buildings);

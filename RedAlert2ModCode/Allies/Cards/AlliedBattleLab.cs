@@ -92,9 +92,6 @@ public sealed class AlliedBattleLab : CardModel
 		forceFieldCard.AddKeyword(CardKeyword.Exhaust);
 		await CardPileCmd.AddGeneratedCardToCombat(forceFieldCard, PileType.Hand, Owner);
 		GD.Print("[AlliedBattleLab] 已添加力场护盾到手牌");
-
-		// 打出后抽一张牌（与其他建筑卡保持一致）
-		await CardPileCmd.Draw(ctx, 1, Owner);
 	}
 
 	protected override void OnUpgrade()

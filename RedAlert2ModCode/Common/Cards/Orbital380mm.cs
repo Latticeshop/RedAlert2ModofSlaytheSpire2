@@ -56,7 +56,10 @@ public sealed class Orbital380mm : CardModel
             if (!base.IsPlayable)
                 return false;
 
-            if (!SovietCardRegistry.HasRadarPower(Owner.Creature))
+            // 轨道战备系列：必须要雷达/空指部能力（T2科技），仅作战实验室（T3科技）不可打出
+            bool hasRadar = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(SovietRadarPower).Name) ||
+                            Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(RedAlert2ModCode.Allies.Powers.AlliedAirForceCommandPower).Name);
+            if (!hasRadar)
                 return false;
 
             return true;

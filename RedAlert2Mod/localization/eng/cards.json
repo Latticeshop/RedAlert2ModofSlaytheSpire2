@@ -306,7 +306,7 @@
     "MONEY_CRATE.title": "Money Crate",
     "MONEY_CRATE.description": "Gain a random amount of money.",
     "VEHICLE_CRATE.title": "Vehicle Crate",
-    "VEHICLE_CRATE.description": "Gain a random armored unit card.",
+    "VEHICLE_CRATE.description": "Gain a random {IfUpgraded:show:upgraded |}armored unit card.",
     "HEAL_CRATE.title": "Heal Crate",
     "HEAL_CRATE.description": "Heal all allies for 5 HP.",
     "FIREPOWER_CRATE.title": "Firepower Crate",

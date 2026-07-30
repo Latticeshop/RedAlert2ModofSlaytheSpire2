@@ -620,7 +620,9 @@ public static class SovietCardValues
 			() => ModelDb.Card<SovietTeslaCoilCard>(),
 			() => ModelDb.Card<BattleBunkerCard>(),
 			() => ModelDb.Card<IronCurtainCard>(),
-			() => ModelDb.Card<NuclearMissileSiloCard>()
+			() => ModelDb.Card<NuclearMissileSiloCard>(),
+			() => ModelDb.Card<NuclearPlantCard>(),
+			() => ModelDb.Card<IndustrialPlantCard>()
 		};
 	}
 

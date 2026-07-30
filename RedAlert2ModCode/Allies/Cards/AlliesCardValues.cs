@@ -788,7 +788,8 @@ public static class AlliesCardValues
 			() => ModelDb.Card<AlliedBattleLab>(),
 			() => ModelDb.Card<ChronoSphere>(),
 			() => ModelDb.Card<WeatherController>(),
-			() => ModelDb.Card<AlliesRepairDepot>()
+			() => ModelDb.Card<AlliesRepairDepot>(),
+			() => ModelDb.Card<OreRefineryCard>()
 		};
 	}
 

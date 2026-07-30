@@ -50,12 +50,12 @@ public sealed class ArmorPower : PowerModel
         return 2m;
     }
 
-    public override async Task AfterSideTurnStart(CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
+    public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
     {
         if (side != CombatSide.Player)
             return;
 
-        GD.Print("[ArmorPower] 玩家回合开始，移除装甲增益");
+        GD.Print("[ArmorPower] 玩家回合结束，移除装甲增益");
         await PowerCmd.Remove(this);
     }
 }

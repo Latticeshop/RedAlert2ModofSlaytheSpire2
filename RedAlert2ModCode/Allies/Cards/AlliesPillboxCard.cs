@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -83,6 +83,7 @@ public sealed class AlliesPillboxCard : CardModel
 
 		// 应用机枪碉堡能力
 		await PillboxPower.ApplyPillbox(Owner.Creature, base.IsUpgraded);
+
 	}
 
 	protected override void OnUpgrade()

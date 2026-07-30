@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -89,6 +89,7 @@ public sealed class PrismTowerCard : CardModel
 
 		// 应用光棱塔能力
 		await PrismTowerPower.ApplyPrismTower(Owner.Creature, currentLevel, base.IsUpgraded);
+
 	}
 
 	/// <summary>

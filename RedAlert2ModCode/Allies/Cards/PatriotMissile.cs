@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -80,6 +80,7 @@ public sealed class PatriotMissile : CardModel
 
 		// 应用爱国者导弹能力
 		await PatriotMissilePower.ApplyPatriotMissile(Owner.Creature, base.IsUpgraded);
+
 	}
 
 	protected override void OnUpgrade()

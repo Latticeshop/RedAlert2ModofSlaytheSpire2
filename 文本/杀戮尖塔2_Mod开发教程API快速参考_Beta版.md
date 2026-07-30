@@ -1069,6 +1069,170 @@ res://images/relics/my_relic.png
 res://images/atlases/relic_atlas.sprites/my_relic.tres
 ```
 
+### 遗物卡牌转换补丁（NewLeaf / LeafyPoultice）
+
+原版遗物「新叶」（NewLeaf）和「树叶膏药」（LeafyPoultice）会转换牌组中的卡牌。Mod 通过 Harmony Prefix 拦截 `AfterObtained` 方法，为盟军/苏军角色提供自定义的转换卡池（Mod 单位卡）。
+
+#### 转换逻辑对比
+
+| 遗物 | 转换目标 | 选择方式 | 卡池 |
+|------|----------|----------|------|
+| `LeafyPoultice`（树叶膏药） | 牌组中的 Strike/Defend 对应单位（盟军: AmericanSoldier/GrizzlyTank，苏军: Conscript/RhinoTank） | 自动转换，无选择面板 | Mod 全部单位卡 |
+| `NewLeaf`（新叶） | 牌组中玩家选择的1张卡 | 玩家从选择面板选1张 | Mod 单位卡（选中 Mod 单位卡时）或原版随机（选中非 Mod 卡时） |
+
+#### 单位卡注册体系
+
+转换卡池通过 `AlliedCardRegistry` / `SovietCardRegistry` 的注册方法动态获取，**不硬编码单位列表**：
+
+```csharp
+// AlliedCardRegistry.cs / SovietCardRegistry.cs
+
+// 特殊单位卡（属于单位卡的特殊卡，不含 Paratrooper 伞兵和 AirborneDivision 空降师团——两者均不属于单位卡）
+public static List<Func<CardModel>> SpecialUnits { get; } = new()
+{
+    // 盟军: 无（PsiCommandoCard 已在 RelicUnlockedSoldiers 中，Paratrooper/AirborneDivision 不属于单位卡）
+    // 苏军: YuriCard, YuriPrimeCard
+};
+
+// MCV 卡（既是装甲单位也是建筑）
+public static List<Func<CardModel>> MobileConstructionVehicles { get; } = new()
+{
+    // 盟军: AlliedMCV
+    // 苏军: SovietMCV
+};
+
+// GetAllUnits() 包含所有单位卡（士兵/装甲/飞机/船只/特殊单位卡/MCV）
+public static List<CardModel> GetAllUnits() { ... }
+
+// GetAllUnitTypes() 返回 HashSet<Type>（自动去重），供判断"是否为单位卡"使用
+public static HashSet<Type> GetAllUnitTypes() { ... }
+```
+
+#### 树叶膏药转换实现
+
+```csharp
+[HarmonyPrefix]
+[HarmonyPatch(typeof(LeafyPoultice), "AfterObtained")]
+public static bool LeafyPoulticeAfterObtainedPrefix(LeafyPoultice __instance, ref Task __result)
+{
+    if (!IsAlliesCharacter(__instance.Owner.Character) && !IsSovietCharacter(__instance.Owner.Character))
+        return true; // 非Mod角色走原版逻辑
+
+    __result = LeafyPoulticeTransformAsync(__instance);
+    return false;
+}
+
+private static async Task LeafyPoulticeTransformAsync(LeafyPoultice __instance)
+{
+    var deck = PileType.Deck.GetPile(__instance.Owner).Cards;
+    var allUnitCards = GetAllModUnitCards(); // Mod 全部单位卡池
+    var rng = __instance.Owner.PlayerRng.Transformations;
+
+    // 查找牌组中的 Strike/Defend 对应单位并转换为随机 Mod 单位卡
+    // 盟军: AmericanSoldier + GrizzlyTank
+    // 苏军: Conscript + RhinoTank
+    // 转换后还需扣除 12 点最大生命值（原版逻辑）
+}
+```
+
+#### 新叶转换实现
+
+```csharp
+[HarmonyPrefix]
+[HarmonyPatch(typeof(NewLeaf), "AfterObtained")]
+public static bool NewLeafAfterObtainedPrefix(NewLeaf __instance, ref Task __result)
+{
+    if (!IsAlliesCharacter(__instance.Owner.Character) && !IsSovietCharacter(__instance.Owner.Character))
+        return true;
+
+    __result = NewLeafTransformAsync(__instance);
+    return false;
+}
+
+private static async Task NewLeafTransformAsync(NewLeaf __instance)
+{
+    var prefs = new CardSelectorPrefs(CardSelectorPrefs.TransformSelectionPrompt, 1, 1);
+
+    // 选择面板 filter：排除围墙和诅咒卡（CardType.Curse）
+    var selectedCards = (await CardSelectCmd.FromDeckGeneric(
+        player: __instance.Owner,
+        prefs: prefs,
+        filter: card => !IsWallCard(card) && card.Type != CardType.Curse
+    )).ToList();
+
+    if (selectedCards.Any())
+    {
+        var selectedCard = selectedCards.First();
+
+        if (IsModUnitCard(selectedCard))
+        {
+            // Mod 单位卡 → 从 Mod 单位卡池随机转换（排除自身）
+            var allUnitCards = GetAllModUnitCards();
+            var rng = __instance.Owner.PlayerRng.Transformations;
+            var targets = allUnitCards.Where(t => t.Id.Entry != selectedCard.Id.Entry).ToList();
+            if (targets.Any())
+            {
+                var replacement = __instance.Owner.RunState.CreateCard(rng.NextItem(targets), __instance.Owner);
+                await CardCmd.Transform(selectedCard, replacement);
+            }
+        }
+        else
+        {
+            // 非 Mod 卡 → 走原版随机转换
+            await CardCmd.TransformToRandom(selectedCard, __instance.Owner.RunState.Rng.Niche);
+        }
+    }
+}
+```
+
+#### 单位卡判断（注册类方法，非硬编码）
+
+```csharp
+// 缓存合并后的所有 Mod 单位类型
+private static HashSet<Type>? _allModUnitTypes;
+
+private static HashSet<Type> GetAllModUnitTypes()
+{
+    if (_allModUnitTypes != null) return _allModUnitTypes;
+    var types = new HashSet<Type>();
+    types.UnionWith(AlliedCardRegistry.GetAllUnitTypes());
+    types.UnionWith(SovietCardRegistry.GetAllUnitTypes());
+    _allModUnitTypes = types;
+    return types;
+}
+
+private static bool IsModUnitCard(CardModel card)
+{
+    return GetAllModUnitTypes().Contains(card.GetType());
+}
+```
+
+#### 围墙判断
+
+```csharp
+private static bool IsWallCard(CardModel card)
+{
+    return card is AlliedWallCard || card is FortifiedWall ||
+           card is SovietWallCard || card is SovietFortifiedWall;
+}
+```
+
+#### 转换卡池范围
+
+| 卡牌类型 | 是否在卡池中 | 说明 |
+|---------|:----------:|------|
+| 士兵（AmericanSoldier/Conscript 等） | ✅ | 通过 `Soldiers`/`RadarSoldiers`/`HighTechSoldiers`/`RelicUnlockedSoldiers` 注册 |
+| 装甲（GrizzlyTank/RhinoTank 等） | ✅ | 通过 `Vehicles`/`RadarVehicles`/`HighTechVehicles` 注册 |
+| 飞机（Intruder/Kirov 等） | ✅ | 通过 `Aircraft` 注册 |
+| 船只（Destroyer/Dreadnought 等） | ✅ | 通过 `Ships`/`HighTechShips` 注册 |
+| 特殊单位卡（YuriCard/YuriPrimeCard 等） | ✅ | 通过 `SpecialUnits` 注册（苏军: YuriCard, YuriPrimeCard；盟军: 无） |
+| MCV（AlliedMCV/SovietMCV） | ✅ | 通过 `MobileConstructionVehicles` 注册 |
+| Paratrooper（伞兵） | ❌ | **不属于单位卡**，不注册 |
+| AirborneDivision（空降师团） | ❌ | **不属于单位卡**，不注册 |
+| 围墙/坚固围墙 | ❌ | 选择面板 filter 排除 |
+| 诅咒卡（CardType.Curse） | ❌ | 选择面板 filter 排除 |
+| 建筑卡/防御塔/能力卡 | ❌ | 不在单位卡池中 |
+
 ---
 
 ## 🧪 药水（PotionModel）
@@ -1155,6 +1319,159 @@ public class DollarPower : PowerModel
     }
 }
 ```
+
+---
+
+## 🏗️ 建筑打出系统（BuildingDrawPower & UrbanizationPower）
+
+### 设计理念
+
+红警2 Mod 中，建筑卡牌打出后有两套独立的自动触发逻辑，均通过 `PowerModel.AfterCardPlayed` 钩子集中实现，**建筑卡牌自身无需写任何触发代码**：
+
+| 能力 | 持有者 | 触发条件 | 效果 |
+|------|--------|----------|------|
+| `BuildingDrawPower`（隐藏） | 所有获得 `DollarPower` 的玩家 | 打出**非围墙且非防御塔**的建筑牌 | 抽1张牌（从抽牌堆顶） |
+| `UrbanizationPower`（可见） | 打出 `UrbanizationCard` 的玩家 | 打出**非围墙**的建筑/防御塔牌 | 从牌堆中抽取建筑牌 |
+
+两者在各自的 `AfterCardPlayed` 钩子中独立触发，互不干扰。
+
+### 核心机制
+
+#### 1. 建筑抽牌能力（BuildingDrawPower）
+
+隐藏能力（`IsVisibleInternal = false`），通过 `DollarPower.AfterApplied` 自动挂载——**任何途径获得 `DollarPower`**（遗物、转账、矿场、油井、资金箱等）都会自动获得此能力，不依赖特定遗物。
+
+```csharp
+public sealed class BuildingDrawPower : PowerModel
+{
+    protected override bool IsVisibleInternal => false;
+
+    public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+        if (cardPlay.Card.Owner != base.Owner.Player)
+            return;
+
+        // 只有非围墙且非防御塔的建筑才触发抽牌（防御塔不抽牌）
+        if (!CardUtils.IsNonWallNonDefenseTowerBuilding(cardPlay.Card))
+            return;
+
+        // 选择面板类建筑卡取消选择时跳过
+        if (CardUtils.WasCardPlayCancelled(cardPlay))
+            return;
+
+        await CardPileCmd.Draw(choiceContext, 1, base.Owner.Player);
+    }
+}
+```
+
+#### 2. 城市化能力（UrbanizationPower）
+
+可见能力，由 `UrbanizationCard` 授予。打出非围墙建筑/防御塔牌时，从弃牌堆/抽牌堆中抽取建筑牌。
+
+```csharp
+public sealed class UrbanizationPower : PowerModel
+{
+    public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+        if (cardPlay.Card.Owner != base.Owner.Player)
+            return;
+
+        // 非围墙建筑/防御塔才触发（围墙不触发，建筑和防御塔都触发）
+        if (!CardUtils.IsNonWallBuildingOrDefenseTower(cardPlay.Card))
+            return;
+
+        // 选择面板类建筑卡取消选择时跳过
+        if (CardUtils.WasCardPlayCancelled(cardPlay))
+            return;
+
+        await TriggerDrawInternal(choiceContext, base.Owner.Player);
+    }
+}
+```
+
+### 卡牌类型判断（CardUtils）
+
+建筑/防御塔类型判断逻辑已集中到 `CardUtils`，提供三套不同范围的判断方法：
+
+| 方法 | 范围 | 用途 |
+|------|------|------|
+| `IsBuildingOrDefenseTower(card)` | 含围墙 | 从牌堆过滤建筑卡（城市化抽牌筛选） |
+| `IsNonWallBuildingOrDefenseTower(card)` | 不含围墙 | 城市化触发判定（建筑+防御塔都触发） |
+| `IsNonWallNonDefenseTowerBuilding(card)` | 不含围墙且不含防御塔 | 建筑抽牌触发判定（只有建筑触发） |
+
+```csharp
+public static HashSet<Type> GetNonWallNonDefenseTowerBuildingTypes()
+{
+    var set = new HashSet<Type>(GetNonWallBuildingOrDefenseTowerTypes());
+    // 移除所有防御塔类型
+    foreach (var towerType in AlliedCardRegistry.GetAllDefenseTowerTypes())
+        set.Remove(towerType);
+    foreach (var towerType in SovietCardRegistry.GetAllDefenseTowerTypes())
+        set.Remove(towerType);
+    return set;
+}
+```
+
+### 选择面板类建筑卡的取消处理
+
+部分建筑卡（重工、兵营、MCV、船厂、维修厂等）实现 `ICancellableCardPlay`，玩家可以在选择面板取消选择。取消时统一走 `CardUtils.HandleCardCancellation`，该方法通过 `ConditionalWeakTable<CardPlay, object>` 标记取消状态：
+
+```csharp
+// CardUtils.cs
+private static readonly ConditionalWeakTable<CardPlay, object> _cancelledCardPlays = new();
+
+public static void MarkCardPlayCancelled(CardPlay play)
+{
+    _cancelledCardPlays.Remove(play);
+    _cancelledCardPlays.Add(play, new object());
+}
+
+public static bool WasCardPlayCancelled(CardPlay play)
+{
+    return play != null && _cancelledCardPlays.TryGetValue(play, out _);
+}
+```
+
+`BuildingDrawPower` 和 `UrbanizationPower` 的 `AfterCardPlayed` 钩子均检测 `WasCardPlayCancelled`，取消则跳过触发。
+
+### 自动挂载机制（DollarPower.AfterApplied）
+
+`BuildingDrawPower` 通过 `DollarPower.AfterApplied` 钩子自动挂载，确保所有获得 `DollarPower` 的玩家都能享受建筑抽牌效果：
+
+```csharp
+public class DollarPower : PowerModel
+{
+    public override async Task AfterApplied(Creature? applier, CardModel? cardSource)
+    {
+        if (Owner == null)
+            return;
+
+        var existingBuildingDraw = Owner.Powers.OfType<BuildingDrawPower>().FirstOrDefault();
+        if (existingBuildingDraw == null)
+        {
+            await PowerCmd.Apply<BuildingDrawPower>(
+                new ThrowingPlayerChoiceContext(), Owner, 1m, Owner, null);
+        }
+    }
+}
+```
+
+### 触发逻辑速查
+
+| 卡牌类型 | BuildingDrawPower（抽1张） | UrbanizationPower（抽建筑牌） |
+|---------|:------------------------:|:---------------------------:|
+| 围墙 | ❌ | ❌ |
+| 防御塔（光棱塔/机枪碉堡等） | ❌ | ✅ |
+| 建筑（发电厂/重工/兵营等） | ✅ | ✅ |
+| 选择面板类建筑卡（取消选择） | ❌ | ❌ |
+| 选择面板类建筑卡（成功选择） | ✅ | ✅ |
+
+### 新增建筑卡注意事项
+
+1. **无需写任何抽牌/城市化触发代码**：两套系统均通过 `AfterCardPlayed` 钩子自动触发
+2. **无需硬编码 `CardPileCmd.Draw(ctx, 1, Owner)`**：建筑抽牌由 `BuildingDrawPower` 统一处理
+3. **无需硬编码 `UrbanizationPower.TriggerOnSuccessfulPlay(...)`**：该方法已删除，城市化由 `AfterCardPlayed` 统一处理
+4. **选择面板类建筑卡**：实现 `ICancellableCardPlay`，取消时调用 `CardUtils.HandleCardCancellation(play, this, Owner)` 即可，无需额外处理
 
 ---
 

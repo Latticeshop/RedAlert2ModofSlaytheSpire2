@@ -91,9 +91,6 @@ public sealed class OreRefineryCard : CardModel
                 oreRefineryPower.IsUpgraded = IsUpgraded;
             }
         }
-        
-        // 打出后抽一张牌
-        await CardPileCmd.Draw(ctx, 1, Owner);
     }
 
     protected override void OnUpgrade()

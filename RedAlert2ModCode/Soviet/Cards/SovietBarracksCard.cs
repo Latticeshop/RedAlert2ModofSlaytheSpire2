@@ -80,10 +80,8 @@ public sealed class SovietBarracksCard : CardModel, ICancellableCardPlay
 		List<CardModel> availableCards = SovietCardRegistry.CreateSoldiers(Owner);
 		GD.Print($"[SovietBarracksCard] 可用卡牌数量: {availableCards.Count}");
 
-		// 检查是否有雷达或空指部能力（T2科技解锁），如果没有则移除T2科技士兵（磁暴步兵、辐射工兵、恐怖分子）
-		bool hasRadarPower = Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(SovietRadarPower).Name) ||
-							 Owner.Creature.Powers.Any(p => p.GetType().Name == typeof(Allies.Powers.AlliedAirForceCommandPower).Name);
-		if (!hasRadarPower)
+		// 检查是否有雷达/空指部能力（T2科技）或作战实验室能力（T3科技），作战实验室(T3)也能解锁T2单位
+		if (!SovietCardRegistry.HasRadarPower(Owner.Creature))
 		{
 			availableCards = availableCards.Where(c => 
 				c is not SovietTeslaTrooper &&
@@ -165,12 +163,6 @@ public sealed class SovietBarracksCard : CardModel, ICancellableCardPlay
 			// 空选：仅获得建筑能力，不创建生产序列
 			GD.Print("[SovietBarracksCard] 空选，仅获得建筑能力");
 		}
-
-		// 无论是否选择了兵种，打出后都抽一张牌
-		await CardPileCmd.Draw(ctx, 1, Owner);
-
-		// 触发城市化能力（仅在确认选择后）
-		await UrbanizationPower.TriggerOnSuccessfulPlay(ctx, Owner, this);
 	}
 
 	protected override void OnUpgrade()

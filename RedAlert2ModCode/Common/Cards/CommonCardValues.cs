@@ -225,7 +225,7 @@ public static class CommonCardValues
 		DollarValue = 3500  // 基础随机值中间值
 	};
 
-	/// <summary>车辆箱子 - 0费(升级固有)，获得随机装甲单位卡</summary>
+	/// <summary>车辆箱子 - 0费(升级获得升级的装甲单位卡)，获得随机装甲单位卡</summary>
 	public static CardValueStore.CardValues VehicleCrate => new()
 	{
 		Cost = 0,

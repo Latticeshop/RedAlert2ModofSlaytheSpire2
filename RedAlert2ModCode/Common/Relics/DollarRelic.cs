@@ -28,7 +28,7 @@ public class DollarRelic : RelicModel
 		var player = base.Owner;
 		
 		var existingPower = player.Creature.Powers.OfType<Powers.DollarPower>().FirstOrDefault();
-		
+
 		if (existingPower != null)
 		{
 			existingPower.AddDollar(Values.DollarValue);

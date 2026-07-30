@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -86,6 +86,7 @@ public sealed class GrandCannon : CardModel
 
         await GrandCannonPower.ApplyGrandCannon(Owner.Creature, base.IsUpgraded);
         GD.Print($"[GrandCannon] 应用巨炮能力 - IsUpgraded={base.IsUpgraded}");
+
     }
 
     protected override void OnUpgrade()

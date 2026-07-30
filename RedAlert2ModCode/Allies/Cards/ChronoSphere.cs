@@ -107,8 +107,5 @@ public sealed class ChronoSphere : CardModel
             chronoWarpCard.AddKeyword(CardKeyword.Exhaust);
             await CardPileCmd.AddGeneratedCardToCombat(chronoWarpCard, PileType.Hand, Owner);
             GD.Print("[ChronoSphere] 已添加超时空传送卡牌到手牌");
-
-            // 打出后抽一张牌
-            await CardPileCmd.Draw(ctx, 1, Owner);
         }
 }

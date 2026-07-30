@@ -51,12 +51,12 @@ public sealed class FirepowerPower : PowerModel
         return 1.5m;
     }
 
-    public override async Task AfterSideTurnStart(CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
+    public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
     {
         if (side != CombatSide.Player)
             return;
 
-        GD.Print("[FirepowerPower] 玩家回合开始，移除火力增益");
+        GD.Print("[FirepowerPower] 玩家回合结束，移除火力增益");
         await PowerCmd.Remove(this);
     }
 }

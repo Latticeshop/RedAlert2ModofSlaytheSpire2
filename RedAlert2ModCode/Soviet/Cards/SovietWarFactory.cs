@@ -167,12 +167,6 @@ public sealed class SovietWarFactory : CardModel, ICancellableCardPlay
 			// 空选：仅获得建筑能力，不创建生产序列
 			GD.Print("[SovietWarFactory] 空选，仅获得建筑能力");
 		}
-
-		// 无论是否选择了兵种，打出后都抽一张牌
-		await CardPileCmd.Draw(ctx, 1, Owner);
-
-		// 触发城市化能力（仅在确认选择后）
-		await UrbanizationPower.TriggerOnSuccessfulPlay(ctx, Owner, this);
 	}
 
 	protected override void OnUpgrade()

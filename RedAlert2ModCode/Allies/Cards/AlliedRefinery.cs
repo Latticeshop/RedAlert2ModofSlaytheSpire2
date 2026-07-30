@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -113,9 +113,6 @@ public sealed class AlliedRefinery : CardModel
 		// 添加矿场能力（用于科技线检查），每次打出都增加层数
 		await PowerCmd.Apply<AlliedRefineryPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
 		GD.Print("[AlliedRefinery] 添加矿场能力");
-
-		// 打出后抽一张牌
-		await CardPileCmd.Draw(ctx, 1, Owner);
 	}
 
 	protected override void OnUpgrade()

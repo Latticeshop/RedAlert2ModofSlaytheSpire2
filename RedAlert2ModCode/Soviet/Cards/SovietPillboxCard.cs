@@ -79,6 +79,7 @@ public sealed class SovietPillboxCard : CardModel
 		GD.Print($"[SovietPillboxCard] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
 
 		await SovietPillboxPower.ApplySovietPillbox(Owner.Creature, base.IsUpgraded);
+
 	}
 
 	protected override void OnUpgrade()

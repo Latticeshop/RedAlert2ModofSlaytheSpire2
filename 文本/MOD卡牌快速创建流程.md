@@ -31,6 +31,25 @@
 ### 8. 本地化
 在 `cards.json` 中添加卡牌 `title` 和 `description`。
 
+### 9. 遗物转换注册（重要）
+
+新叶（NewLeaf）和树叶膏药（LeafyPoultice）会转换牌组中的单位卡。新增的单位卡**必须注册到对应列表**，否则会走原版随机转换而非 Mod 卡池：
+
+| 单位类型 | 注册列表 | 说明 |
+|---------|----------|------|
+| 士兵 | `Soldiers` / `RadarSoldiers` / `HighTechSoldiers` / `RelicUnlockedSoldiers` | 按 T1/T2/T3/遗物解锁分类 |
+| 装甲 | `Vehicles` / `RadarVehicles` / `HighTechVehicles` | 按 T1/T2/T3 分类 |
+| 飞机 | `Aircraft` | — |
+| 船只 | `Ships` / `HighTechShips` | 按 T1/T3 分类 |
+| **特殊单位卡** | `SpecialUnits` | 如 YuriCard、YuriPrimeCard（**Paratrooper 伞兵和 AirborneDivision 空降师团均不属于单位卡，不注册**） |
+| **MCV** | `MobileConstructionVehicles` | 既是装甲单位也是建筑 |
+
+- `GetAllUnits()` 和 `GetAllUnitTypes()` 会自动包含上述所有列表
+- 新叶选择面板会**自动排除**围墙和诅咒卡（`CardType.Curse`）
+- 非 Mod 角色走原版逻辑，无需处理
+
+> 详细实现请查阅 API 文档「遗物卡牌转换补丁」章节。
+
 ---
 
 ## 二、创造建筑卡牌流程（以雷达为例）
@@ -58,6 +77,22 @@
 
 ### 8. 本地化
 在 `cards.json` (含价格) 和 `powers.json` 中添加条目。
+
+### 9. 建筑打出后自动触发系统（无需手写代码）
+
+建筑卡牌打出后有两套**自动触发**逻辑，均通过 `PowerModel.AfterCardPlayed` 钩子集中实现，**卡牌自身无需写任何触发代码**：
+
+| 能力 | 触发条件 | 效果 |
+|------|----------|------|
+| `BuildingDrawPower`（隐藏） | 非围墙且非防御塔的建筑 | 抽1张牌 |
+| `UrbanizationPower`（需打出城市化卡） | 非围墙的建筑/防御塔 | 从牌堆抽取建筑牌 |
+
+- **建筑抽牌**：通过 `DollarPower.AfterApplied` 自动挂载，所有获得刀乐能力的玩家默认持有
+- **防御塔**：只触发城市化，不触发建筑抽牌
+- **选择面板类建筑卡**（重工/兵营/MCV等）：取消选择时调用 `CardUtils.HandleCardCancellation(play, this, Owner)` 即可，两套系统会自动跳过取消的打出
+- **禁止**在 `OnPlay` 中硬编码 `CardPileCmd.Draw(ctx, 1, Owner)` 或 `UrbanizationPower.TriggerOnSuccessfulPlay(...)`
+
+> 详细实现请查阅 API 文档「建筑打出系统」章节。
 
 ---
 
@@ -117,6 +152,7 @@ dotnet build RedAlert2Mod.csproj -c Release -o build
 | 数值存储 | ✅ | ✅ | ✅ | ✅（Common） |
 | 价格映射 | ✅ | ✅ | ❌ | ❌ |
 | CardRegistry注册 | ✅ | ✅ | ✅ | ✅（双阵营） |
+| 遗物转换注册 | ✅ | ❌ | ❌ | ❌ |
 | 能力图标补丁 | ❌ | ✅ | ✅ | ✅（共用） |
 | 科技解锁配置 | ✅ | ✅ | ❌ | ❌ |
 | 本地化 | ✅ | ✅ | ✅ | ✅（双份） |

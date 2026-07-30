@@ -175,7 +175,7 @@ public static class RelicPatches
         List<CardModel> allUnits = new();
         allUnits.AddRange(AlliedCardRegistry.GetAllUnits());
         allUnits.AddRange(SovietCardRegistry.GetAllUnits());
-        return allUnits.Where(c => !(c is AlliedWallCard || c is SovietWallCard || c is FortifiedWall || c is SovietFortifiedWall)).ToList();
+        return allUnits;
     }
 
     #endregion
@@ -241,7 +241,7 @@ public static class RelicPatches
         var selectedCards = (await MegaCrit.Sts2.Core.Commands.CardSelectCmd.FromDeckGeneric(
             player: __instance.Owner,
             prefs: prefs,
-            filter: _ => true
+            filter: card => !IsWallCard(card) && card.Type != CardType.Curse
         )).ToList();
 
         if (selectedCards.Any())
@@ -267,17 +267,36 @@ public static class RelicPatches
         }
     }
 
+    /// <summary>
+    /// 所有 Mod 单位卡类型缓存（合并盟军和苏军，含特殊单位卡和 MCV，不含 Paratrooper 伞兵）。
+    /// 通过注册类的 GetAllUnitTypes() 方法动态获取，避免硬编码单位列表。
+    /// </summary>
+    private static HashSet<Type>? _allModUnitTypes;
+
+    private static HashSet<Type> GetAllModUnitTypes()
+    {
+        if (_allModUnitTypes != null)
+            return _allModUnitTypes;
+
+        var types = new HashSet<Type>();
+        types.UnionWith(AlliedCardRegistry.GetAllUnitTypes());
+        types.UnionWith(SovietCardRegistry.GetAllUnitTypes());
+        _allModUnitTypes = types;
+        return types;
+    }
+
     private static bool IsModUnitCard(CardModel card)
     {
-        return card is AmericanSoldier || card is Conscript ||
-               card is GrizzlyTank || card is RhinoTank ||
-               card is SovietEngineer || card is SovietAttackDog ||
-               card is SovietFlakTrooper || card is SovietTeslaTrooper ||
-               card is FlakTrack || card is TerrorDrone ||
-               card is WarMiner || card is Kirov ||
-               card is ApocalypseTank || card is V3Rocket ||
-               card is SovietTransportShip || card is FlakSubmarine ||
-               card is TyphoonSubmarine || card is Paratrooper;
+        return GetAllModUnitTypes().Contains(card.GetType());
+    }
+
+    /// <summary>
+    /// 判断是否为围墙/坚固围墙卡（这些卡不可被转换）
+    /// </summary>
+    private static bool IsWallCard(CardModel card)
+    {
+        return card is AlliedWallCard || card is FortifiedWall ||
+               card is SovietWallCard || card is SovietFortifiedWall;
     }
 
     #endregion

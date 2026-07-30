@@ -108,8 +108,5 @@ public sealed class WeatherController : CardModel
         lightningStormCard.AddKeyword(CardKeyword.Exhaust);
         await CardPileCmd.AddGeneratedCardToCombat(lightningStormCard, PileType.Hand, Owner);
         GD.Print("[WeatherController] 已添加闪电风暴卡牌到手牌");
-
-        // 打出后抽一张牌
-        await CardPileCmd.Draw(ctx, 1, Owner);
     }
 }

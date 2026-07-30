@@ -304,7 +304,7 @@
     "MONEY_CRATE.title": "金钱箱子",
     "MONEY_CRATE.description": "获得随机数额的资金。",
     "VEHICLE_CRATE.title": "车辆箱子",
-    "VEHICLE_CRATE.description": "随机获得一张随机装甲单位卡牌。",
+    "VEHICLE_CRATE.description": "随机获得一张{IfUpgraded:show:升级的|}装甲单位卡牌。",
     "HEAL_CRATE.title": "回血箱子",
     "HEAL_CRATE.description": "我方全体回5点生命。",
     "FIREPOWER_CRATE.title": "火力箱子",

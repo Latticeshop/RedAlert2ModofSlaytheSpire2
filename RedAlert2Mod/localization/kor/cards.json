@@ -302,7 +302,7 @@
     "MONEY_CRATE.title": "금액 상자",
     "MONEY_CRATE.description": "랜덤한 금액의 자금을 얻습니다.",
     "VEHICLE_CRATE.title": "차량 상자",
-    "VEHICLE_CRATE.description": "랜덤 장갑 유닛 카드 1장을 얻습니다.",
+    "VEHICLE_CRATE.description": "랜덤 {IfUpgraded:show:강화된 |}장갑 유닛 카드 1장을 얻습니다.",
     "HEAL_CRATE.title": "회복 상자",
     "HEAL_CRATE.description": "아군 전체의 HP를 5 회복합니다.",
     "FIREPOWER_CRATE.title": "화력 상자",

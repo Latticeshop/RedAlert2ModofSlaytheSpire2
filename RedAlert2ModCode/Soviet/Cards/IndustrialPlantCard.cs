@@ -95,10 +95,7 @@ public sealed class IndustrialPlantCard : CardModel
         }
         
         await Common.Powers.MassProductionPower.RecalculateAllTrainingQueuePrices(Owner.Creature);
-        
-        // 打出后抽一张牌
-        await CardPileCmd.Draw(ctx, 1, Owner);
-    }
+	    }
 
     protected override void OnUpgrade()
     {

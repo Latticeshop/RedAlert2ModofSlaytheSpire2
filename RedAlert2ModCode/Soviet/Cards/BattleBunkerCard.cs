@@ -89,6 +89,7 @@ public sealed class BattleBunkerCard : CardModel
 		{
 			await BattleBunkerPower.ApplyBattleBunker(Owner.Creature, IsUpgraded, _storedCards);
 		}
+
 	}
 
 	private async Task StoreSoldierCards(PlayerChoiceContext choiceContext, int maxSelect)

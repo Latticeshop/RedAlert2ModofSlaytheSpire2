@@ -95,7 +95,5 @@ public sealed class IronCurtainCard : CardModel
         ironCurtainCard.AddKeyword(CardKeyword.Exhaust);
         await CardPileCmd.AddGeneratedCardToCombat(ironCurtainCard, PileType.Hand, Owner);
         GD.Print("[IronCurtainCard] 已添加铁幕卡牌到手牌");
-
-        await CardPileCmd.Draw(ctx, 1, Owner);
     }
 }

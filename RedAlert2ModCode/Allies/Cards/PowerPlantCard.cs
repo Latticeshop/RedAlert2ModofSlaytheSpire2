@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -88,9 +88,6 @@ public sealed class PowerPlantCard : CardModel
 				: Values.MagicNumber;
 			power.SetThreshold(threshold);
 		}
-
-		// 打出后抽一张牌
-		await CardPileCmd.Draw(ctx, 1, Owner);
 	}
 
 	protected override void OnUpgrade()

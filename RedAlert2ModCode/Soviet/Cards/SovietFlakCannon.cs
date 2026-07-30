@@ -82,6 +82,7 @@ public sealed class SovietFlakCannon : CardModel
 
 		// 应用防空炮能力
 		await SovietFlakCannonPower.ApplyFlakCannon(Owner.Creature, base.IsUpgraded);
+
 	}
 
 	protected override void OnUpgrade()

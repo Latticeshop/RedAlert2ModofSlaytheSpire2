@@ -95,8 +95,25 @@ public static class AlliedCardRegistry
     // 盟军技能卡 
     public static List<Func<CardModel>> PowerCards { get; } = CreatePowerCards();
 
-	// 盟军特殊卡 
+	// 盟军特殊卡
     public static List<Func<CardModel>> SpecialCards { get; } = CreateSpecialCards();
+
+    /// <summary>
+    /// 特殊单位卡（属于单位卡的特殊卡，不含 Paratrooper 伞兵和 AirborneDivision 空降师团——两者均不属于单位卡）。
+    /// PsiCommandoCard 已在 RelicUnlockedSoldiers 中注册，此处不重复添加。
+    /// 盟军目前无其他特殊单位卡，此列表为空。
+    /// </summary>
+    public static List<Func<CardModel>> SpecialUnits { get; } = new()
+    {
+    };
+
+    /// <summary>
+    /// MCV 卡（既是装甲单位也是建筑，需要同时注册到单位列表和建筑列表）。
+    /// </summary>
+    public static List<Func<CardModel>> MobileConstructionVehicles { get; } = new()
+    {
+        () => ModelDb.Card<AlliedMCV>(),
+    };
 
     private static List<Func<CardModel>> CreatePowerCards()
     {
@@ -272,7 +289,43 @@ public static class AlliedCardRegistry
         units.AddRange(GetAllAircraft());
         units.AddRange(GetAllShips());
         units.AddRange(GetAllHighTechShips());
+        units.AddRange(SpecialUnits.Select(s => s()));
+        units.AddRange(MobileConstructionVehicles.Select(s => s()));
         return units;
+    }
+
+    /// <summary>
+    /// 获取所有单位卡类型（含特殊单位卡和 MCV，自动去重）。
+    /// 供新叶/树叶膏药等需要判断"是否为单位卡"的逻辑使用。
+    /// </summary>
+    public static HashSet<Type> GetAllUnitTypes()
+    {
+        var types = new HashSet<Type>();
+        foreach (var factory in Soldiers)
+            types.Add(factory().GetType());
+        foreach (var factory in RadarSoldiers)
+            types.Add(factory().GetType());
+        foreach (var factory in RelicUnlockedSoldiers)
+            types.Add(factory().GetType());
+        foreach (var factory in HighTechSoldiers)
+            types.Add(factory().GetType());
+        foreach (var factory in Vehicles)
+            types.Add(factory().GetType());
+        foreach (var factory in RadarVehicles)
+            types.Add(factory().GetType());
+        foreach (var factory in HighTechVehicles)
+            types.Add(factory().GetType());
+        foreach (var factory in Aircraft)
+            types.Add(factory().GetType());
+        foreach (var factory in Ships)
+            types.Add(factory().GetType());
+        foreach (var factory in HighTechShips)
+            types.Add(factory().GetType());
+        foreach (var factory in SpecialUnits)
+            types.Add(factory().GetType());
+        foreach (var factory in MobileConstructionVehicles)
+            types.Add(factory().GetType());
+        return types;
     }
 
     /// <summary>

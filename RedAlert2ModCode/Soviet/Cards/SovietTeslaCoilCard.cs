@@ -68,8 +68,6 @@ public sealed class SovietTeslaCoilCard : CardModel
 		}
 
 		await SovietTeslaCoilPower.ApplyTeslaCoil(Owner.Creature, base.IsUpgraded);
-
-		await CardPileCmd.Draw(ctx, 1, Owner);
 	}
 
 	protected override void OnUpgrade()

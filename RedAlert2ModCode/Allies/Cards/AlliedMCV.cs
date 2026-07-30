@@ -99,9 +99,6 @@ public sealed class AlliedMCV : CardModel, ICancellableCardPlay
 			// 将选择的卡牌加入手牌
 			await CardPileCmd.AddGeneratedCardToCombat(selectedCard, PileType.Hand, Owner);
 
-			// 触发城市化能力（仅在确认选择后）
-			await UrbanizationPower.TriggerOnSuccessfulPlay(ctx, Owner, this);
-
 			GD.Print("[AlliedMCV] 玩家选择了建筑，基地车将正常进入弃牌堆");
 		}
 		else
