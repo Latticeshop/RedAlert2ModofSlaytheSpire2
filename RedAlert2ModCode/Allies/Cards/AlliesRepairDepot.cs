@@ -32,7 +32,8 @@ public sealed class AlliesRepairDepot : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
-		ModCardKeywords.Building.CreateHoverTip()
+		ModCardKeywords.Building.CreateHoverTip(),
+		ModCardKeywords.TechLevelT2.CreateHoverTip(),
 	];
 
 	protected override bool IsPlayable

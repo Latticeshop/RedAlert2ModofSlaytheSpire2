@@ -9,21 +9,23 @@ public static class AlliedTechTreeConfig
 {
     public static BuildingTechTree CreateTechTree()
     {
+        var refinery = new TechBuildingInfo(typeof(AlliedRefinery), TechLevel.T1, powerType: typeof(AlliedRefineryPower));
+        refinery.WithProductionUnlock();
+
         var buildings = new List<TechBuildingInfo>
         {
+            // T1: 基地车解锁 - 核心建筑（科技树自动显示）
             new(typeof(PowerPlantCard), TechLevel.T1),
             new(typeof(AlliesBarracksCard), TechLevel.T1),
-            new(typeof(AlliedRefinery), TechLevel.T1, unlocksNextTech: true, powerType: typeof(AlliedRefineryPower)),
+            refinery,
             
+            // T2: 矿场解锁生产建筑（核心建筑，仅解锁生产选项，不升级科技等级）
             new(typeof(AlliedWarFactory), TechLevel.T2, powerType: typeof(AlliedWarFactoryPower)),
             new(typeof(AlliesShipyardCard), TechLevel.T2),
-            new(typeof(AirForceCommand), TechLevel.T2, powerType: typeof(AlliedAirForceCommandPower)),
-            new(typeof(GrandCannon), TechLevel.T2, requiredPowers: new[] { typeof(AlliedAirForceCommandPower) }),
+            new(typeof(AirForceCommand), TechLevel.T2, unlocksNextTech: true, powerType: typeof(AlliedAirForceCommandPower)),
             
-            new(typeof(AlliedBattleLab), TechLevel.T3, requiredPowers: new[] { typeof(AlliedAirForceCommandPower) }, powerType: typeof(BattleLabPower)),
-            new(typeof(OreRefineryCard), TechLevel.T3, requiredPowers: new[] { typeof(BattleLabPower) }, powerType: typeof(OreRefineryPower)),
-            new(typeof(ChronoSphere), TechLevel.T3, requiredPowers: new[] { typeof(BattleLabPower) }, powerType: typeof(ChronoSpherePower)),
-            new(typeof(WeatherController), TechLevel.T3, requiredPowers: new[] { typeof(BattleLabPower) }, powerType: typeof(WeatherControllerPower)),
+            // T2: 空指部解锁后，作战实验室在 MCV 出现，打出后升级到 T3
+            new(typeof(AlliedBattleLab), TechLevel.T2, unlocksNextTech: true, powerType: typeof(BattleLabPower), requiredPowers: new[] { typeof(AlliedAirForceCommandPower) }),
         };
 
         return new BuildingTechTree(buildings);

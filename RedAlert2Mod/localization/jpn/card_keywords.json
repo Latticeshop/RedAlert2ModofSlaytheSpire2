@@ -50,7 +50,7 @@
     "garrison.title": "駐留",
     "garrison.description": "内部のカードは自身の効果を発動します。",
     "building_tech_tree.title": "建物テクノロジーツリー",
-    "building_tech_tree.description": "テクノロジーツリー：MCV能力（発電所、兵舎、精製所アンロック）→T1:精製所（重工場、空軍、海軍アンロック）→T2:重工場＋空指部/レーダー（作戦実験室アンロック）→T3:作戦実験室（高級兵種とスーパーウェポンなどアンロック）。",
+    "building_tech_tree.description": "テクノロジーツリー：T1:MCV（発電所/兵舎/精製所アンロック）→精製所（重工場/空指部/レーダー/造船所アンロック）→空指部/レーダー（T1→T2、T2建築と作戦実験室アンロック）→作戦実験室（T2→T3、T3建築アンロック）。\nその他の建築：デッキに存在し、必要なテクノロジーレベルがアンロックされている場合にMCV選択に追加されます。",
     "orbital_readiness.title": "軌道戦備",
     "orbital_readiness.description": "ソ連[gold]レーダー[/gold]建造後に使用。\n1ターン後に[gold]目標锁定[/gold]された敵を攻撃。",
     "terror_drone.title": "テロドローン",

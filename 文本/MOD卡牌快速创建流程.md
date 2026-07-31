@@ -58,7 +58,7 @@
 设置 `PortraitPath`。
 
 ### 2. 数值存储
-在 `*CardValues.cs` 中定义数值。
+在 `*CardValues.cs` 中定义数值。同时注册到 `CreateBuildingValuesMap()`（MCV造价显示）和 `BuildingModelMap`（MCV创建卡牌实例）。
 
 ### 3. 动态数值配置
 注册 `DynamicVar`（如 `DollarVar`, `IntVar`）并在 `OnUpgrade()` 中更新。
@@ -70,7 +70,51 @@
 在 `*CardRegistry.cs` 的 `BuildingCards` 中注册。
 
 ### 6. 科技线配置
-在 `*TechTreeConfig.cs` 配置解锁条件。
+
+建筑科技线分为**核心建筑**和**牌组建筑**两类，配置方式不同：
+
+#### 核心建筑（TechTreeConfig）
+
+核心建筑在 MCV 选项中自动显示（无需在牌组中），需在 `*TechTreeConfig.cs` 中配置：
+
+```csharp
+// 矿场：生产解锁（解锁T2核心建筑，不升级科技等级）
+var refinery = new TechBuildingInfo(typeof(Refinery), TechLevel.T1, 
+    powerType: typeof(RefineryPower));
+refinery.WithProductionUnlock();
+
+// 空指部/雷达：科技等级升级（CurrentTechLevel → T2）
+new(typeof(AirForceCommand), TechLevel.T2, unlocksNextTech: true, 
+    powerType: typeof(AirForceCommandPower));
+```
+
+| 标记方式 | 效果 | 使用场景 |
+|---------|------|----------|
+| `WithProductionUnlock()` | 解锁下一级核心建筑的MCV选项，**不升级科技等级** | 矿场 → 重工/空指部/船厂 |
+| `unlocksNextTech: true` | 升级 `CurrentTechLevel`，解锁对应等级的牌组建筑 | 空指部/雷达 → T2，作战实验室 → T3 |
+
+#### 牌组建筑（BuildingCardUtils._deckBuildingTechLevelMap）
+
+非核心建筑（防御塔、超武、围墙、维修厂等）需要在**牌组中存在**且**科技等级达标**时才出现在 MCV 选项：
+
+```csharp
+// BuildingCardUtils.cs
+{ typeof(PrismTowerCard), TechLevel.T2 },      // 光棱塔：T2解锁
+{ typeof(AlliesRepairDepot), TechLevel.T2 },  // 维修厂：T2解锁
+{ typeof(OreRefineryCard), TechLevel.T3 },    // 矿石精炼器：T3解锁
+{ typeof(WeatherController), TechLevel.T3 },   // 天气控制器：T3解锁
+```
+
+#### MCV 选项构成
+
+```
+MCV选项 = 核心建筑（自动显示） + 牌组建筑（牌组存在 + 科技等级达标）
+
+核心建筑：发电厂 → 兵营 → 矿场 → 重工/空指部/船厂 → 作战实验室
+牌组建筑：围墙/碉堡(T1) → 防御塔/维修厂(T2) → 超武/精炼厂(T3)
+```
+
+> 详细实现请查阅 API 文档「科技树系统」章节。
 
 ### 7. 播放建筑音效
 **强制使用** `BuildingSoundHelper.PlayBuildingPlaceSound()`，禁止使用自定义部署音效。
@@ -155,6 +199,9 @@ dotnet build RedAlert2Mod.csproj -c Release -o build
 | 遗物转换注册 | ✅ | ❌ | ❌ | ❌ |
 | 能力图标补丁 | ❌ | ✅ | ✅ | ✅（共用） |
 | 科技解锁配置 | ✅ | ✅ | ❌ | ❌ |
+| 核心建筑(TechTreeConfig) | — | ✅ 核心建筑 | — | — |
+| 牌组建筑(BuildingCardUtils) | — | ✅ 防御塔/超武/围墙 | — | — |
+| BuildingModelMap | — | ✅（MCV造价显示） | — | — |
 | 本地化 | ✅ | ✅ | ✅ | ✅（双份） |
 | 音效播放 | ✅ | ✅ **强制统一** | ❌ | ❌ |
 

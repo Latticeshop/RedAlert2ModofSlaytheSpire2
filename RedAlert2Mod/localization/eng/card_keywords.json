@@ -50,7 +50,7 @@
     "garrison.title": "Garrison",
     "garrison.description": "Cards inside will trigger their own effects.",
     "building_tech_tree.title": "Building Tech Tree",
-    "building_tech_tree.description": "Tech Tree: MCV Power (unlocks Power Plant, Barracks, Refinery) -> T1: Refinery (unlocks War Factory, Air Force, Navy) -> T2: War Factory + Airfield/Radar (unlocks Battle Lab) -> T3: Battle Lab (unlocks advanced units and super weapons).",
+    "building_tech_tree.description": "Tech Tree: T1: MCV (unlocks Power Plant/Barracks/Refinery) -> Refinery (unlocks War Factory/Air Force Command/Radar/Shipyard) -> Air Force Command/Radar (T1→T2, unlocks T2 buildings and Battle Lab) -> Battle Lab (T2→T3, unlocks T3 buildings).\nOther buildings: Added to MCV selection when in your deck and required tech level is unlocked.",
     "orbital_readiness.title": "Orbital Readiness",
     "orbital_readiness.description": "Use after building a Soviet [gold]Radar[/gold].\nStrikes [gold]Target Locked[/gold] enemies after one turn.",
     "terror_drone.title": "Terror Drone",

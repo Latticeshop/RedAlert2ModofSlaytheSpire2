@@ -412,12 +412,12 @@ public static class SovietCardValues
 		DollarValue = 1500
 	};
 
-	/// <summary>战斗碉堡 - 2费技能卡，金卡，选择3张士兵卡牌驻扎（升级5张），价格500</summary>
+	/// <summary>战斗碉堡 - 2费技能卡，金卡，选择3张士兵卡牌驻扎（升级6张），价格500</summary>
 	public static CardValueStore.CardValues BattleBunker => new()
 	{
 		Cost = 2,
 		MagicNumber = 3,
-		MagicNumberUpgraded = 2,
+		MagicNumberUpgraded = 3,
 		DollarValue = 500
 	};
 
@@ -573,7 +573,10 @@ public static class SovietCardValues
 			{ "SOVIETFORTIFIEDWALL", SovietFortifiedWall },
 			{ "SOVIETRADAR", Radar },
 			{ "IRONCURTAINCARD", IronCurtainCard },
-			{ "NUCLEARMISSILESILOCARD", NuclearMissileSiloCard }
+			{ "NUCLEARMISSILESILOCARD", NuclearMissileSiloCard },
+			{ "SOVIETFLAKCANNON", FlakCannon },
+			{ "NUCLEARPLANTCARD", NuclearPlant },
+			{ "INDUSTRIALPLANTCARD", IndustrialPlant }
 		};
 	}
 
@@ -599,6 +602,29 @@ public static class SovietCardValues
 			{ typeof(RedAlert2ModCode.Soviet.Powers.SovietRepairDepotPower), RepairDepot.DollarValue }
 		};
 	}
+
+	/// <summary>建筑类型到模型的映射（避免反射错误）</summary>
+	public static readonly Dictionary<Type, Func<CardModel>> BuildingModelMap = new()
+	{
+		{ typeof(SovietBarracksCard), () => ModelDb.Card<SovietBarracksCard>() },
+		{ typeof(SovietWarFactory), () => ModelDb.Card<SovietWarFactory>() },
+		{ typeof(SovietShipyardCard), () => ModelDb.Card<SovietShipyardCard>() },
+		{ typeof(SovietRepairDepot), () => ModelDb.Card<SovietRepairDepot>() },
+		{ typeof(SovietPillboxCard), () => ModelDb.Card<SovietPillboxCard>() },
+		{ typeof(SovietFlakCannon), () => ModelDb.Card<SovietFlakCannon>() },
+		{ typeof(SovietWallCard), () => ModelDb.Card<SovietWallCard>() },
+		{ typeof(SovietFortifiedWall), () => ModelDb.Card<SovietFortifiedWall>() },
+		{ typeof(NuclearReactor), () => ModelDb.Card<NuclearReactor>() },
+		{ typeof(SovietRefinery), () => ModelDb.Card<SovietRefinery>() },
+		{ typeof(SovietBattleLab), () => ModelDb.Card<SovietBattleLab>() },
+		{ typeof(SovietRadar), () => ModelDb.Card<SovietRadar>() },
+		{ typeof(SovietTeslaCoilCard), () => ModelDb.Card<SovietTeslaCoilCard>() },
+		{ typeof(BattleBunkerCard), () => ModelDb.Card<BattleBunkerCard>() },
+		{ typeof(IronCurtainCard), () => ModelDb.Card<IronCurtainCard>() },
+		{ typeof(NuclearMissileSiloCard), () => ModelDb.Card<NuclearMissileSiloCard>() },
+		{ typeof(NuclearPlantCard), () => ModelDb.Card<NuclearPlantCard>() },
+		{ typeof(IndustrialPlantCard), () => ModelDb.Card<IndustrialPlantCard>() }
+	};
 
 	public static List<Func<CardModel>> CreateBuildingCardFactories()
 	{

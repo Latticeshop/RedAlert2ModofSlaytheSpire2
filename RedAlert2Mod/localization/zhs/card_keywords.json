@@ -50,7 +50,7 @@
     "garrison.title": "驻扎",
     "garrison.description": "在其中的卡牌会触发自身效果。",
     "building_tech_tree.title": "建筑科技线",
-    "building_tech_tree.description": "科技线：基地车能力(解锁发电厂，兵营，矿场)->T1:矿场(解锁重工，空军，海军)->T2:空指部/雷达(解锁作战实验室)->T3:作战实验室(解锁高级兵种和超级武器等)。",
+    "building_tech_tree.description": "科技线：T1:基地车(解锁发电厂/兵营/矿场)->矿场(解锁重工/空指部/雷达/船厂)->空指部/雷达(T1→T2，解锁T2建筑和作战实验室)->作战实验室(T2→T3，解锁T3建筑)。\n其他建筑：在自己卡组里，且解锁对应科技等级时，添加到MCV选项。",
     "orbital_readiness.title": "轨道战备",
     "orbital_readiness.description": "建造苏联[gold]雷达[/gold]后使用。\n一回合后打击[gold]目标锁定[/gold]的敌人。",
     "terror_drone.title": "恐怖机器人",

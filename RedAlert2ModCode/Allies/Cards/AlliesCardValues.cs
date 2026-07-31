@@ -746,7 +746,12 @@ public static class AlliesCardValues
 			{ "ALLIESPILLBOXCARD", Pillbox },
 			{ "PATRIOTMISSILE", PatriotMissile },
 			{ "ALLIEDBATTLELAB", AlliedBattleLab },
-			{ "GRANDCANNON", GrandCannon }
+			{ "GRANDCANNON", GrandCannon },
+			{ "OREREFINERYCARD", OreRefinery },
+			{ "WEATHERCONTROLLER", WeatherController },
+			{ "CHRONOSPHERE", ChronoSphere },
+			{ "ALLIESREPAIRDEPOT", RepairDepot },
+			{ "FORTIFIEDWALL", AlliedFortifiedWall }
 		};
 	}
 
@@ -828,12 +833,15 @@ public static class AlliesCardValues
 		{ typeof(AlliesShipyardCard), () => ModelDb.Card<AlliesShipyardCard>() },
 		{ typeof(PrismTowerCard), () => ModelDb.Card<PrismTowerCard>() },
 		{ typeof(AlliedWallCard), () => ModelDb.Card<AlliedWallCard>() },
+		{ typeof(FortifiedWall), () => ModelDb.Card<FortifiedWall>() },
 		{ typeof(AlliesPillboxCard), () => ModelDb.Card<AlliesPillboxCard>() },
 		{ typeof(PatriotMissile), () => ModelDb.Card<PatriotMissile>() },
+		{ typeof(GrandCannon), () => ModelDb.Card<GrandCannon>() },
 		{ typeof(AlliedBattleLab), () => ModelDb.Card<AlliedBattleLab>() },
 		{ typeof(ChronoSphere), () => ModelDb.Card<ChronoSphere>() },
 		{ typeof(WeatherController), () => ModelDb.Card<WeatherController>() },
-		{ typeof(AlliesRepairDepot), () => ModelDb.Card<AlliesRepairDepot>() }
+		{ typeof(AlliesRepairDepot), () => ModelDb.Card<AlliesRepairDepot>() },
+		{ typeof(OreRefineryCard), () => ModelDb.Card<OreRefineryCard>() }
 	};
 	
 	public static System.Collections.Generic.Dictionary<string, CardValueStore.CardValues> CreateAllValuesMap()

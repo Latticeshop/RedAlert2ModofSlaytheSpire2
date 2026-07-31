@@ -844,19 +844,105 @@ public sealed class ChronoMiner : ChronoCardModel
 
 ### 科技线架构
 
-本Mod实现了类似红警2的科技树系统，单位卡牌需要按科技等级逐步解锁：
+本Mod实现了类似红警2的科技树系统，分为**核心建筑解锁**与**科技等级升级**两套独立机制：
 
 ```
-科技线：基地车能力(解锁发电厂，兵营，矿场)->T1:矿场(解锁重工，空军，海军)->T2:重工+空指部/雷达(解锁作战实验室)->T3:作战实验室(解锁高级兵种和超级武器等)。
+核心建筑解锁（MCV选项）：
+  T1: 基地车能力 → 发电厂、兵营、矿场（始终可见）
+  T2: 矿场能力   → 重工、空指部/雷达、船厂（仅MCV选项可见，不升级科技等级）
+  T3: 作战实验室 → 作战实验室（通过空指部/雷达能力升级科技等级后解锁）
+
+科技等级升级（用于过滤牌组建筑）：
+  T1: 默认等级 → T1牌组建筑可见
+  T2: 空指部/雷达能力触发 → T2牌组建筑可见
+  T3: 作战实验室能力触发 → T3牌组建筑可见
+```
+
+### 核心机制：BuildingTechTree
+
+`BuildingTechTree` 分离了**核心建筑解锁**与**科技等级升级**两个概念：
+
+| 机制 | 触发条件 | 效果 | 标记方式 |
+|------|----------|------|----------|
+| **核心生产解锁** | 获得矿场能力 | T2核心建筑出现在MCV选项（重工/空指部/船厂） | `WithProductionUnlock()` |
+| **科技等级升级** | 获得空指部/雷达能力 | `CurrentTechLevel` 从T1升至T2，T2牌组建筑可见 | `unlocksNextTech: true` |
+
+#### TechBuildingInfo 配置
+
+```csharp
+// 盟军 TechTreeConfig 示例
+var refinery = new TechBuildingInfo(typeof(AlliedRefinery), TechLevel.T1, 
+    powerType: typeof(AlliedRefineryPower));
+refinery.WithProductionUnlock();  // 标记为生产解锁（解锁T2核心建筑，不升级科技等级）
+
+var buildings = new List<TechBuildingInfo>
+{
+    new(typeof(PowerPlantCard), TechLevel.T1),           // T1：始终可见
+    new(typeof(AlliesBarracksCard), TechLevel.T1),       // T1：始终可见
+    refinery,                                             // T1：生产解锁标记
+    
+    new(typeof(AlliedWarFactory), TechLevel.T2, powerType: typeof(AlliedWarFactoryPower)),
+    new(typeof(AlliesShipyardCard), TechLevel.T2),
+    new(typeof(AirForceCommand), TechLevel.T2, unlocksNextTech: true, powerType: typeof(AlliedAirForceCommandPower)),  // 科技等级升级
+    
+    new(typeof(AlliedBattleLab), TechLevel.T3, powerType: typeof(BattleLabPower), 
+        requiredPowers: new[] { typeof(AlliedAirForceCommandPower) }),
+};
+```
+
+#### MCV 选项面板流程
+
+```
+MCV选项 = 核心建筑（GetUnlockedCoreBuildingTypes） + 牌组建筑（AddDeckBuildings）
+
+核心建筑判定（GetUnlockedCoreBuildingTypes）：
+  T1 → 始终解锁
+  T2 → 矿场能力触发后解锁（_productionUnlockedBuildingTypes 包含该类型）
+  T3 → CurrentTechLevel >= T3（需空指部/雷达能力升级后才能获得）
+
+牌组建筑判定（AddDeckBuildings + BuildingCardUtils._deckBuildingTechLevelMap）：
+  需同时满足：在牌组中 + CurrentTechLevel >= 所需等级
+```
+
+#### 牌组建筑科技等级映射（BuildingCardUtils）
+
+非核心建筑（防御塔、超武、围墙、维修厂等）通过 `_deckBuildingTechLevelMap` 定义科技等级需求：
+
+```csharp
+private static readonly Dictionary<Type, TechLevel> _deckBuildingTechLevelMap = new()
+{
+    // 盟军
+    { typeof(AlliedWallCard), TechLevel.T1 },
+    { typeof(AlliesPillboxCard), TechLevel.T1 },
+    { typeof(AlliesRepairDepot), TechLevel.T2 },     // 维修厂：T2
+    { typeof(PrismTowerCard), TechLevel.T2 },
+    { typeof(PatriotMissile), TechLevel.T2 },
+    { typeof(GrandCannon), TechLevel.T2 },
+    { typeof(OreRefineryCard), TechLevel.T3 },       // 矿石精炼器：T3
+    { typeof(WeatherController), TechLevel.T3 },
+    { typeof(ChronoSphere), TechLevel.T3 },
+
+    // 苏军
+    { typeof(SovietWallCard), TechLevel.T1 },
+    { typeof(SovietPillboxCard), TechLevel.T1 },
+    { typeof(BattleBunkerCard), TechLevel.T1 },
+    { typeof(SovietRepairDepot), TechLevel.T2 },    // 维修厂：T2
+    { typeof(SovietTeslaCoilCard), TechLevel.T2 },
+    { typeof(SovietFlakCannon), TechLevel.T2 },
+    { typeof(NuclearPlantCard), TechLevel.T3 },
+    { typeof(IndustrialPlantCard), TechLevel.T3 },
+    { typeof(IronCurtainCard), TechLevel.T3 },
+    { typeof(NuclearMissileSiloCard), TechLevel.T3 },
+};
 ```
 
 ### T1/T2/T3 科技等级规则
 
-| 等级 | 解锁条件 | 解锁内容 | 示例单位 |
-|------|----------|----------|----------|
-| **T1** | 建造[gold]矿场[/gold]解锁 | 基础单位 | 美国大兵、警犬、工程师、灰熊坦克、IFV |
-| **T2** | 建造[gold]空指部/雷达/心灵探测仪[/gold]解锁 | 进阶单位 | 火箭飞行兵、重装大兵、夜莺直升机、坦克杀手、巨炮 |
-| **T3** | 建造[gold]作战实验室[/gold]解锁 | 高级单位和超级武器 | 超时空军团兵、幻影坦克、光棱坦克、战斗要塞、航空母舰 |
+| 等级 | 解锁条件 | 解锁内容 | 示例 |
+|------|----------|----------|------|
+| **T1** | 基地车默认解锁 | 发电厂、兵营、矿场、围墙、机枪碉堡/哨戒炮 | 基础防御塔 |
+| **T2** | 矿场解锁核心生产 + 空指部/雷达升级科技等级 | 重工、船厂、空指部/雷达 + 爱国者/磁暴线圈/防空炮/巨炮 + 维修厂 | 进阶防御塔 |
+| **T3** | 空指部/雷达升级科技等级 + 作战实验室 | 作战实验室 + 超武（天气控制器/超时空/铁幕/核弹井）+ 矿石精炼器/核电站/工业工厂 | 超级武器 |
 
 ### 科技等级关键字
 
@@ -904,11 +990,13 @@ protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 ```json
 {
     "tech_level_t1.title": "T1",
-    "tech_level_t1.description": "建造[gold]矿场[/gold]解锁。",
+    "tech_level_t1.description": "初始科技。",
     "tech_level_t2.title": "T2",
-    "tech_level_t2.description": "建造[gold]空指部/雷达/心灵探测仪[/gold]解锁。",
+    "tech_level_t2.description": "建造[gold]空指部/雷达[/gold]解锁。",
     "tech_level_t3.title": "T3",
-    "tech_level_t3.description": "建造[gold]作战实验室[/gold]解锁。"
+    "tech_level_t3.description": "建造[gold]作战实验室[/gold]解锁。",
+    "building_tech_tree.title": "建筑科技线",
+    "building_tech_tree.description": "科技线：T1:基地车能力→矿场(解锁重工/空指部/船厂)→T2:空指部/雷达(解锁T2单位)→T3:作战实验室。其他建筑：在自己卡组里，且解锁对应科技等级时，添加到MCV选项。"
 }
 ```
 

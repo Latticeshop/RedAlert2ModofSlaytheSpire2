@@ -56,9 +56,9 @@ public sealed class AlliedMCV : CardModel, ICancellableCardPlay
 		List<CardModel> availableCards = new();
 
 		var techTree = CreateTechTreeFromDeck();
-		var unlockedBuildings = techTree.GetUnlockedBuildingTypes();
+		var unlockedCoreBuildings = techTree.GetUnlockedCoreBuildingTypes();
 
-		foreach (var buildingType in unlockedBuildings)
+		foreach (var buildingType in unlockedCoreBuildings)
 		{
 			var model = GetCardModel(buildingType);
 			if (model != null)
@@ -71,11 +71,11 @@ public sealed class AlliedMCV : CardModel, ICancellableCardPlay
 				}
 
 				availableCards.Add(card);
-				GD.Print($"[AlliedMCV] 科技线解锁建筑: {buildingType.Name}");
+				GD.Print($"[AlliedMCV] 核心建筑解锁: {buildingType.Name}");
 			}
 		}
 
-		AddDeckBuildings(ref availableCards);
+		AddDeckBuildings(ref availableCards, techTree.CurrentTechLevel);
 
 		GD.Print($"[AlliedMCV] 可用建筑卡牌数量: {availableCards.Count} (当前科技等级: {techTree.CurrentTechLevel})");
 
@@ -122,38 +122,43 @@ public sealed class AlliedMCV : CardModel, ICancellableCardPlay
 		return techTree;
 	}
 
-	private void AddDeckBuildings(ref List<CardModel> availableCards)
+	private void AddDeckBuildings(ref List<CardModel> availableCards, TechLevel currentTechLevel)
 	{
 		if (Owner?.Deck?.Cards == null)
 		{
 			return;
 		}
 
-		var techTree = AlliedTechTreeConfig.CreateTechTree();
-		var techTreeBuildingTypes = techTree.GetUnlockedBuildingTypes();
-
 		foreach (var card in Owner.Deck.Cards)
 		{
 			var cardType = card.GetType();
 			
-			if (!techTreeBuildingTypes.Contains(cardType) && IsBuildingCardType(cardType))
+			if (!BuildingCardUtils.IsDeckBuildingCard(cardType))
+				continue;
+			
+			// 阵营过滤：盟军MCV只能造盟军建筑
+			if (!BuildingCardUtils.IsDeckBuildingOfFaction(cardType, FactionType.Allied))
+				continue;
+			
+			var requiredLevel = BuildingCardUtils.GetDeckBuildingTechLevel(cardType);
+			if (requiredLevel == null || currentTechLevel < requiredLevel.Value)
+				continue;
+			
+			if (availableCards.Any(c => c.GetType() == cardType))
+				continue;
+			
+			var model = GetCardModel(cardType);
+			if (model != null)
 			{
-				var model = GetCardModel(cardType);
-				if (model != null)
+				var newCard = Owner.Creature.CombatState.CreateCard(model, Owner);
+				
+				if (base.IsUpgraded)
 				{
-					var newCard = Owner.Creature.CombatState.CreateCard(model, Owner);
-					
-					if (base.IsUpgraded)
-					{
-						CardCmd.Upgrade(newCard);
-					}
-
-					if (!availableCards.Any(c => c.GetType() == cardType))
-					{
-						availableCards.Add(newCard);
-						GD.Print($"[AlliedMCV] 添加牌库建筑: {cardType.Name}");
-					}
+					CardCmd.Upgrade(newCard);
 				}
+
+				availableCards.Add(newCard);
+				GD.Print($"[AlliedMCV] 添加牌组建筑: {cardType.Name}");
 			}
 		}
 	}

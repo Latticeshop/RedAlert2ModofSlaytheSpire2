@@ -34,7 +34,7 @@ public sealed class PatriotMissile : CardModel
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
-		ModCardKeywords.TechLevelT1.CreateHoverTip(),
+		ModCardKeywords.TechLevelT2.CreateHoverTip(),
 		ModCardKeywords.DefenseTower.CreateHoverTip()
 	];
 
