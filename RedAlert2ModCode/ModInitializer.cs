@@ -8,6 +8,8 @@ using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Allies.Patches;
 using RedAlert2ModCode.Common.GameActions;
 using RedAlert2ModCode.Common.Patches;
+using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.DeckConfig;
 using RedAlert2ModCode.Soviet;
 
 namespace RedAlert2ModCode;
@@ -46,6 +48,12 @@ public static class ModInitializer
         
         // 注册手臂图片补丁
         HandTexturePatches.Install(harmony);
+
+        // 初始化Mod配置管理器
+        ModConfigManager.Initialize();
+
+        // 注册Mod配置补丁
+        ModConfigPatches.Install(harmony);
         
         // 注意：卡牌注册已通过 RitsuLib 的 [RegisterCard] 属性自动处理
         // 无需手动调用 ModHelper.AddModelToPool()
