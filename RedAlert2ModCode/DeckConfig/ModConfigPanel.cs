@@ -688,8 +688,14 @@ internal static class ModConfigPanel
         resetBtn.CustomMinimumSize = new Vector2(120, 36);
         resetBtn.Pressed += () =>
         {
-            ModConfigManager.ResetCharacterConfig(_selectedCharacterId!);
-            RefreshContent();
+            ShowConfirmDialog(
+                L("CONFIG_CONFIRM_RESET_TITLE"),
+                L("CONFIG_CONFIRM_RESET_DESC"),
+                () =>
+                {
+                    ModConfigManager.ResetCharacterConfig(_selectedCharacterId!);
+                    RefreshContent();
+                });
         };
         buttonRow.AddChild(resetBtn);
 
@@ -697,8 +703,14 @@ internal static class ModConfigPanel
         saveBtn.CustomMinimumSize = new Vector2(120, 36);
         saveBtn.Pressed += () =>
         {
-            ModConfigManager.Save();
-            ShowNotification(L("CONFIG_SAVED"));
+            ShowConfirmDialog(
+                L("CONFIG_CONFIRM_SAVE_TITLE"),
+                L("CONFIG_CONFIRM_SAVE_DESC"),
+                () =>
+                {
+                    ModConfigManager.Save();
+                    ShowNotification(L("CONFIG_SAVED"));
+                });
         };
         buttonRow.AddChild(saveBtn);
     }
@@ -1119,7 +1131,7 @@ internal static class ModConfigPanel
                 .FirstOrDefault(a => a.GetName().Name == "RedAlert2Mod");
             if (asm != null)
             {
-                var type = asm.GetType(typeName);
+                var type = asm.GetTypes().FirstOrDefault(t => t.Name == typeName);
                 if (type != null)
                 {
                     var cardModel = GetCardModelByType(type);
@@ -1142,7 +1154,7 @@ internal static class ModConfigPanel
                 .FirstOrDefault(a => a.GetName().Name == "RedAlert2Mod");
             if (asm != null)
             {
-                var type = asm.GetType(typeName);
+                var type = asm.GetTypes().FirstOrDefault(t => t.Name == typeName);
                 if (type != null)
                 {
                     return GetCardModelByType(type);
@@ -1198,6 +1210,90 @@ internal static class ModConfigPanel
     private static void ShowNotification(string message)
     {
         GD.Print($"[ModConfig] {message}");
+    }
+
+    private static void ShowConfirmDialog(string title, string desc, Action onConfirm)
+    {
+        if (_layer == null || !GodotObject.IsInstanceValid(_layer)) return;
+
+        var dialogMask = new ColorRect();
+        dialogMask.Color = new Color(0f, 0f, 0f, 0.5f);
+        dialogMask.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
+        dialogMask.MouseFilter = Control.MouseFilterEnum.Stop;
+        _layer.AddChild(dialogMask);
+
+        var dialog = new PanelContainer();
+        dialog.AnchorLeft = 0.5f;
+        dialog.AnchorRight = 0.5f;
+        dialog.AnchorTop = 0.5f;
+        dialog.AnchorBottom = 0.5f;
+        dialog.OffsetLeft = -160;
+        dialog.OffsetRight = 160;
+        dialog.OffsetTop = -80;
+        dialog.OffsetBottom = 80;
+        dialog.GrowHorizontal = Control.GrowDirection.Both;
+        dialog.GrowVertical = Control.GrowDirection.Both;
+        dialog.MouseFilter = Control.MouseFilterEnum.Stop;
+
+        var dialogStyle = new StyleBoxFlat();
+        dialogStyle.BgColor = new Color(0.10f, 0.08f, 0.12f, 0.98f);
+        dialogStyle.SetBorderWidthAll(2);
+        dialogStyle.BorderColor = StsColors.gold;
+        dialogStyle.SetCornerRadiusAll(8);
+        dialogStyle.SetContentMarginAll(0);
+        dialog.AddThemeStyleboxOverride("panel", dialogStyle);
+        _layer.AddChild(dialog);
+
+        var vbox = new VBoxContainer();
+        vbox.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+        vbox.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
+        vbox.AddThemeConstantOverride("separation", 10);
+        dialog.AddChild(vbox);
+
+        var titleLabel = new Label();
+        titleLabel.Text = title;
+        titleLabel.AddThemeFontSizeOverride("font_size", 18);
+        titleLabel.AddThemeColorOverride("font_color", StsColors.gold);
+        titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
+        titleLabel.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+        vbox.AddChild(titleLabel);
+
+        var descLabel = new Label();
+        descLabel.Text = desc;
+        descLabel.AddThemeFontSizeOverride("font_size", 13);
+        descLabel.AddThemeColorOverride("font_color", StsColors.cream);
+        descLabel.HorizontalAlignment = HorizontalAlignment.Center;
+        descLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+        descLabel.CustomMinimumSize = new Vector2(280, 0);
+        descLabel.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+        vbox.AddChild(descLabel);
+
+        var btnRow = new HBoxContainer();
+        btnRow.AddThemeConstantOverride("separation", 16);
+        btnRow.Alignment = BoxContainer.AlignmentMode.Center;
+        vbox.AddChild(btnRow);
+
+        void CloseDialog()
+        {
+            if (GodotObject.IsInstanceValid(dialogMask))
+                dialogMask.QueueFree();
+            if (GodotObject.IsInstanceValid(dialog))
+                dialog.QueueFree();
+        }
+
+        var cancelBtn = CreateActionButton(L("CONFIG_CANCEL"), StsColors.cream);
+        cancelBtn.CustomMinimumSize = new Vector2(100, 36);
+        cancelBtn.Pressed += CloseDialog;
+        btnRow.AddChild(cancelBtn);
+
+        var confirmBtn = CreateActionButton(L("CONFIG_CONFIRM"), StsColors.gold);
+        confirmBtn.CustomMinimumSize = new Vector2(100, 36);
+        confirmBtn.Pressed += () =>
+        {
+            CloseDialog();
+            onConfirm?.Invoke();
+        };
+        btnRow.AddChild(confirmBtn);
     }
 
     // ============ UI辅助方法 ============

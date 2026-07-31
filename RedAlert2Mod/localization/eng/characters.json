@@ -80,5 +80,11 @@
     "CONFIG_SUBTAB_BASE_CAR": "Base Car Mode",
     "CONFIG_SUBTAB_LUCKY": "Lucky Crate",
     "CONFIG_CARD_POOL": "Character Card Pool",
-    "CONFIG_CARD_REMOVE_HINT": "Right-click a card to remove one"
+    "CONFIG_CARD_REMOVE_HINT": "Right-click a card to remove one",
+    "CONFIG_CONFIRM_RESET_TITLE": "Confirm Reset",
+    "CONFIG_CONFIRM_RESET_DESC": "Reset this character's configuration to defaults?",
+    "CONFIG_CONFIRM_SAVE_TITLE": "Save Configuration",
+    "CONFIG_CONFIRM_SAVE_DESC": "Save the current configuration changes?",
+    "CONFIG_CANCEL": "Cancel",
+    "CONFIG_CONFIRM": "Confirm"
 }

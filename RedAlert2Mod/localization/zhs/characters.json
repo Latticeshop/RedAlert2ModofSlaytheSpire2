@@ -80,5 +80,11 @@
     "CONFIG_SUBTAB_BASE_CAR": "基地车模式",
     "CONFIG_SUBTAB_LUCKY": "幸运方块",
     "CONFIG_CARD_POOL": "角色卡池",
-    "CONFIG_CARD_REMOVE_HINT": "右键点击卡牌可移除一张"
+    "CONFIG_CARD_REMOVE_HINT": "右键点击卡牌可移除一张",
+    "CONFIG_CONFIRM_RESET_TITLE": "确认还原",
+    "CONFIG_CONFIRM_RESET_DESC": "确定要将此角色的配置还原为默认值吗？",
+    "CONFIG_CONFIRM_SAVE_TITLE": "保存配置",
+    "CONFIG_CONFIRM_SAVE_DESC": "确定要保存当前的配置更改吗？",
+    "CONFIG_CANCEL": "取消",
+    "CONFIG_CONFIRM": "确定"
 }

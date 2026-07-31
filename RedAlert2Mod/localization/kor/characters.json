@@ -80,5 +80,11 @@
     "CONFIG_SUBTAB_BASE_CAR": "기지차 모드",
     "CONFIG_SUBTAB_LUCKY": "럭키 크레이트",
     "CONFIG_CARD_POOL": "캐릭터 카드 풀",
-    "CONFIG_CARD_REMOVE_HINT": "카드를 우클릭하여 1장 제거"
+    "CONFIG_CARD_REMOVE_HINT": "카드를 우클릭하여 1장 제거",
+    "CONFIG_CONFIRM_RESET_TITLE": "초기화 확인",
+    "CONFIG_CONFIRM_RESET_DESC": "이 캐릭터의 설정을 기본값으로 초기화하시겠습니까?",
+    "CONFIG_CONFIRM_SAVE_TITLE": "설정 저장",
+    "CONFIG_CONFIRM_SAVE_DESC": "현재 설정 변경 사항을 저장하시겠습니까?",
+    "CONFIG_CANCEL": "취소",
+    "CONFIG_CONFIRM": "확인"
 }
