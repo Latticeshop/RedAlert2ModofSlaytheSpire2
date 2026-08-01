@@ -292,6 +292,7 @@ public sealed class AlliesCardPool : CardPoolModel
 - 任何卡牌的数值信息（费用、伤害、护盾、重复次数等）都必须在数值文件中统一存储
 - 推荐使用 `AlliesCardValues.cs` 这样的静态类来管理所有卡牌数值
 - 卡牌类中通过引用数值存储类来获取数值，避免硬编码
+- **飞鹰/轨道系列**的卡牌数值和能力数值**统一存储在** `CommonCardValues.cs` 和 `CommonPowerValues.cs`，不使用阵营专属文件
 
 **规则2：资金消耗本地化格式**
 - 任何需要消耗"资金"的**非单位**卡牌（如建筑卡、技能卡），必须在本地化描述的开头加上"价格：xxx。"
@@ -4204,7 +4205,7 @@ else
 
 | 步骤 | 文件路径 | 操作 |
 |-----|---------|------|
-| 1 | `CommonCardValues.cs` / `AlliesPowerValues.cs` | 添加数值条目 |
+| 1 | `CommonCardValues.cs` / `CommonPowerValues.cs` | 添加数值条目 |
 | 2 | `Allies/Cards/` | 创建卡牌类，继承 `DesperateMeasureCardBase<TPower>` |
 | 3 | `Allies/Powers/` | 创建能力类，继承 `DesperateMeasurePowerBase` |
 | 4 | `Allies/Powers/PowerIconPatch.cs` | 注册能力图标 |
@@ -4273,8 +4274,8 @@ var existing = owner.Powers.OfType<OrbitalGasStrikePower>()
 
 | 步骤 | 文件路径 | 操作 |
 |-----|---------|------|
-| 1 | `SovietCardValues.cs` / `SovietPowerValues.cs` | 添加数值条目 |
-| 2 | `Soviet/Cards/` | 创建卡牌类，继承 `CardModel` |
+| 1 | `CommonCardValues.cs` / `CommonPowerValues.cs` | 添加数值条目 |
+| 2 | `Common/Cards/` | 创建卡牌类，继承 `CardModel` |
 | 3 | `Soviet/Powers/` | 创建能力类，继承 `PowerModel` |
 | 4 | `Allies/Powers/PowerIconPatch.cs` | 注册能力图标 |
 | 5 | `SovietCardRegistry.cs` | **必须**将卡牌加入 `RadarPowerCards` 列表 |

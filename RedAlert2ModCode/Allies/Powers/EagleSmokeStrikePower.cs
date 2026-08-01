@@ -20,7 +20,7 @@ namespace RedAlert2ModCode.Allies.Powers;
 /// </summary>
 public sealed class EagleSmokeStrikePower : DesperateMeasurePowerBase
 {
-    private static readonly CardValueStore.CardValues Values = AlliesPowerValues.EagleSmokeStrikePower;
+    private static readonly CardValueStore.CardValues Values = CommonPowerValues.EagleSmokeStrikePower;
 
     /// <summary>
     /// 当前虚弱层数
@@ -90,7 +90,7 @@ public sealed class EagleSmokeStrikePower : DesperateMeasurePowerBase
 
     /// <summary>
     /// 执行攻击效果：对目标施加虚弱，我方全体获得格挡
-    /// 基类 AfterSideTurnStart 与 ExecuteDesperateMeasureAttack 均会调用此方法
+    /// 仅由 ExecuteDesperateMeasureAttack 调用（战机攻击时触发，不会自动结束）
     /// </summary>
     protected override async Task ExecuteAttackEffect(Creature target, PlayerChoiceContext ctx)
     {

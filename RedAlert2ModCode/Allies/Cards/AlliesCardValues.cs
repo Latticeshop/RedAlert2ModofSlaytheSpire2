@@ -115,11 +115,13 @@ public static class AlliesCardValues
 		DollarValue = 300
 	};
 
-	/// <summary>空降部队 - 1费运转卡，升级后0费，获得4张美国大兵和1张重装大兵（带消耗）</summary>
+	/// <summary>空降部队 - 0费运转卡，获得3张(升级4)美国大兵和1张重装大兵（带消耗）</summary>
 	public static CardValueStore.CardValues AirborneDivision => new()
 	{
-		Cost = 1,
-		CostUpgraded = -1,   // 升级后费用变为 0
+		Cost = 0,
+		CostUpgraded = 0,   // 升级后费用变为 0
+		Repeat = 3,         // 美国大兵数量（基础3张）
+		RepeatUpgraded = 1, // 升级后4张 = 3 + 1
 		DollarValue = 0
 	};
 	
@@ -417,8 +419,8 @@ public static class AlliesCardValues
 	public static CardValueStore.CardValues GrandCannon => new()
 	{
 		Cost = 2,
-		Damage = 20,
-		DamageUpgraded = 10,  // 升级后30 = 20 + 10
+		Damage = 27,
+		DamageUpgraded = 9,  // 升级后36 = 27 + 9
 		DollarValue = 2000
 	};
 	
@@ -575,33 +577,6 @@ public static class AlliesCardValues
 	{
 		Cost = 1,                   // 1费
 		MagicNumber = 80            // 矿车收益百分比：80%
-	};
-
-	/// <summary>飞鹰500kg - 3费攻击卡，绝地战备，获得能力并赋予目标锁定，升级后2费</summary>
-	public static CardValueStore.CardValues Eagle500kg => new()
-	{
-		Cost = 3,                   // 3费
-		CostUpgraded = -1,          // 升级后费用降低1，变为2费
-		DollarValue = 0             // 绝地战备卡牌无价格
-	};
-
-	/// <summary>飞鹰机枪扫射 - 1费攻击卡，绝地战备，对目标锁定敌人造成3点伤害4次，升级后4点</summary>
-	public static CardValueStore.CardValues EagleMachineGun => new()
-	{
-		Cost = 1,                   // 1费
-		Damage = 3,                 // 基础伤害
-		DamageUpgraded = 1,         // 升级后4 = 3 + 1
-		Repeat = 4,                 // 攻击次数
-		DollarValue = 0             // 绝地战备卡牌无价格
-	};
-
-	/// <summary>飞鹰空袭 - 1费攻击卡，绝地战备，对全部敌人造成9点伤害，升级后13点</summary>
-	public static CardValueStore.CardValues EagleAirStrike => new()
-	{
-		Cost = 1,                   // 1费
-		Damage = 9,                 // 基础伤害
-		DamageUpgraded = 4,         // 升级后13 = 9 + 4
-		DollarValue = 0             // 绝地战备卡牌无价格
 	};
 
 	// ==================== 高科技(T2)单位 - 需要作战实验室解锁 ====================

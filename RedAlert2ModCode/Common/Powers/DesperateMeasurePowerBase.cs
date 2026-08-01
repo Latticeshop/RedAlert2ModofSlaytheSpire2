@@ -96,44 +96,6 @@ public abstract class DesperateMeasurePowerBase : PowerModel, IDesperateMeasureP
 	protected virtual bool IsAoeAttack => false;
 
 	/// <summary>
-	/// 回合开始触发 - 核心入口
-	/// 目标解析优先级：StoredTarget → TargetLocked → 随机敌人
-	/// </summary>
-	public override async Task AfterSideTurnStart(CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
-	{
-		if (side != CombatSide.Player || Owner == null)
-			return;
-
-		var ctx = new ThrowingPlayerChoiceContext();
-
-		// AOE模式：直接对全体敌人生效
-		if (IsAoeAttack)
-		{
-			GD.Print($"[{GetType().Name}] AOE模式 - 对全体敌人生效, Amount={Amount}");
-			await ExecuteAoeAttack(ctx, combatState);
-			await ConsumeOrRemove(ctx);
-			return;
-		}
-
-		// 单体模式：解析目标
-		Creature? target = ResolveTarget(combatState);
-
-		if (target == null)
-		{
-			GD.Print($"[{GetType().Name}] 无有效目标，跳过");
-			return;
-		}
-
-		GD.Print($"[{GetType().Name}] 回合开始触发 - Target={target.Name}, Damage={CurrentDamage}, Amount={Amount}");
-
-		// 执行攻击
-		await ExecuteAttackEffect(target, ctx);
-
-		// 消耗层数
-		await ConsumeOrRemove(ctx);
-	}
-
-	/// <summary>
 	/// 解析目标 - 优先级：StoredTarget → TargetLocked → 随机存活敌人
 	/// </summary>
 	private Creature? ResolveTarget(ICombatState combatState)

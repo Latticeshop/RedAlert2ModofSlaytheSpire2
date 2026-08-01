@@ -148,7 +148,7 @@ MCV选项 = 核心建筑（自动显示） + 牌组建筑（牌组存在 + 科�
 1.  **创建能力类** (`*Power.cs`)：继承基类或 `PowerModel`，实现 `AfterSideTurnStart` 触发逻辑。
 2.  **注册能力图标**：在 `PowerIconPatch.cs` 中添加映射。
 3.  **创建卡牌类** (`*Card.cs`)：继承基类或 `CardModel`，实现 `OnPlay` 打出逻辑。
-4.  **数值存储**：在 `*PowerValues.cs` / `*CardValues.cs` 中定义。
+4.  **数值存储**：飞鹰/轨道系列**统一存储在** `CommonCardValues.cs`（卡牌数值）和 `CommonPowerValues.cs`（能力数值），不使用阵营专属文件。
 5.  **动态数值配置**：注册 `DynamicVar` 并在 `OnUpgrade()` 中更新。
 6.  **配置攻击动画**：使用 `VfxCmd` 播放特效。
 7.  **本地化**：在 `cards.json` 和 `powers.json` 中添加条目。
@@ -193,7 +193,7 @@ dotnet build RedAlert2Mod.csproj -c Release -o build
 |--------|:------:|:------:|:------:|:------:|
 | 语音注册 | ✅ | ❌ | ❌ | ❌ |
 | 卡牌图标 | ✅ | ✅ | ✅ | ✅ |
-| 数值存储 | ✅ | ✅ | ✅ | ✅（Common） |
+| 数值存储 | ✅ | ✅ | ✅（Common） | ✅（Common） |
 | 价格映射 | ✅ | ✅ | ❌ | ❌ |
 | CardRegistry注册 | ✅ | ✅ | ✅ | ✅（双阵营） |
 | 遗物转换注册 | ✅ | ❌ | ❌ | ❌ |

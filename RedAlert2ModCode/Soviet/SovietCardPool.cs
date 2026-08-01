@@ -59,6 +59,9 @@ public sealed class SovietCardPool : TypeListCardPoolModel
         typeof(FirepowerCrate),
         typeof(HealCrate),
         typeof(VehicleCrate),
+        typeof(SoldierCrate),
+        typeof(AirForceCrate),
+        typeof(NavyCrate),
         typeof(MoneyCrate),
         typeof(RandomCrate),
     };

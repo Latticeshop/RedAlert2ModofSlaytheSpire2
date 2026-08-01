@@ -180,7 +180,7 @@
     "ui.spy.attack.powerplant_desc_upgraded": "队友减少1点能量，自己获得{PowerPlantEnergyGainUpgraded}点能量",
     "ui.spy.attack.orerefinery_title": "矿场",
     "ui.spy.attack.orerefinery_desc_base": "扣除队友一半资金，自己获得1.5倍",
-    "ui.spy.attack.orerefinery_desc_upgraded": "扣除队友一半资金，自己获得2倍",
+    "ui.spy.attack.orerefinery_desc_upgraded": "扣除队友一半资金，自己获得1.75倍",
     "ui.spy.attack.battlelab_title": "作战实验室",
     "ui.spy.attack.battlelab_desc_base": "获得对应遗物，永久解锁特殊单位",
     "ui.spy.attack.battlelab_desc_upgraded": "获得对应遗物，永久解锁特殊单位",

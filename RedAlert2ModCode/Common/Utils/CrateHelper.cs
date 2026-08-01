@@ -22,6 +22,9 @@ public static class CrateHelper
     {
         () => ModelDb.Card<MoneyCrate>(),
         () => ModelDb.Card<VehicleCrate>(),
+        () => ModelDb.Card<SoldierCrate>(),
+        () => ModelDb.Card<AirForceCrate>(),
+        () => ModelDb.Card<NavyCrate>(),
         () => ModelDb.Card<HealCrate>(),
         () => ModelDb.Card<FirepowerCrate>(),
         () => ModelDb.Card<SpeedCrate>(),
@@ -36,11 +39,14 @@ public static class CrateHelper
     private static readonly Dictionary<Type, int> _crateWeights = new()
     {
         { typeof(MoneyCrate), 50 },
-        { typeof(VehicleCrate), 30 },
         { typeof(HealCrate), 30 },
         { typeof(FirepowerCrate), 30 },
         { typeof(SpeedCrate), 30 },
         { typeof(ArmorCrate), 30 },
+        { typeof(SoldierCrate), 30 },
+        { typeof(VehicleCrate), 20 },
+        { typeof(AirForceCrate), 20 },
+        { typeof(NavyCrate), 20 },
         { typeof(UpgradeCrate), 20},
         { typeof(StealthCrate), 20 },
         { typeof(ExplosionCrate), 20 },

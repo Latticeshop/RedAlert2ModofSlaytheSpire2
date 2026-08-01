@@ -48,7 +48,8 @@ public static class DollarTransferManager
         var dollarPower = sender.Creature.Powers.OfType<DollarPower>().FirstOrDefault();
         if (dollarPower == null) return false;
 
-        return dollarPower.DollarValue >= amount;
+        // 金额不足时允许全额转账（只要有任意资金即可），实际转账金额在 ExecuteTransfer 中截断为余额
+        return dollarPower.DollarValue > 0;
     }
 
     public static IEnumerable<Player> GetValidTargets(Player sender)
@@ -79,6 +80,15 @@ public static class DollarTransferManager
             return false;
         }
 
+        // 金额不足时全额转账：实际转账金额截断为当前余额
+        var dollarPower = sender.Creature.Powers.OfType<DollarPower>().FirstOrDefault();
+        int balance = dollarPower?.DollarValue ?? 0;
+        int actualAmount = Math.Min(amount, balance);
+        if (actualAmount < amount)
+        {
+            GD.Print($"[DollarTransfer] 资金不足，全额转账 {actualAmount}（请求 {amount}）");
+        }
+
         lock (_lock)
         {
             if (_isTransferring)
@@ -89,9 +99,9 @@ public static class DollarTransferManager
             _isTransferring = true;
         }
 
-        var request = CreateTransferRequest(sender, receiver, amount);
+        var request = CreateTransferRequest(sender, receiver, actualAmount);
 
-        var action = new DollarTransferGameAction(sender, receiver.NetId, amount);
+        var action = new DollarTransferGameAction(sender, receiver.NetId, actualAmount);
         action.AfterFinished += delegate
         {
             GD.Print("[DollarTransfer] 转账操作完成");
@@ -119,7 +129,7 @@ public static class DollarTransferManager
         try
         {
             RunManager.Instance.ActionQueueSynchronizer.RequestEnqueue(action);
-            GD.Print($"[DollarTransfer] 转账请求已发送：{GetPlayerName(sender)} -> {GetPlayerName(receiver)}, 金额: {amount}");
+            GD.Print($"[DollarTransfer] 转账请求已发送：{GetPlayerName(sender)} -> {GetPlayerName(receiver)}, 金额: {actualAmount}" + (actualAmount < amount ? $"（请求 {amount}，资金不足全额转账）" : ""));
             return true;
         }
         catch (Exception ex)

@@ -282,7 +282,8 @@ public sealed partial class DollarTransferScreen : Control, IOverlayScreen
     {
         if (int.TryParse(text, out int amount))
         {
-            _selectedAmount = Math.Max(0, Math.Min(amount, _maxAmount));
+            // 允许输入超过余额的金额，转账时由 ExecuteTransfer 自动截断为余额（全额转账）
+            _selectedAmount = Math.Max(0, amount);
         }
     }
 

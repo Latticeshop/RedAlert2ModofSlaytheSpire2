@@ -87,39 +87,6 @@ public static class AlliesPowerValues
 		DollarValueUpgraded = 300  // 升级后每回合 500 = 200 + 300
 	};
 
-	// ==================== 绝地战备能力 ====================
-
-	/// <summary>飞鹰500kg能力 - 对目标锁定敌人造成伤害并溅射</summary>
-	public static CardValueStore.CardValues Eagle500kgPower => new()
-	{
-		Damage = 50,            // 基础伤害
-		DamageUpgraded = 10     // 升级后60 = 50 + 10
-	};
-
-	/// <summary>飞鹰机枪扫射能力 - 对目标锁定敌人造成3点伤害4次</summary>
-	public static CardValueStore.CardValues EagleMachineGunPower => new()
-	{
-		Damage = 3,             // 基础伤害
-		DamageUpgraded = 1,     // 升级后4 = 3 + 1
-		Repeat = 4              // 攻击次数
-	};
-
-	/// <summary>飞鹰空袭能力 - 对全部敌人造成9点伤害</summary>
-	public static CardValueStore.CardValues EagleAirStrikePower => new()
-	{
-		Damage = 9,             // 基础伤害
-		DamageUpgraded = 4      // 升级后13 = 9 + 4
-	};
-
-	/// <summary>飞鹰烟雾能力 - 对目标施加虚弱并给我方全体格挡</summary>
-	public static CardValueStore.CardValues EagleSmokeStrikePower => new()
-	{
-		MagicNumber = 1,             // 基础虚弱层数
-		MagicNumberUpgraded = 1,     // 升级后2 = 1 + 1
-		Block = 16,                  // 基础格挡
-		BlockUpgraded = 4            // 升级后20 = 16 + 4
-	};
-
 	/// <summary>黄金矿能力 - 存储黄金矿储备</summary>
 	public static CardValueStore.CardValues GoldMinePower => new()
 	{

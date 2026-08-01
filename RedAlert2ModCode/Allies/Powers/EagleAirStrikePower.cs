@@ -16,7 +16,7 @@ namespace RedAlert2ModCode.Allies.Powers;
 /// </summary>
 public class EagleAirStrikePower : DesperateMeasurePowerBase
 {
-	private static readonly CardValueStore.CardValues Values = AlliesPowerValues.EagleAirStrikePower;
+	private static readonly CardValueStore.CardValues Values = CommonPowerValues.EagleAirStrikePower;
 
 	public override string PackedIconPath => "res://RedAlert2ModResources/images/packed/card_portraits/Helldivers/Eagle/EagleAirStrikePower.png";
 

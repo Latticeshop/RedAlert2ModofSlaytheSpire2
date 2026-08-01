@@ -13,7 +13,7 @@ public static class EngineerChoiceValues
 		Type = ChoiceSelectionScreen.ChoiceType.CaptureOilDerrick,
 		Title = new LocString("card_keywords", "engineer_choice.capture_oil_derrick.title"),
 		Description = new LocString("card_keywords", "engineer_choice.capture_oil_derrick.description"),
-		Weight = 8
+		Weight = 20
 	};
 
 	public static Choice RepairBuilding => new()
@@ -21,7 +21,7 @@ public static class EngineerChoiceValues
 		Type = ChoiceSelectionScreen.ChoiceType.RepairBuilding,
 		Title = new LocString("card_keywords", "engineer_choice.repair_building.title"),
 		Description = new LocString("card_keywords", "engineer_choice.repair_building.description"),
-		Weight = 10
+		Weight = 20
 	};
 
 	public static Choice CaptureAirfield => new()
@@ -29,7 +29,7 @@ public static class EngineerChoiceValues
 		Type = ChoiceSelectionScreen.ChoiceType.CaptureAirfield,
 		Title = new LocString("card_keywords", "engineer_choice.capture_airfield.title"),
 		Description = new LocString("card_keywords", "engineer_choice.capture_airfield.description"),
-		Weight = 4
+		Weight = 15
 	};
 
 	public static Choice CaptureHospital => new()
@@ -37,7 +37,7 @@ public static class EngineerChoiceValues
 		Type = ChoiceSelectionScreen.ChoiceType.CaptureHospital,
 		Title = new LocString("card_keywords", "engineer_choice.capture_hospital.title"),
 		Description = new LocString("card_keywords", "engineer_choice.capture_hospital.description"),
-		Weight = 1
+		Weight = 4
 	};
 
 	public static Choice CaptureWorkshop => new()
@@ -45,7 +45,7 @@ public static class EngineerChoiceValues
 		Type = ChoiceSelectionScreen.ChoiceType.CaptureWorkshop,
 		Title = new LocString("card_keywords", "engineer_choice.capture_workshop.title"),
 		Description = new LocString("card_keywords", "engineer_choice.capture_workshop.description"),
-		Weight = 1
+		Weight = 4
 	};
 
 	public static Choice CaptureTechOutpost => new()
@@ -61,7 +61,7 @@ public static class EngineerChoiceValues
 		Type = ChoiceSelectionScreen.ChoiceType.RepairBridge,
 		Title = new LocString("card_keywords", "engineer_choice.repair_bridge.title"),
 		Description = new LocString("card_keywords", "engineer_choice.repair_bridge.description"),
-		Weight = 5
+		Weight = 15
 	};
 
 	public static Choice SurveyMineField => new()
@@ -69,7 +69,7 @@ public static class EngineerChoiceValues
 		Type = ChoiceSelectionScreen.ChoiceType.SurveyMineField,
 		Title = new LocString("card_keywords", "engineer_choice.survey_mine_field.title"),
 		Description = new LocString("card_keywords", "engineer_choice.survey_mine_field.description"),
-		Weight = 5
+		Weight = 4
 	};
 
 	public static List<Choice> AllChoices => new()
