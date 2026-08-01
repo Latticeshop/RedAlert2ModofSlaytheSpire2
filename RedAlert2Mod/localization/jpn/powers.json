@@ -130,7 +130,7 @@
     "SOVIET_REPAIR_DEPOT_POWER.title": "ソ連修理工場",
     "SOVIET_REPAIR_DEPOT_POWER.description": "修理工場を展開した。",
     "URBANIZATION_POWER.title": "都市化",
-    "URBANIZATION_POWER.description": "[gold]建築[/gold]または[gold]防衛塔[/gold]カードをプレイするたび、[gold]建築[/gold]または[gold]防衛塔[/gold]カードを1枚ドローする。",
+    "URBANIZATION_POWER.description": "[gold]建築[/gold]カードをプレイするたび[gold]防衛塔[/gold]カードを1枚ドローし、[gold]防衛塔[/gold]カードをプレイするたび[gold]建築[/gold]カードを1枚ドローする。",
     "CAMOUFLAGE_POWER.title": "迷彩",
     "CAMOUFLAGE_POWER.description": "このターンにダメージを与えなかった場合、[gold]無実体[/gold]を1ターン獲得する。ダメージを与えると解除される。",
     "BURN_POWER.title": "灼烧",

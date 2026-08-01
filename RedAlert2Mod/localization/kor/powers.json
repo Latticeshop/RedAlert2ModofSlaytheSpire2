@@ -130,7 +130,7 @@
     "SOVIET_REPAIR_DEPOT_POWER.title": "소련 수리 공장",
     "SOVIET_REPAIR_DEPOT_POWER.description": "수리 공장이 전개되었습니다.",
     "URBANIZATION_POWER.title": "도시화",
-    "URBANIZATION_POWER.description": "[gold]건물[/gold] 또는 [gold]방어탑[/gold] 카드를 플레이할 때마다 [gold]건물[/gold] 또는 [gold]방어탑[/gold] 카드 한 장을 뽑습니다.",
+    "URBANIZATION_POWER.description": "[gold]건물[/gold] 카드를 플레이할 때마다 [gold]방어탑[/gold] 카드를 한 장 뽑고, [gold]방어탑[/gold] 카드를 플레이할 때마다 [gold]건물[/gold] 카드를 한 장 뽑습니다.",
     "CAMOUFLAGE_POWER.title": "위장",
     "CAMOUFLAGE_POWER.description": "이번 턴에 피해를 주지 않았다면 [gold]무실체[/gold]를 1턴 얻습니다. 피해를 주면 제거됩니다.",
     "BURN_POWER.title": "화상",

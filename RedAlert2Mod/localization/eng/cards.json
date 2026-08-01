@@ -294,7 +294,7 @@
     "RED_ALERT2_MOD_CARD_SPY_CARD.title": "Spy",
     "RED_ALERT2_MOD_CARD_SPY_CARD.description": "Infiltrate buildings. Choose 1 command from {IfUpgraded:show:3|2} options.\nCan infiltrate ally buildings.",
     "URBANIZATION_CARD.title": "Urbanization",
-    "URBANIZATION_CARD.description": "Whenever you play a [gold]Building[/gold] or [gold]Defense Tower[/gold] card, draw a [gold]Building[/gold] or [gold]Defense Tower[/gold] card.",
+    "URBANIZATION_CARD.description": "Whenever you play a [gold]Building[/gold] card, draw a [gold]Defense Tower[/gold] card. Whenever you play a [gold]Defense Tower[/gold] card, draw a [gold]Building[/gold] card.",
     "ORBITAL_GAS_STRIKE.title": "Orbital Gas Strike",
     "ORBITAL_GAS_STRIKE.description": "[gold]Orbital Readiness[/gold].\nNext turn, inflict {Poison} stacks of [gold]Poison[/gold] to all enemies.",
     "ORBITAL120MM.title": "Orbital 120mm",

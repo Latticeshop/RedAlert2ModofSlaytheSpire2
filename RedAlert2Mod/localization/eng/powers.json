@@ -130,7 +130,7 @@
     "SOVIET_REPAIR_DEPOT_POWER.title": "Soviet Repair Depot",
     "SOVIET_REPAIR_DEPOT_POWER.description": "Repair Depot deployed.",
     "URBANIZATION_POWER.title": "Urbanization",
-    "URBANIZATION_POWER.description": "Whenever you play a [gold]Building[/gold] or [gold]Defense Tower[/gold] card, draw a [gold]Building[/gold] or [gold]Defense Tower[/gold] card.",
+    "URBANIZATION_POWER.description": "Whenever you play a [gold]Building[/gold] card, draw a [gold]Defense Tower[/gold] card. Whenever you play a [gold]Defense Tower[/gold] card, draw a [gold]Building[/gold] card.",
     "CAMOUFLAGE_POWER.title": "Camouflage",
     "CAMOUFLAGE_POWER.description": "If no damage is dealt this turn, gain 1 turn of [gold]Intangible[/gold]. Removed when damage is dealt.",
     "BURN_POWER.title": "Burn",
