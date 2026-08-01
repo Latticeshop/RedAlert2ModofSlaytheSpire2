@@ -143,6 +143,8 @@
     "timed_bomb.description": "Gain [gold]Vigor[/gold] before playing. Card gains [gold]Exhaust[/gold].",
     "burn.title": "Burn",
     "burn.description": "Takes [gold]current HP × stacks%[/gold] burn damage each turn. Decays 10% of stacks per turn.",
+    "deceleration.title": "Deceleration",
+    "deceleration.description": "Each attack card played increases damage taken by 10%. Removed at the start of the enemy's turn.",
     "ui.crazy_ivan.title": "Choose Crazy Ivan Action",
     "ui.crazy_ivan.attack_title": "Plant Bomb",
     "ui.crazy_ivan.attack_desc": "Apply {BombStacks} Timed Bomb to an enemy",

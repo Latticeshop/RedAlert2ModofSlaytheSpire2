@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
@@ -38,9 +39,21 @@ public static class TimedBombPatch
     }
 }
 
-[HarmonyPatch(typeof(CardModel), nameof(CardModel.GetDescriptionForPile), new Type[] { typeof(PileType), typeof(Creature) })]
+[HarmonyPatch]
 public static class TimedBombDescriptionPatch
 {
+    static MethodBase TargetMethod()
+    {
+        // 瞄准私有方法 GetDescriptionForPile(PileType, DescriptionPreviewType, Creature?)
+        // 这是所有描述渲染的唯一入口
+        foreach (var m in typeof(CardModel).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance))
+        {
+            if (m.Name == "GetDescriptionForPile" && m.ReturnType == typeof(string))
+                return m;
+        }
+        return null!;
+    }
+
     [HarmonyPostfix]
     public static void Postfix(CardModel __instance, ref string __result)
     {

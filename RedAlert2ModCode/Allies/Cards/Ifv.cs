@@ -191,69 +191,71 @@ public sealed class Ifv : CardModel
 
 		var selectedCard = selectedCards[0];
 
+		// 定时炸弹检测（最优先）：关键词（任意被伊文部署的卡）或类型（炸弹单位本身）
+		if (TimedBombManager.HasTimedBombEffect(selectedCard)
+			|| selectedCard is TerrorMan or CrazyIvanCard or ChronoIvanCard)
+		{
+			await VehicleDeployHelper.DeploySpecialVehicle<DemoVehicle>(ctx, this, selectedCard, Owner);
+			return;
+		}
+
 		if (selectedCard is AlliesEngineer or SovietEngineer)
 		{
-			await DeploySpecialVehicle<RepairVehicle>(ctx, selectedCard);
+			await VehicleDeployHelper.DeploySpecialVehicle<RepairVehicle>(ctx, this, selectedCard, Owner);
 			return;
 		}
 
 		if (selectedCard is AmericanSoldier or Conscript or SpyCard)
 		{
-			await DeploySpecialVehicle<MinigunVehicle>(ctx, selectedCard);
+			await VehicleDeployHelper.DeploySpecialVehicle<MinigunVehicle>(ctx, this, selectedCard, Owner);
 			return;
 		}
 
 		if (selectedCard is SovietFlakTrooper)
 		{
-			await DeploySpecialVehicle<AaVehicle>(ctx, selectedCard);
+			await VehicleDeployHelper.DeploySpecialVehicle<AaVehicle>(ctx, this, selectedCard, Owner);
 			return;
 		}
 
 		if (selectedCard is GuardianGi)
 		{
-			await DeploySpecialVehicle<HeavyVehicle>(ctx, selectedCard);
+			await VehicleDeployHelper.DeploySpecialVehicle<HeavyVehicle>(ctx, this, selectedCard, Owner);
 			return;
 		}
 
 		if (selectedCard is SovietTeslaTrooper)
 		{
-			await DeploySpecialVehicle<TeslaVehicle>(ctx, selectedCard);
+			await VehicleDeployHelper.DeploySpecialVehicle<TeslaVehicle>(ctx, this, selectedCard, Owner);
 			return;
 		}
 
 		if (selectedCard is Desolator)
 		{
-			await DeploySpecialVehicle<RadVehicle>(ctx, selectedCard);
-			return;
-		}
-
-		if (selectedCard is TerrorMan or CrazyIvanCard or ChronoIvanCard)
-		{
-			await DeploySpecialVehicle<DemoVehicle>(ctx, selectedCard);
+			await VehicleDeployHelper.DeploySpecialVehicle<RadVehicle>(ctx, this, selectedCard, Owner);
 			return;
 		}
 
 		if (selectedCard is Sniper)
 		{
-			await DeploySpecialVehicle<SniperVehicle>(ctx, selectedCard);
+			await VehicleDeployHelper.DeploySpecialVehicle<SniperVehicle>(ctx, this, selectedCard, Owner);
 			return;
 		}
 
 		if (selectedCard is SealCommandos or ChronoCommandos or PsiCommandoCard)
 		{
-			await DeploySpecialVehicle<HmgVehicle>(ctx, selectedCard);
+			await VehicleDeployHelper.DeploySpecialVehicle<HmgVehicle>(ctx, this, selectedCard, Owner);
 			return;
 		}
 
 		if (selectedCard is YuriCard)
 		{
-			await DeploySpecialVehicle<ShockwaveVehicle>(ctx, selectedCard);
+			await VehicleDeployHelper.DeploySpecialVehicle<ShockwaveVehicle>(ctx, this, selectedCard, Owner);
 			return;
 		}
 
 		if (selectedCard is ChronoLegionnaire)
 		{
-			await DeploySpecialVehicle<ChronoVehicle>(ctx, selectedCard);
+			await VehicleDeployHelper.DeploySpecialVehicle<ChronoVehicle>(ctx, this, selectedCard, Owner);
 			return;
 		}
 
@@ -277,32 +279,6 @@ public sealed class Ifv : CardModel
 		}
 
 		await CardPileCmd.Add(this, PileType.Hand, CardPilePosition.Bottom, this);
-	}
-
-	private async Task DeploySpecialVehicle<TVehicle>(PlayerChoiceContext ctx, CardModel soldierCard) where TVehicle : IfvVehicleBase
-	{
-		GD.Print($"[Ifv] 驻扎 {soldierCard.Title}，生成 {typeof(TVehicle).Name}");
-
-		var vehicleTemplate = ModelDb.Card<TVehicle>();
-		var vehicleCard = Owner.Creature.CombatState.CreateCard(vehicleTemplate, Owner);
-
-		if (IsUpgraded)
-		{
-			CardCmd.Upgrade(vehicleCard);
-			GD.Print($"[Ifv] IFV已升级，{typeof(TVehicle).Name} 也获得升级");
-		}
-
-		if (vehicleCard is IfvVehicleBase rv)
-		{
-			var ifvHasExhaust = Keywords.Contains(CardKeyword.Exhaust);
-			rv.SetStoredCards(this, soldierCard, ifvHasExhaust);
-		}
-
-		await CardPileCmd.RemoveFromCombat(soldierCard);
-		await CardPileCmd.RemoveFromCombat(this);
-
-		await CardPileCmd.AddGeneratedCardToCombat(vehicleCard, PileType.Hand, Owner);
-		GD.Print($"[Ifv] {typeof(TVehicle).Name} 已加入手牌，携带 IFV + {soldierCard.Title}");
 	}
 
 	private async Task ExecuteAttack(PlayerChoiceContext ctx, CardPlay play)

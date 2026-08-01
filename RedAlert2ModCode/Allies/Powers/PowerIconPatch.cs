@@ -95,6 +95,7 @@ public static class PowerIconPatch
         { typeof(RedAlert2ModCode.Common.Powers.FirepowerPower), "res://RedAlert2ModResources/images/packed/powers/firepower.png" },
         { typeof(RedAlert2ModCode.Common.Powers.ArmorPower), "res://RedAlert2ModResources/images/packed/powers/armor.png" },
         { typeof(RedAlert2ModCode.Common.Powers.CrateTemporaryDexterityPower), "res://RedAlert2ModResources/images/packed/card_portraits/box.png" },
+        { typeof(RedAlert2ModCode.Common.Powers.DecelerationPower), "res://RedAlert2ModResources/images/packed/card_portraits/Deceleration.png" },
     };
 
     /// <summary>

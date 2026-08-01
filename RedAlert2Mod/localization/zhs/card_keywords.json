@@ -143,6 +143,8 @@
     "timed_bomb.description": "打出前获得[gold]活力[/gold]。卡牌获得[gold]消耗[/gold]。",
     "burn.title": "灼烧",
     "burn.description": "每回合受到 [gold]当前血量×层数%[/gold] 点灼烧伤害。每回合衰减10%层数。",
+    "deceleration.title": "减速",
+    "deceleration.description": "每打出一张攻击牌，受到的伤害增加10%。敌人回合开始时移除。",
     "ui.crazy_ivan.title": "选择疯狂伊文的行动",
     "ui.crazy_ivan.attack_title": "安装炸弹",
     "ui.crazy_ivan.attack_desc": "对一名敌人赋予 {BombStacks} 层定时炸弹",
