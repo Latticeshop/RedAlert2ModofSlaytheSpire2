@@ -91,31 +91,17 @@ public sealed class UrbanizationPower : PowerModel
         if (cardPlay.Card.Owner != base.Owner.Player)
             return;
 
-        // 城市化交叉抽牌逻辑：
-        // - 打出建筑（非围墙、非防御塔）→ 抽防御塔牌（含围墙，围墙归属于防御塔类）
-        // - 打出防御塔（非围墙）→ 抽建筑牌（纯建筑，不含围墙和防御塔）
+        // 城市化隐性概率抽牌逻辑：
+        // - 打出建筑（非围墙、非防御塔）→ 90%抽防御塔牌（含围墙），10%抽建筑牌
+        // - 打出防御塔（非围墙）→ 90%抽建筑牌，10%抽防御塔牌（含围墙）
         // - 围墙不触发城市化抽牌
+        // 描述文案仍显示为"抽取一张建筑或防御塔牌"，实际概率为隐性。
 
-        HashSet<Type>? targetTypes = null;
-        string targetLabel = "";
-
-        if (CardUtils.IsNonWallNonDefenseTowerBuilding(cardPlay.Card))
-        {
-            // 打出建筑 → 抽防御塔（含围墙）
-            targetTypes = CardUtils.GetAllDefenseTowerTypesWithWalls();
-            targetLabel = "防御塔";
-            GD.Print($"[UrbanizationPower] 打出建筑牌 {cardPlay.Card.Id.Entry}，抽取防御塔");
-        }
-        else if (CardUtils.IsNonWallDefenseTower(cardPlay.Card))
-        {
-            // 打出防御塔 → 抽建筑（纯建筑）
-            targetTypes = CardUtils.GetNonWallNonDefenseTowerBuildingTypes();
-            targetLabel = "建筑";
-            GD.Print($"[UrbanizationPower] 打出防御塔牌 {cardPlay.Card.Id.Entry}，抽取建筑");
-        }
+        bool isBuilding = CardUtils.IsNonWallNonDefenseTowerBuilding(cardPlay.Card);
+        bool isDefenseTower = CardUtils.IsNonWallDefenseTower(cardPlay.Card);
 
         // 围墙或其他卡牌不触发
-        if (targetTypes == null)
+        if (!isBuilding && !isDefenseTower)
             return;
 
         // 选择面板类建筑卡（重工、兵营、MCV 等）在玩家取消选择时会调用 CardUtils.HandleCardCancellation，
@@ -124,6 +110,50 @@ public sealed class UrbanizationPower : PowerModel
         {
             GD.Print($"[UrbanizationPower] 卡牌 {cardPlay.Card.Id.Entry} 已取消选择，跳过城市化抽牌");
             return;
+        }
+
+        // 隐性概率：90%抽对侧类型，10%抽同侧类型
+        // 使用联机同步的 RunState.Rng.CombatCardSelection（new Random() 联机不同步）
+        var towerTypes = CardUtils.GetAllDefenseTowerTypesWithWalls();
+        var buildingTypes = CardUtils.GetNonWallNonDefenseTowerBuildingTypes();
+
+        HashSet<Type> targetTypes;
+        string targetLabel;
+
+        var rng = base.Owner.Player.RunState.Rng.CombatCardSelection;
+        bool drawOpposite = rng.NextInt(100) < 90;
+
+        if (isBuilding)
+        {
+            // 打出建筑：90%抽防御塔（含围墙），10%抽建筑
+            if (drawOpposite)
+            {
+                targetTypes = towerTypes;
+                targetLabel = "防御塔";
+                GD.Print($"[UrbanizationPower] 打出建筑牌 {cardPlay.Card.Id.Entry}，90%概率抽取防御塔");
+            }
+            else
+            {
+                targetTypes = buildingTypes;
+                targetLabel = "建筑";
+                GD.Print($"[UrbanizationPower] 打出建筑牌 {cardPlay.Card.Id.Entry}，10%概率抽取建筑");
+            }
+        }
+        else
+        {
+            // 打出防御塔：90%抽建筑，10%抽防御塔（含围墙）
+            if (drawOpposite)
+            {
+                targetTypes = buildingTypes;
+                targetLabel = "建筑";
+                GD.Print($"[UrbanizationPower] 打出防御塔牌 {cardPlay.Card.Id.Entry}，90%概率抽取建筑");
+            }
+            else
+            {
+                targetTypes = towerTypes;
+                targetLabel = "防御塔";
+                GD.Print($"[UrbanizationPower] 打出防御塔牌 {cardPlay.Card.Id.Entry}，10%概率抽取防御塔");
+            }
         }
 
         await TriggerDrawInternal(choiceContext, base.Owner.Player, targetTypes, targetLabel);

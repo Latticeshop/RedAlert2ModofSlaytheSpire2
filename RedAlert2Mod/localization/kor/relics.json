@@ -1,4 +1,4 @@
-﻿{
+{
     "DOLLAR_RELIC.title": "달러",
     "DOLLAR_RELIC.description": "전투 시작 시 초기 자금 5000을 얻습니다.",
     "DOLLAR_RELIC.flavor": "시작 시 최소 자금.",
@@ -6,10 +6,10 @@
     "DOLLAR_ANCIENT_RELIC.description": "전투 시작 시 초기 자금 10000을 얻습니다.",
     "DOLLAR_ANCIENT_RELIC.flavor": "시작 시 최고 자금.",
     "LIBYA_RELIC.title": "리비아 국기",
-    "LIBYA_RELIC.description": "유닛 \"[red]테러 트럭[/red]\"을 잠금 해제합니다.\n레이더 건설 후 소련 중공업에 추가됩니다.",
+    "LIBYA_RELIC.description": "유닛 \"[red]테러 트럭[/red]\"을 잠금 해제합니다.\n레이더 건설 후 소련 중공업에 추가됩니다.\n막지 않은 피해를 입거나 적이 공격 의도를 가지고 있을 때 사용하면, 자동으로 테러 트럭이 발동합니다.",
     "LIBYA_RELIC.flavor": "Watch out for the bumps!",
     "USA_RELIC.title": "미국 국기",
-    "U_SA_RELIC.description": "유닛 \"[red]공수부대[/red]\"을 잠금 해제합니다. 공군 사령부를 건설하여 얻습니다.",
+    "U_SA_RELIC.description": "유닛 \"[red]공수부대[/red]\"을 잠금 해제합니다.\n공군 사령부를 건설하여 얻습니다.",
     "U_SA_RELIC.flavor": "민주주의와 자유!",
     "UK_RELIC.title": "영국 국기",
     "U_K_RELIC.description": "유닛 \"[red]스나이퍼[/red]\"을 잠금 해제합니다.\n공군 사령부 건설 후 연합군 막사에 추가됩니다.",
@@ -41,5 +41,11 @@
     "SEA_GLASS.RED_ALERT2_MOD_CHARACTER_ALLIES.title": "연합군 유리",
     "SEA_GLASS.RED_ALERT2_MOD_CHARACTER_SOVIET.title": "소련 유리",
     "SEA_GLASS.description": "{Character.StringValue:cond:[gold]{}[/gold]|다른 캐릭터}의 [blue]{Cards}[/blue]장의 카드를 확인합니다. 원하는 만큼 선택하여 [gold]덱[/gold]에 추가합니다.",
-    "SEA_GLASS.selectionScreenPrompt": "덱에 추가할 카드를 원하는 만큼 선택하세요."
+    "SEA_GLASS.selectionScreenPrompt": "덱에 추가할 카드를 원하는 만큼 선택하세요.",
+    "CHRONO_COMMANDOS_RELIC.title": "크로노 코만도스",
+    "CHRONO_COMMANDOS_RELIC.description": "연합군 막사가 [gold]크로노 코만도스[/gold] 생산 권한을 잠금 해제합니다.",
+    "CHRONO_COMMANDOS_RELIC.flavor": "루C푸~",
+    "CHRONO_IVAN_RELIC.title": "크로노 이반",
+    "CHRONO_IVAN_RELIC.description": "소련 막사가 [gold]크로노 이반[/gold] 생산 권한을 잠금 해제합니다.",
+    "CHRONO_IVAN_RELIC.flavor": "이반, 준비 완료!"
 }
