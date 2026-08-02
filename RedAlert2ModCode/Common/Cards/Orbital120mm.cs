@@ -27,7 +27,7 @@ namespace RedAlert2ModCode.Common.Cards;
 /// </summary>
 public sealed class Orbital120mm : CardModel
 {
-    private static readonly CardValueStore.CardValues Values = SovietCardValues.Orbital120mm;
+    private static readonly CardValueStore.CardValues Values = CommonCardValues.Orbital120mm;
 
     public Orbital120mm() : base((int)Values.Cost, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
 

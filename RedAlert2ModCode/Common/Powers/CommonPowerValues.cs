@@ -44,6 +44,52 @@ public static class CommonPowerValues
 		Repeat = 4              // 攻击次数
 	};
 
+	/// <summary>飞鹰500kg能力 - 对目标锁定敌人造成伤害并溅射</summary>
+	public static CardValueStore.CardValues Eagle500kgPower => new()
+	{
+		Damage = 50,            // 基础伤害
+		DamageUpgraded = 10     // 升级后60 = 50 + 10
+	};
+
+	/// <summary>飞鹰空袭能力 - 对全部敌人造成9点伤害</summary>
+	public static CardValueStore.CardValues EagleAirStrikePower => new()
+	{
+		Damage = 9,             // 基础伤害
+		DamageUpgraded = 4      // 升级后13 = 9 + 4
+	};
+
+	/// <summary>飞鹰烟雾能力 - 对目标施加虚弱并给我方全体格挡</summary>
+	public static CardValueStore.CardValues EagleSmokeStrikePower => new()
+	{
+		MagicNumber = 1,             // 基础虚弱层数
+		MagicNumberUpgraded = 1,     // 升级后2 = 1 + 1
+		Block = 10,                  // 基础格挡
+		BlockUpgraded = 2            // 升级后12 = 10 + 2
+	};
+
+	/// <summary>轨道毒气能力 - 回合开始时对全体敌人赋予中毒层数</summary>
+	public static CardValueStore.CardValues OrbitalGasStrikePower => new()
+	{
+		MagicNumber = 8,
+		MagicNumberUpgraded = 4
+	};
+
+	/// <summary>轨道120MM能力 - 回合开始时对目标锁定敌人造成伤害</summary>
+	public static CardValueStore.CardValues Orbital120mmPower => new()
+	{
+		Damage = 6,
+		DamageUpgraded = 2,
+		Repeat = 3
+	};
+
+	/// <summary>轨道380MM能力 - 回合开始时对目标锁定敌人造成伤害并溅射</summary>
+	public static CardValueStore.CardValues Orbital380mmPower => new()
+	{
+		Damage = 6,
+		DamageUpgraded = 2,
+		Repeat = 3
+	};
+
 	/// <summary>大生产能力 - 降低单位训练成本</summary>
 	public static CardValueStore.CardValues MassProductionPower => new()
 	{

@@ -21,7 +21,7 @@ public sealed class AirborneDivision : CardModel
 {
 	private static readonly CardValueStore.CardValues Values = AlliesCardValues.AirborneDivision;
 
-	public AirborneDivision() : base((int)Values.Cost, CardType.Skill, CardRarity.Token, TargetType.Self) { }
+	public AirborneDivision() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.Self) { }
 
 	public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/allies/paraicon.png";
 
@@ -31,7 +31,10 @@ public sealed class AirborneDivision : CardModel
 
     public override CardPoolModel VisualCardPool => Pool;
 
-	protected override List<DynamicVar> CanonicalVars => new() { };
+	protected override List<DynamicVar> CanonicalVars => new()
+    {
+        new RepeatVar(Values.Repeat)
+    };
 
 	protected override IEnumerable<IHoverTip> ExtraHoverTips =>
 	[
@@ -47,7 +50,7 @@ public sealed class AirborneDivision : CardModel
 		UnitVoiceHelper.PlayUnitVoice("Paratrooper", "Allies");
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Attack", Owner.Character.CastAnimDelay);
 
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < Values.GetRepeat(IsUpgraded); i++)
 		{
 			var soldierCard = CreateSoldierCard<AmericanSoldier>();
 			if (soldierCard != null)
@@ -87,7 +90,7 @@ public sealed class AirborneDivision : CardModel
 	}
 
 	protected override void OnUpgrade()
-	{
-		base.EnergyCost.UpgradeBy(-1);
-	}
+    {
+        DynamicVars.Repeat.UpgradeValueBy(Values.RepeatUpgraded);
+    }
 }

@@ -385,4 +385,63 @@ public static class CardUtils
 	{
 		return GetNonWallNonDefenseTowerBuildingTypes().Contains(card.GetType());
 	}
+
+	/// <summary>
+	/// 所有防御塔卡牌类型（不含围墙）的缓存。
+	/// 合并盟军和苏军的防御塔类型。
+	/// </summary>
+	private static HashSet<Type>? _allDefenseTowerTypes;
+
+	/// <summary>
+	/// 获取所有防御塔卡牌类型（不含围墙）。
+	/// 合并盟军和苏军的防御塔类型。
+	/// </summary>
+	public static HashSet<Type> GetAllDefenseTowerTypes()
+	{
+		if (_allDefenseTowerTypes != null)
+			return _allDefenseTowerTypes;
+
+		var set = new HashSet<Type>();
+		set.UnionWith(AlliedCardRegistry.GetAllDefenseTowerTypes());
+		set.UnionWith(SovietCardRegistry.GetAllDefenseTowerTypes());
+
+		_allDefenseTowerTypes = set;
+		return set;
+	}
+
+	/// <summary>
+	/// 所有防御塔卡牌类型（含围墙）的缓存。
+	/// 围墙归属于防御塔类，打出建筑时可以抽到围墙。
+	/// 供 UrbanizationPower 打出建筑时抽取防御塔使用。
+	/// </summary>
+	private static HashSet<Type>? _allDefenseTowerTypesWithWalls;
+
+	/// <summary>
+	/// 获取所有防御塔卡牌类型（含围墙）。
+	/// 在 GetAllDefenseTowerTypes 基础上加入各类围墙卡牌。
+	/// 供 UrbanizationPower 使用（打出建筑→抽防御塔，围墙算防御塔可被抽到）。
+	/// </summary>
+	public static HashSet<Type> GetAllDefenseTowerTypesWithWalls()
+	{
+		if (_allDefenseTowerTypesWithWalls != null)
+			return _allDefenseTowerTypesWithWalls;
+
+		var set = new HashSet<Type>(GetAllDefenseTowerTypes());
+		set.Add(typeof(AlliedWallCard));
+		set.Add(typeof(FortifiedWall));
+		set.Add(typeof(SovietWallCard));
+		set.Add(typeof(SovietFortifiedWall));
+
+		_allDefenseTowerTypesWithWalls = set;
+		return set;
+	}
+
+	/// <summary>
+	/// 判断卡牌是否为防御塔（不含围墙）。
+	/// 用于城市化能力触发判定：打出防御塔时触发抽建筑，打出围墙不触发。
+	/// </summary>
+	public static bool IsNonWallDefenseTower(CardModel card)
+	{
+		return GetAllDefenseTowerTypes().Contains(card.GetType());
+	}
 }

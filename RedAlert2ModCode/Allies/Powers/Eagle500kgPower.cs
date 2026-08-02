@@ -20,7 +20,7 @@ namespace RedAlert2ModCode.Allies.Powers;
 /// </summary>
 public class Eagle500kgPower : DesperateMeasurePowerBase
 {
-	private static readonly CardValueStore.CardValues Values = AlliesPowerValues.Eagle500kgPower;
+	private static readonly CardValueStore.CardValues Values = CommonPowerValues.Eagle500kgPower;
 
 	public override string PackedIconPath => "res://RedAlert2ModResources/images/packed/card_portraits/Helldivers/Eagle/Eagle500kgPower.png";
 

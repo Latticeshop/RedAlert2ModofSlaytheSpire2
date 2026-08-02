@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
-using MegaCrit.Sts2.Core.ValueProps;
+using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet.Powers;
 
@@ -17,7 +17,7 @@ namespace RedAlert2ModCode.Soviet.Cards;
 
 /// <summary>
 /// 恐怖机器人 - 苏联装甲单位
-/// 1费攻击卡，赋予恐怖机器人+缓慢
+/// 1费攻击卡，赋予恐怖机器人伤害能力 + 减速debuff
 /// </summary>
 [RegisterCard(typeof(SovietCardPool))]
 public sealed class TerrorDrone : CardModel
@@ -30,16 +30,16 @@ public sealed class TerrorDrone : CardModel
 
     protected override List<DynamicVar> CanonicalVars => new()
     {
-        new IntVar("TerrorDroneStacks", Values.MagicNumber),
-        new IntVar("SlowStacks", 1)
+        new IntVar("TerrorDroneStacks", Values.MagicNumber)
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
-	[
-		ModCardKeywords.TechLevelT1.CreateHoverTip(),
-		ModCardKeywords.Vehicle.CreateHoverTip(),
-		HoverTipFactory.FromPower<SovietTerrorDronePower>()
-	];
+		[
+			ModCardKeywords.TechLevelT1.CreateHoverTip(),
+			ModCardKeywords.Vehicle.CreateHoverTip(),
+			HoverTipFactory.FromPower<SovietTerrorDronePower>(),
+			HoverTipFactory.FromPower<DecelerationPower>()
+		];
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
@@ -51,6 +51,14 @@ public sealed class TerrorDrone : CardModel
             new ThrowingPlayerChoiceContext(),
             play.Target,
             terrorDroneStacks,
+            Owner.Creature,
+            this
+        );
+
+        await PowerCmd.Apply<DecelerationPower>(
+            new ThrowingPlayerChoiceContext(),
+            play.Target,
+            1m,
             Owner.Creature,
             this
         );

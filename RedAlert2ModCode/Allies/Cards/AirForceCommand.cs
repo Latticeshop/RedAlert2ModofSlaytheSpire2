@@ -129,12 +129,12 @@ public sealed class AirForceCommand : CardModel, ICancellableCardPlay
 			{
 				CardModel selectedCard = result.Card;
 				int count = result.Count;
-				
+
 				GD.Print($"[AirForceCommand] 创建生产序列 - CardId={selectedCard.Id.Entry}, Count={count}");
-				
+
 				// 获取单位价格
 				int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
-				
+
 				// 同一批相同单位合并为一个能力（叠层）
 				await TrainingQueuePower.ApplyTrainingQueue(
 					owner: Owner.Creature,
@@ -147,28 +147,28 @@ public sealed class AirForceCommand : CardModel, ICancellableCardPlay
 					amount: count
 				);
 			}
-
-			// 添加一张空降部队到手牌（需要美国国旗）
-			if (FlagManager.HasUSA(Owner))
-			{
-				var airborneTemplate = ModelDb.Card<AirborneDivision>();
-				var airborneCard = Owner.Creature.CombatState.CreateCard(airborneTemplate, Owner);
-				if (base.IsUpgraded && !airborneCard.IsUpgraded)
-				{
-					CardCmd.Upgrade(airborneCard);
-				}
-				await CardPileCmd.AddGeneratedCardToCombat(airborneCard, PileType.Hand, Owner);
-				GD.Print("[AirForceCommand] 添加空降部队到手牌");
-			}
-			else
-			{
-				GD.Print("[AirForceCommand] 无美国国旗，跳过添加空降部队");
-			}
 		}
 		else
 		{
 			// 空选：仅获得建筑能力，不创建生产序列
 			GD.Print("[AirForceCommand] 空选，仅获得建筑能力");
+		}
+
+		// 添加一张空降部队到手牌（需要美国国旗，空选也添加）
+		if (FlagManager.HasUSA(Owner))
+		{
+			var airborneTemplate = ModelDb.Card<AirborneDivision>();
+			var airborneCard = Owner.Creature.CombatState.CreateCard(airborneTemplate, Owner);
+			if (base.IsUpgraded && !airborneCard.IsUpgraded)
+			{
+				CardCmd.Upgrade(airborneCard);
+			}
+			await CardPileCmd.AddGeneratedCardToCombat(airborneCard, PileType.Hand, Owner);
+			GD.Print("[AirForceCommand] 添加空降部队到手牌");
+		}
+		else
+		{
+			GD.Print("[AirForceCommand] 无美国国旗，跳过添加空降部队");
 		}
 
 	}

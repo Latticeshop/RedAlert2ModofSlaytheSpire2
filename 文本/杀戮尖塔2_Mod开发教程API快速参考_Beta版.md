@@ -292,6 +292,7 @@ public sealed class AlliesCardPool : CardPoolModel
 - 任何卡牌的数值信息（费用、伤害、护盾、重复次数等）都必须在数值文件中统一存储
 - 推荐使用 `AlliesCardValues.cs` 这样的静态类来管理所有卡牌数值
 - 卡牌类中通过引用数值存储类来获取数值，避免硬编码
+- **飞鹰/轨道系列**的卡牌数值和能力数值**统一存储在** `CommonCardValues.cs` 和 `CommonPowerValues.cs`，不使用阵营专属文件
 
 **规则2：资金消耗本地化格式**
 - 任何需要消耗"资金"的**非单位**卡牌（如建筑卡、技能卡），必须在本地化描述的开头加上"价格：xxx。"
@@ -2979,37 +2980,59 @@ public abstract class IfvVehicleBase : CardModel
 ```csharp
 if (selectedCard is AlliesEngineer or SovietEngineer)
 {
-    await DeployEngineer(ctx, selectedCard);
+    await VehicleDeployHelper.DeploySpecialVehicle<RepairVehicle>(ctx, this, selectedCard, Owner);
     return;
 }
 // 新增：磁暴步兵 → 磁暴步兵车
 if (selectedCard is TeslaTrooper or SovietTeslaTrooper)
 {
-    await DeploySpecialVehicle<TeslaVehicle>(ctx, selectedCard);
+    await VehicleDeployHelper.DeploySpecialVehicle<TeslaVehicle>(ctx, this, selectedCard, Owner);
     return;
 }
 ```
 
-##### Step 2：IFV 中添加通用 DeploySpecialVehicle 方法
+**定时炸弹关键词检测**：除了类型判断，还支持通过 `TimedBombManager.HasTimedBombEffect()` 检测被伊文部署功能添加了"定时炸弹"词条的任意卡牌，转化为自爆步兵车（DemoVehicle）：
 
 ```csharp
-private async Task DeploySpecialVehicle<TVehicle>(PlayerChoiceContext ctx, CardModel soldierCard)
-    where TVehicle : CardModel
+// 定时炸弹检测：关键词（任意被伊文部署的卡）或类型（炸弹单位本身）
+if (TimedBombManager.HasTimedBombEffect(selectedCard)
+    || selectedCard is TerrorMan or CrazyIvanCard or ChronoIvanCard)
 {
-    var vehicleTemplate = ModelDb.Card<TVehicle>();
-    var vehicleCard = Owner.Creature.CombatState.CreateCard(vehicleTemplate, Owner);
-
-    if (vehicleCard is IfvVehicleBase vh)
-    {
-        var ifvHasExhaust = Keywords.Contains(CardKeyword.Exhaust);
-        vh.SetStoredCards(this, soldierCard, ifvHasExhaust);
-    }
-
-    await CardPileCmd.RemoveFromCombat(soldierCard);
-    await CardPileCmd.RemoveFromCombat(this);
-    await CardPileCmd.AddGeneratedCardToCombat(vehicleCard, PileType.Hand, Owner);
+    await VehicleDeployHelper.DeploySpecialVehicle<DemoVehicle>(ctx, this, selectedCard, Owner);
+    return;
 }
 ```
+
+> **防空履带车**也支持同样的定时炸弹转化逻辑，在 `ExecuteDeploy` 的卡牌选择后检测：
+> ```csharp
+> var timedBombCard = selectedCards.FirstOrDefault(c =>
+>     TimedBombManager.HasTimedBombEffect(c)
+>     || c is TerrorMan or CrazyIvanCard or ChronoIvanCard);
+> if (timedBombCard != null)
+> {
+>     await VehicleDeployHelper.DeploySpecialVehicle<DemoVehicle>(ctx, this, timedBombCard, Owner);
+>     return;
+> }
+> ```
+
+##### Step 2：使用公共转化工具 VehicleDeployHelper
+
+转化逻辑已提取到 `Common/Utils/VehicleDeployHelper.cs`，IFV 和防空履带车共用：
+
+```csharp
+// 调用方式（TVehicle 必须继承 IfvVehicleBase）
+await VehicleDeployHelper.DeploySpecialVehicle<TVehicle>(
+    ctx,        // 玩家选择上下文
+    sourceCard, // 源卡牌（IFV 或 防空履带车）
+    soldierCard,// 被存储的士兵卡牌
+    Owner);     // 拥有者
+```
+
+工具类内部处理：
+1. 创建转化后的载具卡（`CreateCard`）
+2. 源卡牌升级则载具也升级（`CardCmd.Upgrade`）
+3. 继承消耗词条（源卡牌或士兵卡牌任意一方有消耗则继承）
+4. 移除士兵卡和源卡，将载具卡加入手牌
 
 ##### Step 3：创建新步兵车（继承基类，只需 ~30 行）
 
@@ -4204,7 +4227,7 @@ else
 
 | 步骤 | 文件路径 | 操作 |
 |-----|---------|------|
-| 1 | `CommonCardValues.cs` / `AlliesPowerValues.cs` | 添加数值条目 |
+| 1 | `CommonCardValues.cs` / `CommonPowerValues.cs` | 添加数值条目 |
 | 2 | `Allies/Cards/` | 创建卡牌类，继承 `DesperateMeasureCardBase<TPower>` |
 | 3 | `Allies/Powers/` | 创建能力类，继承 `DesperateMeasurePowerBase` |
 | 4 | `Allies/Powers/PowerIconPatch.cs` | 注册能力图标 |
@@ -4273,8 +4296,8 @@ var existing = owner.Powers.OfType<OrbitalGasStrikePower>()
 
 | 步骤 | 文件路径 | 操作 |
 |-----|---------|------|
-| 1 | `SovietCardValues.cs` / `SovietPowerValues.cs` | 添加数值条目 |
-| 2 | `Soviet/Cards/` | 创建卡牌类，继承 `CardModel` |
+| 1 | `CommonCardValues.cs` / `CommonPowerValues.cs` | 添加数值条目 |
+| 2 | `Common/Cards/` | 创建卡牌类，继承 `CardModel` |
 | 3 | `Soviet/Powers/` | 创建能力类，继承 `PowerModel` |
 | 4 | `Allies/Powers/PowerIconPatch.cs` | 注册能力图标 |
 | 5 | `SovietCardRegistry.cs` | **必须**将卡牌加入 `RadarPowerCards` 列表 |

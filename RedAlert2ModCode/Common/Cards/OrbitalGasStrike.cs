@@ -28,7 +28,7 @@ namespace RedAlert2ModCode.Common.Cards;
 /// </summary>
 public sealed class OrbitalGasStrike : CardModel
 {
-    private static readonly CardValueStore.CardValues Values = SovietCardValues.OrbitalGasStrike;
+    private static readonly CardValueStore.CardValues Values = CommonCardValues.OrbitalGasStrike;
 
     public OrbitalGasStrike() : base((int)Values.Cost, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies) { }
 

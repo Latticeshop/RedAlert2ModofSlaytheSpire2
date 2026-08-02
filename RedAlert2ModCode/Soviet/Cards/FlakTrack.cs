@@ -17,8 +17,10 @@ using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Soviet.Powers;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Allies;
+using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Soviet;
 using RedAlert2ModCode.Yuri;
 
@@ -165,6 +167,18 @@ public sealed partial class FlakTrack : CardModel
             c => soldierCards.Contains(c),
             this
         )).ToList();
+
+        // 定时炸弹检测：若选中的卡牌中有带定时炸弹的，转化为自爆步兵车
+        var timedBombCard = selectedCards.FirstOrDefault(c =>
+            TimedBombManager.HasTimedBombEffect(c)
+            || c is TerrorMan or CrazyIvanCard or ChronoIvanCard);
+
+        if (timedBombCard != null)
+        {
+            GD.Print($"[FlakTrack] 检测到定时炸弹卡牌: {timedBombCard.Title}，转化为自爆步兵车");
+            await VehicleDeployHelper.DeploySpecialVehicle<DemoVehicle>(ctx, this, timedBombCard, Owner);
+            return;
+        }
 
         foreach (var card in selectedCards)
         {

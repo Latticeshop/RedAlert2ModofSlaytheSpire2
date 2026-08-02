@@ -102,8 +102,8 @@ public sealed class WarMiner : CardModel
 		int miningBonus = MineResources();
 		GD.Print($"[WarMiner] 挖矿额外获得 {miningBonus} 资金");
 
-		// 检查是否有矿场能力，没有矿场时不获得资金
-		var hasRefinery = Owner.Creature.Powers.Any(p => p is SovietRefineryPower || p is OreRefineryPower);
+		// 检查是否有矿场能力，没有矿场时不获得资金（盟军/苏联矿场或矿石精炼器均可）
+		var hasRefinery = MinerHelper.HasAnyRefinery(Owner.Creature);
 		
 		// 计算总资金（矿车基础 + 挖矿收益）
 		int totalAmount = amount + miningBonus;

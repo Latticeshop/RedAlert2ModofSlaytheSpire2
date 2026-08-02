@@ -6,7 +6,7 @@
     "DOLLAR_ANCIENT_RELIC.description": "战斗开始时获得10000初始资金。",
     "DOLLAR_ANCIENT_RELIC.flavor": "开局最高资金。",
     "LIBYA_RELIC.title": "利比亚国旗",
-    "LIBYA_RELIC.description": "解锁单位“[red]自爆卡车[/red]”。\n建造雷达后添加到苏军重工。",
+    "LIBYA_RELIC.description": "解锁单位“[red]自爆卡车[/red]”。\n建造雷达后添加到苏军重工。\n若受到没有格挡的伤害或打出时对面有攻击意图，会自动触发自爆卡车。",
     "LIBYA_RELIC.flavor": "我叫磁力棒！",
     "USA_RELIC.title": "美国国旗",
     "U_SA_RELIC.description": "解锁单位“[red]空降部队[/red]”。\n建造空指部获得。",

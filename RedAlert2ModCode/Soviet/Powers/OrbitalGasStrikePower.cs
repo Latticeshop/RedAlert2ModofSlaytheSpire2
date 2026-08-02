@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace RedAlert2ModCode.Soviet.Powers;
 /// </summary>
 public class OrbitalGasStrikePower : PowerModel
 {
-    private static readonly CardValueStore.CardValues Values = SovietPowerValues.OrbitalGasStrikePower;
+    private static readonly CardValueStore.CardValues Values = CommonPowerValues.OrbitalGasStrikePower;
 
     public override PowerType Type => PowerType.Buff;
 

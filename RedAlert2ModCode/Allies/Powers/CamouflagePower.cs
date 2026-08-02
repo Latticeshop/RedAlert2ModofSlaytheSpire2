@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Allies.Powers;
 
@@ -21,6 +22,7 @@ namespace RedAlert2ModCode.Allies.Powers;
 /// 本回合没有造成任何伤害时，获得伪装（具有无实体效果）
 /// 造成伤害时移除伪装
 /// 回合开始时移除伪装
+/// 拥有伪装时角色获得透明特效（与抹除特效一致），移除时恢复
 /// </summary>
 public sealed class CamouflagePower : PowerModel
 {
@@ -42,6 +44,26 @@ public sealed class CamouflagePower : PowerModel
             var locString = new LocString("powers", base.Id.Entry + ".description");
             return locString;
         }
+    }
+
+    /// <summary>
+    /// 能力应用时：设置透明特效（与抹除特效一致）
+    /// </summary>
+    public override async Task AfterApplied(Creature? applier, CardModel? cardSource)
+    {
+        await base.AfterApplied(applier, cardSource);
+        TransparencyHelper.SetTransparency(Owner);
+        GD.Print("[CamouflagePower] 伪装应用，设置透明特效");
+    }
+
+    /// <summary>
+    /// 能力移除时：恢复不透明
+    /// </summary>
+    public override async Task AfterRemoved(Creature oldOwner)
+    {
+        await base.AfterRemoved(oldOwner);
+        TransparencyHelper.ResetTransparency(oldOwner);
+        GD.Print("[CamouflagePower] 伪装移除，恢复不透明");
     }
 
     /// <summary>

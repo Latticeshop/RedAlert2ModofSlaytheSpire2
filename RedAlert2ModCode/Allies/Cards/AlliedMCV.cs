@@ -79,11 +79,29 @@ public sealed class AlliedMCV : CardModel, ICancellableCardPlay
 
 		GD.Print($"[AlliedMCV] 可用建筑卡牌数量: {availableCards.Count} (当前科技等级: {techTree.CurrentTechLevel})");
 
-		// 如果没有法国国旗，移除巨炮选项
-		if (!FlagManager.HasFrance(Owner))
+		// 巨炮（法国专属防御塔）：拥有法国国旗且拥有空指部/雷达/作战实验室能力时，添加巨炮选项
+		// 参考黑鹰战机（韩国国旗）做法：满足国旗条件才展示对应卡牌
+		if (FlagManager.HasFrance(Owner) && AlliedCardRegistry.HasAirForceCommandPower(Owner.Creature))
 		{
+			if (!availableCards.Any(c => c is GrandCannon))
+			{
+				var grandCannonModel = GetCardModel(typeof(GrandCannon));
+				if (grandCannonModel != null)
+				{
+					var grandCannonCard = Owner.Creature.CombatState.CreateCard(grandCannonModel, Owner);
+					if (base.IsUpgraded)
+					{
+						CardCmd.Upgrade(grandCannonCard);
+					}
+					availableCards.Add(grandCannonCard);
+					GD.Print("[AlliedMCV] 拥有法国国旗且有空指部能力，添加巨炮选项");
+				}
+			}
+		}
+		else
+		{
+			// 不满足条件时，移除可能存在的巨炮选项（防御性处理）
 			availableCards = availableCards.Where(c => c is not GrandCannon).ToList();
-			GD.Print($"[AlliedMCV] 无法国国旗，移除巨炮选项，剩余卡牌数量: {availableCards.Count}");
 		}
 
 		var buildingValuesMap = AlliesCardValues.CreateBuildingValuesMap();

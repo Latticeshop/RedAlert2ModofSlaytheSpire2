@@ -1,4 +1,4 @@
-﻿{
+{
     "DOLLAR_RELIC.title": "Dollar",
     "DOLLAR_RELIC.description": "Gain 5000 starting funds at the start of combat.",
     "DOLLAR_RELIC.flavor": "Minimum starting funds.",
@@ -6,10 +6,10 @@
     "DOLLAR_ANCIENT_RELIC.description": "Gain 10000 starting funds at the start of combat.",
     "DOLLAR_ANCIENT_RELIC.flavor": "Maximum starting funds.",
     "LIBYA_RELIC.title": "Libyan Flag",
-    "LIBYA_RELIC.description": "Unlocks the unit \"[red]Demolition Truck[/red]\".\nAdded to the Soviet War Factory after building the Radar.",
+    "LIBYA_RELIC.description": "Unlocks the unit \"[red]Demolition Truck[/red]\".\nAdded to the Soviet War Factory after building the Radar.\nIf taking unblocked damage or played when enemies have attack intent, automatically triggers the Demolition Truck.",
     "LIBYA_RELIC.flavor": "Watch out for the bumps!",
     "USA_RELIC.title": "U.S. Flag",
-    "U_SA_RELIC.description": "Unlocks the unit \"[red]Airborne Division[/red]\". Obtained by building the Air Force Command.",
+    "U_SA_RELIC.description": "Unlocks the unit \"[red]Airborne Division[/red]\".\nObtained by building the Air Force Command.",
     "U_SA_RELIC.flavor": "Democracy and freedom!",
     "UK_RELIC.title": "U.K. Flag",
     "U_K_RELIC.description": "Unlocks the unit \"[red]Sniper[/red]\".\nAdded to the Allied Barracks after building the Air Force Command.",
@@ -41,5 +41,11 @@
     "SEA_GLASS.RED_ALERT2_MOD_CHARACTER_ALLIES.title": "Allied Glass",
     "SEA_GLASS.RED_ALERT2_MOD_CHARACTER_SOVIET.title": "Soviet Glass",
     "SEA_GLASS.description": "See [blue]{Cards}[/blue] cards from {Character.StringValue:cond:[gold]{}[/gold]|another character}. Choose any number of them to add to your [gold]Deck[/gold].",
-    "SEA_GLASS.selectionScreenPrompt": "Select any number of cards to add to your Deck."
+    "SEA_GLASS.selectionScreenPrompt": "Select any number of cards to add to your Deck.",
+    "CHRONO_COMMANDOS_RELIC.title": "Chrono Commandos",
+    "CHRONO_COMMANDOS_RELIC.description": "Allied Barracks unlocks [gold]Chrono Commandos[/gold] construction.",
+    "CHRONO_COMMANDOS_RELIC.flavor": "Lu C fu~",
+    "CHRONO_IVAN_RELIC.title": "Chrono Ivan",
+    "CHRONO_IVAN_RELIC.description": "Soviet Barracks unlocks [gold]Chrono Ivan[/gold] construction.",
+    "CHRONO_IVAN_RELIC.flavor": "Ivan, ready!"
 }

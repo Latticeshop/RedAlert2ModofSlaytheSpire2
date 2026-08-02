@@ -6,7 +6,6 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.ValueProps;
 using RedAlert2ModCode.Common.Utils;
 using System.Collections.Generic;
@@ -42,38 +41,14 @@ public sealed class ErasingPower : PowerModel
     public override async Task AfterApplied(Creature? applier, CardModel? cardSource)
     {
         await base.AfterApplied(applier, cardSource);
-        SetTransparency();
+        TransparencyHelper.SetTransparency(Owner);
         await CheckErase(new ThrowingPlayerChoiceContext(), null);
     }
 
     public override async Task AfterRemoved(Creature oldOwner)
     {
         await base.AfterRemoved(oldOwner);
-        ResetTransparency();
-    }
-
-    private void SetTransparency()
-    {
-        if (Owner == null) return;
-        
-        var nCreature = Owner.GetCreatureNode();
-        if (nCreature?.Visuals != null)
-        {
-            var body = nCreature.Visuals.GetCurrentBody();
-            body.Modulate = new Color(1f, 1f, 1f, 0.4f);
-        }
-    }
-
-    private void ResetTransparency()
-    {
-        if (Owner == null) return;
-        
-        var nCreature = Owner.GetCreatureNode();
-        if (nCreature?.Visuals != null)
-        {
-            var body = nCreature.Visuals.GetCurrentBody();
-            body.Modulate = new Color(1f, 1f, 1f, 1f);
-        }
+        TransparencyHelper.ResetTransparency(oldOwner);
     }
 
     private async Task CheckErase(PlayerChoiceContext choiceContext, ICombatState? combatState)
@@ -87,7 +62,7 @@ public sealed class ErasingPower : PowerModel
         {
             Flash();
             UnitVoiceHelper.PlayUnitVoice("ChronoLegionnaireKill", "Allied");
-            
+
             await CreatureCmd.Kill(Owner);
         }
     }

@@ -75,8 +75,37 @@ public static class CommonCardValues
 		Cost = 1,
 		MagicNumber = 1,             // 基础虚弱层数
 		MagicNumberUpgraded = 1,     // 升级后2 = 1 + 1
-		Block = 16,                  // 基础格挡
-		BlockUpgraded = 4            // 升级后20 = 16 + 4
+		Block = 10,                  // 基础格挡
+		BlockUpgraded = 2            // 升级后12 = 10 + 2
+	};
+
+	/// <summary>轨道毒气 - 1费能力卡，Uncommon，轨道战备卡
+	/// 效果：赋予目标锁定。下回合对全体敌人赋予8(升级12)层中毒。</summary>
+	public static CardValueStore.CardValues OrbitalGasStrike => new()
+	{
+		Cost = 1,
+		MagicNumber = 8,
+		MagicNumberUpgraded = 4
+	};
+
+	/// <summary>轨道120MM - 1费能力卡，Uncommon，轨道战备卡
+	/// 效果：赋予目标锁定。下回合对目标敌人造成6(升级8)点伤害3次。</summary>
+	public static CardValueStore.CardValues Orbital120mm => new()
+	{
+		Cost = 1,
+		Damage = 6,
+		DamageUpgraded = 2,
+		Repeat = 3
+	};
+
+	/// <summary>轨道380MM - 1费能力卡，Rare，轨道战备卡
+	/// 效果：赋予目标锁定。下回合对目标敌人造成6(升级8)点伤害3次，溅射。</summary>
+	public static CardValueStore.CardValues Orbital380mm => new()
+	{
+		Cost = 1,
+		Damage = 6,
+		DamageUpgraded = 2,
+		Repeat = 3
 	};
 
 	/// <summary>伞兵 - 1费攻击卡，将6张美国大兵加入手牌（升级后去掉消耗）</summary>
@@ -227,6 +256,27 @@ public static class CommonCardValues
 
 	/// <summary>车辆箱子 - 0费(升级获得升级的装甲单位卡)，获得随机装甲单位卡</summary>
 	public static CardValueStore.CardValues VehicleCrate => new()
+	{
+		Cost = 0,
+		CostUpgraded = 0
+	};
+
+	/// <summary>士兵箱子 - 0费(升级获得升级的士兵单位卡)，获得随机士兵单位卡</summary>
+	public static CardValueStore.CardValues SoldierCrate => new()
+	{
+		Cost = 0,
+		CostUpgraded = 0
+	};
+
+	/// <summary>空军箱子 - 0费(升级获得升级的空军单位卡)，获得随机空军单位卡，有概率获得黄蜂攻击机能力</summary>
+	public static CardValueStore.CardValues AirForceCrate => new()
+	{
+		Cost = 0,
+		CostUpgraded = 0
+	};
+
+	/// <summary>海军箱子 - 0费(升级获得升级的海军单位卡)，获得随机海军单位卡</summary>
+	public static CardValueStore.CardValues NavyCrate => new()
 	{
 		Cost = 0,
 		CostUpgraded = 0

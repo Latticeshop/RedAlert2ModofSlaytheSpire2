@@ -273,6 +273,12 @@ public static class ModCardKeywords
 		new LocString("card_keywords", "burn.description")
 	);
 
+	public static readonly CustomKeyword Deceleration = new(
+		"DECELERATION",
+		new LocString("card_keywords", "deceleration.title"),
+		new LocString("card_keywords", "deceleration.description")
+	);
+
 	public static void Initialize()
     {
         CustomKeywordManager.RegisterKeyword(Mcv);
@@ -311,5 +317,6 @@ public static class ModCardKeywords
         CustomKeywordManager.RegisterKeyword(ParatrooperFactionInfo);
         CustomKeywordManager.RegisterKeyword(TimedBomb);
         CustomKeywordManager.RegisterKeyword(Burn);
+        CustomKeywordManager.RegisterKeyword(Deceleration);
     }
 }

@@ -26,7 +26,7 @@ namespace RedAlert2ModCode.Soviet.Powers;
 /// </summary>
 public sealed class Orbital380mmPower : PowerModel
 {
-    private static readonly CardValueStore.CardValues Values = SovietPowerValues.Orbital380mmPower;
+    private static readonly CardValueStore.CardValues Values = CommonPowerValues.Orbital380mmPower;
 
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.Counter;

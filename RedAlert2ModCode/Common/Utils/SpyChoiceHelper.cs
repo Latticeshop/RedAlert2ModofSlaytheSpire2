@@ -349,7 +349,7 @@ public static class SpyChoiceHelper
         decimal stealAmount = (decimal)Math.Floor((double)targetDollarPower.Amount * 0.5);
         await PowerCmd.ModifyAmount(ctx, targetDollarPower, -stealAmount, card.Owner.Creature, card);
 
-        float multiplier = upgraded ? 1.5f : 1.25f;
+        float multiplier = upgraded ? 1.75f : 1.5f;
         decimal gainAmount = (decimal)Math.Floor((double)stealAmount * multiplier);
 
         var ownerDollarPower = card.Owner.Creature.Powers.OfType<RedAlert2ModCode.Common.Powers.DollarPower>().FirstOrDefault();

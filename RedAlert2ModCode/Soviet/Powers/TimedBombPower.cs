@@ -203,12 +203,12 @@ public sealed class TimedBombPower : PowerModel
 
             await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(),
                 Owner,
-                15m,
+                20m,
                 ValueProp.Move,
                 null,
                 null);
 
-            GD.Print("[TimedBombPower] 炸弹爆炸，造成15点伤害");
+            GD.Print("[TimedBombPower] 炸弹爆炸，造成20点伤害");
 
             await PowerCmd.Remove(this);
             GD.Print("[TimedBombPower] 移除定时炸弹能力");
