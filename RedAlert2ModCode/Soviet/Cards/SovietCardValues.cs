@@ -356,12 +356,12 @@ public static class SovietCardValues
 	
 	// ==================== 防御建筑 ====================
 	
-	/// <summary>苏军围墙 - 0费1护盾，升级后2护盾，价格100</summary>
+	/// <summary>苏军围墙 - 0费1护盾，升级后3护盾，价格100</summary>
 	public static CardValueStore.CardValues SovietWall => new()
 	{
 		Cost = 0,
 		Block = 1,
-		BlockUpgraded = 1,
+		BlockUpgraded = 2,
 		DollarValue = 100
 	};
 
