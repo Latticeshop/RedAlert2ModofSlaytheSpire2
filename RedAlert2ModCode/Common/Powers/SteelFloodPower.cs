@@ -36,12 +36,16 @@ public sealed class SteelFloodPower : PowerModel
     protected override object InitInternalData() => new Data();
 
     /// <summary>
-    /// 超时空类卡牌（如超时空矿车）虽然属于单位卡，但需要特殊的目标选择逻辑，
-    /// 不应被钢铁洪流自动打出。
+    /// 虽然属于单位卡，但需要特殊目标选择逻辑或会触发建造厂面板，
+    /// 不应被钢铁洪流自动打出的卡牌类型：
+    /// - 超时空矿车：需要超时空目标选择
+    /// - MCV（移动建造厂）：会触发建造厂建造面板，不应自动打出
     /// </summary>
-    private static readonly HashSet<System.Type> ChronoCardTypes = new()
+    private static readonly HashSet<System.Type> ExcludedCardTypes = new()
     {
-        typeof(RedAlert2ModCode.Allies.Cards.ChronoMiner)
+        typeof(RedAlert2ModCode.Allies.Cards.ChronoMiner),
+        typeof(RedAlert2ModCode.Allies.Cards.AlliedMCV),
+        typeof(RedAlert2ModCode.Soviet.Cards.SovietMCV),
     };
 
     /// <summary>
@@ -65,7 +69,7 @@ public sealed class SteelFloodPower : PowerModel
         if (card.Keywords.Contains(CardKeyword.Unplayable))
             return false;
 
-        if (ChronoCardTypes.Contains(card.GetType()))
+        if (ExcludedCardTypes.Contains(card.GetType()))
             return false;
 
         return true;
