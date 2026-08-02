@@ -24,15 +24,19 @@ public sealed class MineRaidPower : PowerModel
         return card is RedAlert2ModCode.Allies.Cards.ChronoMiner || card is RedAlert2ModCode.Soviet.Cards.WarMiner;
     }
 
+    private static HashSet<System.Type>? _unitCardTypes;
+
+    private static HashSet<System.Type> GetUnitCardTypes()
+    {
+        if (_unitCardTypes == null)
+            _unitCardTypes = CardUtils.GetUnitTypes();
+        return _unitCardTypes;
+    }
+
     private bool IsUnitCard(CardModel card)
     {
-        if (card.Rarity != CardRarity.Token)
-            return false;
-
-        if (card.GetType().Name.Contains("Wall"))
-            return false;
-
-        return true;
+        // 仅本mod的"单位"卡牌触发扰矿效果，排除箱子、技能、建筑等非单位卡
+        return GetUnitCardTypes().Contains(card.GetType());
     }
 
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)

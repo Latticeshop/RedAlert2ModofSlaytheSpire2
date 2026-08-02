@@ -301,12 +301,12 @@ public static class SovietCardValues
 		DollarValue = 800
 	};
 	
-	/// <summary>防空炮 - 1费技能卡，回合开始时每有一个攻击意图敌人获得3格挡（升级5），价格1000</summary>
+	/// <summary>防空炮 - 1费技能卡，回合开始时每有一个攻击意图敌人获得4格挡（升级6），价格1000</summary>
 	public static CardValueStore.CardValues FlakCannon => new()
 	{
 		Cost = 1,
-		Block = 3,
-		BlockUpgraded = 2,  // 升级后5 = 3 + 2
+		Block = 4,
+		BlockUpgraded = 2,  // 升级后6 = 4 + 2
 		DollarValue = 1000
 	};
 	

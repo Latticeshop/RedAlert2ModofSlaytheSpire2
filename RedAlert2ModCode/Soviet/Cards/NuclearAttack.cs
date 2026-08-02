@@ -56,7 +56,7 @@ public sealed class NuclearAttack : CardModel
         PlayNuclearLaunchSound();
         PlayNuclearAlarmSound();
 
-        await Cmd.Wait(10f);
+        await Cmd.Wait(8f);
 
         var combatState = Owner.Creature.CombatState;
         if (combatState != null)

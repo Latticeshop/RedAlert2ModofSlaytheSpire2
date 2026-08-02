@@ -20,6 +20,13 @@ namespace RedAlert2ModCode.Allies.Patches;
 /// 伪装伤害追踪补丁
 /// 1. 玩家造成伤害时标记DamageDealtTrackerPower
 /// 2. 若玩家有CamouflagePower：移除伪装（伪装自带无实体效果，移除即失去效果）
+///
+/// 伪装移除规则：
+/// - 玩家回合内造成的伤害（dealer=玩家）打破伪装，包括防御塔卡牌直接伤害。
+///   防御塔卡牌的伤害属于"回合内"伤害，应当打破伪装。
+/// - 防御塔能力（PrismTowerPower/GrandCannonPower等）在回合结束时触发，
+///   调用CreatureCmd.Damage时dealer传null，属于"回合外"伤害，不打破伪装。
+/// - 敌方对玩家造成伤害（dealer.Side != Player）不打破伪装。
 /// </summary>
 [HarmonyPatch]
 public static class CamouflageDamagePatch
@@ -45,6 +52,7 @@ public static class CamouflageDamagePatch
 
     private static async void Postfix(PlayerChoiceContext choiceContext, Creature target, DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
     {
+        // dealer为null时直接返回：防御塔能力在回合结束时造成的伤害（dealer=null）属于"回合外"伤害，不打破伪装
         if (dealer == null || dealer.Side != CombatSide.Player)
             return;
 

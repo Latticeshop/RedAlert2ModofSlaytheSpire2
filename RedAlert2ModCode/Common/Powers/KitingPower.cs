@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Common.Powers;
 
@@ -22,15 +23,19 @@ public sealed class KitingPower : PowerModel
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips => new[] { HoverTipFactory.Static(StaticHoverTip.Block) };
 
+    private static HashSet<System.Type>? _unitCardTypes;
+
+    private static HashSet<System.Type> GetUnitCardTypes()
+    {
+        if (_unitCardTypes == null)
+            _unitCardTypes = CardUtils.GetUnitTypes();
+        return _unitCardTypes;
+    }
+
     private bool IsUnitCard(CardModel card)
     {
-        if (card.Rarity != CardRarity.Token)
-            return false;
-
-        if (card.GetType().Name.Contains("Wall"))
-            return false;
-
-        return true;
+        // 仅本mod的"单位"卡牌触发走A效果，排除箱子、技能、建筑等非单位卡
+        return GetUnitCardTypes().Contains(card.GetType());
     }
 
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)

@@ -117,7 +117,7 @@ public static class CommonCardValues
 
 	public static CardValueStore.CardValues SellMCV => new()
 	{
-		Cost = 1,
+		Cost = 0,
 		DollarValue = 3000
 	};
 

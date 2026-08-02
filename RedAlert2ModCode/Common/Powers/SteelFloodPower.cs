@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Common.Powers;
 
@@ -34,20 +35,34 @@ public sealed class SteelFloodPower : PowerModel
 
     protected override object InitInternalData() => new Data();
 
+    /// <summary>
+    /// 超时空类卡牌（如超时空矿车）虽然属于单位卡，但需要特殊的目标选择逻辑，
+    /// 不应被钢铁洪流自动打出。
+    /// </summary>
     private static readonly HashSet<System.Type> ChronoCardTypes = new()
     {
         typeof(RedAlert2ModCode.Allies.Cards.ChronoMiner)
     };
 
+    /// <summary>
+    /// 本mod全部单位卡牌类型缓存（从各阵营卡牌注册类聚合获取）。
+    /// </summary>
+    private static HashSet<System.Type>? _unitCardTypes;
+
+    private static HashSet<System.Type> GetUnitCardTypes()
+    {
+        if (_unitCardTypes == null)
+            _unitCardTypes = CardUtils.GetUnitTypes();
+        return _unitCardTypes;
+    }
+
     private bool IsCardValidForAutoPlay(CardModel card)
     {
-        if (card.Rarity != CardRarity.Token)
+        // 仅允许本mod的"单位"卡牌（从卡牌注册类获取列表），排除箱子、技能、建筑等非单位卡
+        if (!GetUnitCardTypes().Contains(card.GetType()))
             return false;
 
         if (card.Keywords.Contains(CardKeyword.Unplayable))
-            return false;
-
-        if (card.GetType().Name.Contains("Wall"))
             return false;
 
         if (ChronoCardTypes.Contains(card.GetType()))
