@@ -86,5 +86,10 @@
     "CONFIG_CONFIRM_SAVE_TITLE": "保存配置",
     "CONFIG_CONFIRM_SAVE_DESC": "确定要保存当前的配置更改吗？",
     "CONFIG_CANCEL": "取消",
-    "CONFIG_CONFIRM": "确定"
+    "CONFIG_CONFIRM": "确定",
+    "CONFIG_CRATE_POOL_TITLE": "🎁 卡池奖励（箱子）",
+    "CONFIG_CRATE_POOL_DESC": "修改角色卡池（卡牌奖励范围）中箱子卡的出现方式：默认排除、全部替换为箱子、或加入普通奖励。",
+    "CONFIG_CRATE_POOL_NONE": "默认卡池",
+    "CONFIG_CRATE_POOL_ALL": "奖励全为箱子",
+    "CONFIG_CRATE_POOL_ADD": "奖励加入箱子"
 }

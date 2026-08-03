@@ -86,5 +86,10 @@
     "CONFIG_CONFIRM_SAVE_TITLE": "設定の保存",
     "CONFIG_CONFIRM_SAVE_DESC": "現在の設定変更を保存しますか？",
     "CONFIG_CANCEL": "キャンセル",
-    "CONFIG_CONFIRM": "確認"
+    "CONFIG_CONFIRM": "確認",
+    "CONFIG_CRATE_POOL_TITLE": "🎁 カードプール報酬（クレート）",
+    "CONFIG_CRATE_POOL_DESC": "キャラクターのカードプール（カード報酬範囲）におけるクレートカードの出現方法を制御します：デフォルトで除外、全てクレートに置換、または通常報酬に追加。",
+    "CONFIG_CRATE_POOL_NONE": "デフォルトプール",
+    "CONFIG_CRATE_POOL_ALL": "報酬を全てクレートに",
+    "CONFIG_CRATE_POOL_ADD": "報酬にクレートを追加"
 }

@@ -21,6 +21,16 @@ internal class CardLibraryTab
     private const int CardsPerPage = 24;
     private const int Columns = 6;
 
+    // NCard 基础尺寸约 300x422（参考 FreeLoadout）。Scale 只影响绘制不影响布局，
+    // 因此必须用 clip(ClipContents) 包裹并手动居中，否则格子会被卡牌的自然最小尺寸撑大。
+    // ★ 手动调参入口（改这两处即可）：
+    //   CardCellScale    → 卡片缩放倍率（绘制尺寸 = 300x422 × 此值，越大卡片越大，建议 0.35~0.5）
+    //   CardCellMinHeight→ 每个卡格的固定最小高度（控制格子高度，需 ≥ 422×Scale）
+    private const float CardBaseWidth = 300f;
+    private const float CardBaseHeight = 422f;
+    private const float CardCellScale = 0.40f;
+    private const float CardCellMinHeight = 190f;
+
     private static string _searchText = string.Empty;
     private static readonly Dictionary<CardType, bool> _typeFilter = new()
     {
@@ -309,20 +319,17 @@ internal class CardLibraryTab
         var cell = new VBoxContainer();
         cell.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
         cell.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
-        cell.CustomMinimumSize = new Vector2(120, 175);
         cell.AddThemeConstantOverride("separation", 4);
         cell.Alignment = BoxContainer.AlignmentMode.Center;
 
-        var cardFrame = new PanelContainer();
-        cardFrame.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
-        cardFrame.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
-        var frameStyle = new StyleBoxFlat();
-        frameStyle.BgColor = new Color(0.08f, 0.06f, 0.10f, 0.9f);
-        frameStyle.SetBorderWidthAll(1);
-        frameStyle.BorderColor = new Color(0.45f, 0.40f, 0.30f, 0.5f);
-        frameStyle.SetCornerRadiusAll(4);
-        frameStyle.SetContentMarginAll(2);
-        cardFrame.AddThemeStyleboxOverride("panel", frameStyle);
+        // clip 容器：ClipContents + 固定最小高度，卡牌不参与容器布局（避免自然最小尺寸把格子撑大）
+        var clip = new Control();
+        clip.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+        clip.CustomMinimumSize = new Vector2(0, CardCellMinHeight);
+        clip.ClipContents = true;
+        clip.MouseFilter = Control.MouseFilterEnum.Stop;
+        clip.MouseDefaultCursorShape = Control.CursorShape.PointingHand;
+        cell.AddChild(clip);
 
         NCard? nCard = null;
         try
@@ -331,36 +338,43 @@ internal class CardLibraryTab
             nCard = NCard.Create(displayCard);
             if (nCard != null)
             {
-                nCard.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
-                nCard.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
-                nCard.Scale = new Vector2(0.32f, 0.32f);
+                nCard.Scale = new Vector2(CardCellScale, CardCellScale);
                 nCard.MouseFilter = Control.MouseFilterEnum.Ignore;
-                nCard.CustomMinimumSize = new Vector2(100, 130);
-                cardFrame.AddChild(nCard);
+                clip.AddChild(nCard);
 
                 nCard.Ready += () =>
                 {
                     if (GodotObject.IsInstanceValid(nCard))
                         nCard.UpdateVisuals(PileType.None, CardPreviewMode.Normal);
+                    // 延迟到本帧布局完成后居中（此时 clip.Size 已就绪）
+                    Callable.From(() =>
+                    {
+                        if (GodotObject.IsInstanceValid(clip) && GodotObject.IsInstanceValid(nCard))
+                            CenterCardInClip(clip, nCard);
+                    }).CallDeferred();
                 };
             }
         }
         catch { }
 
-        cell.AddChild(cardFrame);
+        // 居中卡片：clip 尺寸变化时按绘制后的尺寸（基础尺寸 x 缩放）重新定位
+        NCard? capturedCard = nCard;
+        clip.Resized += () => CenterCardInClip(clip, capturedCard);
 
-        cell.MouseEntered += () =>
+        // 悬停提示
+        clip.MouseEntered += () =>
         {
-            try { ShowHoverTips(cell, card.HoverTips, HoverTipAlignment.Left); }
+            try { ShowHoverTips(clip, card.HoverTips, HoverTipAlignment.Left); }
             catch { }
         };
-        cell.MouseExited += () => NHoverTipSet.Remove(cell);
+        clip.MouseExited += () => NHoverTipSet.Remove(clip);
 
-        cell.GuiInput += (InputEvent ev) =>
+        // 点击添加
+        clip.GuiInput += (InputEvent ev) =>
         {
             if (ev is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Left })
             {
-                cell.GetViewport()?.SetInputAsHandled();
+                clip.GetViewport()?.SetInputAsHandled();
                 AddCardToDeck(card);
             }
         };
@@ -371,6 +385,17 @@ internal class CardLibraryTab
         cell.AddChild(addBtn);
 
         return cell;
+    }
+
+    /// <summary>
+    /// 将 NCard 居中到 clip 内（按绘制后的尺寸 基础尺寸x缩放 计算偏移）。
+    /// </summary>
+    private static void CenterCardInClip(Control clip, Control? card)
+    {
+        if (card == null || !GodotObject.IsInstanceValid(clip) || !GodotObject.IsInstanceValid(card)) return;
+        float drawnW = CardBaseWidth * CardCellScale;
+        float drawnH = CardBaseHeight * CardCellScale;
+        card.Position = new Vector2((clip.Size.X - drawnW) / 2f, (clip.Size.Y - drawnH) / 2f);
     }
 
     private void AddCardToDeck(CardModel card)

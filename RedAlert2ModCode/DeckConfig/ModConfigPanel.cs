@@ -91,15 +91,22 @@ internal static class ModConfigPanel
         }
 
         RemoveExistingOverlay(root);
-        root.AddChild(_layer!);
+
+        // 若 _layer 已挂载到场景树，不要重复 AddChild（否则报 "already has a parent"）
+        if (_layer!.GetParent() == null)
+        {
+            root.AddChild(_layer);
+        }
         _layer!.Visible = true;
     }
 
     private static void RemoveExistingOverlay(Node root)
     {
-        if (root.GetNodeOrNull<Control>(OverlayName) is { } overlay && GodotObject.IsInstanceValid(overlay))
+        var existing = root.GetNodeOrNull<Control>(OverlayName);
+        // 仅释放旧的、非当前 _layer 的残留覆盖层，避免误删自身导致重复 AddChild 报错
+        if (existing != null && GodotObject.IsInstanceValid(existing) && !ReferenceEquals(existing, _layer))
         {
-            overlay.QueueFree();
+            existing.QueueFree();
         }
         if (_layer != null && !GodotObject.IsInstanceValid(_layer))
         {
@@ -635,6 +642,42 @@ internal static class ModConfigPanel
         noticeLabel.AddThemeColorOverride("font_color", StsColors.gold);
         noticeLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart;
         container.AddChild(noticeLabel);
+
+        AddDivider(container);
+
+        // 卡池奖励模式（三选一互斥：默认 / 全为箱子 / 加入箱子）
+        var poolHeader = CreateSectionHeader(L("CONFIG_CRATE_POOL_TITLE"));
+        container.AddChild(poolHeader);
+
+        var poolDesc = new Label();
+        poolDesc.Text = L("CONFIG_CRATE_POOL_DESC");
+        poolDesc.AddThemeFontSizeOverride("font_size", 13);
+        poolDesc.AddThemeColorOverride("font_color", StsColors.gray);
+        poolDesc.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+        container.AddChild(poolDesc);
+
+        var poolRow = new HBoxContainer();
+        poolRow.AddThemeConstantOverride("separation", 8);
+        container.AddChild(poolRow);
+
+        (CratePoolMode mode, string label)[] poolModes =
+        {
+            (CratePoolMode.None, L("CONFIG_CRATE_POOL_NONE")),
+            (CratePoolMode.AllCrates, L("CONFIG_CRATE_POOL_ALL")),
+            (CratePoolMode.AddCrates, L("CONFIG_CRATE_POOL_ADD")),
+        };
+        foreach (var (mode, label) in poolModes)
+        {
+            var btn = CreateToggleButton(config.CratePoolMode == mode, label);
+            btn.CustomMinimumSize = new Vector2(130, 32);
+            btn.Pressed += () =>
+            {
+                config.CratePoolMode = mode;
+                ModConfigManager.UpdateCharacterConfig(config);
+                RefreshContent();
+            };
+            poolRow.AddChild(btn);
+        }
     }
 
     private static void BuildCardPoolSection(VBoxContainer container, CharacterConfig config)
@@ -870,79 +913,60 @@ internal static class ModConfigPanel
                 catch { return false; }
             });
 
-            if (characterModel != null)
+            if (characterModel == null)
             {
-                var type = characterModel.GetType();
-                var deckEntriesProp = type.GetProperty("StartingDeckEntries",
-                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-                if (deckEntriesProp != null)
-                {
-                    var deckEntries = deckEntriesProp.GetValue(characterModel);
-                    if (deckEntries != null)
-                    {
-                        var list = deckEntries as System.Collections.IList;
-                        if (list != null && list.Count > 0)
-                        {
-                            var infoLabel = new Label();
-                            infoLabel.Text = L("CONFIG_DEFAULT_DECK_INFO", list.Count);
-                            infoLabel.AddThemeFontSizeOverride("font_size", 14);
-                            infoLabel.AddThemeColorOverride("font_color", StsColors.gray);
-                            container.AddChild(infoLabel);
-
-                            var cardInfoList = new List<string>();
-                            foreach (var entry in list)
-                            {
-                                try
-                                {
-                                    var cardTypeProp = entry.GetType().GetProperty("CardType");
-                                    var countProp = entry.GetType().GetProperty("Count");
-                                    if (cardTypeProp != null)
-                                    {
-                                        var cardType = cardTypeProp.GetValue(entry) as Type;
-                                        int count = countProp?.GetValue(entry) as int? ?? 1;
-                                        if (cardType != null)
-                                        {
-                                            var cardModel = GetCardModelByType(cardType);
-                                            string displayName = cardModel != null
-                                                ? GetCardDisplayName(cardType.Name)
-                                                : cardType.Name;
-                                            cardInfoList.Add($"{displayName} × {count}");
-                                        }
-                                    }
-                                }
-                                catch { }
-                            }
-
-                            if (cardInfoList.Count > 0)
-                            {
-                                var deckListLabel = new Label();
-                                deckListLabel.Text = string.Join("，", cardInfoList);
-                                deckListLabel.AddThemeFontSizeOverride("font_size", 12);
-                                deckListLabel.AddThemeColorOverride("font_color", StsColors.gray);
-                                deckListLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart;
-                                container.AddChild(deckListLabel);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    var infoLabel = new Label();
-                    infoLabel.Text = L("CONFIG_DECK_EMPTY");
-                    infoLabel.AddThemeFontSizeOverride("font_size", 14);
-                    infoLabel.AddThemeColorOverride("font_color", StsColors.gray);
-                    container.AddChild(infoLabel);
-                }
+                var noModelLabel = new Label();
+                noModelLabel.Text = L("CONFIG_NO_CHARACTER_MODEL");
+                noModelLabel.AddThemeFontSizeOverride("font_size", 14);
+                noModelLabel.AddThemeColorOverride("font_color", StsColors.gray);
+                container.AddChild(noModelLabel);
+                return;
             }
-            else
+
+            // 官方属性 CharacterModel.StartingDeck（RitsuLib 已将 StartingDeckEntries 映射到此处）
+            List<CardModel> startingCards;
+            try
             {
-                var infoLabel = new Label();
-                infoLabel.Text = L("CONFIG_NO_CHARACTER_MODEL");
-                infoLabel.AddThemeFontSizeOverride("font_size", 14);
-                infoLabel.AddThemeColorOverride("font_color", StsColors.gray);
-                container.AddChild(infoLabel);
+                startingCards = characterModel.StartingDeck?.ToList() ?? new List<CardModel>();
             }
+            catch
+            {
+                startingCards = new List<CardModel>();
+            }
+
+            if (startingCards.Count == 0)
+            {
+                var emptyLabel = new Label();
+                emptyLabel.Text = L("CONFIG_DECK_EMPTY");
+                emptyLabel.AddThemeFontSizeOverride("font_size", 14);
+                emptyLabel.AddThemeColorOverride("font_color", StsColors.gray);
+                container.AddChild(emptyLabel);
+                return;
+            }
+
+            var infoLabel = new Label();
+            infoLabel.Text = L("CONFIG_DEFAULT_DECK_INFO", startingCards.Count);
+            infoLabel.AddThemeFontSizeOverride("font_size", 14);
+            infoLabel.AddThemeColorOverride("font_color", StsColors.gray);
+            container.AddChild(infoLabel);
+
+            // 按卡牌标题分组统计数量（直接读取 CardModel.Title，兼容原版与mod卡牌）
+            var counts = new Dictionary<string, int>();
+            foreach (var card in startingCards)
+            {
+                string name;
+                try { name = card.Title; }
+                catch { name = card.GetType().Name; }
+                counts.TryGetValue(name, out int n);
+                counts[name] = n + 1;
+            }
+
+            var deckListLabel = new Label();
+            deckListLabel.Text = string.Join("，", counts.Select(kv => $"{kv.Key} × {kv.Value}"));
+            deckListLabel.AddThemeFontSizeOverride("font_size", 12);
+            deckListLabel.AddThemeColorOverride("font_color", StsColors.gray);
+            deckListLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+            container.AddChild(deckListLabel);
         }
         catch
         {
@@ -999,18 +1023,15 @@ internal static class ModConfigPanel
                 var cardThumb = new VBoxContainer();
                 cardThumb.Alignment = BoxContainer.AlignmentMode.Center;
                 cardThumb.AddThemeConstantOverride("separation", 2);
-                cardThumb.CustomMinimumSize = new Vector2(100, 115);
+                cardThumb.CustomMinimumSize = new Vector2(110, 160);
 
-                var thumbFrame = new PanelContainer();
-                thumbFrame.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
-                thumbFrame.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
-                var thumbStyle = new StyleBoxFlat();
-                thumbStyle.BgColor = new Color(0.08f, 0.06f, 0.10f, 0.9f);
-                thumbStyle.SetBorderWidthAll(1);
-                thumbStyle.BorderColor = new Color(0.45f, 0.40f, 0.30f, 0.5f);
-                thumbStyle.SetCornerRadiusAll(4);
-                thumbStyle.SetContentMarginAll(2);
-                thumbFrame.AddThemeStyleboxOverride("panel", thumbStyle);
+                // 用 clip 包裹卡牌，避免卡片自然最小尺寸把格子撑大（与 CardLibraryTab 相同方案）
+                var clip = new Control();
+                clip.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+                clip.CustomMinimumSize = new Vector2(0, 140);
+                clip.ClipContents = true;
+                clip.MouseFilter = Control.MouseFilterEnum.Ignore;
+                cardThumb.AddChild(clip);
 
                 if (cardModel != null)
                 {
@@ -1020,23 +1041,31 @@ internal static class ModConfigPanel
                         var nCard = NCard.Create(displayCard);
                         if (nCard != null)
                         {
-                            nCard.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
-                            nCard.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
-                            nCard.Scale = new Vector2(0.28f, 0.28f);
+                            nCard.Scale = new Vector2(0.32f, 0.32f);
                             nCard.MouseFilter = Control.MouseFilterEnum.Ignore;
-                            nCard.CustomMinimumSize = new Vector2(80, 104);
-                            thumbFrame.AddChild(nCard);
+                            clip.AddChild(nCard);
+
+                            NCard capturedCard = nCard;
+                            Control capturedClip = clip;
                             nCard.Ready += () =>
                             {
-                                if (GodotObject.IsInstanceValid(nCard))
-                                    nCard.UpdateVisuals(PileType.None, CardPreviewMode.Normal);
+                                if (GodotObject.IsInstanceValid(capturedCard))
+                                    capturedCard.UpdateVisuals(PileType.None, CardPreviewMode.Normal);
+                                Callable.From(() =>
+                                {
+                                    if (GodotObject.IsInstanceValid(capturedClip) && GodotObject.IsInstanceValid(capturedCard))
+                                        CenterThumb(capturedClip, capturedCard, 0.32f);
+                                }).CallDeferred();
+                            };
+                            clip.Resized += () =>
+                            {
+                                if (GodotObject.IsInstanceValid(capturedClip) && GodotObject.IsInstanceValid(capturedCard))
+                                    CenterThumb(capturedClip, capturedCard, 0.32f);
                             };
                         }
                     }
                     catch { }
                 }
-
-                cardThumb.AddChild(thumbFrame);
 
                 var infoRow = new HBoxContainer();
                 infoRow.Alignment = BoxContainer.AlignmentMode.Center;
@@ -1123,22 +1152,58 @@ internal static class ModConfigPanel
         }
     }
 
+    /// <summary>
+    /// 将卡牌缩略图居中到 clip 内（按绘制后的尺寸 300x422x缩放 计算偏移）。
+    /// </summary>
+    private static void CenterThumb(Control clip, Control card, float scale)
+    {
+        if (!GodotObject.IsInstanceValid(clip) || !GodotObject.IsInstanceValid(card)) return;
+        float drawnW = 300f * scale;
+        float drawnH = 422f * scale;
+        card.Position = new Vector2((clip.Size.X - drawnW) / 2f, (clip.Size.Y - drawnH) / 2f);
+    }
+
+    /// <summary>
+    /// 在所有已加载程序集中按名称查找类型（兼容本mod与原版卡牌，如 Wound）。
+    /// </summary>
+    private static Type? FindTypeInAllAssemblies(string typeName)
+    {
+        if (string.IsNullOrEmpty(typeName)) return null;
+
+        foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            try
+            {
+                var type = asm.GetType(typeName);
+                if (type != null) return type;
+            }
+            catch { }
+        }
+
+        foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            try
+            {
+                var type = asm.GetTypes().FirstOrDefault(t => t.Name == typeName);
+                if (type != null) return type;
+            }
+            catch { }
+        }
+
+        return null;
+    }
+
     private static string GetCardDisplayName(string typeName)
     {
         try
         {
-            var asm = AppDomain.CurrentDomain.GetAssemblies()
-                .FirstOrDefault(a => a.GetName().Name == "RedAlert2Mod");
-            if (asm != null)
+            var type = FindTypeInAllAssemblies(typeName);
+            if (type != null)
             {
-                var type = asm.GetTypes().FirstOrDefault(t => t.Name == typeName);
-                if (type != null)
+                var cardModel = GetCardModelByType(type);
+                if (cardModel != null)
                 {
-                    var cardModel = GetCardModelByType(type);
-                    if (cardModel != null)
-                    {
-                        try { return cardModel.Title; } catch { }
-                    }
+                    try { return cardModel.Title; } catch { }
                 }
             }
         }
@@ -1150,15 +1215,10 @@ internal static class ModConfigPanel
     {
         try
         {
-            var asm = AppDomain.CurrentDomain.GetAssemblies()
-                .FirstOrDefault(a => a.GetName().Name == "RedAlert2Mod");
-            if (asm != null)
+            var type = FindTypeInAllAssemblies(typeName);
+            if (type != null)
             {
-                var type = asm.GetTypes().FirstOrDefault(t => t.Name == typeName);
-                if (type != null)
-                {
-                    return GetCardModelByType(type);
-                }
+                return GetCardModelByType(type);
             }
         }
         catch { }

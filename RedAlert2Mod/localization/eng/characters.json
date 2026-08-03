@@ -86,5 +86,10 @@
     "CONFIG_CONFIRM_SAVE_TITLE": "Save Configuration",
     "CONFIG_CONFIRM_SAVE_DESC": "Save the current configuration changes?",
     "CONFIG_CANCEL": "Cancel",
-    "CONFIG_CONFIRM": "Confirm"
+    "CONFIG_CONFIRM": "Confirm",
+    "CONFIG_CRATE_POOL_TITLE": "🎁 Card Pool Rewards (Crates)",
+    "CONFIG_CRATE_POOL_DESC": "Control how crate cards appear in the character's card pool (card reward range): excluded by default, all replaced with crates, or added to normal rewards.",
+    "CONFIG_CRATE_POOL_NONE": "Default Pool",
+    "CONFIG_CRATE_POOL_ALL": "All Rewards Crates",
+    "CONFIG_CRATE_POOL_ADD": "Add Crates to Rewards"
 }

@@ -16,6 +16,8 @@ using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.Screens.MainMenu;
 using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Saves;
+using RedAlert2ModCode.Common.Relics;
 using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.DeckConfig;
@@ -25,7 +27,6 @@ namespace RedAlert2ModCode.DeckConfig;
 /// </summary>
 public static class ModConfigPatches
 {
-    private static bool _configApplied;
     private static readonly MegaCrit.Sts2.Core.Logging.Logger Logger = new("ModConfigPatches", MegaCrit.Sts2.Core.Logging.LogType.Generic);
 
     private const string MenuButtonName = "RedAlert2ModConfigButton";
@@ -92,21 +93,25 @@ public static class ModConfigPatches
     public static void Install(HarmonyLib.Harmony harmony)
     {
         // 补丁1: 拦截初始卡组创建
+        // 注意：游戏没有 RunState.CreateInitialDeckCards 方法（旧代码打到不存在的目标，覆盖从未生效）。
+        // 真实初始牌组在 Player.CreateForNewRun -> PopulateStartingInventory() 中依次生成 牌组/遗物/药水。
+        // 必须 Patch 整个 PopulateStartingInventory（而非仅 PopulateStartingDeck）：
+        //   在 PopulateStartingInventory 的 Postfix 中替换牌组、追加基地车、补授刀乐遗物，
+        //   此时所有 PopulateStarting* 已执行完毕，不会触发 "Relics have already been populated" 冲突。
         try
         {
-            var createInitialDeckMethod = AccessTools.Method(typeof(RunState), "CreateInitialDeckCards");
-            if (createInitialDeckMethod != null)
+            var populateInventoryMethod = AccessTools.Method(typeof(Player), "PopulateStartingInventory");
+            if (populateInventoryMethod != null)
             {
                 harmony.Patch(
-                    original: createInitialDeckMethod,
-                    prefix: new HarmonyMethod(typeof(InitialDeckPatch), nameof(InitialDeckPatch.Prefix)),
+                    original: populateInventoryMethod,
                     postfix: new HarmonyMethod(typeof(InitialDeckPatch), nameof(InitialDeckPatch.Postfix))
                 );
-                Logger.Info("[ModConfig] 初始卡组补丁安装成功");
+                Logger.Info("[ModConfig] 初始卡组补丁安装成功 (Player.PopulateStartingInventory)");
             }
             else
             {
-                Logger.Warn("[ModConfig] 找不到 CreateInitialDeckCards 方法");
+                Logger.Warn("[ModConfig] 找不到 Player.PopulateStartingInventory 方法");
             }
         }
         catch (Exception ex)
@@ -242,60 +247,47 @@ public static class ModConfigPatches
     /// </summary>
     public static class InitialDeckPatch
     {
-        private static readonly FieldInfo? PlayerField =
-            AccessTools.Field(typeof(RunState), "_player");
-
-        public static void Prefix(RunState __instance, ref List<CardModel> __state)
+        public static void Postfix(Player __instance)
         {
             try
             {
-                var player = PlayerField?.GetValue(__instance) as Player;
-                if (player?.Character == null) return;
+                if (__instance?.Character == null) return;
 
-                string? characterId = player.Character?.Id?.Entry;
+                string? characterId = __instance.Character?.Id?.Entry;
                 if (string.IsNullOrEmpty(characterId)) return;
 
                 var config = ModConfigManager.GetCharacterConfig(characterId);
 
-                // 幸运方块模式
+                // 幸运方块 / 自定义卡组：清空并重建初始牌组
+                List<CardModel>? replacement = null;
                 if (config.LuckyCrateMode)
                 {
-                    var luckyDeck = CreateLuckyCrateDeck();
-                    __state = luckyDeck;
+                    replacement = CreateLuckyCrateDeck();
                     Logger.Info($"[ModConfig] 已应用幸运方块模式，角色: {characterId}");
-                    return;
                 }
-
-                // 自定义卡组
-                if (config.EnableCustomDeck && config.CustomDeckCardTypes.Count > 0)
+                else if (config.EnableCustomDeck && config.CustomDeckCardTypes.Count > 0)
                 {
                     var customDeck = CreateCustomDeck(config);
                     if (customDeck.Count > 0)
                     {
-                        __state = customDeck;
+                        replacement = customDeck;
                         Logger.Info($"[ModConfig] 已应用自定义卡组，角色: {characterId}, 卡牌数: {customDeck.Count}");
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"[ModConfig] InitialDeckPatch.Prefix 失败: {ex.Message}");
-            }
-        }
 
-        public static void Postfix(RunState __instance)
-        {
-            try
-            {
-                var player = PlayerField?.GetValue(__instance) as Player;
-                if (player?.Character == null) return;
+                if (replacement != null)
+                {
+                    // Player.PopulateStartingInventory 已用默认牌组填充过 Deck，这里清空后重建
+                    __instance.Deck.Clear(silent: true);
+                    foreach (CardModel card in replacement)
+                    {
+                        card.FloorAddedToDeck = 1;
+                        __instance.Deck.AddInternal(card, -1, true);
+                    }
+                    Logger.Info($"[ModConfig] 初始卡组已覆盖，角色: {characterId}, 卡牌数: {replacement.Count}");
+                }
 
-                string? characterId = player.Character?.Id?.Entry;
-                if (string.IsNullOrEmpty(characterId)) return;
-
-                var config = ModConfigManager.GetCharacterConfig(characterId);
-
-                // 基地车模式 - 在初始卡组中添加基地车
+                // 基地车模式 - 在初始卡组中追加基地车 + 补授刀乐遗物
                 if (config.BaseCarMode != BaseCarMode.None)
                 {
                     ApplyBaseCarMode(__instance, config);
@@ -350,18 +342,47 @@ public static class ModConfigPatches
 
         private static Type? FindCardType(string typeName)
         {
-            var asm = AppDomain.CurrentDomain.GetAssemblies()
-                .FirstOrDefault(a => a.GetName().Name == "RedAlert2Mod");
-            if (asm != null)
-            {
-                var type = asm.GetType(typeName);
-                if (type != null) return type;
+            if (string.IsNullOrEmpty(typeName)) return null;
 
-                foreach (var ns in new[] { "RedAlert2ModCode.Allies.Cards", "RedAlert2ModCode.Soviet.Cards", "RedAlert2ModCode.Common.Cards" })
+            // 1) 尝试全名（含命名空间）
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
                 {
-                    type = asm.GetType($"{ns}.{typeName}");
+                    var type = asm.GetType(typeName);
                     if (type != null) return type;
                 }
+                catch { }
+            }
+
+            // 2) 常用命名空间（本mod + 原版卡牌）
+            string[] namespaces =
+            {
+                "RedAlert2ModCode.Allies.Cards", "RedAlert2ModCode.Soviet.Cards", "RedAlert2ModCode.Common.Cards",
+                "MegaCrit.Sts2.Core.Models.Cards",
+            };
+            foreach (var ns in namespaces)
+            {
+                foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    try
+                    {
+                        var type = asm.GetType($"{ns}.{typeName}");
+                        if (type != null) return type;
+                    }
+                    catch { }
+                }
+            }
+
+            // 3) 短名扫描（兼容原版卡牌，如 Wound）
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    var type = asm.GetTypes().FirstOrDefault(t => t.Name == typeName);
+                    if (type != null) return type;
+                }
+                catch { }
             }
 
             return null;
@@ -391,15 +412,18 @@ public static class ModConfigPatches
         private static List<CardModel> CreateLuckyCrateDeck()
         {
             var deck = new List<CardModel>();
-            var crateNames = new[]
+            // 随机箱子×5、回血箱子×1、士兵/车辆/海军/空军箱子各×1（共10张）
+            var crateList = new[]
             {
-                "OreCrate", "MoneyCrate", "HealCrate", "ArmorCrate",
-                "StealthCrate", "SpeedCrate", "UpgradeCrate",
-                "ExplosionCrate", "SuperWeaponCrate", "VehicleCrate",
-                "FirepowerCrate", "RandomCrate",
+                ("RandomCrate", 5),
+                ("HealCrate", 1),
+                ("SoldierCrate", 1),
+                ("VehicleCrate", 1),
+                ("NavyCrate", 1),
+                ("AirForceCrate", 1),
             };
 
-            foreach (var name in crateNames)
+            foreach (var (name, count) in crateList)
             {
                 try
                 {
@@ -409,8 +433,15 @@ public static class ModConfigPatches
                         var cardModel = GetCardModel(cardType);
                         if (cardModel != null)
                         {
-                            deck.Add(cardModel.ToMutable());
+                            for (int i = 0; i < count; i++)
+                            {
+                                deck.Add(cardModel.ToMutable());
+                            }
                         }
+                    }
+                    else
+                    {
+                        Logger.Warn($"[ModConfig] 找不到箱子卡类型: {name}");
                     }
                 }
                 catch (Exception ex)
@@ -422,7 +453,7 @@ public static class ModConfigPatches
             return deck;
         }
 
-        private static void ApplyBaseCarMode(RunState runState, CharacterConfig config)
+        private static void ApplyBaseCarMode(Player player, CharacterConfig config)
         {
             try
             {
@@ -436,43 +467,56 @@ public static class ModConfigPatches
 
                 if (string.IsNullOrEmpty(mcvName)) return;
 
-                var mcvType = FindCardType(mcvName);
-                if (mcvType != null)
-                {
-                    var mcvCard = GetCardModel(mcvType);
-                    if (mcvCard != null)
-                    {
-                        var mcvInstance = mcvCard.ToMutable();
+                string characterId = player.Character?.Id?.Entry ?? string.Empty;
 
-                        // 使用反射获取 Deck 或相关属性
-                        var deckProp = typeof(RunState).GetProperty("Deck");
-                        if (deckProp != null)
-                        {
-                            var deck = deckProp.GetValue(runState) as IList<CardModel>;
-                            deck?.Add(mcvInstance);
-                            Logger.Info($"[ModConfig] 基地车模式: 已添加 {mcvName} 到卡组");
-                        }
-                        else
-                        {
-                            var deckField = typeof(RunState).GetField("_deck", BindingFlags.NonPublic | BindingFlags.Instance);
-                            if (deckField != null)
-                            {
-                                var deck = deckField.GetValue(runState) as IList<CardModel>;
-                                deck?.Add(mcvInstance);
-                                Logger.Info($"[ModConfig] 基地车模式: 已添加 {mcvName} 到卡组 (通过字段)");
-                            }
-                        }
-                    }
+                // 同阵营的本mod角色起始卡组已含对应基地车，不重复添加（等同于无效果）
+                if (IsSameFactionAsMcv(characterId, config.BaseCarMode))
+                {
+                    Logger.Info($"[ModConfig] 基地车模式: 角色 {characterId} 已有对应阵营基地车，跳过添加");
                 }
                 else
                 {
-                    Logger.Warn($"[ModConfig] 找不到基地车类型: {mcvName}");
+                    var mcvType = FindCardType(mcvName);
+                    if (mcvType != null)
+                    {
+                        var mcvCard = GetCardModel(mcvType);
+                        if (mcvCard != null)
+                        {
+                            var mcvInstance = mcvCard.ToMutable();
+                            mcvInstance.FloorAddedToDeck = 1;
+                            player.Deck.AddInternal(mcvInstance, -1, true);
+                            Logger.Info($"[ModConfig] 基地车模式: 已添加 {mcvName} 到卡组");
+                        }
+                    }
+                    else
+                    {
+                        Logger.Warn($"[ModConfig] 找不到基地车类型: {mcvName}");
+                    }
+                }
+
+                // 补授刀乐遗物（本mod角色已自带，不重复授予）
+                if (!player.Relics.Any(r => r is DollarRelic))
+                {
+                    var relic = ModelDb.Relic<DollarRelic>().ToMutable();
+                    relic.FloorAddedToDeck = 1;
+                    try { SaveManager.Instance.MarkRelicAsSeen(relic); } catch { }
+                    player.AddRelicInternal(relic, -1, true);
+                    Logger.Info($"[ModConfig] 基地车模式: 已补授刀乐遗物给 {characterId}");
                 }
             }
             catch (Exception ex)
             {
                 Logger.Error($"[ModConfig] ApplyBaseCarMode 失败: {ex.Message}");
             }
+        }
+
+        private static bool IsSameFactionAsMcv(string characterId, BaseCarMode mode)
+        {
+            if (mode == BaseCarMode.Allied && characterId.Equals("Allies", StringComparison.OrdinalIgnoreCase))
+                return true;
+            if (mode == BaseCarMode.Soviet && characterId.Equals("Soviet", StringComparison.OrdinalIgnoreCase))
+                return true;
+            return false;
         }
     }
 
@@ -629,11 +673,13 @@ public static class ModConfigPatches
 
         private static void ConfigureNativeMenuFocus(Node mainMenu, Node configButton)
         {
+            // NClickableControl.RefreshFocus 发出的 Focused/Unfocused 信号带 1 个参数（控件本身），
+            // 必须用 Callable.From<T>(...) 匹配参数个数，否则报 "Expected 0 argument(s), received 1"。
             if (ButtonFocusedMethod != null && FocusedSignalName != null)
             {
                 ((GodotObject)configButton).Connect(
                     FocusedSignalName,
-                    Callable.From(() =>
+                    Callable.From<GodotObject>(_ =>
                     {
                         ButtonFocusedMethod.Invoke(mainMenu, new[] { configButton });
                     }));
@@ -643,7 +689,7 @@ public static class ModConfigPatches
             {
                 ((GodotObject)configButton).Connect(
                     UnfocusedSignalName,
-                    Callable.From(() =>
+                    Callable.From<GodotObject>(_ =>
                     {
                         ButtonUnfocusedMethod.Invoke(mainMenu, new[] { configButton });
                     }));
@@ -790,7 +836,6 @@ public static class ModConfigPatches
         {
             try
             {
-                _configApplied = true;
                 Logger.Info("[ModConfig] RunStartPatch: 游戏开始，配置已应用");
             }
             catch (Exception ex)

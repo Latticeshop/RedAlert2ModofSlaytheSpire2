@@ -23,6 +23,16 @@ public enum BaseCarMode
 }
 
 /// <summary>
+/// 卡池奖励模式（控制箱子卡是否/如何进入角色的卡牌奖励范围）
+/// </summary>
+public enum CratePoolMode
+{
+    None,       // 默认卡池（排除箱子）
+    AllCrates,  // 卡池奖励全为箱子
+    AddCrates   // 卡池奖励加入箱子
+}
+
+/// <summary>
 /// 角色配置数据
 /// </summary>
 public class CharacterConfig
@@ -51,6 +61,11 @@ public class CharacterConfig
     /// 是否启用幸运方块捡箱子模式
     /// </summary>
     public bool LuckyCrateMode { get; set; }
+
+    /// <summary>
+    /// 卡池奖励模式（None=默认排除箱子，AllCrates=全为箱子，AddCrates=加入箱子）
+    /// </summary>
+    public CratePoolMode CratePoolMode { get; set; } = CratePoolMode.None;
 }
 
 /// <summary>
@@ -138,12 +153,13 @@ public static class ModConfigManager
                 ["version"] = "1.0",
                 ["characters"] = _configs.ToDictionary(
                     kv => kv.Key,
-                    kv => new
+                    kv =>                    new
                     {
                         customDeckCardTypes = kv.Value.CustomDeckCardTypes,
                         enableCustomDeck = kv.Value.EnableCustomDeck,
                         baseCarMode = kv.Value.BaseCarMode.ToString(),
-                        luckyCrateMode = kv.Value.LuckyCrateMode
+                        luckyCrateMode = kv.Value.LuckyCrateMode,
+                        cratePoolMode = kv.Value.CratePoolMode.ToString()
                     }
                 )
             };
@@ -268,6 +284,15 @@ public static class ModConfigManager
         if (element.TryGetProperty("luckyCrateMode", out var luckyCrate))
         {
             config.LuckyCrateMode = luckyCrate.GetBoolean();
+        }
+
+        if (element.TryGetProperty("cratePoolMode", out var cratePoolMode))
+        {
+            string modeStr = cratePoolMode.GetString() ?? "None";
+            if (Enum.TryParse<CratePoolMode>(modeStr, true, out var mode))
+            {
+                config.CratePoolMode = mode;
+            }
         }
 
         return config;

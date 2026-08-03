@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using STS2RitsuLib.Scaffolding.Content;
 using RedAlert2ModCode.Common.Cards;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.Soviet;
 
@@ -85,8 +86,8 @@ public sealed class SovietCardPool : TypeListCardPoolModel
                 return method?.Invoke(null, null) as CardModel;
             }).Where(c => c != null);
             
-            // 合并两个列表
-            return baseCards.Concat(commonCards);
+            // 应用卡池奖励箱子模式（默认排除箱子 / 全为箱子 / 加入箱子）
+            return CratePoolHelper.ApplyCrateMode(this, baseCards, commonCards);
         }
     }
 }
