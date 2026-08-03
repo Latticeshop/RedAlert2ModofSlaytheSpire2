@@ -1,148 +1,174 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Ancients;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Events;
 using RedAlert2ModCode.Allies;
+using SovietCharacter = RedAlert2ModCode.Soviet.Soviet;
 
 namespace RedAlert2ModCode.Allies.Patches;
 
 /// <summary>
-/// Harmony补丁：为盟军角色添加建筑师对话
+/// Harmony补丁：为盟军和苏军角色添加建筑师对话
 /// 
-/// 对话流程：
-/// - 第1次访问：建筑师对盟军指挥官表示不屑
-/// - 第2次访问：建筑师开始重视盟军的实力
-/// - 第3次访问：建筑师承认盟军的战术能力
-/// - 第4次访问：最终对决前的对话
+/// 对话机制：
+/// - charVisits = TotalWins（角色总胜场数）
+/// - 优先匹配VisitIndex == charVisits的对话
+/// - 若无匹配，回退到IsRepeating的对话池
+/// - 所有对话同时设置VisitIndex（精确匹配）和IsRepeating（回退）
 /// </summary>
 [HarmonyPatch]
 public static class ArchitectDialoguePatch
 {
-    private static string? _cachedCharacterEntry;
+    private static string? _cachedAlliesEntry;
+    private static string? _cachedSovietEntry;
 
-    /// <summary>
-    /// 获取盟军角色的ModelId.Entry
-    /// 参考WineFox mod，角色ID是通过StringHelper.Slugify(type.FullName)生成的完整类型名
-    /// </summary>
     private static string GetAlliesCharacterEntry()
     {
-        if (_cachedCharacterEntry != null)
-        {
-            return _cachedCharacterEntry;
-        }
+        if (_cachedAlliesEntry != null)
+            return _cachedAlliesEntry;
 
-        // 尝试从ModelDb获取实际的Entry
         try
         {
             if (ModelDb.Contains(typeof(Allies)))
             {
-                _cachedCharacterEntry = ModelDb.GetId<Allies>().Entry;
-                return _cachedCharacterEntry;
+                _cachedAlliesEntry = ModelDb.GetId<Allies>().Entry;
+                return _cachedAlliesEntry;
             }
         }
         catch (Exception ex)
         {
-            // 记录错误但继续使用默认值
             System.Diagnostics.Debug.WriteLine($"[RedAlert2Mod] Failed to get Allies ModelId: {ex.Message}");
         }
 
-        // 回退到RitsuLib生成的角色ID格式
-        _cachedCharacterEntry = "RED_ALERT2_MOD_CHARACTER_ALLIES";
-        return _cachedCharacterEntry;
+        _cachedAlliesEntry = "RED_ALERT2_MOD_CHARACTER_ALLIES";
+        return _cachedAlliesEntry;
+    }
+
+    private static string GetSovietCharacterEntry()
+    {
+        if (_cachedSovietEntry != null)
+            return _cachedSovietEntry;
+
+        try
+        {
+            if (ModelDb.Contains(typeof(SovietCharacter)))
+            {
+                _cachedSovietEntry = ModelDb.GetId<SovietCharacter>().Entry;
+                return _cachedSovietEntry;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[RedAlert2Mod] Failed to get Soviet ModelId: {ex.Message}");
+        }
+
+        _cachedSovietEntry = "RED_ALERT2_MOD_CHARACTER_SOVIET";
+        return _cachedSovietEntry;
     }
 
     /// <summary>
-    /// 补丁：在TheArchitect的DefineDialogues方法后添加盟军角色的对话
+    /// 补丁：在TheArchitect的DefineDialogues方法后添加盟军和苏军角色的对话
     /// </summary>
     [HarmonyPostfix]
     [HarmonyPatch(typeof(TheArchitect), "DefineDialogues")]
     public static void TheArchitectDefineDialoguesPostfix(AncientDialogueSet __result)
     {
-        string alliesCharacterId = GetAlliesCharacterEntry();
+        string alliesId = GetAlliesCharacterEntry();
+        var alliesDialogues = CreateDialogues(
+            (0, 4), (1, 4), (2, 4), (3, 4), (4, 4), (5, 4), (6, 4));
+        __result.CharacterDialogues[alliesId] = alliesDialogues;
+        GD.Print($"[ArchitectDialoguePatch] Allies: CharacterDialogues key='{alliesId}', dialogue count={alliesDialogues.Length}");
 
-        // 创建盟军角色的建筑师对话
-        var alliesDialogues = new[]
-        {
-            // 第1次访问
-            new AncientDialogue(["", "", ""])
-            {
-                VisitIndex = 0,
-                EndAttackers = ArchitectAttackers.Both
-            },
-            // 第2次访问
-            new AncientDialogue(["", "", ""])
-            {
-                VisitIndex = 1,
-                EndAttackers = ArchitectAttackers.Both
-            },
-            // 第3次访问
-            new AncientDialogue(["", "", ""])
-            {
-                VisitIndex = 2,
-                EndAttackers = ArchitectAttackers.Both
-            },
-            // 第4次访问
-            new AncientDialogue(["", "", ""])
-            {
-                VisitIndex = 3,
-                EndAttackers = ArchitectAttackers.Both
-            }
-        };
+        string sovietId = GetSovietCharacterEntry();
+        var sovietDialogues = CreateDialogues(
+            (0, 4), (1, 4), (2, 4), (3, 4), (4, 4), (5, 4), (6, 4));
+        __result.CharacterDialogues[sovietId] = sovietDialogues;
+        GD.Print($"[ArchitectDialoguePatch] Soviet: CharacterDialogues key='{sovietId}', dialogue count={sovietDialogues.Length}");
 
-        // 添加盟军角色的建筑师对话（使用实际的ModelId.Entry）
-        __result.CharacterDialogues[alliesCharacterId] = alliesDialogues;
+        GD.Print($"[ArchitectDialoguePatch] All CharacterDialogues keys: {string.Join(", ", __result.CharacterDialogues.Keys)}");
     }
 
     /// <summary>
-    /// 补丁：拦截GetValidDialogues方法，确保盟军角色的对话能被正确找到
+    /// 补丁：在LoadDialogues后打印选中的对话信息
     /// </summary>
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(AncientDialogueSet), nameof(AncientDialogueSet.GetValidDialogues))]
-    public static bool GetValidDialoguesPrefix(
-        AncientDialogueSet __instance,
-        ModelId characterId,
-        int charVisits,
-        int totalVisits,
-        bool allowAnyCharacterDialogues,
-        ref IEnumerable<AncientDialogue> __result)
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(TheArchitect), "LoadDialogue")]
+    public static void LoadDialoguePostfix(TheArchitect __instance)
     {
-        string alliesCharacterId = GetAlliesCharacterEntry();
-
-        // 如果不是盟军角色，执行原方法
-        if (characterId.Entry != alliesCharacterId)
+        try
         {
-            return true;
+            var dialogueField = typeof(TheArchitect).GetField("_dialogue",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var dialogue = dialogueField?.GetValue(__instance) as AncientDialogue;
+            if (dialogue != null)
+            {
+                int? visitIdx = dialogue.VisitIndex;
+                bool isRepeating = dialogue.IsRepeating;
+                int lineCount = dialogue.Lines?.Count ?? 0;
+                string firstLineKey = dialogue.Lines?[0]?.LineText?.LocEntryKey ?? "null";
+                GD.Print($"[ArchitectDialoguePatch] LoadDialogue result: VisitIndex={visitIdx}, IsRepeating={isRepeating}, Lines={lineCount}, FirstLineKey={firstLineKey}");
+            }
+            else
+            {
+                GD.Print($"[ArchitectDialoguePatch] LoadDialogue result: Dialogue is NULL!");
+            }
         }
-
-        // 尝试获取盟军角色的对话
-        if (!__instance.CharacterDialogues.TryGetValue(alliesCharacterId, out IReadOnlyList<AncientDialogue>? characterDialogues))
+        catch (System.Exception ex)
         {
-            return true;
+            GD.Print($"[ArchitectDialoguePatch] LoadDialoguePostfix error: {ex.Message}");
         }
+    }
 
-        // 查找匹配当前访问次数的对话
-        List<AncientDialogue> exactDialogues = characterDialogues
-            .Where(dialogue => dialogue.VisitIndex == charVisits)
-            .ToList();
-        if (exactDialogues.Count > 0)
+    /// <summary>
+    /// 补丁：在GetValidDialogues后打印返回的对话列表
+    /// </summary>
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(AncientDialogueSet), "GetValidDialogues")]
+    public static void GetValidDialoguesPostfix(AncientDialogueSet __instance, ModelId characterId, int charVisits, int totalVisits, IEnumerable<AncientDialogue> __result)
+    {
+        try
         {
-            __result = exactDialogues;
-            return false;
+            var list = __result?.ToList();
+            if (list != null && list.Count > 0)
+            {
+                GD.Print($"[ArchitectDialoguePatch] GetValidDialogues: charId={characterId.Entry}, charVisits={charVisits}, totalVisits={totalVisits}, result count={list.Count}, first VisitIndex={list[0].VisitIndex}");
+            }
+            else
+            {
+                GD.Print($"[ArchitectDialoguePatch] GetValidDialogues: charId={characterId.Entry}, charVisits={charVisits}, totalVisits={totalVisits}, result is EMPTY!");
+                // 打印所有可用的 CharacterDialogues 键
+                GD.Print($"[ArchitectDialoguePatch] Available CharacterDialogues keys: {string.Join(", ", __instance.CharacterDialogues.Keys)}");
+            }
         }
-
-        // 查找可重复的对话
-        List<AncientDialogue> repeatingDialogues = characterDialogues
-            .Where(dialogue => dialogue.IsRepeating
-                && (!dialogue.VisitIndex.HasValue || charVisits >= dialogue.VisitIndex.Value))
-            .ToList();
-        if (repeatingDialogues.Count > 0)
+        catch (System.Exception ex)
         {
-            __result = repeatingDialogues;
-            return false;
+            GD.Print($"[ArchitectDialoguePatch] GetValidDialoguesPostfix error: {ex.Message}");
         }
+    }
 
-        return true;
+    /// <summary>
+    /// 创建对话：同时设置VisitIndex（精确匹配）和IsRepeating（回退池）
+    /// PopulateLines只在JSON有r后缀时覆盖IsRepeating，C#中设为true不会被覆盖
+    /// </summary>
+    private static AncientDialogue[] CreateDialogues(params (int visitIndex, int lineCount)[] specs)
+    {
+        var list = new List<AncientDialogue>();
+        foreach (var (visitIndex, lineCount) in specs)
+        {
+            var lines = new string[lineCount];
+            for (int i = 0; i < lineCount; i++)
+                lines[i] = "";
+            list.Add(new AncientDialogue(lines)
+            {
+                VisitIndex = visitIndex,
+                IsRepeating = true,
+                EndAttackers = ArchitectAttackers.Both
+            });
+        }
+        return list.ToArray();
     }
 }

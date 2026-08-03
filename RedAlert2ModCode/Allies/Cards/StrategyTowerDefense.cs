@@ -45,6 +45,7 @@ public sealed class StrategyTowerDefense : CardModel
 	{
 		HoverTipFactory.FromPower<StrategyTowerDefensePower>(),
 		HoverTipFactory.FromCard<PrismTowerCard>(),
+		HoverTipFactory.FromPower<MegaCrit.Sts2.Core.Models.Powers.BlurPower>(),
 		HoverTipFactory.Static(StaticHoverTip.Block)
 	};
 

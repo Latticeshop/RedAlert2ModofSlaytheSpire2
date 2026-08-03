@@ -10,6 +10,9 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Allies.Powers;
+using RedAlert2ModCode.Common.Powers;
+using System.Linq;
 
 using STS2RitsuLib.Interop.AutoRegistration;
 
@@ -89,6 +92,15 @@ public sealed class FortifiedWall : CardModel
 
         // 获得护盾（坚固围墙格挡更高）
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);
+
+        // 检查是否拥有策略：塔防能力，且有光棱塔能力
+        var strategyTowerDefensePower = Owner.Creature.Powers.OfType<StrategyTowerDefensePower>().FirstOrDefault();
+        var prismTowerPower = Owner.Creature.Powers.OfType<PrismTowerPower>().FirstOrDefault();
+        if (strategyTowerDefensePower != null && prismTowerPower != null)
+        {
+            GD.Print($"[FortifiedWall] 拥有策略：塔防和光棱塔能力，获得1回合残影");
+            await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.BlurPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, 1m, Owner.Creature, this);
+        }
     }
 
     /// <summary>
