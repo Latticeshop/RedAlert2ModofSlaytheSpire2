@@ -4,13 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Godot;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.Cards;
+using MegaCrit.Sts2.Core.Nodes.HoverTips;
 using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.DeckConfig;
@@ -23,8 +26,8 @@ internal static class ModConfigPanel
     private const string LocTable = "characters";
     private const string OverlayName = "RedAlert2ModConfigOverlay";
     private const int OverlayZIndex = 1000;
-    private static readonly string[] FeatureIds = { "deck_config" };
-    private static string[] FeatureNames => new[] { L("CONFIG_FEATURE_DECK") };
+    private static readonly string[] FeatureIds = { "deck_config", "relic_config" };
+    private static string[] FeatureNames => new[] { L("CONFIG_FEATURE_DECK"), L("CONFIG_FEATURE_RELIC") };
     private static readonly MegaCrit.Sts2.Core.Logging.Logger Logger = new("ModConfigPanel", MegaCrit.Sts2.Core.Logging.LogType.Generic);
 
     private static Control? _layer;
@@ -43,6 +46,7 @@ internal static class ModConfigPanel
     private static string? _selectedCharacterId;
     private static CharacterConfig? _currentConfig;
     private static CardLibraryTab? _cardLibraryTab;
+    private static RelicLibraryTab? _relicLibraryTab;
 
     private static readonly Dictionary<string, Texture2D> _iconCache = new();
 
@@ -387,7 +391,7 @@ internal static class ModConfigPanel
     {
         var btn = new Button();
         btn.Text = text;
-        btn.CustomMinimumSize = new Vector2(180, 36);
+        btn.CustomMinimumSize = new Vector2(180, 44);
         btn.AddThemeFontSizeOverride("font_size", 14);
         btn.AddThemeColorOverride("font_color", StsColors.cream);
         btn.AddThemeColorOverride("font_hover_color", StsColors.gold);
@@ -412,6 +416,8 @@ internal static class ModConfigPanel
     private static void SwitchFeature(int index)
     {
         _activeFeature = index;
+        // 初始遗物配置页不显示基地车/幸运方块子页签
+        if (_subTabBar != null) _subTabBar.Visible = index == 0;
         UpdateSidebarHighlights();
         RefreshContent();
     }
@@ -475,14 +481,21 @@ internal static class ModConfigPanel
         // Update icon highlights
         UpdateCharacterIconHighlights();
 
-        switch (_activeSubTab)
+        switch (_activeFeature)
         {
-            case 0: BuildBaseCarModeContent(_contentContainer, config); break;
-            case 1: BuildLuckyCrateContent(_contentContainer, config); break;
+            case 0:
+                switch (_activeSubTab)
+                {
+                    case 0: BuildBaseCarModeContent(_contentContainer, config); break;
+                    case 1: BuildLuckyCrateContent(_contentContainer, config); break;
+                }
+                AddDivider(_contentContainer);
+                BuildCardPoolSection(_contentContainer, config);
+                break;
+            case 1:
+                BuildRelicConfigContent(_contentContainer, config);
+                break;
         }
-
-        AddDivider(_contentContainer);
-        BuildCardPoolSection(_contentContainer, config);
     }
 
     private static void UpdateCharacterInfo()
@@ -532,14 +545,8 @@ internal static class ModConfigPanel
                 {
                     if (c is Button btn && btn.CustomMinimumSize.X == 80 && btn.CustomMinimumSize.Y == 80)
                     {
-                        var bg = btn.GetThemeStylebox("normal") as StyleBoxFlat;
-                        if (bg != null)
-                        {
-                            bg.BgColor = isSelected
-                                ? new Color(0.30f, 0.25f, 0.10f, 0.95f)
-                                : new Color(0.15f, 0.12f, 0.18f, 0.9f);
-                            bg.BorderColor = isSelected ? StsColors.gold : new Color(0.45f, 0.40f, 0.30f, 0.5f);
-                        }
+                        // 重建 StyleBox（新实例触发重绘），保证当前角色长期显示黄色方框
+                        ApplyCharacterIconStyle(btn, isSelected);
                     }
                     if (c is Label nameLabel)
                     {
@@ -770,17 +777,13 @@ internal static class ModConfigPanel
 
         var iconBtn = new Button();
         iconBtn.CustomMinimumSize = new Vector2(80, 80);
-        iconBtn.Flat = true;
+        // 非 Flat 才会绘制 normal 边框；四态统一覆写，避免默认装饰
+        iconBtn.Flat = false;
+        // 去掉点击后的白色焦点框，只保留常驻的黄色选中方框
+        iconBtn.FocusMode = Control.FocusModeEnum.None;
         iconBtn.MouseFilter = Control.MouseFilterEnum.Stop;
 
-        var iconBg = new StyleBoxFlat();
-        iconBg.BgColor = isSelected
-            ? new Color(0.30f, 0.25f, 0.10f, 0.95f)
-            : new Color(0.15f, 0.12f, 0.18f, 0.9f);
-        iconBg.SetBorderWidthAll(2);
-        iconBg.BorderColor = isSelected ? StsColors.gold : new Color(0.45f, 0.40f, 0.30f, 0.5f);
-        iconBg.SetCornerRadiusAll(8);
-        iconBtn.AddThemeStyleboxOverride("normal", iconBg);
+        ApplyCharacterIconStyle(iconBtn, isSelected);
 
         var iconTexture = LoadCharacterIcon(character);
         if (iconTexture != null)
@@ -843,6 +846,22 @@ internal static class ModConfigPanel
         wrapper.AddChild(nameLabel);
 
         return wrapper;
+    }
+
+    private static void ApplyCharacterIconStyle(Button btn, bool isSelected)
+    {
+        var bg = new StyleBoxFlat();
+        bg.BgColor = isSelected
+            ? new Color(0.30f, 0.25f, 0.10f, 0.95f)
+            : new Color(0.15f, 0.12f, 0.18f, 0.9f);
+        bg.SetBorderWidthAll(2);
+        bg.BorderColor = isSelected ? StsColors.gold : new Color(0.45f, 0.40f, 0.30f, 0.5f);
+        bg.SetCornerRadiusAll(8);
+        // normal/hover/pressed/focus 统一，避免默认焦点框与悬停装饰
+        btn.AddThemeStyleboxOverride("normal", bg);
+        btn.AddThemeStyleboxOverride("hover", bg);
+        btn.AddThemeStyleboxOverride("pressed", bg);
+        btn.AddThemeStyleboxOverride("focus", bg);
     }
 
     private static Texture2D? LoadCharacterIcon(CharacterModel character)
@@ -977,6 +996,334 @@ internal static class ModConfigPanel
         }
     }
 
+    private static void BuildRelicConfigContent(VBoxContainer container, CharacterConfig config)
+    {
+        var header = CreateSectionHeader(L("CONFIG_RELIC_TITLE"));
+        container.AddChild(header);
+
+        var desc = new Label();
+        desc.Text = L("CONFIG_RELIC_DESC");
+        desc.AddThemeFontSizeOverride("font_size", 13);
+        desc.AddThemeColorOverride("font_color", StsColors.gray);
+        desc.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+        container.AddChild(desc);
+
+        var toggleRow = new HBoxContainer();
+        toggleRow.AddThemeConstantOverride("separation", 12);
+        container.AddChild(toggleRow);
+
+        var toggleLabel = new Label();
+        toggleLabel.Text = L("CONFIG_RELIC_ENABLE");
+        toggleLabel.AddThemeFontSizeOverride("font_size", 15);
+        toggleLabel.AddThemeColorOverride("font_color", StsColors.cream);
+        toggleRow.AddChild(toggleLabel);
+
+        var enableBtn = CreateToggleButton(config.EnableCustomRelics,
+            config.EnableCustomRelics ? L("CONFIG_ENABLED") : L("CONFIG_DISABLED"));
+        enableBtn.Pressed += () =>
+        {
+            config.EnableCustomRelics = !config.EnableCustomRelics;
+            ModConfigManager.UpdateCharacterConfig(config);
+            RefreshContent();
+        };
+        toggleRow.AddChild(enableBtn);
+
+        AddDivider(container);
+
+        var currentLabel = new Label();
+        currentLabel.Text = L("CONFIG_RELIC_CURRENT", config.StartingRelicTypes.Count);
+        currentLabel.AddThemeFontSizeOverride("font_size", 14);
+        currentLabel.AddThemeColorOverride("font_color", StsColors.gold);
+        container.AddChild(currentLabel);
+
+        if (config.StartingRelicTypes.Count == 0)
+        {
+            var emptyLabel = new Label();
+            emptyLabel.Text = L("CONFIG_RELIC_EMPTY");
+            emptyLabel.AddThemeFontSizeOverride("font_size", 13);
+            emptyLabel.AddThemeColorOverride("font_color", StsColors.gray);
+            container.AddChild(emptyLabel);
+        }
+        else
+        {
+            var relicCounts = new Dictionary<string, int>();
+            foreach (var relicType in config.StartingRelicTypes)
+            {
+                relicCounts.TryGetValue(relicType, out int count);
+                relicCounts[relicType] = count + 1;
+            }
+
+            var flow = new FlowContainer();
+            flow.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+            flow.AddThemeConstantOverride("h_separation", 6);
+            flow.AddThemeConstantOverride("v_separation", 6);
+            container.AddChild(flow);
+
+            foreach (var (relicTypeName, count) in relicCounts)
+            {
+                flow.AddChild(CreateRelicConfigTile(config, relicTypeName, count));
+            }
+        }
+
+        var hintLabel = new Label();
+        hintLabel.Text = L("CONFIG_RELIC_REMOVE_HINT");
+        hintLabel.AddThemeFontSizeOverride("font_size", 11);
+        hintLabel.AddThemeColorOverride("font_color", StsColors.gray);
+        container.AddChild(hintLabel);
+
+        var btnRow = new HBoxContainer();
+        btnRow.AddThemeConstantOverride("separation", 10);
+        btnRow.Alignment = BoxContainer.AlignmentMode.Center;
+        container.AddChild(btnRow);
+
+        var libraryBtn = CreateActionButton(L("CONFIG_RELIC_LIBRARY"), StsColors.gold);
+        libraryBtn.CustomMinimumSize = new Vector2(150, 36);
+        libraryBtn.Pressed += () => OpenRelicLibrary(config);
+        btnRow.AddChild(libraryBtn);
+
+        if (config.StartingRelicTypes.Count > 0)
+        {
+            var clearBtn = CreateActionButton(L("CONFIG_CLEAR_RELICS"), StsColors.red);
+            clearBtn.CustomMinimumSize = new Vector2(120, 36);
+            clearBtn.Pressed += () =>
+            {
+                config.StartingRelicTypes.Clear();
+                ModConfigManager.UpdateCharacterConfig(config);
+                RefreshContent();
+            };
+            btnRow.AddChild(clearBtn);
+        }
+
+        var saveBtn = CreateActionButton(L("CONFIG_SAVE"), StsColors.green);
+        saveBtn.CustomMinimumSize = new Vector2(120, 36);
+        saveBtn.Pressed += () =>
+        {
+            ShowConfirmDialog(
+                L("CONFIG_CONFIRM_SAVE_TITLE"),
+                L("CONFIG_CONFIRM_SAVE_DESC"),
+                () =>
+                {
+                    ModConfigManager.Save();
+                    ShowNotification(L("CONFIG_SAVED"));
+                });
+        };
+        btnRow.AddChild(saveBtn);
+    }
+
+    private static Control CreateRelicConfigTile(CharacterConfig config, string relicTypeName, int count)
+    {
+        var tile = new Control();
+        tile.CustomMinimumSize = new Vector2(56, 56);
+        tile.MouseFilter = Control.MouseFilterEnum.Stop;
+        tile.MouseDefaultCursorShape = Control.CursorShape.PointingHand;
+
+        var relicModel = GetRelicModelByTypeName(relicTypeName);
+        if (relicModel != null)
+        {
+            try
+            {
+                var icon = new TextureRect();
+                icon.Texture = relicModel.Icon;
+                icon.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
+                icon.ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize;
+                icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
+                icon.MouseFilter = Control.MouseFilterEnum.Ignore;
+                tile.AddChild(icon);
+            }
+            catch { }
+        }
+
+        // 边框
+        var frame = new PanelContainer();
+        frame.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
+        frame.MouseFilter = Control.MouseFilterEnum.Ignore;
+        var style = new StyleBoxFlat();
+        style.BgColor = new Color(0, 0, 0, 0f);
+        style.SetBorderWidthAll(2);
+        style.BorderColor = new Color(0.35f, 0.30f, 0.25f, 0.5f);
+        style.SetCornerRadiusAll(4);
+        frame.AddThemeStyleboxOverride("panel", style);
+        tile.AddChild(frame);
+
+        if (count > 1)
+        {
+            var countLabel = new Label();
+            countLabel.Text = $"×{count}";
+            countLabel.AddThemeFontSizeOverride("font_size", 10);
+            countLabel.AddThemeColorOverride("font_color", StsColors.gold);
+            countLabel.AnchorLeft = 0f;
+            countLabel.AnchorRight = 0f;
+            countLabel.AnchorTop = 0f;
+            countLabel.AnchorBottom = 0f;
+            countLabel.OffsetLeft = 3;
+            countLabel.OffsetTop = 1;
+            tile.AddChild(countLabel);
+        }
+
+        // 右上角小 ✕ 删除按钮（与卡牌模型一致）
+        var removeBtn = new Button();
+        removeBtn.Text = "✕";
+        removeBtn.AnchorLeft = 1f;
+        removeBtn.AnchorRight = 1f;
+        removeBtn.AnchorTop = 0f;
+        removeBtn.AnchorBottom = 0f;
+        removeBtn.OffsetLeft = -13;
+        removeBtn.OffsetRight = -3;
+        removeBtn.OffsetTop = 2;
+        removeBtn.OffsetBottom = 12;
+        removeBtn.AddThemeFontSizeOverride("font_size", 8);
+        removeBtn.AddThemeColorOverride("font_color", StsColors.gray);
+        removeBtn.AddThemeColorOverride("font_hover_color", StsColors.red);
+        removeBtn.FocusMode = Control.FocusModeEnum.None;
+        removeBtn.AddThemeStyleboxOverride("normal", CreateStyleBox(
+            new Color(0.08f, 0.06f, 0.10f, 0.85f), new Color(0.35f, 0.30f, 0.25f, 0.5f)));
+        removeBtn.AddThemeStyleboxOverride("hover", CreateStyleBox(
+            new Color(0.25f, 0.10f, 0.12f, 0.95f), StsColors.red));
+        removeBtn.Pressed += () => RemoveRelicFromConfig(config, relicTypeName);
+        tile.AddChild(removeBtn);
+
+        // 左键查看详情，右键移除
+        tile.GuiInput += (InputEvent ev) =>
+        {
+            if (ev is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Left })
+            {
+                tile.GetViewport()?.SetInputAsHandled();
+                ShowRelicDetails(relicTypeName);
+            }
+            else if (ev is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Right })
+            {
+                tile.GetViewport()?.SetInputAsHandled();
+                RemoveRelicFromConfig(config, relicTypeName);
+            }
+        };
+
+        // 悬停显示遗物详情
+        tile.MouseEntered += () =>
+        {
+            try
+            {
+                var relic = GetRelicModelByTypeName(relicTypeName);
+                if (relic != null) ShowRelicHoverTips(tile, relic);
+            }
+            catch { }
+        };
+        tile.MouseExited += () => NHoverTipSet.Remove(tile);
+
+        return tile;
+    }
+
+    private static void ShowRelicHoverTips(Control owner, RelicModel relic)
+    {
+        try
+        {
+            var tipSet = NHoverTipSet.CreateAndShow(owner, relic.HoverTips, HoverTipAlignment.Left);
+            if (tipSet != null && GodotObject.IsInstanceValid(tipSet))
+            {
+                tipSet.GetParent()?.RemoveChild(tipSet);
+                UiLayers.GetHoverTipLayer().AddChild(tipSet);
+            }
+        }
+        catch { }
+    }
+
+    private static void RemoveRelicFromConfig(CharacterConfig config, string relicTypeName)
+    {
+        string? firstMatch = config.StartingRelicTypes.FirstOrDefault(t => t == relicTypeName);
+        if (firstMatch != null)
+        {
+            config.StartingRelicTypes.Remove(firstMatch);
+            ModConfigManager.UpdateCharacterConfig(config);
+            RefreshContent();
+        }
+    }
+
+    private static void OpenRelicLibrary(CharacterConfig config)
+    {
+        _relicLibraryTab = new RelicLibraryTab(config, () => RefreshContent());
+        _relicLibraryTab.Show();
+    }
+
+    private static string GetRelicDisplayName(string relicTypeName)
+    {
+        try
+        {
+            var relicModel = GetRelicModelByTypeName(relicTypeName);
+            if (relicModel != null)
+            {
+                try { return relicModel.Title.GetFormattedText(); }
+                catch { }
+            }
+        }
+        catch { }
+        return relicTypeName;
+    }
+
+    private static RelicModel? GetRelicModelByTypeName(string relicTypeName)
+    {
+        try
+        {
+            var type = FindTypeInAllAssemblies(relicTypeName);
+            if (type != null)
+            {
+                var relicMethod = typeof(ModelDb).GetMethods()
+                    .FirstOrDefault(m => m.Name == "Relic" && m.IsGenericMethodDefinition);
+                if (relicMethod != null)
+                {
+                    var genericMethod = relicMethod.MakeGenericMethod(type);
+                    return genericMethod.Invoke(null, null) as RelicModel;
+                }
+            }
+        }
+        catch { }
+        return null;
+    }
+
+    private static void ShowRelicDetails(string relicTypeName)
+    {
+        try
+        {
+            var relic = GetRelicModelByTypeName(relicTypeName);
+            if (relic == null) return;
+            var allRelics = new List<RelicModel>();
+            try
+            {
+                foreach (var r in ModelDb.AllRelics) allRelics.Add(r);
+            }
+            catch { }
+            if (allRelics.Count == 0) allRelics.Add(relic);
+            NGame.Instance?.GetInspectRelicScreen()?.Open(allRelics, relic);
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"[ModConfig] ShowRelicDetails 失败: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// 遗物检视页打开时，临时降低配置面板层级，避免盖住详情页。
+    /// </summary>
+    public static void OnInspectScreenOpened()
+    {
+        if (_layer != null && GodotObject.IsInstanceValid(_layer))
+        {
+            _layer.ZIndex = -1;
+            // 隐藏配置面板，让点击任意位置都落到详情页背板，点击即可关闭
+            _layer.Visible = false;
+        }
+    }
+
+    /// <summary>
+    /// 遗物检视页关闭后恢复配置面板层级。
+    /// </summary>
+    public static void OnInspectScreenClosed()
+    {
+        if (_layer != null && GodotObject.IsInstanceValid(_layer))
+        {
+            _layer.ZIndex = OverlayZIndex;
+            _layer.Visible = true;
+        }
+    }
+
     private static void ShowCustomDeckEditor(VBoxContainer container, CharacterConfig config)
     {
         var currentDeckLabel = new Label();
@@ -995,11 +1342,14 @@ internal static class ModConfigPanel
         }
         else
         {
-            var cardCounts = new Dictionary<string, int>();
-            foreach (var cardType in config.CustomDeckCardTypes)
+            // 升级卡与未升级同名卡分开统计（各自独立叠加）
+            var cardCounts = new Dictionary<(string TypeName, bool Upgraded), int>();
+            foreach (var entry in config.CustomDeckCardTypes)
             {
-                cardCounts.TryGetValue(cardType, out int count);
-                cardCounts[cardType] = count + 1;
+                string typeName = ModConfigManager.DecodeCardType(entry, out bool upgraded);
+                var key = (typeName, upgraded);
+                cardCounts.TryGetValue(key, out int count);
+                cardCounts[key] = count + 1;
             }
 
             var flowContainer = new VBoxContainer();
@@ -1007,17 +1357,17 @@ internal static class ModConfigPanel
             flowContainer.AddThemeConstantOverride("separation", 6);
             container.AddChild(flowContainer);
 
-            var row = new HBoxContainer();
-            row.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-            row.AddThemeConstantOverride("separation", 8);
+            // 卡牌按容器宽度自动换行（不再固定每行5张）
+            var cardsFlow = new FlowContainer();
+            cardsFlow.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+            cardsFlow.AddThemeConstantOverride("h_separation", 8);
+            cardsFlow.AddThemeConstantOverride("v_separation", 6);
+            flowContainer.AddChild(cardsFlow);
 
-            int itemsInRow = 0;
-            int maxPerRow = 5;
-
-            foreach (var (cardType, count) in cardCounts.OrderByDescending(kv => kv.Value))
+            foreach (var ((typeName, upgraded), count) in cardCounts.OrderByDescending(kv => kv.Value))
             {
-                string displayName = GetCardDisplayName(cardType);
-                var cardModel = GetCardModelByTypeName(cardType);
+                string displayName = GetCardDisplayName(typeName) + (upgraded ? " +" : "");
+                var cardModel = GetCardModelByTypeName(typeName);
 
                 var cardThumb = new VBoxContainer();
                 cardThumb.Alignment = BoxContainer.AlignmentMode.Center;
@@ -1037,6 +1387,10 @@ internal static class ModConfigPanel
                     try
                     {
                         var displayCard = cardModel.IsMutable ? cardModel : cardModel.ToMutable();
+                        if (upgraded && !displayCard.IsUpgraded)
+                        {
+                            CardCmd.Upgrade(displayCard);
+                        }
                         var nCard = NCard.Create(displayCard);
                         if (nCard != null)
                         {
@@ -1083,21 +1437,23 @@ internal static class ModConfigPanel
                 removeBtn.AnchorRight = 1f;
                 removeBtn.AnchorTop = 0f;
                 removeBtn.AnchorBottom = 0f;
-                removeBtn.OffsetLeft = -16;
-                removeBtn.OffsetRight = -6;
+                removeBtn.OffsetLeft = -21;
+                removeBtn.OffsetRight = -11;
                 removeBtn.OffsetTop = 3;
                 removeBtn.OffsetBottom = 13;
                 removeBtn.AddThemeFontSizeOverride("font_size", 9);
-                removeBtn.AddThemeColorOverride("font_color", StsColors.red);
-                removeBtn.AddThemeColorOverride("font_hover_color", StsColors.cream);
+                // 与遗物 X 按钮一致：未聚焦灰色，聚焦红色高亮
+                removeBtn.AddThemeColorOverride("font_color", StsColors.gray);
+                removeBtn.AddThemeColorOverride("font_hover_color", StsColors.red);
                 removeBtn.AddThemeStyleboxOverride("normal", CreateStyleBox(
-                    new Color(0.08f, 0.06f, 0.10f, 0.85f), StsColors.red));
+                    new Color(0.08f, 0.06f, 0.10f, 0.85f), new Color(0.35f, 0.30f, 0.25f, 0.5f)));
                 removeBtn.AddThemeStyleboxOverride("hover", CreateStyleBox(
                     new Color(0.25f, 0.10f, 0.12f, 0.95f), StsColors.red));
                 removeBtn.AddThemeStyleboxOverride("pressed", CreateStyleBox(
                     new Color(0.08f, 0.06f, 0.10f, 0.95f), new Color("B89840")));
                 removeBtn.FocusMode = Control.FocusModeEnum.None;
-                string capturedRemoveType = cardType;
+                string encodedEntry = ModConfigManager.EncodeCardType(typeName, upgraded);
+                string capturedRemoveType = encodedEntry;
                 removeBtn.Pressed += () => RemoveDeckCard(config, capturedRemoveType);
                 clip.AddChild(removeBtn);
 
@@ -1119,7 +1475,7 @@ internal static class ModConfigPanel
 
                 cardThumb.AddChild(infoRow);
 
-                string capturedType = cardType;
+                string capturedType = encodedEntry;
                 cardThumb.GuiInput += (InputEvent ev) =>
                 {
                     if (ev is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Right })
@@ -1129,22 +1485,7 @@ internal static class ModConfigPanel
                     }
                 };
 
-                row.AddChild(cardThumb);
-                itemsInRow++;
-
-                if (itemsInRow >= maxPerRow)
-                {
-                    flowContainer.AddChild(row);
-                    row = new HBoxContainer();
-                    row.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-                    row.AddThemeConstantOverride("separation", 8);
-                    itemsInRow = 0;
-                }
-            }
-
-            if (itemsInRow > 0)
-            {
-                flowContainer.AddChild(row);
+                cardsFlow.AddChild(cardThumb);
             }
 
             var hintLabel = new Label();
@@ -1291,9 +1632,9 @@ internal static class ModConfigPanel
         _cardLibraryTab.Show();
     }
 
-    internal static void AddCardToDeck(CharacterConfig config, string cardTypeName)
+    internal static void AddCardToDeck(CharacterConfig config, string cardTypeName, bool upgraded = false)
     {
-        config.CustomDeckCardTypes.Add(cardTypeName);
+        config.CustomDeckCardTypes.Add(ModConfigManager.EncodeCardType(cardTypeName, upgraded));
         ModConfigManager.UpdateCharacterConfig(config);
     }
 

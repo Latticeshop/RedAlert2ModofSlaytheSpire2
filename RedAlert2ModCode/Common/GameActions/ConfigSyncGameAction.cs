@@ -27,6 +27,10 @@ public class ConfigSyncGameAction : GameAction
 
     public List<string> CustomDeckCardTypes { get; }
 
+    public bool EnableCustomRelics { get; }
+
+    public List<string> StartingRelicTypes { get; }
+
     public string BaseCarMode { get; }
 
     public bool LuckyCrateMode { get; }
@@ -39,6 +43,8 @@ public class ConfigSyncGameAction : GameAction
         CharacterId = config.CharacterId;
         EnableCustomDeck = config.EnableCustomDeck;
         CustomDeckCardTypes = new List<string>(config.CustomDeckCardTypes);
+        EnableCustomRelics = config.EnableCustomRelics;
+        StartingRelicTypes = new List<string>(config.StartingRelicTypes);
         BaseCarMode = config.BaseCarMode.ToString();
         LuckyCrateMode = config.LuckyCrateMode;
         CratePoolMode = config.CratePoolMode.ToString();
@@ -49,6 +55,8 @@ public class ConfigSyncGameAction : GameAction
         string characterId,
         bool enableCustomDeck,
         List<string> customDeckCardTypes,
+        bool enableCustomRelics,
+        List<string> startingRelicTypes,
         string baseCarMode,
         bool luckyCrateMode,
         string cratePoolMode)
@@ -57,6 +65,8 @@ public class ConfigSyncGameAction : GameAction
         CharacterId = characterId;
         EnableCustomDeck = enableCustomDeck;
         CustomDeckCardTypes = customDeckCardTypes ?? new List<string>();
+        EnableCustomRelics = enableCustomRelics;
+        StartingRelicTypes = startingRelicTypes ?? new List<string>();
         BaseCarMode = baseCarMode;
         LuckyCrateMode = luckyCrateMode;
         CratePoolMode = cratePoolMode;
@@ -69,6 +79,8 @@ public class ConfigSyncGameAction : GameAction
             CharacterId = CharacterId,
             EnableCustomDeck = EnableCustomDeck,
             CustomDeckCardTypes = new List<string>(CustomDeckCardTypes),
+            EnableCustomRelics = EnableCustomRelics,
+            StartingRelicTypes = new List<string>(StartingRelicTypes),
             LuckyCrateMode = LuckyCrateMode,
             CratePoolMode = RedAlert2ModCode.DeckConfig.CratePoolMode.None,
         };
@@ -91,6 +103,8 @@ public class ConfigSyncGameAction : GameAction
             characterId = CharacterId,
             enableCustomDeck = EnableCustomDeck,
             customDeckCardTypes = CustomDeckCardTypes,
+            enableCustomRelics = EnableCustomRelics,
+            startingRelicTypes = StartingRelicTypes,
             baseCarMode = BaseCarMode,
             luckyCrateMode = LuckyCrateMode,
             cratePoolMode = CratePoolMode,

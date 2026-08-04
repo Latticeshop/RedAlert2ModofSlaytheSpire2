@@ -46,6 +46,15 @@ public static class FlagManager
 
 	public static Faction GetPlayerFaction(Player player)
 	{
+		return GetNativePlayerFaction(player);
+	}
+
+	/// <summary>
+	/// 角色原生阵营（仅按角色判断，不受基地车模式覆盖影响）。
+	/// 国旗选择等逻辑必须用原生阵营判断"同阵营/跨阵营"，避免 FactionPatch 把非RA2角色误判成基地车阵营。
+	/// </summary>
+	public static Faction GetNativePlayerFaction(Player player)
+	{
 		string? charId = player.Character?.Id?.Entry;
 		GD.Print($"[RedAlert2Mod] GetPlayerFaction: charId={charId}");
 		if (charId == null) return Faction.None;
@@ -114,6 +123,15 @@ public static class FlagManager
 	{
 		var allFlags = AlliedFlags.Concat(SovietFlags).Concat(YuriFlags);
 		return player.Relics.Any(r => allFlags.Contains(r.GetType()));
+	}
+
+	/// <summary>
+	/// 玩家是否已拥有指定阵营的国旗（用于跨阵营基地车时补授另一阵营国旗）。
+	/// </summary>
+	public static bool PlayerHasFlag(Player player, Faction faction)
+	{
+		List<Type> flags = GetFlagsForFaction(faction);
+		return player.Relics.Any(r => flags.Contains(r.GetType()));
 	}
 
 	public static bool HasFlag(Player player, Type flagType)

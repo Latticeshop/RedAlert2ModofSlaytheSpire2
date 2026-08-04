@@ -564,14 +564,25 @@ internal class CardLibraryTab
             if (ev is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Left })
             {
                 clip.GetViewport()?.SetInputAsHandled();
-                AddCardToDeck(card);
+                AddCardToDeck(card, false);
             }
         };
 
-        var addBtn = CreateActionButton("➕ 添加", StsColors.gold);
-        addBtn.CustomMinimumSize = new Vector2(90, 28);
-        addBtn.Pressed += () => AddCardToDeck(card);
-        cell.AddChild(addBtn);
+        // 添加 / 升级 两个按钮并排（各占一半）
+        var addRow = new HBoxContainer();
+        addRow.AddThemeConstantOverride("separation", 4);
+        addRow.Alignment = BoxContainer.AlignmentMode.Center;
+        cell.AddChild(addRow);
+
+        var addBtn = CreateActionButton("＋ 添加", StsColors.gold);
+        addBtn.CustomMinimumSize = new Vector2(72, 28);
+        addBtn.Pressed += () => AddCardToDeck(card, false);
+        addRow.AddChild(addBtn);
+
+        var upgradeBtn = CreateActionButton("＋ 升级", StsColors.gold);
+        upgradeBtn.CustomMinimumSize = new Vector2(72, 28);
+        upgradeBtn.Pressed += () => AddCardToDeck(card, true);
+        addRow.AddChild(upgradeBtn);
 
         return cell;
     }
@@ -589,11 +600,11 @@ internal class CardLibraryTab
         card.Position = new Vector2(clip.Size.X / 2f, clip.Size.Y / 2f);
     }
 
-    private void AddCardToDeck(CardModel card)
+    private void AddCardToDeck(CardModel card, bool upgraded)
     {
         string typeName = card.GetType().Name;
-        ModConfigPanel.AddCardToDeck(_config, typeName);
-        ShowNotification($"已添加: {GetCardTitle(card)}");
+        ModConfigPanel.AddCardToDeck(_config, typeName, upgraded);
+        ShowNotification($"已添加: {GetCardTitle(card)}" + (upgraded ? "（升级）" : ""));
         RefreshContent();
     }
 
@@ -717,7 +728,7 @@ internal class CardLibraryTab
             if (tipSet != null && GodotObject.IsInstanceValid(tipSet))
             {
                 tipSet.GetParent()?.RemoveChild(tipSet);
-                NGame.Instance?.AddChild(tipSet);
+                UiLayers.GetHoverTipLayer().AddChild(tipSet);
             }
         }
         catch { }

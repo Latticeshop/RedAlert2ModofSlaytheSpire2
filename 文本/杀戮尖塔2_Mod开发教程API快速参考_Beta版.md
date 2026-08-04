@@ -3208,6 +3208,130 @@ res://images/atlases/vfx_atlas.sprites/<特效名称>.tres
 
 ---
 
+## 🗂️ Mod配置面板：自定义初始卡组 / 初始遗物 / 基地车 / 幸运方块
+
+本 mod 的配置面板（主菜单按钮进入）提供按角色（Character）独立配置的四个功能：
+自定义初始卡组、自定义初始遗物、基地车模式、幸运方块模式，以及卡池奖励模式。
+所有配置以 JSON 保存，**多人模式下按玩家 NetId 独立同步与应用**。
+
+### 功能总览
+
+| 配置项 | 作用 | 主要实现位置 |
+|---|---|---|
+| 自定义初始卡组 | 开局用自选卡牌替换默认初始卡组 | `CardLibraryTab.cs` / `InitialDeckPatch.ApplyConfigToPlayer` |
+| 自定义初始遗物 | 开局用自选遗物替换默认初始遗物 | `RelicLibraryTab.cs` / `InitialDeckPatch.ApplyCustomRelics` |
+| 基地车模式 | 追加基地车卡 + 补刀乐遗物 + 触发对应阵营国旗事件 | `ModConfigPatches.ApplyBaseCarMode` / `FlagSelectionPatches` |
+| 幸运方块模式 | 初始卡组替换为箱子卡组（可与自定义卡组叠加） | `InitialDeckPatch.CreateLuckyCrateDeck` |
+| 卡池奖励模式 | 控制箱子卡是否进入卡牌奖励 | `CratePoolHelper` / `CardRewardCratePatch` |
+
+### 配置数据模型（CharacterConfig）
+
+配置按角色 ID 保存于 `RedAlert2ModConfig.json`：
+
+```json
+{
+  "characters": {
+    "RED_ALERT2_MOD_CHARACTER_ALLIES": {
+      "customDeckCardTypes": ["Strike", "Defend:U"],
+      "enableCustomDeck": true,
+      "startingRelicTypes": ["IvoryTile", "OrnamentalFan"],
+      "enableCustomRelics": true,
+      "baseCarMode": "Soviet",
+      "luckyCrateMode": false,
+      "cratePoolMode": "None"
+    }
+  }
+}
+```
+
+要点：
+- `customDeckCardTypes` 存卡牌**类型名**（`Type.Name`）；升级卡以 **`类型名:U`** 后缀标记，与未升级同名卡**分开独立叠加**（各按数量合并）。
+- `startingRelicTypes` 存遗物类型名，同样支持 `:U` 无关（遗物没有升级，纯类型名）。
+- 互斥规则：`baseCarMode != None` 时自动关闭 `luckyCrateMode`；`luckyCrateMode = true` 时把 `baseCarMode` 置为 `None`（由 `CharacterConfig` 属性 setter 统一保证）。
+
+### 自定义初始卡组
+
+**卡牌库 UI（`CardLibraryTab.cs`）**：
+- 每张卡下方两个并排按钮：`＋ 添加`（左）与 `＋ 升级`（右），点击卡牌本身 = 普通添加。
+- 升级条目写入配置时编码为 `类型名:U`。
+- 筛选：类型（默认开启攻击/技能/能力）、角色（默认不选中=不过滤；选中后严格过滤）、通用；未选任何项时显示空态提示。
+- NCard 从对象池复用时 `Ready` 信号不会再次触发，需在 `IsNodeReady()` 时立即 `UpdateVisuals`，否则残留上一张卡文案。
+
+**开局应用（`InitialDeckPatch` → `ApplyConfigToPlayer`）**：
+```csharp
+player.Deck.Clear(silent: true);
+foreach (CardModel card in replacement) {
+    card.FloorAddedToDeck = 1;
+    player.Deck.AddInternal(card, -1, true);
+    if (runState != null) runState.AddCard(card, player); // 多人延迟应用时注册 Owner，避免 Hook 遍历 NRE
+}
+```
+- 单机：在 `Player.PopulateStartingInventory` 的 Postfix 应用（`CreateShared` 会统一赋 Owner，**不要**预置 Owner）。
+- 多人：开局同步完成后由 `RunStartPatch.ApplyConfigsAfterSyncAsync` 统一应用，需用 `runState.AddCard(card, player)` 注册。
+- 升级条目在 `CreateCustomDeck` 中通过 `CardCmd.Upgrade(card)` 生成真正升级版卡牌。
+
+### 自定义初始遗物
+
+**遗物库 UI（`RelicLibraryTab.cs`）**：
+- 按原版百科分组：初始/普通/罕见/稀有/商店/先古/事件，外加各 mod 专属池（按遗物池类型分组的 `专属 · xxx` 栏）。
+- 点击图标添加/移除（右键取消选中），已添加显示金色边框 + 数量角标；悬停显示遗物 tooltip（挂到共享顶层 CanvasLayer 105）。
+- 详情：点击已配置遗物打开游戏原生遗物检视页：`NGame.Instance.GetInspectRelicScreen().Open(relics, relic)`。
+
+**开局应用（`ApplyCustomRelics`）**：清空默认遗物后按配置 `player.AddRelicInternal(relic, -1, true)`（该方法自带 `relic.Owner = player`），并 `MarkRelicAsSeen`。
+
+### 基地车模式
+
+规则（按角色**原生阵营**判断，`FlagManager.GetNativePlayerFaction`）：
+
+| 角色原生阵营 | 基地车选择 | 效果 |
+|---|---|---|
+| 盟军 | 无 / 盟军 | 盟军：原生旗 + 同阵营重复一轮旗 + 额外一张盟军MCV + 缺刀乐则补 |
+| 盟军 | 苏军 | 原生盟军旗 + 苏军旗 + 苏军MCV + 刀乐 |
+| 苏军 | 盟军 | 对称 |
+| 任意 | 尤里 | 仅授予尤里旗（不加MCV/刀乐） |
+| 战士等非RA2 | 苏军/盟军 | 仅基地车阵营旗一次 |
+
+实现：
+- MCV 卡通过 `Deck.AddInternal` 加入（同阵营也加，2 张）；跨阵营 MCV 无本阵营建筑时，打出后自动回手牌（防空选择界面卡死）。
+- 刀乐：`!player.Relics.Any(r => r is DollarRelic)` 时补授（自定义遗物替换后仍会补）。
+- 国旗事件：单机 = 原生轮 + 基地车轮顺序执行；**多人 = 两轮都走 `PlayerChoiceSynchronizer` 同步**（`EnsureFlagsSelectedMultiplayer`，原生轮 + `baseCarRound: true` 第二轮），并带"每局每玩家每阵营只授一次"守卫（同阵营重复轮除外）。
+
+### 幸运方块模式
+
+- 初始卡组替换为：随机箱子×5，回血/士兵/载具/海军/空军箱子各×1（共 10 张）。
+- 与自定义初始卡组叠加：箱子卡 + 自定义卡。
+- 与基地车模式互斥（见配置模型）。
+
+### 卡池奖励模式（CratePoolMode）
+
+- 箱子卡属于角色默认卡池，`AlliesCardPool` / `SovietCardPool` 的 `AllCards` 始终包含（不再按模式过滤）。
+- `AllCrates`（奖励只有箱子）：仅**战斗结束卡牌奖励**（`CardCreationOptions.ForRoom` 的 Encounter 来源）替换为纯箱子卡；商店/事件保持默认池。
+- `AddCrates`（奖励加入箱子）：通过补丁 `CardCreationOptions.GetPossibleCards` 在奖励候选中混入箱子卡（`Distinct` 去重），原版角色也生效。
+
+### 联机同步（配置按 NetId）
+
+- 载荷：`NetConfigSyncAction`（INetAction，游戏自动反射注册）携带 角色ID/卡组/遗物/基地车/幸运方块/奖励模式；`ConfigSyncGameAction.ExecuteAction` 调 `ModConfigManager.SetRemoteCharacterConfig(NetId, config)`。
+- 触发：开局 `RunManager.SetUpNewMultiplayer` Postfix 广播本机配置；配置保存时也尝试广播（两局之间动作队列不存在时静默失败，本机保存仍生效，下一局广播带上）。
+- 应用：`ApplyConfigsAfterSyncAsync` 持续等待（战斗开始前）各玩家配置到位，**本机玩家用本机最新配置，远端玩家用同步配置**（避免 `_remoteConfigs` 过期副本导致"卡牌生效遗物不生效"）。
+- 离开大厅时清空 `_remoteConfigs`，避免跨会话串配置。
+
+### 关键文件索引
+
+```
+RedAlert2ModCode/DeckConfig/ModConfigManager.cs   # 配置模型/JSON/同步
+RedAlert2ModCode/DeckConfig/ModConfigPanel.cs     # 配置面板 UI + 卡组/遗物编辑器
+RedAlert2ModCode/DeckConfig/CardLibraryTab.cs     # 卡牌库
+RedAlert2ModCode/DeckConfig/RelicLibraryTab.cs    # 遗物库
+RedAlert2ModCode/DeckConfig/ModConfigPatches.cs   # 开局应用/基地车/奖励/联机应用
+RedAlert2ModCode/Common/Patches/FlagSelectionPatches.cs # 国旗事件（含多人同步轮）
+RedAlert2ModCode/Common/Utils/FlagManager.cs      # 阵营/国旗工具
+RedAlert2ModCode/Common/Utils/CratePoolHelper.cs  # 箱子卡池辅助
+RedAlert2ModCode/Common/Utils/UiLayers.cs         # 共享顶层 UI 层（悬浮提示等）
+RedAlert2ModCode/Common/GameActions/NetConfigSyncAction.cs / ConfigSyncGameAction.cs # 配置同步动作
+```
+
+---
+
 ## ⚠️ 常见问题
 
 ### 📋 游戏日志路径

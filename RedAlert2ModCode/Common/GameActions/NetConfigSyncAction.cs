@@ -14,6 +14,8 @@ public struct NetConfigSyncAction : INetAction, IPacketSerializable
     public string characterId;
     public bool enableCustomDeck;
     public List<string> customDeckCardTypes;
+    public bool enableCustomRelics;
+    public List<string> startingRelicTypes;
     public string baseCarMode;
     public bool luckyCrateMode;
     public string cratePoolMode;
@@ -25,6 +27,8 @@ public struct NetConfigSyncAction : INetAction, IPacketSerializable
             characterId,
             enableCustomDeck,
             customDeckCardTypes ?? new List<string>(),
+            enableCustomRelics,
+            startingRelicTypes ?? new List<string>(),
             baseCarMode,
             luckyCrateMode,
             cratePoolMode);
@@ -42,6 +46,15 @@ public struct NetConfigSyncAction : INetAction, IPacketSerializable
                 writer.WriteString(cardType);
             }
         }
+        writer.WriteBool(enableCustomRelics);
+        writer.WriteInt(startingRelicTypes?.Count ?? 0);
+        if (startingRelicTypes != null)
+        {
+            foreach (var relicType in startingRelicTypes)
+            {
+                writer.WriteString(relicType);
+            }
+        }
         writer.WriteString(baseCarMode);
         writer.WriteBool(luckyCrateMode);
         writer.WriteString(cratePoolMode);
@@ -56,6 +69,13 @@ public struct NetConfigSyncAction : INetAction, IPacketSerializable
         for (int i = 0; i < count; i++)
         {
             customDeckCardTypes.Add(reader.ReadString());
+        }
+        enableCustomRelics = reader.ReadBool();
+        int relicCount = reader.ReadInt();
+        startingRelicTypes = new List<string>(relicCount);
+        for (int i = 0; i < relicCount; i++)
+        {
+            startingRelicTypes.Add(reader.ReadString());
         }
         baseCarMode = reader.ReadString();
         luckyCrateMode = reader.ReadBool();

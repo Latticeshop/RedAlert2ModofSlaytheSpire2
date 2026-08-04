@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Godot;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -15,11 +16,13 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.Screens.MainMenu;
+using MegaCrit.Sts2.Core.Nodes.Screens.InspectScreens;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Saves;
 using RedAlert2ModCode.Common.Relics;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.UI;
 
 namespace RedAlert2ModCode.DeckConfig;
 
@@ -168,6 +171,39 @@ public static class ModConfigPatches
             Logger.Error($"[ModConfig] 多人开局设置补丁安装失败: {ex.Message}");
         }
 
+        // 补丁3.5: 多人大厅初始化/关闭 - 标记多人会话（使开局牌组改为同步后统一应用）
+        try
+        {
+            var charSelectType = FindType("NCharacterSelectScreen", "MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect");
+            if (charSelectType != null)
+            {
+                var hostInitMethod = AccessTools.Method(charSelectType, "InitializeMultiplayerAsHost");
+                var clientInitMethod = AccessTools.Method(charSelectType, "InitializeMultiplayerAsClient");
+                var closedMethod = AccessTools.Method(charSelectType, "OnSubmenuClosed");
+                if (hostInitMethod != null)
+                {
+                    harmony.Patch(hostInitMethod, postfix: new HarmonyMethod(typeof(MultiplayerLobbyPatch), nameof(MultiplayerLobbyPatch.HostPostfix)));
+                }
+                if (clientInitMethod != null)
+                {
+                    harmony.Patch(clientInitMethod, postfix: new HarmonyMethod(typeof(MultiplayerLobbyPatch), nameof(MultiplayerLobbyPatch.ClientPostfix)));
+                }
+                if (closedMethod != null)
+                {
+                    harmony.Patch(closedMethod, postfix: new HarmonyMethod(typeof(MultiplayerLobbyPatch), nameof(MultiplayerLobbyPatch.LobbyClosedPostfix)));
+                }
+                Logger.Info("[ModConfig] 多人大厅会话标记补丁安装成功");
+            }
+            else
+            {
+                Logger.Warn("[ModConfig] 找不到 NCharacterSelectScreen");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"[ModConfig] 多人大厅会话标记补丁安装失败: {ex.Message}");
+        }
+
         // 补丁4: 拦截FlagManager.GetPlayerFaction以支持MCV模式国旗事件
         try
         {
@@ -206,6 +242,39 @@ public static class ModConfigPatches
         catch (Exception ex)
         {
             Logger.Error($"[ModConfig] 卡池奖励模式补丁安装失败: {ex.Message}");
+        }
+
+        // 补丁6: 遗物检视页层级 - 打开时临时降低 mod 配置面板/遗物库层级，关闭后恢复
+        try
+        {
+            var inspectOpenMethod = AccessTools.Method(typeof(NInspectRelicScreen), "Open");
+            var inspectCloseMethod = AccessTools.Method(typeof(NInspectRelicScreen), "Close");
+            if (inspectOpenMethod != null)
+            {
+                harmony.Patch(
+                    original: inspectOpenMethod,
+                    postfix: new HarmonyMethod(typeof(RelicInspectZOrderPatch), nameof(RelicInspectZOrderPatch.OpenPostfix))
+                );
+            }
+            if (inspectCloseMethod != null)
+            {
+                harmony.Patch(
+                    original: inspectCloseMethod,
+                    postfix: new HarmonyMethod(typeof(RelicInspectZOrderPatch), nameof(RelicInspectZOrderPatch.ClosePostfix))
+                );
+            }
+            if (inspectOpenMethod != null || inspectCloseMethod != null)
+            {
+                Logger.Info("[ModConfig] 遗物检视页层级补丁安装成功");
+            }
+            else
+            {
+                Logger.Warn("[ModConfig] 找不到 NInspectRelicScreen.Open/Close");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"[ModConfig] 遗物检视页层级补丁安装失败: {ex.Message}");
         }
 
         Logger.Info("[ModConfigPatches] 配置补丁安装完成");
@@ -280,12 +349,40 @@ public static class ModConfigPatches
             try
             {
                 if (__instance?.Character == null) return;
+                // 多人联机：各端在开局时按各自配置建牌组会分叉，
+                // 改为开局同步完成后由 RunStartPatch 统一调用 ApplyConfigToPlayer
+                if (ModConfigManager.IsMultiplayerSession) return;
+                ApplyConfigToPlayer(__instance);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"[ModConfig] InitialDeckPatch.Postfix 失败: {ex.Message}");
+            }
+        }
 
+        /// <summary>
+        /// 按玩家配置应用初始牌组 / 基地车 / 初始遗物（单人在建牌组时调用，多人同步完成后也调用）。
+        /// </summary>
+        public static void ApplyConfigToPlayer(Player __instance, RunState? runState = null)
+        {
+            try
+            {
+                if (__instance?.Character == null) return;
                 string? characterId = __instance.Character?.Id?.Entry;
                 if (string.IsNullOrEmpty(characterId)) return;
 
-                // 多人模式按玩家 NetId 取配置，保证每个玩家独立应用自己的配置
-                var config = ModConfigManager.GetCharacterConfig(characterId, __instance.NetId);
+                // 本机玩家始终用本机最新配置；远端玩家用同步配置（保证每玩家独立）
+                CharacterConfig config;
+                try
+                {
+                    config = MultiplayerSyncHelper.IsLocalPlayer(__instance)
+                        ? ModConfigManager.GetCharacterConfig(characterId)
+                        : ModConfigManager.GetCharacterConfig(characterId, __instance.NetId);
+                }
+                catch
+                {
+                    config = ModConfigManager.GetCharacterConfig(characterId, __instance.NetId);
+                }
 
                 // 幸运方块 / 自定义卡组：清空并重建初始牌组
                 List<CardModel>? replacement = null;
@@ -317,20 +414,100 @@ public static class ModConfigPatches
                     {
                         card.FloorAddedToDeck = 1;
                         __instance.Deck.AddInternal(card, -1, true);
+                        // 多人延迟应用时 RunState 已建立，需通过 AddCard 正规注册（设置 Owner 并加入运行状态），
+                        // 否则 Hook 遍历会因 Owner 为空 NRE；单人局由 CreateShared 统一赋 Owner，不能预置。
+                        if (runState != null)
+                        {
+                            try { runState.AddCard(card, __instance); } catch { }
+                        }
                     }
                     Logger.Info($"[ModConfig] 初始卡组已覆盖，角色: {characterId}, 卡牌数: {replacement.Count}");
                 }
 
-                // 基地车模式 - 在初始卡组中追加基地车 + 补授刀乐遗物
-                if (config.BaseCarMode != BaseCarMode.None)
+                // 自定义初始遗物 - 用配置的遗物替换默认初始遗物
+                if (config.EnableCustomRelics && config.StartingRelicTypes.Count > 0)
                 {
-                    ApplyBaseCarMode(__instance, config);
+                    ApplyCustomRelics(__instance, config);
+                }
+
+                // 基地车模式 - 追加基地车 + 补授刀乐遗物（在自定义遗物之后，确保刀乐未被清掉时补齐）。
+                // 尤里体系未实现：仅由国旗流程授予尤里国旗，不加基地车/刀乐。
+                if (config.BaseCarMode != BaseCarMode.None && config.BaseCarMode != BaseCarMode.Yuri)
+                {
+                    ApplyBaseCarMode(__instance, config, runState);
                 }
             }
             catch (Exception ex)
             {
-                Logger.Error($"[ModConfig] InitialDeckPatch.Postfix 失败: {ex.Message}");
+                Logger.Error($"[ModConfig] ApplyConfigToPlayer 失败: {ex.Message}");
             }
+        }
+
+        private static void ApplyCustomRelics(Player player, CharacterConfig config)
+        {
+            try
+            {
+                var newRelics = new List<RelicModel>();
+                foreach (var relicTypeName in config.StartingRelicTypes)
+                {
+                    try
+                    {
+                        var relicType = FindCardType(relicTypeName);
+                        if (relicType == null) continue;
+                        var relic = GetRelicModel(relicType);
+                        if (relic != null)
+                        {
+                            newRelics.Add(relic.ToMutable());
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Warn($"[ModConfig] 创建遗物失败 {relicTypeName}: {ex.Message}");
+                    }
+                }
+
+                if (newRelics.Count == 0)
+                {
+                    Logger.Warn("[ModConfig] 自定义遗物配置为空或全部无效，保留默认初始遗物");
+                    return;
+                }
+
+                // 清空默认初始遗物后按配置授予
+                foreach (var old in player.Relics.ToList())
+                {
+                    try { player.RemoveRelicInternal(old, silent: true); } catch { }
+                }
+                foreach (var relic in newRelics)
+                {
+                    relic.FloorAddedToDeck = 1;
+                    try { SaveManager.Instance.MarkRelicAsSeen(relic); } catch { }
+                    player.AddRelicInternal(relic, -1, true);
+                }
+                Logger.Info($"[ModConfig] 已应用自定义初始遗物，角色: {player.Character?.Id?.Entry}, 遗物数: {newRelics.Count}");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"[ModConfig] ApplyCustomRelics 失败: {ex.Message}");
+            }
+        }
+
+        private static RelicModel? GetRelicModel(Type relicType)
+        {
+            try
+            {
+                var relicMethod = typeof(ModelDb).GetMethods()
+                    .FirstOrDefault(m => m.Name == "Relic" && m.IsGenericMethodDefinition);
+                if (relicMethod != null)
+                {
+                    var genericMethod = relicMethod.MakeGenericMethod(relicType);
+                    return genericMethod.Invoke(null, null) as RelicModel;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn($"[ModConfig] 获取遗物模型失败: {ex.Message}");
+            }
+            return null;
         }
 
         private static List<CardModel> CreateCustomDeck(CharacterConfig config)
@@ -348,7 +525,8 @@ public static class ModConfigPatches
             {
                 try
                 {
-                    var cardType = FindCardType(cardTypeName);
+                    string typeName = ModConfigManager.DecodeCardType(cardTypeName, out bool upgraded);
+                    var cardType = FindCardType(typeName);
                     if (cardType != null)
                     {
                         for (int i = 0; i < count; i++)
@@ -356,13 +534,18 @@ public static class ModConfigPatches
                             var cardModel = GetCardModel(cardType);
                             if (cardModel != null)
                             {
-                                deck.Add(cardModel.ToMutable());
+                                var card = cardModel.ToMutable();
+                                if (upgraded && !card.IsUpgraded)
+                                {
+                                    CardCmd.Upgrade(card);
+                                }
+                                deck.Add(card);
                             }
                         }
                     }
                     else
                     {
-                        Logger.Warn($"[ModConfig] 找不到卡牌类型: {cardTypeName}");
+                        Logger.Warn($"[ModConfig] 找不到卡牌类型: {typeName}");
                     }
                 }
                 catch (Exception ex)
@@ -487,7 +670,7 @@ public static class ModConfigPatches
             return deck;
         }
 
-        private static void ApplyBaseCarMode(Player player, CharacterConfig config)
+        private static void ApplyBaseCarMode(Player player, CharacterConfig config, RunState? runState = null)
         {
             try
             {
@@ -503,29 +686,26 @@ public static class ModConfigPatches
 
                 string characterId = player.Character?.Id?.Entry ?? string.Empty;
 
-                // 同阵营的本mod角色起始卡组已含对应基地车，不重复添加（等同于无效果）
-                if (IsSameFactionAsMcv(characterId, config.BaseCarMode))
+                // 同阵营也会额外追加一张基地车（默认卡池1张 + 本配置1张 = 共2张）
+                var mcvType = FindCardType(mcvName);
+                if (mcvType != null)
                 {
-                    Logger.Info($"[ModConfig] 基地车模式: 角色 {characterId} 已有对应阵营基地车，跳过添加");
+                    var mcvCard = GetCardModel(mcvType);
+                    if (mcvCard != null)
+                    {
+                        var mcvInstance = mcvCard.ToMutable();
+                        mcvInstance.FloorAddedToDeck = 1;
+                        player.Deck.AddInternal(mcvInstance, -1, true);
+                        if (runState != null)
+                        {
+                            try { runState.AddCard(mcvInstance, player); } catch { }
+                        }
+                        Logger.Info($"[ModConfig] 基地车模式: 已添加 {mcvName} 到卡组");
+                    }
                 }
                 else
                 {
-                    var mcvType = FindCardType(mcvName);
-                    if (mcvType != null)
-                    {
-                        var mcvCard = GetCardModel(mcvType);
-                        if (mcvCard != null)
-                        {
-                            var mcvInstance = mcvCard.ToMutable();
-                            mcvInstance.FloorAddedToDeck = 1;
-                            player.Deck.AddInternal(mcvInstance, -1, true);
-                            Logger.Info($"[ModConfig] 基地车模式: 已添加 {mcvName} 到卡组");
-                        }
-                    }
-                    else
-                    {
-                        Logger.Warn($"[ModConfig] 找不到基地车类型: {mcvName}");
-                    }
+                    Logger.Warn($"[ModConfig] 找不到基地车类型: {mcvName}");
                 }
 
                 // 补授刀乐遗物（本mod角色已自带，不重复授予）
@@ -873,12 +1053,96 @@ public static class ModConfigPatches
                 ModConfigManager.SetRunPlayers(state?.Players);
                 // 多人开局：把本机本地玩家的配置广播给主机，供主机按 NetId 应用
                 ModConfigManager.BroadcastAllLocalConfigs();
+                if (ModConfigManager.IsMultiplayerSession && state != null)
+                {
+                    // 等待各玩家配置同步到位后统一应用（最多约 3 秒）
+                    TaskHelper.RunSafely(ApplyConfigsAfterSyncAsync(state));
+                }
                 Logger.Info("[ModConfig] RunStartPatch: 开局设置完成，配置已广播");
             }
             catch (Exception ex)
             {
                 Logger.Error($"[ModConfig] RunStartPatch 失败: {ex.Message}");
             }
+        }
+
+        private static async Task ApplyConfigsAfterSyncAsync(RunState state)
+        {
+            try
+            {
+                // 持续等待各玩家配置同步到位（最多约 20 秒），并逐玩家应用；
+                // 战斗开始后停止（未同步到的配置下一局生效），避免中途改牌组引发状态分叉
+                var applied = new HashSet<ulong>();
+                DateTimeOffset deadline = DateTimeOffset.UtcNow + TimeSpan.FromSeconds(20);
+                while (DateTimeOffset.UtcNow < deadline)
+                {
+                    bool allReady = true;
+                    foreach (var player in state.Players)
+                    {
+                        if (applied.Contains(player.NetId)) continue;
+                        if (player == null) continue;
+
+                        // 战斗开始后不再应用，避免中途改牌组/遗物引发分叉
+                        try
+                        {
+                            if (CombatManager.Instance != null && CombatManager.Instance.IsInProgress)
+                            {
+                                Logger.Info("[ModConfig] 战斗已开始，未同步配置留待下一局应用");
+                                return;
+                            }
+                        }
+                        catch { }
+
+                        if (!ModConfigManager.HasConfigForPlayer(player))
+                        {
+                            allReady = false;
+                            continue;
+                        }
+
+                        try
+                        {
+                            InitialDeckPatch.ApplyConfigToPlayer(player, state);
+                            applied.Add(player.NetId);
+                            Logger.Info($"[ModConfig] 已应用玩家配置 player={player.NetId}");
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error($"[ModConfig] 应用玩家配置失败 player={player.NetId}: {ex.Message}");
+                            applied.Add(player.NetId); // 避免死循环重试
+                        }
+                    }
+
+                    if (allReady) break;
+                    await Task.Delay(250);
+                }
+                Logger.Info($"[ModConfig] 开局配置应用完成（已应用 {applied.Count}/{state.Players.Count} 名玩家）");
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"[ModConfig] ApplyConfigsAfterSyncAsync 失败: {ex.Message}");
+            }
+        }
+    }
+
+    /// <summary>
+    /// 多人大厅补丁 - 标记多人会话，使开局牌组改为同步后统一应用；
+    /// 离开大厅时复位，避免影响后续单人局。
+    /// </summary>
+    public static class MultiplayerLobbyPatch
+    {
+        public static void HostPostfix()
+        {
+            ModConfigManager.SetMultiplayerSession(true);
+        }
+
+        public static void ClientPostfix()
+        {
+            ModConfigManager.SetMultiplayerSession(true);
+        }
+
+        public static void LobbyClosedPostfix()
+        {
+            ModConfigManager.SetMultiplayerSession(false);
         }
     }
 
@@ -964,6 +1228,25 @@ public static class ModConfigPatches
             {
                 Logger.Warn($"[ModConfig] CardRewardCratePatch 失败: {ex.Message}");
             }
+        }
+    }
+
+    /// <summary>
+    /// 遗物检视页层级补丁：打开详情时临时降低 mod 配置面板/遗物库层级，
+    /// 关闭后恢复，保证详情页在 mod 配置页面之上。
+    /// </summary>
+    public static class RelicInspectZOrderPatch
+    {
+        public static void OpenPostfix()
+        {
+            ModConfigPanel.OnInspectScreenOpened();
+            RelicLibraryTab.OnInspectScreenOpened();
+        }
+
+        public static void ClosePostfix()
+        {
+            ModConfigPanel.OnInspectScreenClosed();
+            RelicLibraryTab.OnInspectScreenClosed();
         }
     }
 }

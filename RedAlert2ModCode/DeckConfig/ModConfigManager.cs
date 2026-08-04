@@ -55,6 +55,16 @@ public class CharacterConfig
     public List<string> CustomDeckCardTypes { get; set; } = new();
 
     /// <summary>
+    /// 是否启用自定义初始遗物
+    /// </summary>
+    public bool EnableCustomRelics { get; set; }
+
+    /// <summary>
+    /// 自定义初始遗物（遗物类型名列表），为空则使用默认
+    /// </summary>
+    public List<string> StartingRelicTypes { get; set; } = new();
+
+    /// <summary>
     /// 是否启用自定义卡组
     /// </summary>
     public bool EnableCustomDeck { get; set; }
@@ -105,7 +115,33 @@ public class CharacterConfig
 public static class ModConfigManager
 {
     private const string ConfigFileName = "RedAlert2ModConfig.json";
+    /// <summary>
+    /// 自定义卡组条目中升级卡牌的标记后缀（如 "Strike:U"）。
+    /// </summary>
+    public const string UpgradedMarker = ":U";
     private static readonly MegaCrit.Sts2.Core.Logging.Logger Logger = new("RedAlert2Mod", LogType.Generic);
+
+    /// <summary>
+    /// 编码卡组条目：升级卡附加 ":U" 后缀，与未升级同名卡区分（各自独立叠加）。
+    /// </summary>
+    public static string EncodeCardType(string typeName, bool upgraded)
+    {
+        return upgraded ? typeName + UpgradedMarker : typeName;
+    }
+
+    /// <summary>
+    /// 解码卡组条目：去掉升级标记，返回真实卡牌类型名。
+    /// </summary>
+    public static string DecodeCardType(string entry, out bool upgraded)
+    {
+        upgraded = false;
+        if (!string.IsNullOrEmpty(entry) && entry.EndsWith(UpgradedMarker, StringComparison.Ordinal))
+        {
+            upgraded = true;
+            return entry.Substring(0, entry.Length - UpgradedMarker.Length);
+        }
+        return entry ?? string.Empty;
+    }
 
     private static Dictionary<string, CharacterConfig>? _configs;
     private static bool _initialized;
@@ -113,6 +149,8 @@ public static class ModConfigManager
     private static readonly Dictionary<ulong, CharacterConfig> _remoteConfigs = new();
     // 当前局玩家列表（由 RunStartPatch 在开局时缓存，供配置广播定位本地玩家）
     private static IReadOnlyList<Player>? _currentPlayers;
+    // 是否处于多人联机会话（由大厅初始化补丁设置；多人时开局牌组改为同步后统一应用）
+    private static bool _isMultiplayerSession;
 
     /// <summary>
     /// 配置文件路径
@@ -192,6 +230,8 @@ public static class ModConfigManager
                     {
                         customDeckCardTypes = kv.Value.CustomDeckCardTypes,
                         enableCustomDeck = kv.Value.EnableCustomDeck,
+                        startingRelicTypes = kv.Value.StartingRelicTypes,
+                        enableCustomRelics = kv.Value.EnableCustomRelics,
                         baseCarMode = kv.Value.BaseCarMode.ToString(),
                         luckyCrateMode = kv.Value.LuckyCrateMode,
                         cratePoolMode = kv.Value.CratePoolMode.ToString()
@@ -221,8 +261,9 @@ public static class ModConfigManager
     {
         if (_configs == null) Load();
 
-        // 多人模式：优先使用该玩家（NetId）同步过来的配置，实现每玩家独立
-        if (netId.HasValue && _remoteConfigs.TryGetValue(netId.Value, out var remoteConfig))
+        // 多人模式：仅远端玩家使用同步过来的配置（本机玩家始终用本机最新配置，
+        // 避免局内改配置后广播失败/未同步时读到 _remoteConfigs 里的过期副本）
+        if (netId.HasValue && !IsLocalNetId(netId.Value) && _remoteConfigs.TryGetValue(netId.Value, out var remoteConfig))
         {
             return remoteConfig;
         }
@@ -236,6 +277,15 @@ public static class ModConfigManager
         var newConfig = new CharacterConfig { CharacterId = characterId };
         _configs[characterId] = newConfig;
         return newConfig;
+    }
+
+    private static bool IsLocalNetId(ulong netId)
+    {
+        try
+        {
+            return RunManager.Instance?.NetService != null && RunManager.Instance.NetService.NetId == netId;
+        }
+        catch { return false; }
     }
 
     /// <summary>
@@ -274,6 +324,57 @@ public static class ModConfigManager
     public static void SetRunPlayers(IReadOnlyList<Player>? players)
     {
         _currentPlayers = players;
+    }
+
+    /// <summary>
+    /// 是否处于多人联机会话（大厅阶段即置位，离开大厅后复位）。
+    /// </summary>
+    public static bool IsMultiplayerSession => _isMultiplayerSession;
+
+    /// <summary>
+    /// 设置多人联机会话标记（由大厅初始化/清理补丁调用）。
+    /// </summary>
+    public static void SetMultiplayerSession(bool value)
+    {
+        _isMultiplayerSession = value;
+        if (!value)
+        {
+            _remoteConfigs.Clear();
+            _currentPlayers = null;
+        }
+    }
+
+    /// <summary>
+    /// 是否已收集到所有远端玩家的配置（本地玩家始终可用本机配置）。
+    /// </summary>
+    public static bool HasConfigForAllPlayers(IReadOnlyList<Player> players)
+    {
+        if (players == null) return false;
+        foreach (var player in players)
+        {
+            try
+            {
+                if (player == null) continue;
+                if (MultiplayerSyncHelper.IsLocalPlayer(player)) continue;
+                if (!_remoteConfigs.ContainsKey(player.NetId)) return false;
+            }
+            catch { return false; }
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// 单个玩家配置是否就绪（本地玩家始终可用本机配置，远端玩家需等同步到达）。
+    /// </summary>
+    public static bool HasConfigForPlayer(Player player)
+    {
+        if (player == null) return false;
+        try
+        {
+            if (MultiplayerSyncHelper.IsLocalPlayer(player)) return true;
+            return _remoteConfigs.ContainsKey(player.NetId);
+        }
+        catch { return false; }
     }
 
     /// <summary>
@@ -384,6 +485,23 @@ public static class ModConfigManager
                     list.Add(val);
             }
             config.CustomDeckCardTypes = list;
+        }
+
+        if (element.TryGetProperty("startingRelicTypes", out var relicTypes))
+        {
+            var list = new List<string>();
+            foreach (var item in relicTypes.EnumerateArray())
+            {
+                string? val = item.GetString();
+                if (!string.IsNullOrEmpty(val))
+                    list.Add(val);
+            }
+            config.StartingRelicTypes = list;
+        }
+
+        if (element.TryGetProperty("enableCustomRelics", out var enableCustomRelics))
+        {
+            config.EnableCustomRelics = enableCustomRelics.GetBoolean();
         }
 
         // 先解析幸运方块，再解析基地车：若旧配置两者同时启用，基地车模式优先（并自动关闭幸运方块）。

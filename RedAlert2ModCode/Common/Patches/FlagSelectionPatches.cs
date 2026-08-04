@@ -18,6 +18,7 @@ using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
 using MegaCrit.Sts2.Core.Saves.Runs;
+using RedAlert2ModCode.DeckConfig;
 using RedAlert2ModCode.Common.UI;
 using RedAlert2ModCode.Common.Utils;
 
@@ -27,8 +28,10 @@ namespace RedAlert2ModCode.Common.Patches;
 public static class FlagSelectionPatches
 {
 	private static bool _selectionInProgress;
+	// 本局已授予的国旗（玩家NetId, 阵营），防止重复轮/误判导致同一阵营国旗发两遍
+	private static readonly HashSet<(ulong PlayerId, FlagManager.Faction Faction)> _grantedFlagsThisRun = new();
 
-	private readonly record struct PendingFlagSelection(Player Player, List<RelicModel> Options, uint ChoiceId, bool IsLocal);
+	private readonly record struct PendingFlagSelection(Player Player, List<RelicModel> Options, uint ChoiceId, bool IsLocal, FlagManager.Faction Faction);
 
 	private static MethodInfo RequireMethod(Type type, string name, BindingFlags flags, params Type[] parameters)
 	{
@@ -65,6 +68,7 @@ public static class FlagSelectionPatches
 		}
 
 		_selectionInProgress = true;
+		_grantedFlagsThisRun.Clear();
 		try
 		{
 			NetGameType gameType = RunManager.Instance?.NetService?.Type ?? NetGameType.Singleplayer;
@@ -74,11 +78,17 @@ public static class FlagSelectionPatches
 				foreach (Player player in runState.Players)
 				{
 					await EnsureFlagSelected(player);
+					// 基地车模式跨阵营时，依次触发另一阵营的国旗选择
+					await EnsureBaseCarFlagSelected(player);
 				}
 			}
 			else
 			{
+				GD.Print("[RedAlert2Mod] Multiplayer native flag round...");
 				await EnsureFlagsSelectedMultiplayer(runState.Players.ToList());
+				// 基地车模式跨阵营/同阵营的第二轮国旗选择（与原生国旗一样走同步器）
+				GD.Print("[RedAlert2Mod] Multiplayer base-car flag round...");
+				await EnsureFlagsSelectedMultiplayer(runState.Players.ToList(), baseCarRound: true);
 			}
 		}
 		catch (Exception ex)
@@ -89,6 +99,70 @@ public static class FlagSelectionPatches
 		{
 			_selectionInProgress = false;
 		}
+	}
+
+	/// <summary>
+	/// 基地车模式：跨阵营时补授/选择基地车阵营的国旗（原生阵营国旗由 EnsureFlagSelected 处理）。
+	/// 盟军选盟军/无 = 无额外效果；盟军选苏联 = 追加苏联国旗（可与盟军国旗依次触发）；尤里 = 仅授尤里国旗。
+	/// </summary>
+	private static async Task<bool> EnsureBaseCarFlagSelected(Player player)
+	{
+		try
+		{
+			string? characterId = player?.Character?.Id?.Entry;
+			if (string.IsNullOrEmpty(characterId)) return false;
+
+			var baseFaction = GetBaseCarFaction(player);
+			if (baseFaction == FlagManager.Faction.None) return false;
+
+			// 同阵营：额外重复一轮国旗选择（可再选一枚同阵营国旗）；
+			// 跨阵营且已拥有该阵营国旗时跳过，避免重复
+			bool sameFaction = baseFaction == FlagManager.GetNativePlayerFaction(player);
+			if (!sameFaction && FlagManager.PlayerHasFlag(player, baseFaction)) return false;
+
+			if (baseFaction == FlagManager.Faction.Yuri)
+			{
+				// 尤里体系未实现：直接授予尤里国旗
+				if (FlagManager.PlayerHasFlag(player, FlagManager.Faction.Yuri)) return false;
+				RelicModel yuriFlag = FlagManager.GetAllFlags(FlagManager.Faction.Yuri)[0];
+				await RelicCmd.Obtain(yuriFlag.ToMutable(), player);
+				GD.Print("[RedAlert2Mod] 基地车模式（尤里）：自动授予尤里国旗");
+				return true;
+			}
+
+			GD.Print($"[RedAlert2Mod] Opening base-car flag selection for faction={baseFaction}...");
+			RelicModel? selected = await SelectFlagWithLocalScreen(baseFaction);
+			if (selected == null) return false;
+			await RelicCmd.Obtain(selected.ToMutable(), player);
+			GD.Print($"[RedAlert2Mod] 基地车模式国旗已授予: {selected.Title.GetFormattedText()}");
+			return true;
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr($"[RedAlert2Mod] EnsureBaseCarFlagSelected error: {ex}");
+			return false;
+		}
+	}
+
+	/// <summary>
+	/// 获取基地车模式对应的阵营（None 表示未配置基地车）。
+	/// </summary>
+	private static FlagManager.Faction GetBaseCarFaction(Player player)
+	{
+		try
+		{
+			string? characterId = player?.Character?.Id?.Entry;
+			if (string.IsNullOrEmpty(characterId)) return FlagManager.Faction.None;
+			var config = ModConfigManager.GetCharacterConfig(characterId, player.NetId);
+			return config.BaseCarMode switch
+			{
+				BaseCarMode.Allied => FlagManager.Faction.Allies,
+				BaseCarMode.Soviet => FlagManager.Faction.Soviet,
+				BaseCarMode.Yuri => FlagManager.Faction.Yuri,
+				_ => FlagManager.Faction.None,
+			};
+		}
+		catch { return FlagManager.Faction.None; }
 	}
 
 	private static async Task<bool> EnsureFlagSelected(Player player)
@@ -102,7 +176,7 @@ public static class FlagSelectionPatches
 			return false;
 		}
 
-		FlagManager.Faction faction = FlagManager.GetPlayerFaction(player);
+		FlagManager.Faction faction = FlagManager.GetNativePlayerFaction(player);
 		GD.Print($"[RedAlert2Mod] EnsureFlagSelected: detected faction={faction}");
 
 		if (faction == FlagManager.Faction.None)
@@ -136,7 +210,7 @@ public static class FlagSelectionPatches
 		return true;
 	}
 
-	private static async Task<bool> EnsureFlagsSelectedMultiplayer(IReadOnlyList<Player> players)
+	private static async Task<bool> EnsureFlagsSelectedMultiplayer(IReadOnlyList<Player> players, bool baseCarRound = false)
 	{
 		RunManager runManager = RunManager.Instance;
 
@@ -154,7 +228,9 @@ public static class FlagSelectionPatches
 			// 如果没有同步器，退回到单机逻辑
 			foreach (Player player in orderedPlayers)
 			{
-				changed |= await EnsureFlagSelected(player);
+				changed |= baseCarRound
+					? await EnsureBaseCarFlagSelected(player)
+					: await EnsureFlagSelected(player);
 			}
 			return changed;
 		}
@@ -163,24 +239,40 @@ public static class FlagSelectionPatches
 		List<PendingFlagSelection> pendingSelections = new();
 		foreach (Player player in orderedPlayers)
 		{
-			if (FlagManager.PlayerHasAnyFlag(player))
+			FlagManager.Faction faction;
+			if (baseCarRound)
 			{
-				continue;
+				faction = GetBaseCarFaction(player);
+				if (faction == FlagManager.Faction.None) continue;
+				// 同阵营：重复一轮国旗选择；跨阵营且已有该阵营国旗：跳过
+				if (faction != FlagManager.GetNativePlayerFaction(player) && FlagManager.PlayerHasFlag(player, faction)) continue;
+			}
+			else
+			{
+				if (FlagManager.PlayerHasAnyFlag(player)) continue;
+				faction = FlagManager.GetNativePlayerFaction(player);
+				if (faction == FlagManager.Faction.None)
+				{
+					GD.Print($"[RedAlert2Mod] Multiplayer: player {player.NetId} is not a RA2 character, skipping.");
+					continue;
+				}
 			}
 
-			FlagManager.Faction faction = FlagManager.GetPlayerFaction(player);
-
-			if (faction == FlagManager.Faction.None)
+			// 本局同一阵营国旗只授一次（同阵营重复轮除外）
+			bool isSameFactionRepeat = baseCarRound && faction == FlagManager.GetNativePlayerFaction(player);
+			if (!isSameFactionRepeat && _grantedFlagsThisRun.Contains((player.NetId, faction)))
 			{
-				GD.Print($"[RedAlert2Mod] Multiplayer: player {player.NetId} is not a RA2 character, skipping.");
+				GD.Print($"[RedAlert2Mod] Multiplayer: player {player.NetId} already granted {faction} this run, skipping.");
 				continue;
 			}
 
 			// 尤里阵营自动获得尤里国旗
 			if (faction == FlagManager.Faction.Yuri)
 			{
+				if (FlagManager.PlayerHasFlag(player, faction)) continue;
 				RelicModel yuriFlag = FlagManager.GetAllFlags(FlagManager.Faction.Yuri)[0];
 				await RelicCmd.Obtain(yuriFlag.ToMutable(), player);
+				_grantedFlagsThisRun.Add((player.NetId, faction));
 				changed = true;
 				continue;
 			}
@@ -188,7 +280,7 @@ public static class FlagSelectionPatches
 			List<RelicModel> options = FlagManager.GetAllFlags(faction);
 			uint choiceId = synchronizer.ReserveChoiceId(player);
 			bool isLocal = IsLocalPlayer(runManager, player);
-			pendingSelections.Add(new PendingFlagSelection(player, options, choiceId, isLocal));
+			pendingSelections.Add(new PendingFlagSelection(player, options, choiceId, isLocal, faction));
 			GD.Print($"[RedAlert2Mod] Multiplayer: reserved choiceId={choiceId} for player={player.NetId}, isLocal={isLocal}, faction={faction}");
 		}
 
@@ -221,6 +313,7 @@ public static class FlagSelectionPatches
 				if (selectedFlag != null)
 				{
 					await RelicCmd.Obtain(selectedFlag.ToMutable(), selection.Player);
+					_grantedFlagsThisRun.Add((selection.Player.NetId, selection.Faction));
 					changed = true;
 					GD.Print($"[RedAlert2Mod] Multiplayer flag obtained: player={selection.Player.NetId} flag={selectedFlag.Title.GetFormattedText()}");
 				}
@@ -253,8 +346,8 @@ public static class FlagSelectionPatches
 		if (selection.IsLocal)
 		{
 			// 本地玩家：显示选择UI
-			FlagManager.Faction faction = FlagManager.GetPlayerFaction(selection.Player);
-			FlagSelectionScreen screen = await CreateFlagSelectionScreenAsync(faction);
+			// 必须使用 selection.Faction（可能是基地车阵营），不能取玩家原生阵营
+			FlagSelectionScreen screen = await CreateFlagSelectionScreenAsync(selection.Faction);
 			localScreens.Add(screen);
 
 			RelicModel? selectedFlag = await screen.FlagSelected();
