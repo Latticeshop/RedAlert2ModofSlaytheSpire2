@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Nodes.HoverTips;
+using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.DeckConfig;
 
@@ -37,9 +38,15 @@ internal class CardLibraryTab
         [CardType.Attack] = true,
         [CardType.Skill] = true,
         [CardType.Power] = true,
-        [CardType.Status] = true,
-        [CardType.Curse] = true,
+        [CardType.Status] = false,
+        [CardType.Curse] = false,
     };
+    // 角色筛选（角色Id -> 是否显示），默认均不选中，未选任何项时不过滤
+    private static readonly Dictionary<string, bool> _characterFilter = new(StringComparer.OrdinalIgnoreCase);
+    // 未归属任何角色的卡牌（无色/诅咒/衍生等）是否显示
+    private static bool _includeGeneralCards;
+    // 懒构建：卡牌Id -> 归属角色Id集合（一卡可属多角色）
+    private static Dictionary<string, HashSet<string>>? _cardCharacterMap;
     private static int _pageIndex;
 
     private readonly CharacterConfig _config;
@@ -126,6 +133,9 @@ internal class CardLibraryTab
 
         // 搜索栏
         BuildSearchBar(mainVBox);
+
+        // 角色筛选
+        BuildCharacterFilterBar(mainVBox);
 
         // 类型筛选
         BuildTypeFilterBar(mainVBox);
@@ -230,17 +240,82 @@ internal class CardLibraryTab
 
         foreach (var (type, name) in types)
         {
-            bool enabled = _typeFilter.GetValueOrDefault(type, true);
+            bool enabled = _typeFilter.GetValueOrDefault(type, false);
             var btn = CreateFilterButton(name, enabled);
             btn.Pressed += () =>
             {
                 _typeFilter[type] = !_typeFilter.GetValueOrDefault(type, true);
-                btn.AddThemeColorOverride("font_color", _typeFilter[type] ? StsColors.green : StsColors.gray);
-                btn.UpdateMinimumSize();
+                UpdateFilterButtonStyle(btn, _typeFilter[type]);
                 RefreshContent();
             };
             filterBox.AddChild(btn);
         }
+    }
+
+    private void BuildCharacterFilterBar(VBoxContainer container)
+    {
+        var filterBox = new FlowContainer();
+        filterBox.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+        filterBox.AddThemeConstantOverride("h_separation", 4);
+        filterBox.AddThemeConstantOverride("v_separation", 4);
+        container.AddChild(filterBox);
+
+        var filterLabel = new Label();
+        filterLabel.Text = "角色:";
+        filterLabel.AddThemeFontSizeOverride("font_size", 14);
+        filterLabel.AddThemeColorOverride("font_color", StsColors.cream);
+        filterLabel.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
+        filterBox.AddChild(filterLabel);
+
+        foreach (var character in GetAllCharacters())
+        {
+            string charId = character.Id.Entry;
+            bool enabled = _characterFilter.GetValueOrDefault(charId, false);
+            _characterFilter[charId] = enabled;
+
+            var btn = CreateFilterButton(GetCharacterName(character), enabled);
+            btn.Pressed += () =>
+            {
+                _characterFilter[charId] = !_characterFilter.GetValueOrDefault(charId, true);
+                UpdateFilterButtonStyle(btn, _characterFilter[charId]);
+                RefreshContent();
+            };
+            filterBox.AddChild(btn);
+        }
+
+        var generalBtn = CreateFilterButton("通用", _includeGeneralCards);
+        generalBtn.Pressed += () =>
+        {
+            _includeGeneralCards = !_includeGeneralCards;
+            UpdateFilterButtonStyle(generalBtn, _includeGeneralCards);
+            RefreshContent();
+        };
+        filterBox.AddChild(generalBtn);
+    }
+
+    private static List<CharacterModel> GetAllCharacters()
+    {
+        var characters = new List<CharacterModel>();
+        try
+        {
+            foreach (var character in ModelDb.AllCharacters)
+            {
+                characters.Add(character);
+            }
+        }
+        catch { }
+        return characters;
+    }
+
+    private static string GetCharacterName(CharacterModel character)
+    {
+        try
+        {
+            string? name = character.Title?.GetFormattedText();
+            if (!string.IsNullOrEmpty(name)) return name;
+        }
+        catch { }
+        return character.Id.Entry;
     }
 
     private void RefreshContent()
@@ -257,8 +332,14 @@ internal class CardLibraryTab
 
         if (pageCards.Count == 0)
         {
+            bool noFilterSelected =
+                !_typeFilter.Values.Any(v => v)
+                && !_characterFilter.Values.Any(v => v)
+                && !_includeGeneralCards;
             var emptyLabel = new Label();
-            emptyLabel.Text = string.IsNullOrEmpty(_searchText) ? "没有找到卡牌" : "没有匹配的卡牌";
+            emptyLabel.Text = noFilterSelected
+                ? "请先勾选至少一个类型或角色以显示卡牌"
+                : (string.IsNullOrEmpty(_searchText) ? "没有找到卡牌" : "没有匹配的卡牌");
             emptyLabel.AddThemeFontSizeOverride("font_size", 14);
             emptyLabel.AddThemeColorOverride("font_color", StsColors.gray);
             _contentContainer.AddChild(emptyLabel);
@@ -292,6 +373,7 @@ internal class CardLibraryTab
             foreach (var card in ModelDb.AllCards)
             {
                 if (!_typeFilter.GetValueOrDefault(card.Type, false)) continue;
+                if (!IsCharacterFilteredIn(card)) continue;
 
                 if (!string.IsNullOrEmpty(_searchText))
                 {
@@ -311,7 +393,104 @@ internal class CardLibraryTab
         }
         catch { }
 
-        return cards.OrderBy(c => c.Id.Entry).ToList();
+        // 保险起见单独补充箱子卡（若角色池已包含会经 Distinct 去重）
+        foreach (var crateCard in CratePoolHelper.GetAllCrateCards())
+        {
+            if (!_typeFilter.GetValueOrDefault(crateCard.Type, false)) continue;
+            if (!IsCharacterFilteredIn(crateCard)) continue;
+            if (!string.IsNullOrEmpty(_searchText))
+            {
+                string search = _searchText.ToLowerInvariant();
+                bool matches = false;
+                try
+                {
+                    if (crateCard.Title.ToLowerInvariant().Contains(search)) matches = true;
+                }
+                catch { }
+                if (crateCard.Id.Entry.ToLowerInvariant().Contains(search)) matches = true;
+                if (!matches) continue;
+            }
+            cards.Add(crateCard);
+        }
+
+        return cards.Distinct().OrderBy(c => c.Id.Entry).ToList();
+    }
+
+    /// <summary>
+    /// 判断卡牌是否通过角色筛选；未归属任何角色的卡牌视为“通用”。
+    /// 一张卡可归属多个角色（如箱子卡同时注册在盟军/苏军卡池），任一归属角色处于开启状态即显示。
+    /// </summary>
+    private static bool IsCharacterFilteredIn(CardModel card)
+    {
+        var owners = GetCardCharacterIds(card);
+        if (owners == null || owners.Count == 0) return _includeGeneralCards;
+        foreach (var owner in owners)
+        {
+            if (_characterFilter.GetValueOrDefault(owner, false)) return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 懒构建 卡牌Id -> 归属角色Id集合 映射。
+    /// </summary>
+    private static HashSet<string>? GetCardCharacterIds(CardModel card)
+    {
+        if (_cardCharacterMap == null)
+        {
+            var map = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+            try
+            {
+                foreach (var character in ModelDb.AllCharacters)
+                {
+                    var entries = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    try
+                    {
+                        foreach (var id in character.CardPool.AllCardIds)
+                        {
+                            if (!string.IsNullOrEmpty(id.Entry)) entries.Add(id.Entry);
+                        }
+                    }
+                    catch { }
+                    try
+                    {
+                        foreach (var c in character.StartingDeck)
+                        {
+                            if (c != null && !string.IsNullOrEmpty(c.Id.Entry)) entries.Add(c.Id.Entry);
+                        }
+                    }
+                    catch { }
+                    foreach (var entry in entries)
+                    {
+                        if (!map.TryGetValue(entry, out var owners))
+                        {
+                            owners = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                            map[entry] = owners;
+                        }
+                        owners.Add(character.Id.Entry);
+                    }
+                }
+
+                // 箱子卡默认被卡池奖励模式从 AllCardIds 过滤，这里补充其归属角色
+                var crateOwners = CratePoolHelper.GetCrateOwnerCharacterIds().ToList();
+                if (crateOwners.Count > 0)
+                {
+                    foreach (var crateCard in CratePoolHelper.GetAllCrateCards())
+                    {
+                        string entry = crateCard.Id.Entry;
+                        if (!map.TryGetValue(entry, out var owners))
+                        {
+                            owners = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                            map[entry] = owners;
+                        }
+                        foreach (var owner in crateOwners) owners.Add(owner);
+                    }
+                }
+            }
+            catch { }
+            _cardCharacterMap = map;
+        }
+        return _cardCharacterMap.TryGetValue(card.Id.Entry, out var resultOwners) ? resultOwners : null;
     }
 
     private Control CreateCardCell(CardModel card)
@@ -342,17 +521,27 @@ internal class CardLibraryTab
                 nCard.MouseFilter = Control.MouseFilterEnum.Ignore;
                 clip.AddChild(nCard);
 
-                nCard.Ready += () =>
+                // 复用池中的 NCard 可能已 Ready：Ready 信号不会再次触发，
+                // 必须立即刷新视觉，否则会显示上一张卡残留的文案/模型
+                if (nCard.IsNodeReady())
                 {
-                    if (GodotObject.IsInstanceValid(nCard))
-                        nCard.UpdateVisuals(PileType.None, CardPreviewMode.Normal);
-                    // 延迟到本帧布局完成后居中（此时 clip.Size 已就绪）
-                    Callable.From(() =>
+                    nCard.UpdateVisuals(PileType.None, CardPreviewMode.Normal);
+                    CenterCardInClip(clip, nCard);
+                }
+                else
+                {
+                    nCard.Ready += () =>
                     {
-                        if (GodotObject.IsInstanceValid(clip) && GodotObject.IsInstanceValid(nCard))
-                            CenterCardInClip(clip, nCard);
-                    }).CallDeferred();
-                };
+                        if (GodotObject.IsInstanceValid(nCard))
+                            nCard.UpdateVisuals(PileType.None, CardPreviewMode.Normal);
+                        // 延迟到本帧布局完成后居中（此时 clip.Size 已就绪）
+                        Callable.From(() =>
+                        {
+                            if (GodotObject.IsInstanceValid(clip) && GodotObject.IsInstanceValid(nCard))
+                                CenterCardInClip(clip, nCard);
+                        }).CallDeferred();
+                    };
+                }
             }
         }
         catch { }
@@ -393,9 +582,11 @@ internal class CardLibraryTab
     private static void CenterCardInClip(Control clip, Control? card)
     {
         if (card == null || !GodotObject.IsInstanceValid(clip) || !GodotObject.IsInstanceValid(card)) return;
-        float drawnW = CardBaseWidth * CardCellScale;
-        float drawnH = CardBaseHeight * CardCellScale;
-        card.Position = new Vector2((clip.Size.X - drawnW) / 2f, (clip.Size.Y - drawnH) / 2f);
+        // NCard 的原点在卡牌中心（card.tscn 中卡面偏移 -150..150 × -211..211），不是左上角，
+        // 所以把原点放到 clip 中心即可让整张卡居中（绘制尺寸 = 基础尺寸 × 缩放）。
+        // 原实现把原点当左上角，用 (clip.Size - drawn) / 2 计算，导致卡牌整体向左上偏移、
+        // 顶部（卡名/费用/插画）和左侧（描述开头）被 clip 裁掉。
+        card.Position = new Vector2(clip.Size.X / 2f, clip.Size.Y / 2f);
     }
 
     private void AddCardToDeck(CardModel card)
@@ -468,9 +659,27 @@ internal class CardLibraryTab
         btn.Text = text;
         btn.CustomMinimumSize = new Vector2(70, 28);
         btn.AddThemeFontSizeOverride("font_size", 13);
-        btn.AddThemeColorOverride("font_color", enabled ? StsColors.green : StsColors.gray);
-        ApplyFlatStyle(btn);
+        // 筛选按钮是即时切换开关：去掉焦点选中框，点击后底色/字体色立即变化
+        btn.FocusMode = Control.FocusModeEnum.None;
+        UpdateFilterButtonStyle(btn, enabled);
+        btn.AddThemeStyleboxOverride("hover", CreateStyleBox(
+            new Color(0.18f, 0.15f, 0.22f, 0.92f),
+            StsColors.gold));
+        btn.AddThemeStyleboxOverride("pressed", CreateStyleBox(
+            new Color(0.08f, 0.06f, 0.10f, 0.95f),
+            new Color("B89840")));
         return btn;
+    }
+
+    /// <summary>
+    /// 更新筛选按钮的开关状态样式：开启=绿底绿字，关闭=灰底灰字。
+    /// </summary>
+    private void UpdateFilterButtonStyle(Button btn, bool enabled)
+    {
+        btn.AddThemeColorOverride("font_color", enabled ? StsColors.green : StsColors.gray);
+        btn.AddThemeStyleboxOverride("normal", CreateStyleBox(
+            enabled ? new Color(0.13f, 0.24f, 0.13f, 0.92f) : new Color(0.12f, 0.10f, 0.15f, 0.85f),
+            enabled ? new Color(0.30f, 0.60f, 0.30f, 0.75f) : new Color(0.35f, 0.30f, 0.25f, 0.5f)));
     }
 
     private void ApplyFlatStyle(Button btn)

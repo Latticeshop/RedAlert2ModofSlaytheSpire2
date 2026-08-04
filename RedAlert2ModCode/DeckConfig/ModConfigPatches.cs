@@ -16,6 +16,7 @@ using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.Screens.MainMenu;
 using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Saves;
 using RedAlert2ModCode.Common.Relics;
 using RedAlert2ModCode.Common.Utils;
@@ -144,22 +145,27 @@ public static class ModConfigPatches
             Logger.Error($"[ModConfig] 主菜单补丁安装失败: {ex.Message}");
         }
 
-        // 补丁3: 拦截Run开始时应用基地车模式
+        // 补丁3: 拦截多人开局设置（RunManager.StartRun 在当前版本不存在，改用真实存在的 SetUpNewMultiplayer），
+        // 缓存玩家列表并广播本机配置，供主机按 NetId 应用
         try
         {
-            var startRunMethod = AccessTools.Method(typeof(RunManager), "StartRun");
-            if (startRunMethod != null)
+            var setupMultiplayerMethod = AccessTools.Method(typeof(RunManager), "SetUpNewMultiplayer");
+            if (setupMultiplayerMethod != null)
             {
                 harmony.Patch(
-                    original: startRunMethod,
+                    original: setupMultiplayerMethod,
                     postfix: new HarmonyMethod(typeof(RunStartPatch), nameof(RunStartPatch.Postfix))
                 );
-                Logger.Info("[ModConfig] Run开始补丁安装成功");
+                Logger.Info("[ModConfig] 多人开局设置补丁安装成功 (RunManager.SetUpNewMultiplayer)");
+            }
+            else
+            {
+                Logger.Warn("[ModConfig] 找不到 RunManager.SetUpNewMultiplayer");
             }
         }
         catch (Exception ex)
         {
-            Logger.Error($"[ModConfig] Run开始补丁安装失败: {ex.Message}");
+            Logger.Error($"[ModConfig] 多人开局设置补丁安装失败: {ex.Message}");
         }
 
         // 补丁4: 拦截FlagManager.GetPlayerFaction以支持MCV模式国旗事件
@@ -178,6 +184,28 @@ public static class ModConfigPatches
         catch (Exception ex)
         {
             Logger.Error($"[ModConfig] MCV模式国旗补丁安装失败: {ex.Message}");
+        }
+
+        // 补丁5: 卡池奖励模式 - 直接给奖励候选注入箱子卡（不修改角色池，原版角色也生效）
+        try
+        {
+            var getPossibleCardsMethod = AccessTools.Method(typeof(CardCreationOptions), "GetPossibleCards");
+            if (getPossibleCardsMethod != null)
+            {
+                harmony.Patch(
+                    original: getPossibleCardsMethod,
+                    postfix: new HarmonyMethod(typeof(CardRewardCratePatch), nameof(CardRewardCratePatch.Postfix))
+                );
+                Logger.Info("[ModConfig] 卡池奖励模式补丁安装成功 (CardCreationOptions.GetPossibleCards)");
+            }
+            else
+            {
+                Logger.Warn("[ModConfig] 找不到 CardCreationOptions.GetPossibleCards");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"[ModConfig] 卡池奖励模式补丁安装失败: {ex.Message}");
         }
 
         Logger.Info("[ModConfigPatches] 配置补丁安装完成");
@@ -256,14 +284,20 @@ public static class ModConfigPatches
                 string? characterId = __instance.Character?.Id?.Entry;
                 if (string.IsNullOrEmpty(characterId)) return;
 
-                var config = ModConfigManager.GetCharacterConfig(characterId);
+                // 多人模式按玩家 NetId 取配置，保证每个玩家独立应用自己的配置
+                var config = ModConfigManager.GetCharacterConfig(characterId, __instance.NetId);
 
                 // 幸运方块 / 自定义卡组：清空并重建初始牌组
                 List<CardModel>? replacement = null;
                 if (config.LuckyCrateMode)
                 {
                     replacement = CreateLuckyCrateDeck();
-                    Logger.Info($"[ModConfig] 已应用幸运方块模式，角色: {characterId}");
+                    // 幸运方块 + 自定义初始卡组可叠加：自定义卡牌追加在箱子卡之后
+                    if (config.EnableCustomDeck && config.CustomDeckCardTypes.Count > 0)
+                    {
+                        replacement.AddRange(CreateCustomDeck(config));
+                    }
+                    Logger.Info($"[ModConfig] 已应用幸运方块模式（含自定义卡组），角色: {characterId}");
                 }
                 else if (config.EnableCustomDeck && config.CustomDeckCardTypes.Count > 0)
                 {
@@ -832,11 +866,14 @@ public static class ModConfigPatches
     /// </summary>
     public static class RunStartPatch
     {
-        public static void Postfix(RunState __instance)
+        public static void Postfix(RunState state)
         {
             try
             {
-                Logger.Info("[ModConfig] RunStartPatch: 游戏开始，配置已应用");
+                ModConfigManager.SetRunPlayers(state?.Players);
+                // 多人开局：把本机本地玩家的配置广播给主机，供主机按 NetId 应用
+                ModConfigManager.BroadcastAllLocalConfigs();
+                Logger.Info("[ModConfig] RunStartPatch: 开局设置完成，配置已广播");
             }
             catch (Exception ex)
             {
@@ -863,7 +900,7 @@ public static class ModConfigPatches
                 string? characterId = player.Character?.Id?.Entry;
                 if (string.IsNullOrEmpty(characterId)) return;
 
-                var config = ModConfigManager.GetCharacterConfig(characterId);
+                var config = ModConfigManager.GetCharacterConfig(characterId, player.NetId);
 
                 if (config.BaseCarMode == BaseCarMode.None) return;
 
@@ -884,6 +921,48 @@ public static class ModConfigPatches
             catch (Exception ex)
             {
                 Logger.Warn($"[ModConfig] FactionPatch 失败: {ex.Message}");
+            }
+        }
+    }
+
+    /// <summary>
+    /// 卡池奖励模式补丁：直接给卡牌奖励候选注入箱子卡。
+    ///   AllCrates → 仅战斗结束卡牌奖励（Encounter 来源）替换为纯箱子卡，商店/事件保持默认池；
+    ///   AddCrates → 在卡牌奖励候选中混入箱子卡（不修改角色池，原版角色也生效）。
+    /// </summary>
+    public static class CardRewardCratePatch
+    {
+        public static void Postfix(CardCreationOptions __instance, Player player, ref IEnumerable<CardModel> __result)
+        {
+            try
+            {
+                if (__result == null || player?.Character == null) return;
+
+                string? characterId = player.Character?.Id?.Entry;
+                if (string.IsNullOrEmpty(characterId)) return;
+
+                var config = ModConfigManager.GetCharacterConfig(characterId, player.NetId);
+                if (config.CratePoolMode == CratePoolMode.None) return;
+
+                var crateCards = CratePoolHelper.GetAllCrateCards().ToList();
+                if (crateCards.Count == 0) return;
+
+                if (config.CratePoolMode == CratePoolMode.AllCrates)
+                {
+                    // 仅战斗结束卡牌奖励生效（Encounter 来源），商店/事件等使用默认角色卡池
+                    if (__instance.Source != CardCreationSource.Encounter) return;
+                    __result = crateCards;
+                    Logger.Info($"[ModConfig] 奖励模式: 战斗卡牌奖励仅箱子（角色 {characterId}）");
+                }
+                else // AddCrates：奖励候选混入箱子卡
+                {
+                    __result = __result.Concat(crateCards).Distinct();
+                    Logger.Info($"[ModConfig] 奖励模式: 卡牌奖励加入箱子（角色 {characterId}）");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn($"[ModConfig] CardRewardCratePatch 失败: {ex.Message}");
             }
         }
     }

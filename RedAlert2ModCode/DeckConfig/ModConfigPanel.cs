@@ -36,7 +36,6 @@ internal static class ModConfigPanel
     private static Button[]? _subTabButtons;
     private static Control? _charInfoHeader;
     private static Label? _charNameLabel;
-    private static Label? _charFactionLabel;
 
     private static int _activeFeature;
     private static int _activeSubTab;
@@ -354,11 +353,6 @@ internal static class ModConfigPanel
         _charNameLabel.AddThemeColorOverride("font_color", StsColors.gold);
         _charInfoHeader.AddChild(_charNameLabel);
 
-        _charFactionLabel = new Label();
-        _charFactionLabel.AddThemeFontSizeOverride("font_size", 13);
-        _charFactionLabel.AddThemeColorOverride("font_color", StsColors.cream);
-        _charInfoHeader.AddChild(_charFactionLabel);
-
         // Sub-tabs
         _subTabBar = new HBoxContainer();
         _subTabBar.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
@@ -493,17 +487,15 @@ internal static class ModConfigPanel
 
     private static void UpdateCharacterInfo()
     {
-        if (_charNameLabel == null || _charFactionLabel == null) return;
+        if (_charNameLabel == null) return;
 
         if (string.IsNullOrEmpty(_selectedCharacterId))
         {
             _charNameLabel.Text = L("CONFIG_SELECT_CHAR_PROMPT");
-            _charFactionLabel.Text = string.Empty;
             return;
         }
 
         _charNameLabel.Text = GetCharacterDisplayName(_selectedCharacterId);
-        _charFactionLabel.Text = GetCharacterFactionInfo(_selectedCharacterId);
     }
 
     private static string GetCharacterDisplayName(string characterId)
@@ -568,6 +560,13 @@ internal static class ModConfigPanel
         desc.AddThemeFontSizeOverride("font_size", 13);
         desc.AddThemeColorOverride("font_color", StsColors.gray);
         container.AddChild(desc);
+
+        // 阵营信息（从角色头部移入基地车模式内容）
+        var factionLabel = new Label();
+        factionLabel.Text = GetCharacterFactionInfo(config.CharacterId);
+        factionLabel.AddThemeFontSizeOverride("font_size", 13);
+        factionLabel.AddThemeColorOverride("font_color", StsColors.cream);
+        container.AddChild(factionLabel);
 
         var currentLabel = new Label();
         currentLabel.Text = L("CONFIG_BASE_CAR_CURRENT", config.BaseCarMode);
@@ -1028,7 +1027,7 @@ internal static class ModConfigPanel
                 // 用 clip 包裹卡牌，避免卡片自然最小尺寸把格子撑大（与 CardLibraryTab 相同方案）
                 var clip = new Control();
                 clip.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-                clip.CustomMinimumSize = new Vector2(0, 140);
+                clip.CustomMinimumSize = new Vector2(0, 150);
                 clip.ClipContents = true;
                 clip.MouseFilter = Control.MouseFilterEnum.Ignore;
                 cardThumb.AddChild(clip);
@@ -1047,16 +1046,26 @@ internal static class ModConfigPanel
 
                             NCard capturedCard = nCard;
                             Control capturedClip = clip;
-                            nCard.Ready += () =>
+                            // 复用池中的 NCard 可能已 Ready：Ready 信号不会再次触发，
+                            // 必须立即刷新视觉，否则会显示上一张卡残留的文案/模型
+                            if (nCard.IsNodeReady())
                             {
-                                if (GodotObject.IsInstanceValid(capturedCard))
-                                    capturedCard.UpdateVisuals(PileType.None, CardPreviewMode.Normal);
-                                Callable.From(() =>
+                                nCard.UpdateVisuals(PileType.None, CardPreviewMode.Normal);
+                                CenterThumb(capturedClip, capturedCard, 0.32f);
+                            }
+                            else
+                            {
+                                nCard.Ready += () =>
                                 {
-                                    if (GodotObject.IsInstanceValid(capturedClip) && GodotObject.IsInstanceValid(capturedCard))
-                                        CenterThumb(capturedClip, capturedCard, 0.32f);
-                                }).CallDeferred();
-                            };
+                                    if (GodotObject.IsInstanceValid(capturedCard))
+                                        capturedCard.UpdateVisuals(PileType.None, CardPreviewMode.Normal);
+                                    Callable.From(() =>
+                                    {
+                                        if (GodotObject.IsInstanceValid(capturedClip) && GodotObject.IsInstanceValid(capturedCard))
+                                            CenterThumb(capturedClip, capturedCard, 0.32f);
+                                    }).CallDeferred();
+                                };
+                            }
                             clip.Resized += () =>
                             {
                                 if (GodotObject.IsInstanceValid(capturedClip) && GodotObject.IsInstanceValid(capturedCard))
@@ -1066,6 +1075,31 @@ internal static class ModConfigPanel
                     }
                     catch { }
                 }
+
+                // 卡片右上角 ✕ 按钮：点击移除一张（与右键逻辑一致）
+                var removeBtn = new Button();
+                removeBtn.Text = "✕";
+                removeBtn.AnchorLeft = 1f;
+                removeBtn.AnchorRight = 1f;
+                removeBtn.AnchorTop = 0f;
+                removeBtn.AnchorBottom = 0f;
+                removeBtn.OffsetLeft = -16;
+                removeBtn.OffsetRight = -6;
+                removeBtn.OffsetTop = 3;
+                removeBtn.OffsetBottom = 13;
+                removeBtn.AddThemeFontSizeOverride("font_size", 9);
+                removeBtn.AddThemeColorOverride("font_color", StsColors.red);
+                removeBtn.AddThemeColorOverride("font_hover_color", StsColors.cream);
+                removeBtn.AddThemeStyleboxOverride("normal", CreateStyleBox(
+                    new Color(0.08f, 0.06f, 0.10f, 0.85f), StsColors.red));
+                removeBtn.AddThemeStyleboxOverride("hover", CreateStyleBox(
+                    new Color(0.25f, 0.10f, 0.12f, 0.95f), StsColors.red));
+                removeBtn.AddThemeStyleboxOverride("pressed", CreateStyleBox(
+                    new Color(0.08f, 0.06f, 0.10f, 0.95f), new Color("B89840")));
+                removeBtn.FocusMode = Control.FocusModeEnum.None;
+                string capturedRemoveType = cardType;
+                removeBtn.Pressed += () => RemoveDeckCard(config, capturedRemoveType);
+                clip.AddChild(removeBtn);
 
                 var infoRow = new HBoxContainer();
                 infoRow.Alignment = BoxContainer.AlignmentMode.Center;
@@ -1091,13 +1125,7 @@ internal static class ModConfigPanel
                     if (ev is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Right })
                     {
                         cardThumb.GetViewport()?.SetInputAsHandled();
-                        string? firstMatch = config.CustomDeckCardTypes.FirstOrDefault(t => t == capturedType);
-                        if (firstMatch != null)
-                        {
-                            config.CustomDeckCardTypes.Remove(firstMatch);
-                            ModConfigManager.UpdateCharacterConfig(config);
-                            RefreshContent();
-                        }
+                        RemoveDeckCard(config, capturedType);
                     }
                 };
 
@@ -1153,14 +1181,30 @@ internal static class ModConfigPanel
     }
 
     /// <summary>
-    /// 将卡牌缩略图居中到 clip 内（按绘制后的尺寸 300x422x缩放 计算偏移）。
+    /// 从自定义卡组移除一张指定卡牌（每次移除 1 张，与原有右键逻辑一致）。
+    /// </summary>
+    private static void RemoveDeckCard(CharacterConfig config, string cardType)
+    {
+        string? firstMatch = config.CustomDeckCardTypes.FirstOrDefault(t => t == cardType);
+        if (firstMatch != null)
+        {
+            config.CustomDeckCardTypes.Remove(firstMatch);
+            ModConfigManager.UpdateCharacterConfig(config);
+            RefreshContent();
+        }
+    }
+
+    /// <summary>
+    /// 将卡牌缩略图居中到 clip 内（NCard 原点在卡牌中心，因此把原点放到 clip 中心）。
     /// </summary>
     private static void CenterThumb(Control clip, Control card, float scale)
     {
         if (!GodotObject.IsInstanceValid(clip) || !GodotObject.IsInstanceValid(card)) return;
-        float drawnW = 300f * scale;
-        float drawnH = 422f * scale;
-        card.Position = new Vector2((clip.Size.X - drawnW) / 2f, (clip.Size.Y - drawnH) / 2f);
+        // NCard 的原点在卡牌中心（card.tscn 中卡面偏移 -150..150 × -211..211），不是左上角，
+        // 所以把原点放到 clip 中心即可让整张卡居中（绘制尺寸 = 300×422×scale）。
+        // 原实现把原点当左上角，用 (clip.Size - drawn) / 2 计算，导致卡牌整体向左上偏移、
+        // 顶部（卡名/费用/插画）和左侧（描述开头）被 clip 裁掉。
+        card.Position = new Vector2(clip.Size.X / 2f, clip.Size.Y / 2f);
     }
 
     /// <summary>
@@ -1289,8 +1333,10 @@ internal static class ModConfigPanel
         dialog.AnchorBottom = 0.5f;
         dialog.OffsetLeft = -160;
         dialog.OffsetRight = 160;
-        dialog.OffsetTop = -80;
-        dialog.OffsetBottom = 80;
+        // 高度由内容自适应（宽度仍固定 320），配合下方上大下小的内边距，
+        // 让标题不贴顶、底部留白紧凑
+        dialog.OffsetTop = 0;
+        dialog.OffsetBottom = 0;
         dialog.GrowHorizontal = Control.GrowDirection.Both;
         dialog.GrowVertical = Control.GrowDirection.Both;
         dialog.MouseFilter = Control.MouseFilterEnum.Stop;
@@ -1300,13 +1346,17 @@ internal static class ModConfigPanel
         dialogStyle.SetBorderWidthAll(2);
         dialogStyle.BorderColor = StsColors.gold;
         dialogStyle.SetCornerRadiusAll(8);
-        dialogStyle.SetContentMarginAll(0);
+        dialogStyle.SetContentMargin(Side.Left, 14);
+        dialogStyle.SetContentMargin(Side.Right, 14);
+        dialogStyle.SetContentMargin(Side.Top, 16);
+        dialogStyle.SetContentMargin(Side.Bottom, 10);
         dialog.AddThemeStyleboxOverride("panel", dialogStyle);
         _layer.AddChild(dialog);
 
         var vbox = new VBoxContainer();
         vbox.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
-        vbox.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
+        // 让弹窗内容按实际高度垂直居中，避免内容贴顶、底部留白过大
+        vbox.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
         vbox.AddThemeConstantOverride("separation", 10);
         dialog.AddChild(vbox);
 

@@ -6,8 +6,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using Godot;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Runs;
+using RedAlert2ModCode.Common.GameActions;
+using RedAlert2ModCode.UI;
 
 namespace RedAlert2ModCode.DeckConfig;
 
@@ -37,6 +41,9 @@ public enum CratePoolMode
 /// </summary>
 public class CharacterConfig
 {
+    private BaseCarMode _baseCarMode = BaseCarMode.None;
+    private bool _luckyCrateMode;
+
     /// <summary>
     /// 角色ID
     /// </summary>
@@ -55,12 +62,36 @@ public class CharacterConfig
     /// <summary>
     /// 基地车开局模式
     /// </summary>
-    public BaseCarMode BaseCarMode { get; set; } = BaseCarMode.None;
+    public BaseCarMode BaseCarMode
+    {
+        get => _baseCarMode;
+        set
+        {
+            _baseCarMode = value;
+            // 基地车模式与幸运方块模式互斥：启用基地车自动关闭幸运方块。
+            if (_baseCarMode != BaseCarMode.None)
+            {
+                _luckyCrateMode = false;
+            }
+        }
+    }
 
     /// <summary>
     /// 是否启用幸运方块捡箱子模式
     /// </summary>
-    public bool LuckyCrateMode { get; set; }
+    public bool LuckyCrateMode
+    {
+        get => _luckyCrateMode;
+        set
+        {
+            _luckyCrateMode = value;
+            // 与基地车模式互斥：启用幸运方块自动把基地车模式设为“无”。
+            if (_luckyCrateMode)
+            {
+                _baseCarMode = BaseCarMode.None;
+            }
+        }
+    }
 
     /// <summary>
     /// 卡池奖励模式（None=默认排除箱子，AllCrates=全为箱子，AddCrates=加入箱子）
@@ -78,6 +109,10 @@ public static class ModConfigManager
 
     private static Dictionary<string, CharacterConfig>? _configs;
     private static bool _initialized;
+    // 多人模式下按玩家 NetId 同步过来的配置（优先级高于本机按角色保存的配置）
+    private static readonly Dictionary<ulong, CharacterConfig> _remoteConfigs = new();
+    // 当前局玩家列表（由 RunStartPatch 在开局时缓存，供配置广播定位本地玩家）
+    private static IReadOnlyList<Player>? _currentPlayers;
 
     /// <summary>
     /// 配置文件路径
@@ -182,9 +217,15 @@ public static class ModConfigManager
     /// <summary>
     /// 获取指定角色的配置
     /// </summary>
-    public static CharacterConfig GetCharacterConfig(string characterId)
+    public static CharacterConfig GetCharacterConfig(string characterId, ulong? netId = null)
     {
         if (_configs == null) Load();
+
+        // 多人模式：优先使用该玩家（NetId）同步过来的配置，实现每玩家独立
+        if (netId.HasValue && _remoteConfigs.TryGetValue(netId.Value, out var remoteConfig))
+        {
+            return remoteConfig;
+        }
 
         if (_configs!.TryGetValue(characterId, out var config))
         {
@@ -214,6 +255,79 @@ public static class ModConfigManager
         if (_configs == null) Load();
         _configs![config.CharacterId] = config;
         Save();
+        BroadcastConfig(config);
+    }
+
+    /// <summary>
+    /// 记录其他玩家（NetId）同步过来的配置，用于多人模式下按玩家独立应用。
+    /// </summary>
+    public static void SetRemoteCharacterConfig(ulong netId, CharacterConfig config)
+    {
+        if (config == null) return;
+        _remoteConfigs[netId] = config;
+        Logger.Info($"[ModConfigManager] 已记录玩家 {netId} 的配置（角色: {config.CharacterId}）");
+    }
+
+    /// <summary>
+    /// 缓存当前局玩家列表（开局时由 RunStartPatch 调用）。
+    /// </summary>
+    public static void SetRunPlayers(IReadOnlyList<Player>? players)
+    {
+        _currentPlayers = players;
+    }
+
+    /// <summary>
+    /// 多人开局时：把本机所有本地玩家的配置广播给主机。
+    /// </summary>
+    public static void BroadcastAllLocalConfigs()
+    {
+        try
+        {
+            if (!MultiplayerSyncHelper.IsMultiplayerGame()) return;
+            if (_currentPlayers == null) return;
+            foreach (var player in _currentPlayers)
+            {
+                try
+                {
+                    if (!MultiplayerSyncHelper.IsLocalPlayer(player)) continue;
+                    string? characterId = player.Character?.Id?.Entry;
+                    if (string.IsNullOrEmpty(characterId)) continue;
+                    BroadcastConfig(GetCharacterConfig(characterId));
+                }
+                catch { }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"[ModConfigManager] 广播本地配置失败: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// 将本地配置广播给主机（多人模式下）；不在多人运行环境中时静默跳过。
+    /// </summary>
+    public static void BroadcastConfig(CharacterConfig config)
+    {
+        try
+        {
+            if (config == null) return;
+            if (!MultiplayerSyncHelper.IsMultiplayerGame()) return;
+            if (_currentPlayers == null) return;
+
+            Player? local = _currentPlayers.FirstOrDefault(p =>
+            {
+                try { return MultiplayerSyncHelper.IsLocalPlayer(p) && p.Character?.Id?.Entry == config.CharacterId; }
+                catch { return false; }
+            });
+            if (local == null) return;
+
+            RunManager.Instance?.ActionQueueSynchronizer?.RequestEnqueue(new ConfigSyncGameAction(local, config));
+            Logger.Info($"[ModConfigManager] 已广播配置（角色: {config.CharacterId}）");
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"[ModConfigManager] 广播配置失败: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -272,6 +386,12 @@ public static class ModConfigManager
             config.CustomDeckCardTypes = list;
         }
 
+        // 先解析幸运方块，再解析基地车：若旧配置两者同时启用，基地车模式优先（并自动关闭幸运方块）。
+        if (element.TryGetProperty("luckyCrateMode", out var luckyCrate))
+        {
+            config.LuckyCrateMode = luckyCrate.GetBoolean();
+        }
+
         if (element.TryGetProperty("baseCarMode", out var baseCarMode))
         {
             string modeStr = baseCarMode.GetString() ?? "None";
@@ -279,11 +399,6 @@ public static class ModConfigManager
             {
                 config.BaseCarMode = mode;
             }
-        }
-
-        if (element.TryGetProperty("luckyCrateMode", out var luckyCrate))
-        {
-            config.LuckyCrateMode = luckyCrate.GetBoolean();
         }
 
         if (element.TryGetProperty("cratePoolMode", out var cratePoolMode))
