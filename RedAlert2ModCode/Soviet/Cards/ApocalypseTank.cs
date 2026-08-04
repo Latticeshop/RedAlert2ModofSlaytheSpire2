@@ -49,9 +49,6 @@ public sealed class ApocalypseTank : CardModel
 			if (!base.IsPlayable)
 				return false;
 
-			if (!CardUtils.HasMcvPower(Owner.Creature))
-				return false;
-
 			return true;
 		}
 	}
