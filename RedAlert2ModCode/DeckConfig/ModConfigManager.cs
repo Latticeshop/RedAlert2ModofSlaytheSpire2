@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text.Json;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
@@ -115,11 +116,30 @@ public class CharacterConfig
 public static class ModConfigManager
 {
     private const string ConfigFileName = "RedAlert2ModConfig.json";
+    private const string LocTable = "characters";
     /// <summary>
     /// 自定义卡组条目中升级卡牌的标记后缀（如 "Strike:U"）。
     /// </summary>
     public const string UpgradedMarker = ":U";
     private static readonly MegaCrit.Sts2.Core.Logging.Logger Logger = new("RedAlert2Mod", LogType.Generic);
+
+    /// <summary>
+    /// 读取 characters 本地化表中的文案（供卡牌库/遗物库等配置模块 UI 使用）。
+    /// </summary>
+    public static string L(string key, params object[] args)
+    {
+        try
+        {
+            string text = new LocString(LocTable, key).GetRawText();
+            if (args.Length > 0)
+                text = string.Format(text, args);
+            return text;
+        }
+        catch
+        {
+            return key;
+        }
+    }
 
     /// <summary>
     /// 编码卡组条目：升级卡附加 ":U" 后缀，与未升级同名卡区分（各自独立叠加）。

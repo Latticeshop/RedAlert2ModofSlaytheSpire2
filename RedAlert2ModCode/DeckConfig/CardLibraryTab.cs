@@ -125,7 +125,7 @@ internal class CardLibraryTab
 
         // 标题
         var titleLabel = new Label();
-        titleLabel.Text = "选择卡牌添加到卡组";
+        titleLabel.Text = ModConfigManager.L("CONFIG_CARD_LIB_TITLE");
         titleLabel.AddThemeFontSizeOverride("font_size", 20);
         titleLabel.AddThemeColorOverride("font_color", StsColors.gold);
         titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
@@ -164,7 +164,7 @@ internal class CardLibraryTab
         buttonRow.Alignment = BoxContainer.AlignmentMode.Center;
         mainVBox.AddChild(buttonRow);
 
-        var closeBtn = CreateActionButton("关闭", StsColors.red);
+        var closeBtn = CreateActionButton(ModConfigManager.L("CONFIG_LIB_CLOSE"), StsColors.red);
         closeBtn.CustomMinimumSize = new Vector2(100, 36);
         closeBtn.Pressed += () =>
         {
@@ -183,7 +183,7 @@ internal class CardLibraryTab
         searchBox.AddThemeConstantOverride("separation", 6);
 
         var searchLabel = new Label();
-        searchLabel.Text = "搜索:";
+        searchLabel.Text = ModConfigManager.L("CONFIG_SEARCH");
         searchLabel.AddThemeFontSizeOverride("font_size", 14);
         searchLabel.AddThemeColorOverride("font_color", StsColors.cream);
         searchBox.AddChild(searchLabel);
@@ -203,7 +203,7 @@ internal class CardLibraryTab
 
         if (!string.IsNullOrEmpty(_searchText))
         {
-            var clearBtn = CreateActionButton("清除", StsColors.red);
+            var clearBtn = CreateActionButton(ModConfigManager.L("CONFIG_CLEAR"), StsColors.red);
             clearBtn.Pressed += () =>
             {
                 _searchText = string.Empty;
@@ -223,7 +223,7 @@ internal class CardLibraryTab
         container.AddChild(filterBox);
 
         var filterLabel = new Label();
-        filterLabel.Text = "类型:";
+        filterLabel.Text = ModConfigManager.L("CONFIG_TYPE");
         filterLabel.AddThemeFontSizeOverride("font_size", 14);
         filterLabel.AddThemeColorOverride("font_color", StsColors.cream);
         filterLabel.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
@@ -231,11 +231,11 @@ internal class CardLibraryTab
 
         (CardType type, string name)[] types =
         [
-            (CardType.Attack, "攻击"),
-            (CardType.Skill, "技能"),
-            (CardType.Power, "能力"),
-            (CardType.Status, "衍生"),
-            (CardType.Curse, "诅咒"),
+            (CardType.Attack, ModConfigManager.L("CONFIG_TYPE_ATTACK")),
+            (CardType.Skill, ModConfigManager.L("CONFIG_TYPE_SKILL")),
+            (CardType.Power, ModConfigManager.L("CONFIG_TYPE_POWER")),
+            (CardType.Status, ModConfigManager.L("CONFIG_TYPE_STATUS")),
+            (CardType.Curse, ModConfigManager.L("CONFIG_TYPE_CURSE")),
         ];
 
         foreach (var (type, name) in types)
@@ -261,7 +261,7 @@ internal class CardLibraryTab
         container.AddChild(filterBox);
 
         var filterLabel = new Label();
-        filterLabel.Text = "角色:";
+        filterLabel.Text = ModConfigManager.L("CONFIG_CHARACTER");
         filterLabel.AddThemeFontSizeOverride("font_size", 14);
         filterLabel.AddThemeColorOverride("font_color", StsColors.cream);
         filterLabel.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
@@ -283,7 +283,7 @@ internal class CardLibraryTab
             filterBox.AddChild(btn);
         }
 
-        var generalBtn = CreateFilterButton("通用", _includeGeneralCards);
+        var generalBtn = CreateFilterButton(ModConfigManager.L("CONFIG_GENERAL"), _includeGeneralCards);
         generalBtn.Pressed += () =>
         {
             _includeGeneralCards = !_includeGeneralCards;
@@ -338,8 +338,8 @@ internal class CardLibraryTab
                 && !_includeGeneralCards;
             var emptyLabel = new Label();
             emptyLabel.Text = noFilterSelected
-                ? "请先勾选至少一个类型或角色以显示卡牌"
-                : (string.IsNullOrEmpty(_searchText) ? "没有找到卡牌" : "没有匹配的卡牌");
+                ? ModConfigManager.L("CONFIG_CARD_LIB_EMPTY_FILTER")
+                : (string.IsNullOrEmpty(_searchText) ? ModConfigManager.L("CONFIG_CARD_LIB_EMPTY") : ModConfigManager.L("CONFIG_CARD_LIB_NO_MATCH"));
             emptyLabel.AddThemeFontSizeOverride("font_size", 14);
             emptyLabel.AddThemeColorOverride("font_color", StsColors.gray);
             _contentContainer.AddChild(emptyLabel);
@@ -574,12 +574,12 @@ internal class CardLibraryTab
         addRow.Alignment = BoxContainer.AlignmentMode.Center;
         cell.AddChild(addRow);
 
-        var addBtn = CreateActionButton("＋ 添加", StsColors.gold);
+        var addBtn = CreateActionButton(ModConfigManager.L("CONFIG_ADD"), StsColors.gold);
         addBtn.CustomMinimumSize = new Vector2(72, 28);
         addBtn.Pressed += () => AddCardToDeck(card, false);
         addRow.AddChild(addBtn);
 
-        var upgradeBtn = CreateActionButton("＋ 升级", StsColors.gold);
+        var upgradeBtn = CreateActionButton(ModConfigManager.L("CONFIG_UPGRADE"), StsColors.gold);
         upgradeBtn.CustomMinimumSize = new Vector2(72, 28);
         upgradeBtn.Pressed += () => AddCardToDeck(card, true);
         addRow.AddChild(upgradeBtn);
@@ -621,7 +621,7 @@ internal class CardLibraryTab
 
         if (_pageIndex > 0)
         {
-            var prevBtn = CreateActionButton("← 上一页", StsColors.cream);
+            var prevBtn = CreateActionButton(ModConfigManager.L("CONFIG_PREV_PAGE"), StsColors.cream);
             prevBtn.Pressed += () =>
             {
                 _pageIndex--;
@@ -631,14 +631,14 @@ internal class CardLibraryTab
         }
 
         var pageLabel = new Label();
-        pageLabel.Text = $"第 {_pageIndex + 1}/{totalPages} 页 (共 {totalCount} 张)";
+        pageLabel.Text = ModConfigManager.L("CONFIG_PAGE_INFO", _pageIndex + 1, totalPages, totalCount);
         pageLabel.AddThemeFontSizeOverride("font_size", 13);
         pageLabel.AddThemeColorOverride("font_color", StsColors.cream);
         nav.AddChild(pageLabel);
 
         if (_pageIndex < totalPages - 1)
         {
-            var nextBtn = CreateActionButton("下一页 →", StsColors.cream);
+            var nextBtn = CreateActionButton(ModConfigManager.L("CONFIG_NEXT_PAGE"), StsColors.cream);
             nextBtn.Pressed += () =>
             {
                 _pageIndex++;

@@ -97,7 +97,7 @@ internal class RelicLibraryTab
         panel.AddChild(mainVBox);
 
         var titleLabel = new Label();
-        titleLabel.Text = "选择遗物添加到初始遗物";
+        titleLabel.Text = ModConfigManager.L("CONFIG_RELIC_LIB_TITLE");
         titleLabel.AddThemeFontSizeOverride("font_size", 20);
         titleLabel.AddThemeColorOverride("font_color", StsColors.gold);
         titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
@@ -124,7 +124,7 @@ internal class RelicLibraryTab
         buttonRow.Alignment = BoxContainer.AlignmentMode.Center;
         mainVBox.AddChild(buttonRow);
 
-        var closeBtn = CreateActionButton("关闭", StsColors.red);
+        var closeBtn = CreateActionButton(ModConfigManager.L("CONFIG_LIB_CLOSE"), StsColors.red);
         closeBtn.CustomMinimumSize = new Vector2(100, 36);
         closeBtn.Pressed += () =>
         {
@@ -202,13 +202,13 @@ internal class RelicLibraryTab
         var groups = new List<(string, List<RelicModel>)>();
         var rarityGroups = new (RelicRarity Rarity, string Name)[]
         {
-            (RelicRarity.Starter, "初始"),
-            (RelicRarity.Common, "普通"),
-            (RelicRarity.Uncommon, "罕见"),
-            (RelicRarity.Rare, "稀有"),
-            (RelicRarity.Shop, "商店"),
-            (RelicRarity.Ancient, "先古"),
-            (RelicRarity.Event, "事件"),
+            (RelicRarity.Starter, ModConfigManager.L("CONFIG_RELIC_GROUP_STARTER")),
+            (RelicRarity.Common, ModConfigManager.L("CONFIG_RELIC_GROUP_COMMON")),
+            (RelicRarity.Uncommon, ModConfigManager.L("CONFIG_RELIC_GROUP_UNCOMMON")),
+            (RelicRarity.Rare, ModConfigManager.L("CONFIG_RELIC_GROUP_RARE")),
+            (RelicRarity.Shop, ModConfigManager.L("CONFIG_RELIC_GROUP_SHOP")),
+            (RelicRarity.Ancient, ModConfigManager.L("CONFIG_RELIC_GROUP_ANCIENT")),
+            (RelicRarity.Event, ModConfigManager.L("CONFIG_RELIC_GROUP_EVENT")),
         };
 
         var handled = new HashSet<RelicModel>();
@@ -232,11 +232,11 @@ internal class RelicLibraryTab
         {
             foreach (var poolGroup in exclusive.GroupBy(r =>
             {
-                try { return r.Pool?.GetType().Name ?? "专属"; }
-                catch { return "专属"; }
+                try { return r.Pool?.GetType().Name ?? ModConfigManager.L("CONFIG_RELIC_GROUP_EXCLUSIVE"); }
+                catch { return ModConfigManager.L("CONFIG_RELIC_GROUP_EXCLUSIVE"); }
             }))
             {
-                groups.Add(("专属 · " + poolGroup.Key, poolGroup.ToList()));
+                groups.Add((ModConfigManager.L("CONFIG_RELIC_GROUP_EXCLUSIVE_PREFIX", poolGroup.Key), poolGroup.ToList()));
             }
         }
 

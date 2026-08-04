@@ -79,7 +79,7 @@ internal sealed partial class FlagSelectionScreen : Control, IOverlayScreen, ISc
 		ApplyDefaultMegaLabelTheme(title);
 		title.Modulate = Colors.White;
 		string titleText = string.IsNullOrEmpty(_titleOverride)
-			? "选择你的国家"
+			? L("CONFIG_FLAG_SELECT_TITLE")
 			: _titleOverride;
 		title.SetTextAutoSize(titleText);
 		root.AddChild(title);
@@ -171,7 +171,7 @@ internal sealed partial class FlagSelectionScreen : Control, IOverlayScreen, ISc
 		};
 		ApplyDefaultMegaLabelTheme(customLabel);
 		customLabel.Modulate = Colors.White;
-		customLabel.SetTextAutoSize("自定义");
+		customLabel.SetTextAutoSize(L("CONFIG_FLAG_CUSTOM"));
 		_customContainer.AddChild(customLabel);
 
 		_customOptionButton = new OptionButton
@@ -204,7 +204,7 @@ internal sealed partial class FlagSelectionScreen : Control, IOverlayScreen, ISc
 			skipButton.Name = "FlagSkipButton";
 			if (skipButton.GetNodeOrNull("Label") is GodotObject labelNode)
 			{
-				labelNode.Call("SetTextAutoSize", "跳过");
+				labelNode.Call("SetTextAutoSize", L("CONFIG_FLAG_SKIP"));
 			}
 			skipButton.Connect(NClickableControl.SignalName.Released, Callable.From<NClickableControl>(_ => OnSkipPressed()));
 			AddChild(skipButton);
@@ -294,6 +294,18 @@ internal sealed partial class FlagSelectionScreen : Control, IOverlayScreen, ISc
 		if (skipButton.Size == Vector2.Zero && minSize != Vector2.Zero)
 		{
 			skipButton.Size = minSize;
+		}
+	}
+
+	private static string L(string key)
+	{
+		try
+		{
+			return new LocString("characters", key).GetFormattedText();
+		}
+		catch
+		{
+			return key;
 		}
 	}
 
