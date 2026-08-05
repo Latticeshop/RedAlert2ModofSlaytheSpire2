@@ -8,6 +8,7 @@ using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Helpers;
@@ -15,11 +16,15 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
+using MegaCrit.Sts2.Core.Nodes.Multiplayer;
+using MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect;
 using MegaCrit.Sts2.Core.Nodes.Screens.MainMenu;
 using MegaCrit.Sts2.Core.Nodes.Screens.InspectScreens;
+using MegaCrit.Sts2.Core.Multiplayer.Game.Lobby;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Saves;
+using RedAlert2ModCode.Common.GameActions;
 using RedAlert2ModCode.Common.Relics;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.UI;
@@ -204,6 +209,33 @@ public static class ModConfigPatches
             Logger.Error($"[ModConfig] 多人大厅会话标记补丁安装失败: {ex.Message}");
         }
 
+        // 补丁3.6: 大厅面板挂载/清理 - 在所有玩家的联机大厅页展示“强制房主配置”面板
+        try
+        {
+            var containerType = typeof(NRemoteLobbyPlayerContainer);
+            var initMethod = AccessTools.Method(containerType, "Initialize", new[] { typeof(StartRunLobby), typeof(bool) });
+            var cleanupMethod = AccessTools.Method(containerType, "Cleanup");
+            // OnPlayerConnected 只有一个重载，按方法名查找即可（避免依赖具体参数类型名）
+            var playerConnectedMethod = AccessTools.Method(containerType, "OnPlayerConnected");
+            if (initMethod != null)
+            {
+                harmony.Patch(initMethod, postfix: new HarmonyMethod(typeof(LobbyPanelPatch), nameof(LobbyPanelPatch.InitializePostfix)));
+            }
+            if (cleanupMethod != null)
+            {
+                harmony.Patch(cleanupMethod, postfix: new HarmonyMethod(typeof(LobbyPanelPatch), nameof(LobbyPanelPatch.CleanupPostfix)));
+            }
+            if (playerConnectedMethod != null)
+            {
+                harmony.Patch(playerConnectedMethod, postfix: new HarmonyMethod(typeof(LobbyPanelPatch), nameof(LobbyPanelPatch.PlayerConnectedPostfix)));
+            }
+            Logger.Info("[ModConfig] 大厅面板补丁安装成功");
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"[ModConfig] 大厅面板补丁安装失败: {ex.Message}");
+        }
+
         // 补丁4: 拦截FlagManager.GetPlayerFaction以支持MCV模式国旗事件
         try
         {
@@ -368,21 +400,12 @@ public static class ModConfigPatches
             try
             {
                 if (__instance?.Character == null) return;
-                string? characterId = __instance.Character?.Id?.Entry;
-                if (string.IsNullOrEmpty(characterId)) return;
 
-                // 本机玩家始终用本机最新配置；远端玩家用同步配置（保证每玩家独立）
-                CharacterConfig config;
-                try
-                {
-                    config = MultiplayerSyncHelper.IsLocalPlayer(__instance)
-                        ? ModConfigManager.GetCharacterConfig(characterId)
-                        : ModConfigManager.GetCharacterConfig(characterId, __instance.NetId);
-                }
-                catch
-                {
-                    config = ModConfigManager.GetCharacterConfig(characterId, __instance.NetId);
-                }
+                // 本局配置：强制房主配置开启时用房主配置（未配置的角色强制默认开局）；
+                // 否则本机玩家用本机配置、远端玩家用同步配置（保证每玩家独立）
+                var config = ModConfigManager.GetConfigForPlayer(__instance);
+                if (config == null) return;
+                string characterId = config.CharacterId;
 
                 // 幸运方块 / 自定义卡组：清空并重建初始牌组
                 List<CardModel>? replacement = null;
@@ -472,23 +495,53 @@ public static class ModConfigPatches
                     return;
                 }
 
-                // 清空默认初始遗物后按配置授予
+                // 清空默认初始遗物后按配置授予。
+                // 注意：必须用 silent:false 走 RelicObtained/RelicRemoved 事件，
+                // 让顶部遗物栏（NRelicInventory）与玩家遗物列表保持同步；
+                // 否则后续获得遗物（NEOW/事件/奖励）时 UI 索引越界崩溃。
                 foreach (var old in player.Relics.ToList())
                 {
-                    try { player.RemoveRelicInternal(old, silent: true); } catch { }
+                    try { player.RemoveRelicInternal(old, silent: false); } catch { }
                 }
                 foreach (var relic in newRelics)
                 {
                     relic.FloorAddedToDeck = 1;
                     try { SaveManager.Instance.MarkRelicAsSeen(relic); } catch { }
-                    player.AddRelicInternal(relic, -1, true);
+                    player.AddRelicInternal(relic, -1, false);
                 }
+                // 事件添加的图标默认隐藏（startsShown=false），这里把本地玩家遗物栏图标恢复可见
+                RevealLocalRelicInventoryIcons(player);
                 Logger.Info($"[ModConfig] 已应用自定义初始遗物，角色: {player.Character?.Id?.Entry}, 遗物数: {newRelics.Count}");
             }
             catch (Exception ex)
             {
                 Logger.Error($"[ModConfig] ApplyCustomRelics 失败: {ex.Message}");
             }
+        }
+
+        private static void RevealLocalRelicInventoryIcons(Player player)
+        {
+            try
+            {
+                if (!LocalContext.IsMe(player)) return;
+                var nRun = NRun.Instance;
+                if (nRun == null || !GodotObject.IsInstanceValid(nRun)) return;
+                var inventory = nRun.GlobalUi?.RelicInventory;
+                if (inventory == null || !GodotObject.IsInstanceValid(inventory)) return;
+                foreach (var holder in inventory.RelicNodes)
+                {
+                    try
+                    {
+                        var icon = holder.Relic?.Icon;
+                        if (icon == null || !GodotObject.IsInstanceValid(icon)) continue;
+                        Color modulate = icon.Modulate;
+                        modulate.A = 1f;
+                        icon.Modulate = modulate;
+                    }
+                    catch { }
+                }
+            }
+            catch { }
         }
 
         private static RelicModel? GetRelicModel(Type relicType)
@@ -1050,12 +1103,33 @@ public static class ModConfigPatches
         {
             try
             {
+                // SetUpNewMultiplayer 只会在多人开局时调用，这里确保会话标记置位（即使大厅阶段标记缺失也能自愈）
+                ModConfigManager.SetMultiplayerSession(true);
+                // 每次开局前清空上一局残留的房主整套配置，等待本局重新广播
+                ModConfigManager.ClearForcedHostConfigs();
                 ModConfigManager.SetRunPlayers(state?.Players);
                 // 多人开局：把本机本地玩家的配置广播给主机，供主机按 NetId 应用
                 ModConfigManager.BroadcastAllLocalConfigs();
                 if (ModConfigManager.IsMultiplayerSession && state != null)
                 {
-                    // 等待各玩家配置同步到位后统一应用（最多约 3 秒）
+                    // 强制房主配置模式：仅房主广播整套配置（含基地车/幸运方块/卡池奖励模式），
+                    // 避免各端用各自本地配置互相覆盖
+                    if (ModConfigManager.IsForceHostConfigEnabled && MultiplayerSyncHelper.IsHost())
+                    {
+                        Player? local = state.Players.FirstOrDefault(p =>
+                        {
+                            try { return MultiplayerSyncHelper.IsLocalPlayer(p); }
+                            catch { return false; }
+                        });
+                        if (local != null)
+                        {
+                            RunManager.Instance?.ActionQueueSynchronizer?.RequestEnqueue(
+                                new HostForceConfigSyncGameAction(local, ModConfigManager.GetAllConfigs()));
+                            Logger.Info("[ModConfig] 强制房主配置模式：房主已广播整套配置");
+                        }
+                    }
+
+                    // 等待各玩家配置（或房主整套配置）同步到位后统一应用（最多约 20 秒）
                     TaskHelper.RunSafely(ApplyConfigsAfterSyncAsync(state));
                 }
                 Logger.Info("[ModConfig] RunStartPatch: 开局设置完成，配置已广播");
@@ -1093,7 +1167,10 @@ public static class ModConfigPatches
                         }
                         catch { }
 
-                        if (!ModConfigManager.HasConfigForPlayer(player))
+                        bool ready = ModConfigManager.IsForceHostConfigEnabled
+                            ? ModConfigManager.HasForcedHostConfigs()
+                            : ModConfigManager.HasConfigForPlayer(player);
+                        if (!ready)
                         {
                             allReady = false;
                             continue;
@@ -1121,6 +1198,13 @@ public static class ModConfigPatches
             {
                 Logger.Error($"[ModConfig] ApplyConfigsAfterSyncAsync 失败: {ex.Message}");
             }
+            finally
+            {
+                // 开局配置应用结束（全部应用/超时/战斗已开始），只复位会话标记，
+                // 保留各玩家同步配置/强制配置，供局内奖励与阵营补丁继续使用；
+                // 这样后续单机局的 InitialDeckPatch 也不会被跳过。
+                ModConfigManager.ResetMultiplayerSessionFlag();
+            }
         }
     }
 
@@ -1130,19 +1214,44 @@ public static class ModConfigPatches
     /// </summary>
     public static class MultiplayerLobbyPatch
     {
-        public static void HostPostfix()
+        public static void HostPostfix(NCharacterSelectScreen __instance)
         {
             ModConfigManager.SetMultiplayerSession(true);
+            ModConfigManager.ResetForceConfigState();
+            LobbyHostConfigPanel.BindLobby(__instance?.Lobby);
         }
 
-        public static void ClientPostfix()
+        public static void ClientPostfix(NCharacterSelectScreen __instance)
         {
             ModConfigManager.SetMultiplayerSession(true);
+            ModConfigManager.ResetForceConfigState();
+            LobbyHostConfigPanel.BindLobby(__instance?.Lobby);
         }
 
         public static void LobbyClosedPostfix()
         {
             ModConfigManager.SetMultiplayerSession(false);
+        }
+    }
+
+    /// <summary>
+    /// 大厅面板补丁 - 在联机大厅页挂载“强制房主配置”面板，离开时清理。
+    /// </summary>
+    public static class LobbyPanelPatch
+    {
+        public static void InitializePostfix(NRemoteLobbyPlayerContainer __instance, StartRunLobby lobby)
+        {
+            LobbyHostConfigPanel.AttachOrRebind(__instance, lobby);
+        }
+
+        public static void CleanupPostfix()
+        {
+            LobbyHostConfigPanel.Cleanup();
+        }
+
+        public static void PlayerConnectedPostfix(NRemoteLobbyPlayerContainer __instance)
+        {
+            LobbyHostConfigPanel.OnPlayerConnected(__instance);
         }
     }
 
@@ -1164,7 +1273,9 @@ public static class ModConfigPatches
                 string? characterId = player.Character?.Id?.Entry;
                 if (string.IsNullOrEmpty(characterId)) return;
 
-                var config = ModConfigManager.GetCharacterConfig(characterId, player.NetId);
+                // 使用 GetConfigForPlayer：强制房主配置开启时也按房主配置判断 MCV 阵营
+                var config = ModConfigManager.GetConfigForPlayer(player);
+                if (config == null) return;
 
                 if (config.BaseCarMode == BaseCarMode.None) return;
 
@@ -1205,7 +1316,9 @@ public static class ModConfigPatches
                 string? characterId = player.Character?.Id?.Entry;
                 if (string.IsNullOrEmpty(characterId)) return;
 
-                var config = ModConfigManager.GetCharacterConfig(characterId, player.NetId);
+                // 使用 GetConfigForPlayer：强制房主配置开启时也按房主配置决定奖励池
+                var config = ModConfigManager.GetConfigForPlayer(player);
+                if (config == null) return;
                 if (config.CratePoolMode == CratePoolMode.None) return;
 
                 var crateCards = CratePoolHelper.GetAllCrateCards().ToList();

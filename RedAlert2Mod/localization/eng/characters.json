@@ -133,5 +133,14 @@
     "CONFIG_CRATE_POOL_DESC": "Control how crate cards appear in the character's card pool (card reward range): excluded by default, all replaced with crates, or added to normal rewards.",
     "CONFIG_CRATE_POOL_NONE": "Default Pool",
     "CONFIG_CRATE_POOL_ALL": "All Rewards Crates",
-    "CONFIG_CRATE_POOL_ADD": "Add Crates to Rewards"
+    "CONFIG_CRATE_POOL_ADD": "Add Crates to Rewards",
+    "CONFIG_LOBBY_FORCE_HOST_TITLE": "RA2 Mod · Multiplayer",
+    "CONFIG_LOBBY_FORCE_HOST_TOGGLE": "Force All to Use Host Config",
+    "CONFIG_LOBBY_FORCE_HOST_STATUS_ON": "Enabled",
+    "CONFIG_LOBBY_FORCE_HOST_STATUS_OFF": "Disabled",
+    "CONFIG_LOBBY_FORCE_HOST_TOOLTIP_HOST": "When enabled, every player in this run will use the host's saved config (deck/relics/MCV/lucky crate, without overwriting clients' local configs)",
+    "CONFIG_LOBBY_FORCE_HOST_TOOLTIP_CLIENT": "This option is controlled by the host; this run will follow the host's config",
+    "CONFIG_LOBBY_FORCE_HOST_HINT_HOST": "Host only. Takes effect for all players once the run starts",
+    "CONFIG_LOBBY_FORCE_HOST_HINT_CLIENT": "Host only; clients can only view the status",
+    "CONFIG_RELIC_LIB_HINT": "Left-click to add one, right-click to remove one"
 }

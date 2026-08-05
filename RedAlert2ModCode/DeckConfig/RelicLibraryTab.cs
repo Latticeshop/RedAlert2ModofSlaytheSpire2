@@ -103,6 +103,13 @@ internal class RelicLibraryTab
         titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
         mainVBox.AddChild(titleLabel);
 
+        var hintLabel = new Label();
+        hintLabel.Text = ModConfigManager.L("CONFIG_RELIC_LIB_HINT");
+        hintLabel.AddThemeFontSizeOverride("font_size", 11);
+        hintLabel.AddThemeColorOverride("font_color", StsColors.gray);
+        hintLabel.HorizontalAlignment = HorizontalAlignment.Center;
+        mainVBox.AddChild(hintLabel);
+
         var divider = new ColorRect();
         divider.CustomMinimumSize = new Vector2(0, 2);
         divider.Color = new Color(0.91f, 0.86f, 0.75f, 0.25f);
@@ -277,39 +284,38 @@ internal class RelicLibraryTab
         frame.AddThemeStyleboxOverride("panel", style);
         tile.AddChild(frame);
 
-        if (count > 1)
+        if (count > 0)
         {
             var countLabel = new Label();
             countLabel.Text = $"×{count}";
-            countLabel.AddThemeFontSizeOverride("font_size", 10);
+            countLabel.AddThemeFontSizeOverride("font_size", 9);
             countLabel.AddThemeColorOverride("font_color", StsColors.gold);
-            countLabel.AnchorLeft = 0f;
-            countLabel.AnchorRight = 0f;
-            countLabel.AnchorTop = 0f;
-            countLabel.AnchorBottom = 0f;
-            countLabel.OffsetLeft = 3;
-            countLabel.OffsetTop = 1;
+            countLabel.AnchorLeft = 1f;
+            countLabel.AnchorRight = 1f;
+            countLabel.AnchorTop = 1f;
+            countLabel.AnchorBottom = 1f;
+            countLabel.OffsetLeft = -22;
+            countLabel.OffsetTop = -13;
+            countLabel.OffsetRight = -3;
+            countLabel.OffsetBottom = -3;
+            countLabel.HorizontalAlignment = HorizontalAlignment.Right;
             tile.AddChild(countLabel);
         }
 
-        // 点击图标添加/移除
+        // 左键重复点击可添加多个副本；右键减少一个（与自定义卡牌逻辑一致）
         tile.GuiInput += (InputEvent ev) =>
         {
             if (ev is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Left })
             {
                 tile.GetViewport()?.SetInputAsHandled();
-                ToggleRelic(relic);
+                AddRelicCopy(relic);
                 RefreshContent();
             }
             else if (ev is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Right })
             {
-                // 右键取消选中
-                if (count > 0)
-                {
-                    tile.GetViewport()?.SetInputAsHandled();
-                    ToggleRelic(relic);
-                    RefreshContent();
-                }
+                tile.GetViewport()?.SetInputAsHandled();
+                RemoveRelicCopy(relic);
+                RefreshContent();
             }
         };
 
@@ -338,18 +344,18 @@ internal class RelicLibraryTab
         catch { }
     }
 
-    private void ToggleRelic(RelicModel relic)
+    private void AddRelicCopy(RelicModel relic)
+    {
+        _config.StartingRelicTypes.Add(relic.GetType().Name);
+        ModConfigManager.UpdateCharacterConfig(_config);
+    }
+
+    private void RemoveRelicCopy(RelicModel relic)
     {
         string typeName = relic.GetType().Name;
         string? firstMatch = _config.StartingRelicTypes.FirstOrDefault(t => t == typeName);
-        if (firstMatch != null)
-        {
-            _config.StartingRelicTypes.Remove(firstMatch);
-        }
-        else
-        {
-            _config.StartingRelicTypes.Add(typeName);
-        }
+        if (firstMatch == null) return;
+        _config.StartingRelicTypes.Remove(firstMatch);
         ModConfigManager.UpdateCharacterConfig(_config);
     }
 

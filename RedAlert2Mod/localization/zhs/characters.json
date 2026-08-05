@@ -133,5 +133,14 @@
     "CONFIG_CRATE_POOL_DESC": "修改角色卡池（卡牌奖励范围）中箱子卡的出现方式：默认排除、全部替换为箱子、或加入普通奖励。",
     "CONFIG_CRATE_POOL_NONE": "默认卡池",
     "CONFIG_CRATE_POOL_ALL": "奖励全为箱子",
-    "CONFIG_CRATE_POOL_ADD": "奖励加入箱子"
+    "CONFIG_CRATE_POOL_ADD": "奖励加入箱子",
+    "CONFIG_LOBBY_FORCE_HOST_TITLE": "红警2MOD · 联机配置",
+    "CONFIG_LOBBY_FORCE_HOST_TOGGLE": "强制全部应用房主配置",
+    "CONFIG_LOBBY_FORCE_HOST_STATUS_ON": "已开启",
+    "CONFIG_LOBBY_FORCE_HOST_STATUS_OFF": "已关闭",
+    "CONFIG_LOBBY_FORCE_HOST_TOOLTIP_HOST": "开启后，本局所有玩家都将使用房主保存的配置（卡组/遗物/基地车/幸运方块，不覆盖客机本地配置）",
+    "CONFIG_LOBBY_FORCE_HOST_TOOLTIP_CLIENT": "此选项由房主控制，本局将按房主配置进行",
+    "CONFIG_LOBBY_FORCE_HOST_HINT_HOST": "仅房主可操作，进入游戏后对本局所有玩家生效",
+    "CONFIG_LOBBY_FORCE_HOST_HINT_CLIENT": "仅房主可操作，客机只能查看状态",
+    "CONFIG_RELIC_LIB_HINT": "左键点击添加一个，右键点击减少一个"
 }

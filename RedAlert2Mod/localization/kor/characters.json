@@ -133,5 +133,14 @@
     "CONFIG_CRATE_POOL_DESC": "캐릭터 카드 풀(카드 보상 범위)에서 크레이트 카드가 나타나는 방식을 제어합니다: 기본 제외, 전부 크레이트로 교체, 또는 일반 보상에 추가.",
     "CONFIG_CRATE_POOL_NONE": "기본 풀",
     "CONFIG_CRATE_POOL_ALL": "보상을 모두 크레이트로",
-    "CONFIG_CRATE_POOL_ADD": "보상에 크레이트 추가"
+    "CONFIG_CRATE_POOL_ADD": "보상에 크레이트 추가",
+    "CONFIG_LOBBY_FORCE_HOST_TITLE": "RA2 Mod · 멀티플레이",
+    "CONFIG_LOBBY_FORCE_HOST_TOGGLE": "모두 호스트 설정 강제 적용",
+    "CONFIG_LOBBY_FORCE_HOST_STATUS_ON": "활성화됨",
+    "CONFIG_LOBBY_FORCE_HOST_STATUS_OFF": "비활성화됨",
+    "CONFIG_LOBBY_FORCE_HOST_TOOLTIP_HOST": "활성화하면 이번 실행의 모든 플레이어가 호스트의 저장된 설정(덱/유물/MCV/럭키 크레이트)을 사용합니다 (클라이언트 로컬 설정은 덮어쓰지 않습니다)",
+    "CONFIG_LOBBY_FORCE_HOST_TOOLTIP_CLIENT": "이 옵션은 호스트가 조작합니다. 이번 실행은 호스트 설정을 따릅니다",
+    "CONFIG_LOBBY_FORCE_HOST_HINT_HOST": "호스트만 조작 가능. 실행 시작 후 모든 플레이어에게 적용됩니다",
+    "CONFIG_LOBBY_FORCE_HOST_HINT_CLIENT": "호스트만 조작 가능. 클라이언트는 상태만 볼 수 있습니다",
+    "CONFIG_RELIC_LIB_HINT": "왼쪽 클릭으로 1개 추가, 오른쪽 클릭으로 1개 제거"
 }

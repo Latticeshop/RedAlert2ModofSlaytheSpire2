@@ -23,6 +23,20 @@ public static class MultiplayerSyncHelper
         return isMultiplayer;
     }
 
+    /// <summary>
+    /// 当前端是否为房主。
+    /// </summary>
+    public static bool IsHost()
+    {
+        try
+        {
+            if (RunManager.Instance == null) return false;
+            if (RunManager.Instance.NetService == null) return false;
+            return RunManager.Instance.NetService.Type == NetGameType.Host;
+        }
+        catch { return false; }
+    }
+
     public static bool IsLocalPlayer(Player player)
     {
         if (RunManager.Instance == null) return false;

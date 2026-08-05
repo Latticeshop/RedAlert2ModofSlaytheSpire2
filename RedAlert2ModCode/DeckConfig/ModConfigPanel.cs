@@ -1145,18 +1145,21 @@ internal static class ModConfigPanel
         frame.AddThemeStyleboxOverride("panel", style);
         tile.AddChild(frame);
 
-        if (count > 1)
+        if (count > 0)
         {
             var countLabel = new Label();
             countLabel.Text = $"×{count}";
-            countLabel.AddThemeFontSizeOverride("font_size", 10);
+            countLabel.AddThemeFontSizeOverride("font_size", 9);
             countLabel.AddThemeColorOverride("font_color", StsColors.gold);
-            countLabel.AnchorLeft = 0f;
-            countLabel.AnchorRight = 0f;
-            countLabel.AnchorTop = 0f;
-            countLabel.AnchorBottom = 0f;
-            countLabel.OffsetLeft = 3;
-            countLabel.OffsetTop = 1;
+            countLabel.AnchorLeft = 1f;
+            countLabel.AnchorRight = 1f;
+            countLabel.AnchorTop = 1f;
+            countLabel.AnchorBottom = 1f;
+            countLabel.OffsetLeft = -22;
+            countLabel.OffsetTop = -13;
+            countLabel.OffsetRight = -3;
+            countLabel.OffsetBottom = -3;
+            countLabel.HorizontalAlignment = HorizontalAlignment.Right;
             tile.AddChild(countLabel);
         }
 

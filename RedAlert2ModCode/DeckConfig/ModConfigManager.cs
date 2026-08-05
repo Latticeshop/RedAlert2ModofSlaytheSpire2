@@ -171,6 +171,10 @@ public static class ModConfigManager
     private static IReadOnlyList<Player>? _currentPlayers;
     // 是否处于多人联机会话（由大厅初始化补丁设置；多人时开局牌组改为同步后统一应用）
     private static bool _isMultiplayerSession;
+    // “强制全部应用房主配置”开关（由房主在大厅切换并广播到各端）
+    private static bool _forceHostConfigEnabled;
+    // 房主整套配置的临时副本（本局生效，不写入各端配置存储）
+    private static Dictionary<string, CharacterConfig>? _forcedHostConfigs;
 
     /// <summary>
     /// 配置文件路径
@@ -361,6 +365,118 @@ public static class ModConfigManager
         {
             _remoteConfigs.Clear();
             _currentPlayers = null;
+            _forceHostConfigEnabled = false;
+            _forcedHostConfigs = null;
+        }
+    }
+
+    /// <summary>
+    /// 仅复位多人会话标记，不清空同步配置/强制配置。
+    /// 用于开局应用结束后复位 InitialDeckPatch 的跳过标记，
+    /// 同时保留局内奖励/阵营补丁所需的各玩家同步配置。
+    /// </summary>
+    public static void ResetMultiplayerSessionFlag()
+    {
+        _isMultiplayerSession = false;
+    }
+
+    /// <summary>
+    /// 清空房主整套配置的临时副本（每次开局前调用，避免上一局残留被误用）。
+    /// </summary>
+    public static void ClearForcedHostConfigs()
+    {
+        _forcedHostConfigs = null;
+    }
+
+    /// <summary>
+    /// 复位强制房主配置开关与临时副本（每次进入新大厅时调用，默认关闭）。
+    /// </summary>
+    public static void ResetForceConfigState()
+    {
+        _forceHostConfigEnabled = false;
+        _forcedHostConfigs = null;
+    }
+
+    /// <summary>
+    /// “强制全部应用房主配置”开关状态。
+    /// </summary>
+    public static bool IsForceHostConfigEnabled => _forceHostConfigEnabled;
+
+    /// <summary>
+    /// 设置强制房主配置开关（大厅面板/消息调用；不写入配置文件）。
+    /// </summary>
+    public static void SetForceHostConfig(bool enabled)
+    {
+        if (_forceHostConfigEnabled == enabled) return;
+        _forceHostConfigEnabled = enabled;
+        Logger.Info($"[ModConfigManager] 强制全部应用房主配置: {(enabled ? "开启" : "关闭")}");
+    }
+
+    /// <summary>
+    /// 保存房主整套配置的本局临时副本（由开局时的同步动作在所有端执行）。
+    /// </summary>
+    public static void SetForcedHostConfigs(Dictionary<string, CharacterConfig>? configs)
+    {
+        _forcedHostConfigs = configs == null
+            ? null
+            : new Dictionary<string, CharacterConfig>(configs, StringComparer.OrdinalIgnoreCase);
+        Logger.Info($"[ModConfigManager] 已接收房主整套配置（{_forcedHostConfigs?.Count ?? 0} 个角色）");
+    }
+
+    /// <summary>
+    /// 强制模式下是否已收到房主整套配置（房主可能一个角色都没配置，即全默认，也算就绪）。
+    /// </summary>
+    public static bool HasForcedHostConfigs()
+    {
+        return _forceHostConfigEnabled && _forcedHostConfigs != null;
+    }
+
+    /// <summary>
+    /// 尝试获取房主对指定角色的强制配置。
+    /// </summary>
+    public static bool TryGetForcedConfig(string characterId, out CharacterConfig config)
+    {
+        if (_forcedHostConfigs != null && _forcedHostConfigs.TryGetValue(characterId, out var forced))
+        {
+            config = forced;
+            return true;
+        }
+        config = null!;
+        return false;
+    }
+
+    /// <summary>
+    /// 获取玩家本局应使用的配置：
+    /// 强制房主配置开启时优先使用房主对对应角色的配置（房主未配置的角色强制默认开局）；
+    /// 否则本机玩家用本机配置，远端玩家用同步配置。
+    /// </summary>
+    public static CharacterConfig? GetConfigForPlayer(Player player)
+    {
+        try
+        {
+            if (player?.Character == null) return null;
+            string? characterId = player.Character?.Id?.Entry;
+            if (string.IsNullOrEmpty(characterId)) return null;
+
+            // 强制模式只在多人游戏运行中生效（RunManager.NetService 为 Host/Client）；
+            // 单机局即使残留开关也不应用，避免误用上一局房主配置
+            if (_forceHostConfigEnabled && MultiplayerSyncHelper.IsMultiplayerGame())
+            {
+                if (TryGetForcedConfig(characterId, out var forced))
+                {
+                    return forced;
+                }
+                // 房主未配置该角色：本局按默认开局（与房主行为一致），不采用玩家自身配置
+                return new CharacterConfig { CharacterId = characterId };
+            }
+
+            return MultiplayerSyncHelper.IsLocalPlayer(player)
+                ? GetCharacterConfig(characterId)
+                : GetCharacterConfig(characterId, player.NetId);
+        }
+        catch
+        {
+            return null;
         }
     }
 

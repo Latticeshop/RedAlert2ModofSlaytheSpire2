@@ -133,5 +133,14 @@
     "CONFIG_CRATE_POOL_DESC": "キャラクターのカードプール（カード報酬範囲）におけるクレートカードの出現方法を制御します：デフォルトで除外、全てクレートに置換、または通常報酬に追加。",
     "CONFIG_CRATE_POOL_NONE": "デフォルトプール",
     "CONFIG_CRATE_POOL_ALL": "報酬を全てクレートに",
-    "CONFIG_CRATE_POOL_ADD": "報酬にクレートを追加"
+    "CONFIG_CRATE_POOL_ADD": "報酬にクレートを追加",
+    "CONFIG_LOBBY_FORCE_HOST_TITLE": "RA2 Mod · マルチプレイ",
+    "CONFIG_LOBBY_FORCE_HOST_TOGGLE": "全員にホスト設定を強制",
+    "CONFIG_LOBBY_FORCE_HOST_STATUS_ON": "有効",
+    "CONFIG_LOBBY_FORCE_HOST_STATUS_OFF": "無効",
+    "CONFIG_LOBBY_FORCE_HOST_TOOLTIP_HOST": "有効にすると、このランでは全プレイヤーがホストの保存済み設定（デッキ/レリック/MCV/ラッキークレート）を使用します（クライアントのローカル設定は上書きされません）",
+    "CONFIG_LOBBY_FORCE_HOST_TOOLTIP_CLIENT": "このオプションはホストが操作します。このランはホストの設定に従います",
+    "CONFIG_LOBBY_FORCE_HOST_HINT_HOST": "ホストのみ操作可能。ラン開始後、全プレイヤーに適用されます",
+    "CONFIG_LOBBY_FORCE_HOST_HINT_CLIENT": "ホストのみ操作可能。クライアントは状態を確認できます",
+    "CONFIG_RELIC_LIB_HINT": "左クリックで1つ追加、右クリックで1つ削除"
 }
