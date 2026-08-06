@@ -32,7 +32,7 @@ public sealed class GuardianGi : CardModel
 
     protected override List<DynamicVar> CanonicalVars => new()
     {
-        new BlockVar(Values.Block, ValueProp.Unpowered),
+            new BlockVar(Values.Block, ValueProp.Move),
         new DamageVar(Values.Damage, ValueProp.Move),
         new IntVar("VulnerableStacks", 1)
     };

@@ -43,7 +43,8 @@ public sealed class KitingPower : PowerModel
         if (cardPlay.Card.Owner == base.Owner.Player && IsUnitCard(cardPlay.Card))
         {
             GD.Print($"[KitingPower] 打出单位卡 {cardPlay.Card.Id.Entry}，获得 {Amount} 点格挡");
-            await CreatureCmd.GainBlock(base.Owner, Amount, ValueProp.Unpowered, null);
+            // Move：走A的格挡吃敏捷加成（与围墙等打出卡牌格挡一致）
+            await CreatureCmd.GainBlock(base.Owner, Amount, ValueProp.Move, null);
         }
     }
 

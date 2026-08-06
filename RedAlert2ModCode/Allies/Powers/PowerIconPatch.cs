@@ -69,6 +69,7 @@ public static class PowerIconPatch
         { typeof(RedAlert2ModCode.Soviet.Powers.V3RocketPower), "res://RedAlert2ModResources/images/packed/powers/v3.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.DreadnoughtPower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/dredicon.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.NuclearReactorCorePower), "res://RedAlert2ModResources/images/packed/card_portraits/soviet/nrcticon.png" },
+        { typeof(RedAlert2ModCode.Soviet.Powers.NuclearAttackPower), "res://RedAlert2ModResources/images/packed/powers/nuclear_attack.png" },
         { typeof(RedAlert2ModCode.Soviet.Powers.TimedBombPower), "res://RedAlert2ModResources/images/packed/powers/dynamite.png" },
         { typeof(BurnPower), "res://RedAlert2ModResources/images/packed/powers/BurnPower.png" },
         { typeof(SteelFloodPower), "res://RedAlert2ModResources/images/packed/powers/SteelFloodPower.png" },

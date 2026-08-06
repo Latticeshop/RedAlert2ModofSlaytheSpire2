@@ -55,7 +55,7 @@ public sealed class BattleFortress : CardModel
 
 	protected override IEnumerable<DynamicVar> CanonicalVars => new DynamicVar[]
 	{
-		new BlockVar(Values.Block, ValueProp.Unpowered),
+		new BlockVar(Values.Block, ValueProp.Move),
 		new StringVar("StoredCards"),
 		new IntVar("StoreCount", 3),
 		new IntVar("DollarNumber", Values.DollarValue)

@@ -52,7 +52,8 @@ public sealed class SovietTransportShip : CardModel
         new StringVar("StoredCards"),
         new IntVar("StoreCount", IsUpgraded ? Values.MagicNumber + Values.MagicNumberUpgraded : Values.MagicNumber),
         new IntVar("DollarNumber", Values.DollarValue),
-        new BlockVar(Values.Block, ValueProp.Unpowered)
+        // Move：打出卡牌获得的格挡吃敏捷加成（与原版格挡卡一致）
+        new BlockVar(Values.Block, ValueProp.Move)
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>

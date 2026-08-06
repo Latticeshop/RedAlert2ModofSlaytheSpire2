@@ -61,7 +61,7 @@ public sealed class Ifv : CardModel
 	{
 		new IntVar("DrawCount", Values.MagicNumber),
 		new IntVar("DiscardCount", Values.Stars),
-		new BlockVar(Values.Block, ValueProp.Unpowered),
+            new BlockVar(Values.Block, ValueProp.Move),
 		new StringVar("StoredCards"),
 		new IntVar("StoreCount", 1)
 	};
