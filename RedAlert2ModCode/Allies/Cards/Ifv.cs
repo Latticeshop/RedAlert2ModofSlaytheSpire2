@@ -101,7 +101,7 @@ public sealed class Ifv : CardModel
 			}
 		};
 
-		var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, new LocString("card_keywords", "ui.ifv.title"), options, FactionType.Allied);
+		var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(ctx, Owner, new LocString("card_keywords", "ui.ifv.title"), options, FactionType.Allied);
 
 		if (selectedIndex.HasValue)
 		{

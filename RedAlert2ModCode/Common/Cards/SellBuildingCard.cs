@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System;
 using Godot;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Powers;
@@ -55,58 +56,21 @@ public class SellBuildingCard : CardModel
         DynamicVars["MaxSellCount"].BaseValue = Values.Repeat + Values.RepeatUpgraded;
     }
 
-    protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
-    {
-        await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
+	{
+		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+		// 注：A2 预选模式下，选择在打出前完成；出售结算由 BuildingResolutionAction 调用 ResolveSoldPowers。
+		// 自动打出兜底：若没有手动 A2 的待结算标记，则本地补开预选面板（确认后由结算动作执行效果）
+		if (BuildingPrePlayHelper.TryConsumePendingResolution(this))
+			return;
+		if (MultiplayerSyncHelper.IsLocalPlayer(Owner))
+			BuildingPrePlayHelper.OpenAutoPlayPanel(this);
+	}
 
-        List<SellBuildingItem> buildingItems = GetDeduplicatedBuildingItems();
-
-        if (buildingItems.Count == 0)
-        {
-            GD.Print("[SellBuildingCard] 没有可出售的建筑能力");
-            return;
-        }
-
-        int maxSelection = IsUpgraded ? 99 : (int)Values.Repeat;
-
-        FactionType faction = Owner.Character.Id.Entry?.Contains("SOVIET") ?? false
-            ? FactionType.Soviet
-            : FactionType.Allied;
-
-        SellBuildingResult? selectedResult = await SellBuildingScreen.ShowSelectionWithSync(buildingItems, maxSelection, Owner, faction);
-
-        // 空选时直接打出卡牌（不返还），只有返回null时才取消
-        if (selectedResult == null)
-        {
-            await CardUtils.HandleCardCancellation(play, this, Owner);
-            return;
-        }
-
-        int maxTotalSell = IsUpgraded ? int.MaxValue : (int)Values.Repeat;
-        int totalSold = 0;
-
-        foreach (var item in selectedResult.Items)
-        {
-            if (totalSold >= maxTotalSell)
-            {
-                GD.Print($"[SellBuildingCard] 已达到最大出售层数 {maxTotalSell}，停止执行");
-                break;
-            }
-
-            int remainingQuota = maxTotalSell - totalSold;
-            int countToSell = Math.Min(item.SelectedCount, remainingQuota);
-
-            if (countToSell <= 0) break;
-
-            await ProcessSoldPower(item.Power, countToSell);
-            totalSold += countToSell;
-        }
-    }
-
-    private List<SellBuildingItem> GetDeduplicatedBuildingItems()
+    public static List<SellBuildingItem> GetPrePlayCandidates(Player owner)
     {
         List<SellBuildingItem> result = new();
-        var powers = Owner.Creature.Powers;
+        var powers = owner.Creature.Powers;
         var sellablePowerTypes = CommonCardValues.GetSellablePowerTypes();
 
         // 按能力类型分组，合并相同建筑的层数
@@ -140,7 +104,42 @@ public class SellBuildingCard : CardModel
         return result;
     }
 
-    private string GetPowerIconPath(PowerModel power)
+    /// <summary>
+    /// A2 结算：按预选结果出售建筑能力（能力类型名 + 数量），所有端确定性执行。
+    /// </summary>
+    public static async Task ResolveSoldPowers(Player owner, bool isUpgraded, string[] powerTypeNames, int[] counts)
+    {
+        if (owner?.Creature == null)
+            return;
+
+        int maxTotalSell = isUpgraded ? int.MaxValue : (int)CommonCardValues.SellBuilding.Repeat;
+        int totalSold = 0;
+
+        for (int i = 0; i < powerTypeNames.Length && i < counts.Length; i++)
+        {
+            if (totalSold >= maxTotalSell)
+                break;
+
+            string typeName = powerTypeNames[i];
+            int count = counts[i];
+            if (count <= 0 || string.IsNullOrEmpty(typeName))
+                continue;
+
+            var power = owner.Creature.Powers.FirstOrDefault(p => p.GetType().Name == typeName);
+            if (power == null)
+                continue;
+
+            int remainingQuota = maxTotalSell - totalSold;
+            int countToSell = Math.Min(count, remainingQuota);
+            if (countToSell <= 0)
+                break;
+
+            await ProcessSoldPower(owner, power, countToSell);
+            totalSold += countToSell;
+        }
+    }
+
+    private static string GetPowerIconPath(PowerModel power)
     {
         Type powerType = power.GetType();
         
@@ -174,7 +173,7 @@ public class SellBuildingCard : CardModel
         return string.Empty;
     }
 
-    private async Task ProcessSoldPower(PowerModel power, int count)
+    private static async Task ProcessSoldPower(Player owner, PowerModel power, int count)
     {
         int dollarValue = CommonCardValues.GetSellablePowerDollarValue(power.GetType());
         int sellValue = dollarValue / 2 * count;
@@ -187,38 +186,38 @@ public class SellBuildingCard : CardModel
 
         BuildingSoundHelper.PlayBuildingSellSound();
 
-        var dollarPower = Owner.Creature.Powers.OfType<DollarPower>().FirstOrDefault();
+        var dollarPower = owner.Creature.Powers.OfType<DollarPower>().FirstOrDefault();
         if (dollarPower != null)
         {
             dollarPower.AddDollar(sellValue);
             GD.Print($"[SellBuildingCard] 出售建筑获得资金: {sellValue}");
         }
 
-        await CheckAndRemoveProductionQueues();
+        await CheckAndRemoveProductionQueues(owner);
         
-        await UnitPriceCalculator.RecalculateAllTrainingQueuePrices(Owner.Creature);
+        await UnitPriceCalculator.RecalculateAllTrainingQueuePrices(owner.Creature);
     }
 
-    private async Task CheckAndRemoveProductionQueues()
+    private static async Task CheckAndRemoveProductionQueues(Player owner)
     {
         GD.Print("[SellBuildingCard] 检查生产序列是否需要移除");
 
         // 计算建筑能力的总层数（而非是否存在）
-        int alliedBarracksStacks = Owner.Creature.Powers.OfType<AlliedBarracksPower>().Sum(p => p.Amount);
-        int sovietBarracksStacks = Owner.Creature.Powers.OfType<SovietBarracksPower>().Sum(p => p.Amount);
-        int alliedWarFactoryStacks = Owner.Creature.Powers.OfType<AlliedWarFactoryPower>().Sum(p => p.Amount);
-        int sovietWarFactoryStacks = Owner.Creature.Powers.OfType<SovietWarFactoryPower>().Sum(p => p.Amount);
-        int alliedShipyardStacks = Owner.Creature.Powers.OfType<AlliedShipyardPower>().Sum(p => p.Amount);
-        int sovietShipyardStacks = Owner.Creature.Powers.OfType<SovietShipyardPower>().Sum(p => p.Amount);
-        int sovietRadarStacks = Owner.Creature.Powers.OfType<SovietRadarPower>().Sum(p => p.Amount);
-        int alliedAirForceCommandStacks = Owner.Creature.Powers.OfType<AlliedAirForceCommandPower>().Sum(p => p.Amount);
+        int alliedBarracksStacks = owner.Creature.Powers.OfType<AlliedBarracksPower>().Sum(p => p.Amount);
+        int sovietBarracksStacks = owner.Creature.Powers.OfType<SovietBarracksPower>().Sum(p => p.Amount);
+        int alliedWarFactoryStacks = owner.Creature.Powers.OfType<AlliedWarFactoryPower>().Sum(p => p.Amount);
+        int sovietWarFactoryStacks = owner.Creature.Powers.OfType<SovietWarFactoryPower>().Sum(p => p.Amount);
+        int alliedShipyardStacks = owner.Creature.Powers.OfType<AlliedShipyardPower>().Sum(p => p.Amount);
+        int sovietShipyardStacks = owner.Creature.Powers.OfType<SovietShipyardPower>().Sum(p => p.Amount);
+        int sovietRadarStacks = owner.Creature.Powers.OfType<SovietRadarPower>().Sum(p => p.Amount);
+        int alliedAirForceCommandStacks = owner.Creature.Powers.OfType<AlliedAirForceCommandPower>().Sum(p => p.Amount);
 
         GD.Print($"[SellBuildingCard] 兵营(盟军): {alliedBarracksStacks}层, 兵营(苏联): {sovietBarracksStacks}层");
         GD.Print($"[SellBuildingCard] 重工(盟军): {alliedWarFactoryStacks}层, 重工(苏联): {sovietWarFactoryStacks}层");
         GD.Print($"[SellBuildingCard] 船厂(盟军): {alliedShipyardStacks}层, 船厂(苏联): {sovietShipyardStacks}层");
         GD.Print($"[SellBuildingCard] 雷达(苏联): {sovietRadarStacks}层, 空指部(盟军): {alliedAirForceCommandStacks}层");
 
-        foreach (var trainingPower in Owner.Creature.Powers.OfType<TrainingQueuePower>().ToList())
+        foreach (var trainingPower in owner.Creature.Powers.OfType<TrainingQueuePower>().ToList())
         {
             // 停产状态的序列也需要检查（如果建筑能力清空，停产序列也应移除）
             bool shouldRemove = false;
@@ -288,13 +287,13 @@ public class SellBuildingCard : CardModel
             if (shouldRemove)
             {
                 // 直接移除生产序列能力，而非停产
-                Owner.Creature.RemovePowerInternal(trainingPower);
+                owner.Creature.RemovePowerInternal(trainingPower);
                 GD.Print($"[SellBuildingCard] 已移除生产序列能力: {trainingPower.UnitName}");
             }
         }
     }
 
-    private bool IsSoldierCard(string cardId)
+    private static bool IsSoldierCard(string cardId)
     {
         var soldierIds = new[]
         {
@@ -304,7 +303,7 @@ public class SellBuildingCard : CardModel
         return soldierIds.Any(id => cardId.Contains(id));
     }
 
-    private bool IsAlliedVehicleCard(string cardId)
+    private static bool IsAlliedVehicleCard(string cardId)
     {
         var vehicleIds = new[]
         {
@@ -313,7 +312,7 @@ public class SellBuildingCard : CardModel
         return vehicleIds.Any(id => cardId.Contains(id));
     }
 
-    private bool IsSovietVehicleCard(string cardId)
+    private static bool IsSovietVehicleCard(string cardId)
     {
         var vehicleIds = new[]
         {
@@ -322,7 +321,7 @@ public class SellBuildingCard : CardModel
         return vehicleIds.Any(id => cardId.Contains(id));
     }
 
-    private bool IsAlliedAircraftCard(string cardId)
+    private static bool IsAlliedAircraftCard(string cardId)
     {
         var aircraftIds = new[]
         {
@@ -331,7 +330,7 @@ public class SellBuildingCard : CardModel
         return aircraftIds.Any(id => cardId.Contains(id));
     }
 
-    private bool IsSovietAircraftCard(string cardId)
+    private static bool IsSovietAircraftCard(string cardId)
     {
         var aircraftIds = new[]
         {
@@ -340,7 +339,7 @@ public class SellBuildingCard : CardModel
         return aircraftIds.Any(id => cardId.Contains(id));
     }
 
-    private bool IsAlliedShipCard(string cardId)
+    private static bool IsAlliedShipCard(string cardId)
     {
         var shipIds = new[]
         {
@@ -349,7 +348,7 @@ public class SellBuildingCard : CardModel
         return shipIds.Any(id => cardId.Contains(id));
     }
 
-    private bool IsSovietShipCard(string cardId)
+    private static bool IsSovietShipCard(string cardId)
     {
         var shipIds = new[]
         {

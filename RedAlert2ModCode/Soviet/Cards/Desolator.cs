@@ -67,7 +67,7 @@ public sealed class Desolator : CardModel
 		};
 
 		var titleText = new LocString("card_keywords", "ui.desolator.title").GetFormattedText();
-		var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, titleText, options, FactionType.Soviet);
+		var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(ctx, Owner, titleText, options, FactionType.Soviet);
 
 		if (selectedIndex == 0)
 		{

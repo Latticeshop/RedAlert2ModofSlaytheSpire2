@@ -326,8 +326,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
                 CustomMinimumSize = new Vector2(160f, 50f),
                 SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
                 FocusMode = FocusModeEnum.All,
-                MouseDefaultCursorShape = CursorShape.PointingHand,
-                Disabled = true
+                MouseDefaultCursorShape = CursorShape.PointingHand
             };
             _cancelButton.AddThemeStyleboxOverride("normal", CreateCancelStyle());
             _cancelButton.AddThemeStyleboxOverride("hover", CreateCancelStyle(new Color(0.6f, 0.15f, 0.15f, 0.9f)));
@@ -366,8 +365,7 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
                 CustomMinimumSize = new Vector2(160f, 50f),
                 SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
                 FocusMode = FocusModeEnum.All,
-                MouseDefaultCursorShape = CursorShape.PointingHand,
-                Disabled = true
+                MouseDefaultCursorShape = CursorShape.PointingHand
             };
             _cancelButton.AddThemeStyleboxOverride("normal", CreateCancelStyle());
             _cancelButton.AddThemeStyleboxOverride("hover", CreateCancelStyle(new Color(0.6f, 0.15f, 0.15f, 0.9f)));
@@ -380,17 +378,6 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
             root.AddChild(_cancelButton);
         }
 
-        // 900ms后启用取消按钮
-        _ = EnableCancelButtonAfterDelay();
-    }
-
-    private async Task EnableCancelButtonAfterDelay()
-    {
-        await Task.Delay(900);
-        if (_cancelButton != null && IsInstanceValid(_cancelButton))
-        {
-            _cancelButton.Disabled = false;
-        }
     }
 
     private Button CreateCardButton(CardModel card, int index)

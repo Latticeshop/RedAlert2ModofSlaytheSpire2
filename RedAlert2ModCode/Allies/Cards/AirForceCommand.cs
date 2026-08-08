@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -70,114 +71,34 @@ public sealed class AirForceCommand : CardModel, ICancellableCardPlay
 
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
-		// 播放建筑释放音效
 		BuildingSoundHelper.PlayBuildingPlaceSound();
-		
-		GD.Print($"[AirForceCommand] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
+		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+		// 注：A2 预选模式下，选择在打出前完成；扣费/能力/生产序列由 BuildingResolutionAction 结算。
+		// 自动打出兜底：若没有手动 A2 的待结算标记，则本地补开预选面板（确认后由结算动作执行效果）
+		if (BuildingPrePlayHelper.TryConsumePendingResolution(this))
+			return;
+		if (MultiplayerSyncHelper.IsLocalPlayer(Owner))
+			BuildingPrePlayHelper.OpenAutoPlayPanel(this);
+	}
+	/// <summary>
+	/// A2 预选面板候选：与结算动作共用同一套确定性候选构建。
+	/// </summary>
+	public static List<CardModel> GetPrePlayCandidates(Player owner, bool isUpgraded)
+	{
+		List<CardModel> availableCards = AlliedCardRegistry.CreateAirUnits(owner);
 
-		// 使用盟军卡牌注册管理器获取所有空军单位卡
-		List<CardModel> availableCards = AlliedCardRegistry.CreateAirUnits(Owner);
-		GD.Print($"[AirForceCommand] 可用卡牌数量: {availableCards.Count}");
-
-		// 如果没有韩国国旗，移除黑鹰战机选项
-		if (!FlagManager.HasSouthKorea(Owner))
+		if (!FlagManager.HasSouthKorea(owner))
 		{
 			availableCards = availableCards.Where(c => c.GetType() != typeof(BlackHawk)).ToList();
-			GD.Print($"[AirForceCommand] 无韩国国旗，移除黑鹰战机选项，剩余卡牌数量: {availableCards.Count}");
 		}
-		
-		// 如果空指部是升级过的，创建的卡牌也显示为升级版本
-		if (base.IsUpgraded)
+
+		if (isUpgraded)
 		{
 			foreach (var card in availableCards)
-			{
 				CardCmd.Upgrade(card);
-			}
 		}
 
-		// 使用自定义选择面板，支持多选和数量选择
-		var cardValuesMap = AlliesCardValues.CreateAircraftValuesMap();
-		var selectedResults = await CardSelectionSyncHelper.ShowSelectionWithQuantitySync(availableCards, Owner, cardValuesMap, FactionType.Allied);
-
-		GD.Print($"[AirForceCommand] 选择结果数量: {(selectedResults != null ? selectedResults.Count : 0)}");
-
-		// 如果取消选择（selectedResults == null），返还能量，卡牌返回手中
-		if (selectedResults == null)
-		{
-			GD.Print("[AirForceCommand] 取消选择，返还能量，卡牌返回手中");
-			await CardUtils.HandleCardCancellation(play, this, Owner);
-			return;
-		}
-
-		// 选择确认后才扣除资金（空选也消耗资金）
-		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-		if (dollarPower != null)
-		{
-			dollarPower.AddDollar(-(int)AlliesCardValues.AirForceCommand.DollarValue);
-			GD.Print($"[AirForceCommand] 扣除建筑资金 {AlliesCardValues.AirForceCommand.DollarValue}");
-		}
-
-		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
-		
-		await PowerCmd.Apply<AlliedAirForceCommandPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
-		GD.Print("[AirForceCommand] 添加空指部能力");
-
-		// 如果玩家选择了卡牌，创建对应的生产序列能力（同一批相同单位叠层）
-		if (selectedResults.Count > 0)
-		{
-			foreach (var result in selectedResults)
-			{
-				CardModel selectedCard = result.Card;
-				int count = result.Count;
-
-				GD.Print($"[AirForceCommand] 创建生产序列 - CardId={selectedCard.Id.Entry}, Count={count}");
-
-				// 升级预览卡后的 Title 会带“+”，生产序列名称由 IsUpgraded 标记统一追加，避免“++”
-				string unitName = selectedCard.Title.ToString();
-				if (selectedCard.IsUpgraded && unitName.EndsWith("+"))
-				{
-					unitName = unitName.Substring(0, unitName.Length - 1);
-				}
-
-				// 获取单位价格
-				int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
-
-				// 同一批相同单位合并为一个能力（叠层）
-				await TrainingQueuePower.ApplyTrainingQueue(
-					owner: Owner.Creature,
-					cardId: selectedCard.Id.Entry,
-					unitName: unitName,
-					iconPath: selectedCard.PortraitPath,
-					unitPrice: unitPrice,
-					isUpgraded: base.IsUpgraded,
-					sourceCard: this,
-					amount: count
-				);
-			}
-		}
-		else
-		{
-			// 空选：仅获得建筑能力，不创建生产序列
-			GD.Print("[AirForceCommand] 空选，仅获得建筑能力");
-		}
-
-		// 添加一张空降部队到手牌（需要美国国旗，空选也添加）
-		if (FlagManager.HasUSA(Owner))
-		{
-			var airborneTemplate = ModelDb.Card<AirborneDivision>();
-			var airborneCard = Owner.Creature.CombatState.CreateCard(airborneTemplate, Owner);
-			if (base.IsUpgraded && !airborneCard.IsUpgraded)
-			{
-				CardCmd.Upgrade(airborneCard);
-			}
-			await CardPileCmd.AddGeneratedCardToCombat(airborneCard, PileType.Hand, Owner);
-			GD.Print("[AirForceCommand] 添加空降部队到手牌");
-		}
-		else
-		{
-			GD.Print("[AirForceCommand] 无美国国旗，跳过添加空降部队");
-		}
-
+		return availableCards;
 	}
 
 	protected override void OnUpgrade()

@@ -142,6 +142,7 @@
     "RED_ALERT2_MOD_CARD_AIRCRAFT_CARRIER.description": "Apply [gold]Target Locked[/gold] to an enemy and gain 3 [gold]Hornets[/gold].{IfUpgraded:show:Hornets upgraded.|}",
     "RED_ALERT2_MOD_CARD_ALLIES_REPAIR_DEPOT.title": "Repair Depot",
     "RED_ALERT2_MOD_CARD_ALLIES_REPAIR_DEPOT.description": "[gold]Cost: ${DollarNumber}[/gold]. Choose 1 card from the Exhaust pile to add to your hand.",
+    "RED_ALERT2_MOD_CARD_ALLIES_REPAIR_DEPOT.select_prompt": "Choose a card to add to your hand.",
     "EAGLE500KG.title": "Eagle 500kg",
     "EAGLE500KG.description": "[gold]Desperate Measures[/gold].\nApply [gold]Target Locked[/gold].\n[red]↑ → ↓ ↓ ↓[/red]\n[gold]Splash[/gold].",
     "EAGLE_MACHINE_GUN.title": "Eagle Machine Gun",

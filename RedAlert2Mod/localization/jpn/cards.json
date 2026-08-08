@@ -142,6 +142,7 @@
     "RED_ALERT2_MOD_CARD_AIRCRAFT_CARRIER.description": "敵1人を選択して[gold]ターゲットロック[/gold]を獲得し、3機の[gold]ホーネット艦載機[/gold]を獲得する。{IfUpgraded:show:艦載機アップグレード。|}",
     "RED_ALERT2_MOD_CARD_ALLIES_REPAIR_DEPOT.title": "修理工場",
     "RED_ALERT2_MOD_CARD_ALLIES_REPAIR_DEPOT.description": "[gold]価格：${DollarNumber}[/gold]。捨て札山から1枚のカードを選択して手札に加える。",
+    "RED_ALERT2_MOD_CARD_ALLIES_REPAIR_DEPOT.select_prompt": "手札に加えるカードを1枚選択する。",
     "EAGLE500KG.title": "イーグル500KG",
     "EAGLE500KG.description": "[gold]イーグル戦備[/gold]。\n[gold]ターゲットロック[/gold]。\n[red]↑ → ↓ ↓ ↓[/red]\n[gold]スプラッシュ[/gold]。",
     "EAGLE_MACHINE_GUN.title": "イーグル機関銃射撃",

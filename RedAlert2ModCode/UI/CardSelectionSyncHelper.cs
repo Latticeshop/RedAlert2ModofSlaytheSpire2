@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using RedAlert2ModCode.Common.Utils;
 
@@ -8,11 +9,11 @@ namespace RedAlert2ModCode.UI;
 
 internal static class CardSelectionSyncHelper
 {
-    public static async Task<CardModel?> ShowSelectionWithSync(List<CardModel> cards, Player player, Dictionary<string, CardValueStore.CardValues>? cardValuesMap = null, FactionType faction = FactionType.Allied)
+    public static async Task<CardModel?> ShowSelectionWithSync(PlayerChoiceContext context, List<CardModel> cards, Player player, Dictionary<string, CardValueStore.CardValues>? cardValuesMap = null, FactionType faction = FactionType.Allied)
     {
         List<CardModel> cardsCopy = new(cards);
 
-        int? selectedIndex = await MultiplayerSyncHelper.ExecuteSyncChoice(player, async () =>
+        int? selectedIndex = await MultiplayerSyncHelper.ExecuteSyncChoice(context, player, async () =>
         {
             CardModel? card;
             if (cardValuesMap != null)
@@ -34,11 +35,11 @@ internal static class CardSelectionSyncHelper
         return null;
     }
 
-    public static async Task<List<CardModel>?> ShowMultiSelectionWithSync(List<CardModel> cards, int maxSelect, int minSelect, Player player)
+    public static async Task<List<CardModel>?> ShowMultiSelectionWithSync(PlayerChoiceContext context, List<CardModel> cards, int maxSelect, int minSelect, Player player)
     {
         List<CardModel> cardsCopy = new(cards);
 
-        List<int> selectedIndices = await MultiplayerSyncHelper.ExecuteSyncMultiChoice(player, async () =>
+        List<int> selectedIndices = await MultiplayerSyncHelper.ExecuteSyncMultiChoice(context, player, async () =>
         {
             List<CardModel>? selected = await CardSelectionScreen.ShowMultiSelection(cardsCopy, maxSelect, minSelect, player);
             if (selected == null) return null;
@@ -67,13 +68,13 @@ internal static class CardSelectionSyncHelper
         return null;
     }
 
-    public static async Task<List<CardSelectionResult>?> ShowSelectionWithQuantitySync(List<CardModel> cards, Player player, Dictionary<string, CardValueStore.CardValues> cardValuesMap, FactionType faction = FactionType.Allied)
+    public static async Task<List<CardSelectionResult>?> ShowSelectionWithQuantitySync(PlayerChoiceContext context, List<CardModel> cards, Player player, Dictionary<string, CardValueStore.CardValues> cardValuesMap, FactionType faction = FactionType.Allied)
     {
         List<CardModel> cardsCopy = new(cards);
 
         // 将选择结果编码为 [cardIndex1, count1, cardIndex2, count2, ...] 的整数列表
         // 使用特殊标记区分取消(-2)和空选确认(-1)
-        List<int> encodedSelection = await MultiplayerSyncHelper.ExecuteSyncMultiChoice(player, async () =>
+        List<int> encodedSelection = await MultiplayerSyncHelper.ExecuteSyncMultiChoice(context, player, async () =>
         {
             List<CardSelectionResult>? selected = await CardSelectionScreen.ShowSelectionWithQuantity(cardsCopy, player, cardValuesMap, faction);
             if (selected == null)

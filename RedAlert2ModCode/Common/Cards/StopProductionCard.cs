@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -56,7 +56,7 @@ public class StopProductionCard : CardModel
             return;
         }
 
-        var selectedResult = await ProductionQueueSelectionScreen.ShowSelectionWithSync(productionQueues, Owner);
+        var selectedResult = await ProductionQueueSelectionScreen.ShowSelectionWithSync(ctx, productionQueues, Owner);
 
         if (selectedResult != null && selectedResult.Items.Count > 0)
         {

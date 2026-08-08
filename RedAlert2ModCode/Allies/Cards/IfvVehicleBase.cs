@@ -96,7 +96,7 @@ public abstract class IfvVehicleBase : CardModel
 			}
 		};
 
-		var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, new LocString("card_keywords", UiTitleKey), options, FactionType.Allied);
+		var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(ctx, Owner, new LocString("card_keywords", UiTitleKey), options, FactionType.Allied);
 
 		if (selectedIndex.HasValue)
 		{

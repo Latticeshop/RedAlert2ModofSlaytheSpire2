@@ -144,6 +144,7 @@
     "RED_ALERT2_MOD_CARD_AIRCRAFT_CARRIER.description": "选择一名敌人获得[gold]目标锁定[/gold]，获得 3 架[gold]黄蜂舰载机[/gold]。{IfUpgraded:show:舰载机升级。|}",
     "RED_ALERT2_MOD_CARD_ALLIES_REPAIR_DEPOT.title": "维修厂",
     "RED_ALERT2_MOD_CARD_ALLIES_REPAIR_DEPOT.description": "[gold]价格：${DollarNumber}[/gold]。从消耗牌堆选择一张牌加入手牌。",
+    "RED_ALERT2_MOD_CARD_ALLIES_REPAIR_DEPOT.select_prompt": "选择一张牌加入手牌。",
     "EAGLE500KG.title": "飞鹰500KG",
     "EAGLE500KG.description": "[gold]飞鹰战备[/gold]。\n赋予[gold]目标锁定[/gold]。\n[red]↑ → ↓ ↓ ↓[/red]\n[gold]溅射[/gold]。",
     "EAGLE_MACHINE_GUN.title": "飞鹰机枪扫射",

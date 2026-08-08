@@ -102,7 +102,7 @@ public sealed partial class NightHawkChopper : CardModel
             }
         };
 
-        var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, new LocString("card_keywords", "ui.night_hawk.title"), options, FactionType.Allied);
+		var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(ctx, Owner, new LocString("card_keywords", "ui.night_hawk.title"), options, FactionType.Allied);
 
         if (selectedIndex == 0)
         {

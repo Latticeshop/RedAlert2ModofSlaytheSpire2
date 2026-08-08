@@ -78,6 +78,7 @@
   "ui.chrono_warp.title": "더미 선택",
   "ui.chrono_warp.source": "카드 출처 선택:",
   "ui.chrono_warp.target": "목적지 선택:",
+  "ui.chrono_warp.select_prompt": "전송할 카드 {0}~{1}장을 선택하세요.",
   "ui.deploy_choice.title": "행동 선택",
   "ui.production_queue.title": "시작하거나 멈출 생산 대기열을 선택하세요",
   "ui.production_queue.cancel": "X 취소",

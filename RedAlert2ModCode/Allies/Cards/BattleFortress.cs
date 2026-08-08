@@ -152,7 +152,7 @@ public sealed class BattleFortress : CardModel
 			}
 		};
 
-		var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, new LocString("card_keywords", "ui.battle_fortress.title"), options, FactionType.Allied);
+		var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(choiceContext, Owner, new LocString("card_keywords", "ui.battle_fortress.title"), options, FactionType.Allied);
 
 		if (selectedIndex.HasValue)
 		{

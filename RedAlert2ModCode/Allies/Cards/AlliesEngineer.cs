@@ -49,7 +49,7 @@ public sealed class AlliesEngineer : CardModel
 
 		List<Choice> choices = EngineerChoiceHelper.GenerateRandomChoices(IsUpgraded, Owner);
 
-		var selectedChoice = await ChoiceSelectionScreen.ShowSelectionWithSync(choices, PortraitPath, Owner, FactionType.Allied);
+		var selectedChoice = await ChoiceSelectionScreen.ShowSelectionWithSync(ctx, choices, PortraitPath, Owner, FactionType.Allied);
 
 		if (selectedChoice != null)
 		{

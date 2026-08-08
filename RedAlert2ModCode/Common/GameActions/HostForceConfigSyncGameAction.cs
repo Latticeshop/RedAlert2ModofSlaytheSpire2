@@ -83,6 +83,8 @@ public struct NetCharacterConfig : IPacketSerializable
     public string baseCarMode;
     public bool luckyCrateMode;
     public string cratePoolMode;
+    public int startingGold;
+    public int maxHp;
 
     public NetCharacterConfig(CharacterConfig config)
     {
@@ -94,6 +96,8 @@ public struct NetCharacterConfig : IPacketSerializable
         baseCarMode = config.BaseCarMode.ToString();
         luckyCrateMode = config.LuckyCrateMode;
         cratePoolMode = config.CratePoolMode.ToString();
+        startingGold = config.StartingGold;
+        maxHp = config.MaxHp;
     }
 
     public CharacterConfig ToConfig()
@@ -115,6 +119,8 @@ public struct NetCharacterConfig : IPacketSerializable
         {
             config.CratePoolMode = crateMode;
         }
+        config.StartingGold = startingGold;
+        config.MaxHp = maxHp;
         return config;
     }
 
@@ -142,6 +148,8 @@ public struct NetCharacterConfig : IPacketSerializable
         writer.WriteString(baseCarMode ?? "None");
         writer.WriteBool(luckyCrateMode);
         writer.WriteString(cratePoolMode ?? "None");
+        writer.WriteInt(startingGold);
+        writer.WriteInt(maxHp);
     }
 
     public void Deserialize(PacketReader reader)
@@ -164,6 +172,8 @@ public struct NetCharacterConfig : IPacketSerializable
         baseCarMode = reader.ReadString();
         luckyCrateMode = reader.ReadBool();
         cratePoolMode = reader.ReadString();
+        startingGold = reader.ReadInt();
+        maxHp = reader.ReadInt();
     }
 }
 

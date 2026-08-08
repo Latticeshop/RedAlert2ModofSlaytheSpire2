@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using RedAlert2ModCode.Common.Utils;
@@ -93,11 +94,11 @@ public sealed partial class SpyInfiltrateScreen : Control, IOverlayScreen
         return await screen._completionSource.Task;
     }
 
-    public static async Task<int?> ShowSelectionWithSync(List<(Type PowerType, string Title, string Description, string IconPath)> buildingOptions, Player player, FactionType faction = FactionType.Allied)
+    public static async Task<int?> ShowSelectionWithSync(PlayerChoiceContext context, List<(Type PowerType, string Title, string Description, string IconPath)> buildingOptions, Player player, FactionType faction = FactionType.Allied)
     {
         List<(Type PowerType, string Title, string Description, string IconPath)> optionsCopy = new(buildingOptions);
 
-        int? selectedIndex = await MultiplayerSyncHelper.ExecuteSyncChoice(player, async () =>
+        int? selectedIndex = await MultiplayerSyncHelper.ExecuteSyncChoice(context, player, async () =>
         {
             return await ShowSelection(optionsCopy, player, faction);
         });

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
@@ -51,11 +52,11 @@ public sealed partial class SpyTeammateSelectScreen : Control, IOverlayScreen
         return await screen._completionSource.Task;
     }
 
-    public static async Task<Player?> ShowSelectionWithSync(List<Player> teammates, Player player, FactionType faction = FactionType.Allied)
+    public static async Task<Player?> ShowSelectionWithSync(PlayerChoiceContext context, List<Player> teammates, Player player, FactionType faction = FactionType.Allied)
     {
         List<Player> teammatesCopy = new(teammates);
 
-        int? selectedIndex = await MultiplayerSyncHelper.ExecuteSyncChoice(player, async () =>
+        int? selectedIndex = await MultiplayerSyncHelper.ExecuteSyncChoice(context, player, async () =>
         {
             Player? choice = await ShowSelection(teammatesCopy, player, faction);
             return choice != null ? teammatesCopy.FindIndex(p => p.NetId == choice.NetId) : null;

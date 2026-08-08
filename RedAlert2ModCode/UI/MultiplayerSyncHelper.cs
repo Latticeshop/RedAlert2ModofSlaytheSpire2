@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Runs;
 
@@ -12,6 +14,29 @@ namespace RedAlert2ModCode.UI;
 
 public static class MultiplayerSyncHelper
 {
+    /// <summary>
+    /// 本地卡牌效果处理串行化闸门（依次执行，类似排到队列末尾）。
+    /// 注意：不能用于“暂停/恢复动作”阶段——那些阶段在客户端上走主机中转握手（客户端→主机→客户端），
+    /// 本机闸门会与握手互相等待造成卡死。只用于纯本地的卡牌效果/取消处理（如 HandleCardCancellation）。
+    /// </summary>
+    private static readonly SemaphoreSlim _executionGate = new(1, 1);
+
+    /// <summary>
+    /// 将一次本地卡牌效果/取消处理排入串行队列，同一时刻只执行一个。
+    /// </summary>
+    public static async Task RunSerialized(Func<Task> action)
+    {
+        await _executionGate.WaitAsync();
+        try
+        {
+            await action();
+        }
+        finally
+        {
+            _executionGate.Release();
+        }
+    }
+
     public static bool IsMultiplayerGame()
     {
         if (RunManager.Instance == null) return false;
@@ -50,54 +75,120 @@ public static class MultiplayerSyncHelper
         return isLocal;
     }
 
-    public static async Task<int?> ExecuteSyncChoice(Player player, Func<Task<int?>> localChoiceFunc)
+    /// <summary>
+    /// 执行一次同步单选。
+    /// 与原版 CardSelectCmd 一致：预留选择ID → SignalPlayerChoiceBegun（创建/暂停动作，只阻塞选择者的队列，其他队友继续）
+    /// → 本机显示面板/远端等待 → SignalPlayerChoiceEnded（恢复动作）。
+    /// </summary>
+    public static async Task<int?> ExecuteSyncChoice(PlayerChoiceContext context, Player player, Func<Task<int?>> localChoiceFunc)
     {
-        if (!IsMultiplayerGame())
+        if (context == null)
         {
             return await localChoiceFunc();
+        }
+
+        if (!IsMultiplayerGame())
+        {
+            // 单机：同样走暂停信号（与原版一致），但无需同步结果
+            await context.SignalPlayerChoiceBegun(player, PlayerChoiceOptions.CancelPlayCardActions);
+            try
+            {
+                return await localChoiceFunc();
+            }
+            finally
+            {
+                await context.SignalPlayerChoiceEnded();
+            }
         }
 
         var synchronizer = await WaitForSynchronizer();
         if (synchronizer == null)
         {
-            return await localChoiceFunc();
+            await context.SignalPlayerChoiceBegun(player, PlayerChoiceOptions.CancelPlayCardActions);
+            try
+            {
+                return await localChoiceFunc();
+            }
+            finally
+            {
+                await context.SignalPlayerChoiceEnded();
+            }
         }
 
         uint choiceId = synchronizer.ReserveChoiceId(player);
-
-        if (IsLocalPlayer(player))
+        await context.SignalPlayerChoiceBegun(player, PlayerChoiceOptions.CancelPlayCardActions);
+        try
         {
-            int? result = await localChoiceFunc();
-            SyncLocalChoice(synchronizer, player, choiceId, result);
-            return result;
-        }
+            if (IsLocalPlayer(player))
+            {
+                int? result = await localChoiceFunc();
+                SyncLocalChoice(synchronizer, player, choiceId, result);
+                return result;
+            }
 
-        return await WaitForRemoteChoice(synchronizer, player, choiceId);
+            return await WaitForRemoteChoice(synchronizer, player, choiceId);
+        }
+        finally
+        {
+            await context.SignalPlayerChoiceEnded();
+        }
     }
 
-    public static async Task<List<int>> ExecuteSyncMultiChoice(Player player, Func<Task<List<int>?>> localChoiceFunc)
+    /// <summary>
+    /// 执行一次同步多选，机制与 <see cref="ExecuteSyncChoice"/> 相同。
+    /// </summary>
+    public static async Task<List<int>> ExecuteSyncMultiChoice(PlayerChoiceContext context, Player player, Func<Task<List<int>?>> localChoiceFunc)
     {
-        if (!IsMultiplayerGame())
+        if (context == null)
         {
             return (await localChoiceFunc()) ?? new List<int>();
+        }
+
+        if (!IsMultiplayerGame())
+        {
+            // 单机：同样走暂停信号（与原版一致），但无需同步结果
+            await context.SignalPlayerChoiceBegun(player, PlayerChoiceOptions.CancelPlayCardActions);
+            try
+            {
+                return (await localChoiceFunc()) ?? new List<int>();
+            }
+            finally
+            {
+                await context.SignalPlayerChoiceEnded();
+            }
         }
 
         var synchronizer = await WaitForSynchronizer();
         if (synchronizer == null)
         {
-            return (await localChoiceFunc()) ?? new List<int>();
+            await context.SignalPlayerChoiceBegun(player, PlayerChoiceOptions.CancelPlayCardActions);
+            try
+            {
+                return (await localChoiceFunc()) ?? new List<int>();
+            }
+            finally
+            {
+                await context.SignalPlayerChoiceEnded();
+            }
         }
 
         uint choiceId = synchronizer.ReserveChoiceId(player);
-
-        if (IsLocalPlayer(player))
+        await context.SignalPlayerChoiceBegun(player, PlayerChoiceOptions.CancelPlayCardActions);
+        try
         {
-            List<int>? result = await localChoiceFunc();
-            SyncLocalMultiChoice(synchronizer, player, choiceId, result);
-            return result ?? new List<int>();
-        }
+            if (IsLocalPlayer(player))
+            {
+                List<int>? result = await localChoiceFunc();
+                SyncLocalMultiChoice(synchronizer, player, choiceId, result);
+                return result ?? new List<int>();
+            }
 
-        return await WaitForRemoteMultiChoice(synchronizer, player, choiceId);
+            return await WaitForRemoteMultiChoice(synchronizer, player, choiceId);
+        }
+        finally
+        {
+            await context.SignalPlayerChoiceEnded();
+        }
     }
 
     private static async Task<PlayerChoiceSynchronizer?> WaitForSynchronizer()

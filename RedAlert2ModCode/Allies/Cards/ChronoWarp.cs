@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -58,7 +59,7 @@ public sealed class ChronoWarp : CardModel
         await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 
         // 第一步：选择源牌堆
-        var sourcePileInt = await ChronoWarpScreen.ShowPileSelectionWithSync(new LocString("card_keywords", "ui.chrono_warp.source").GetFormattedText(), Owner);
+		var sourcePileInt = await ChronoWarpScreen.ShowPileSelectionWithSync(ctx, new LocString("card_keywords", "ui.chrono_warp.source").GetFormattedText(), Owner);
         if (sourcePileInt == null)
         {
             GD.Print("[ChronoWarp] 取消选择");
@@ -75,16 +76,24 @@ public sealed class ChronoWarp : CardModel
             return;
         }
 
-        // 选择要移动的卡牌（可多选）
-        var selectedCards = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(cardsInSource, cardsInSource.Count, 1, Owner);
-        if (selectedCards == null || !selectedCards.Any())
+        // 选择要移动的卡牌（可多选）——复用原版牌堆选择UI（同“指导”等卡牌）
+        var selectPrompt = new LocString("card_keywords", "ui.chrono_warp.select_prompt");
+        selectPrompt.Add("0", 1);
+        selectPrompt.Add("1", cardsInSource.Count);
+        var prefs = new CardSelectorPrefs(selectPrompt, 1, cardsInSource.Count)
+        {
+            RequireManualConfirmation = true
+        };
+
+        var selectedCards = (await CardSelectCmd.FromCombatPile(ctx, sourcePile.GetPile(Owner), Owner, prefs, null)).ToList();
+        if (!selectedCards.Any())
         {
             GD.Print("[ChronoWarp] 未选择任何卡牌");
             return;
         }
 
         // 第二步：选择目标牌堆
-        var targetPileInt = await ChronoWarpScreen.ShowPileSelectionWithSync(new LocString("card_keywords", "ui.chrono_warp.target").GetFormattedText(), Owner);
+		var targetPileInt = await ChronoWarpScreen.ShowPileSelectionWithSync(ctx, new LocString("card_keywords", "ui.chrono_warp.target").GetFormattedText(), Owner);
         if (targetPileInt == null)
         {
             GD.Print("[ChronoWarp] 取消选择目标");

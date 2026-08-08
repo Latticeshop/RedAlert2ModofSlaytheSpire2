@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using RedAlert2ModCode.Common.Utils;
 
@@ -110,9 +111,9 @@ public sealed partial class DeployChoiceScreen : Control, IOverlayScreen
         QueueFree();
     }
 
-    public static async Task<int?> ShowSelectionWithSync(Player player, object title, List<ChoiceOption> options, FactionType faction = FactionType.Allied)
+    public static async Task<int?> ShowSelectionWithSync(PlayerChoiceContext context, Player player, object title, List<ChoiceOption> options, FactionType faction = FactionType.Allied)
     {
-        return await MultiplayerSyncHelper.ExecuteSyncChoice(player, async () =>
+        return await MultiplayerSyncHelper.ExecuteSyncChoice(context, player, async () =>
         {
             return await ShowSelection(title, options, player, faction);
         });

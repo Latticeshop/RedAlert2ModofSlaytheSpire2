@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using RedAlert2ModCode.Common.Utils;
@@ -127,13 +128,13 @@ public sealed partial class SellBuildingScreen : Control, IOverlayScreen
         return await screen._completionSource.Task;
     }
 
-    public static async Task<SellBuildingResult?> ShowSelectionWithSync(List<SellBuildingItem> items, int maxSelect, Player player, FactionType faction)
+    public static async Task<SellBuildingResult?> ShowSelectionWithSync(PlayerChoiceContext context, List<SellBuildingItem> items, int maxSelect, Player player, FactionType faction)
     {
         List<SellBuildingItem> itemsCopy = new(items);
 
         // 将选择结果编码为整数列表
         // 使用特殊标记区分取消(-2)和空选确认(-1)
-        List<int> encodedSelection = await MultiplayerSyncHelper.ExecuteSyncMultiChoice(player, async () =>
+        List<int> encodedSelection = await MultiplayerSyncHelper.ExecuteSyncMultiChoice(context, player, async () =>
         {
             SellBuildingResult? result = await ShowSelection(itemsCopy, maxSelect, player, faction);
             if (result == null)

@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using RedAlert2ModCode.Common.Utils;
 
 namespace RedAlert2ModCode.UI;
@@ -130,11 +131,11 @@ public sealed partial class ChoiceSelectionScreen : Control, IOverlayScreen
 	/// <summary>
 	/// 显示选择界面（支持多人同步）
 	/// </summary>
-	public static async Task<Choice?> ShowSelectionWithSync(List<Choice> choices, string? portraitPath, MegaCrit.Sts2.Core.Entities.Players.Player player, FactionType faction = FactionType.Allied)
+	public static async Task<Choice?> ShowSelectionWithSync(PlayerChoiceContext context, List<Choice> choices, string? portraitPath, MegaCrit.Sts2.Core.Entities.Players.Player player, FactionType faction = FactionType.Allied)
 	{
 		List<Choice> choicesCopy = new(choices);
 		
-		int? selectedIndex = await MultiplayerSyncHelper.ExecuteSyncChoice(player, async () =>
+		int? selectedIndex = await MultiplayerSyncHelper.ExecuteSyncChoice(context, player, async () =>
 		{
 			Choice? choice = await ShowSelection(choicesCopy, portraitPath, player, faction);
 			return choice != null ? choicesCopy.FindIndex(c => c.Type == choice.Type) : null;

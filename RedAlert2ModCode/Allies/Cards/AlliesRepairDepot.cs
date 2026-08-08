@@ -2,10 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -14,7 +16,6 @@ using MegaCrit.Sts2.Core.HoverTips;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
-using RedAlert2ModCode.UI;
 
 using STS2RitsuLib.Interop.AutoRegistration;
 
@@ -79,7 +80,15 @@ public sealed class AlliesRepairDepot : CardModel
 		var exhaustPile = PileType.Exhaust.GetPile(Owner);
 		if (exhaustPile != null && exhaustPile.Cards.Count > 0)
 		{
-			var selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(exhaustPile.Cards.ToList(), Owner);
+			// 复用原版牌堆选择UI（同“指导”等卡牌）
+			var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_ALLIES_REPAIR_DEPOT.select_prompt");
+			var prefs = new CardSelectorPrefs(selectPrompt, 1, 1)
+			{
+				RequireManualConfirmation = true
+			};
+
+			var selectedCards = (await CardSelectCmd.FromCombatPile(ctx, exhaustPile, Owner, prefs, null)).ToList();
+			var selectedCard = selectedCards.FirstOrDefault();
 			if (selectedCard != null)
 			{
 				await CardPileCmd.Add(selectedCard, PileType.Hand);

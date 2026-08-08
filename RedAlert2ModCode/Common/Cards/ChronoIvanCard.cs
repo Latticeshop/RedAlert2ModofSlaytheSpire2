@@ -77,7 +77,7 @@ public sealed class ChronoIvanCard : ChronoCardModel
         };
 
         var titleText = new LocString("card_keywords", "ui.crazy_ivan.title").GetRawText();
-        var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, titleText, options, FactionType.Soviet);
+		var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(ctx, Owner, titleText, options, FactionType.Soviet);
 
         if (selectedIndex == 0)
         {
@@ -125,7 +125,7 @@ public sealed class ChronoIvanCard : ChronoCardModel
             return;
         }
 
-        CardModel? selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(unitCards, Owner, null, FactionType.Soviet);
+		CardModel? selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(ctx, unitCards, Owner, null, FactionType.Soviet);
 
         if (selectedCard != null)
         {

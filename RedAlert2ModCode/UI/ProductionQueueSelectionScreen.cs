@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using RedAlert2ModCode.Common.Cards;
@@ -129,13 +130,13 @@ public sealed partial class ProductionQueueSelectionScreen : Control, IOverlaySc
     }
 
     public static async Task<ProductionQueueSelectionResult?> ShowSelectionWithSync(
-        List<ProductionQueueItem> items, Player player)
+        PlayerChoiceContext context, List<ProductionQueueItem> items, Player player)
     {
         List<ProductionQueueItem> itemsCopy = new(items);
 
         // 将选择结果编码为 [action, index1, count1, index2, count2, ...] 的整数列表
         // action: 0=ToggleStop, 1=CancelQueue
-        List<int> encodedSelection = await MultiplayerSyncHelper.ExecuteSyncMultiChoice(player, async () =>
+        List<int> encodedSelection = await MultiplayerSyncHelper.ExecuteSyncMultiChoice(context, player, async () =>
         {
             ProductionQueueSelectionResult? result = await ShowSelection(itemsCopy, player);
             if (result == null) return null;

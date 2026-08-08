@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -48,10 +49,22 @@ public sealed class SovietMCV : CardModel, ICancellableCardPlay
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{
 		BuildingSoundHelper.PlayBuildingPlaceSound();
-		
+		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+		// 注：A2 预选模式下，选择在打出前完成；扣费/基地车能力/建筑入队由 BuildingResolutionAction 结算。
+		// 自动打出兜底：若没有手动 A2 的待结算标记，则本地补开预选面板（确认后由结算动作执行效果）
+		if (BuildingPrePlayHelper.TryConsumePendingResolution(this))
+			return;
+		if (MultiplayerSyncHelper.IsLocalPlayer(Owner))
+			BuildingPrePlayHelper.OpenAutoPlayPanel(this);
+	}
+	/// <summary>
+	/// A2 预选面板候选：与结算动作共用同一套确定性候选构建。
+	/// </summary>
+	public static List<CardModel> GetPrePlayCandidates(Player owner, bool isUpgraded)
+	{
 		List<CardModel> availableCards = new();
 
-		var techTree = CreateTechTreeFromDeck();
+		var techTree = CreateTechTreeFromDeck(owner);
 		var unlockedCoreBuildings = techTree.GetUnlockedCoreBuildingTypes();
 
 		foreach (var buildingType in unlockedCoreBuildings)
@@ -59,66 +72,40 @@ public sealed class SovietMCV : CardModel, ICancellableCardPlay
 			var model = GetCardModel(buildingType);
 			if (model != null)
 			{
-				var card = Owner.Creature.CombatState.CreateCard(model, Owner);
-				
-				if (base.IsUpgraded)
-				{
+				var card = owner.Creature.CombatState.CreateCard(model, owner);
+				if (isUpgraded)
 					CardCmd.Upgrade(card);
-				}
-
 				availableCards.Add(card);
-				GD.Print($"[SovietMCV] 核心建筑解锁: {buildingType.Name}");
 			}
 		}
 
-		AddDeckBuildings(ref availableCards, techTree.CurrentTechLevel);
+		AddDeckBuildings(owner, isUpgraded, ref availableCards, techTree.CurrentTechLevel);
 
-		GD.Print($"[SovietMCV] 可用建筑卡牌数量: {availableCards.Count} (当前科技等级: {techTree.CurrentTechLevel})");
-
-		var buildingValuesMap = SovietCardValues.CreateBuildingValuesMap();
-		CardModel? selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(availableCards, Owner, buildingValuesMap, FactionType.Soviet);
-
-		// 如果玩家选择了卡牌，执行能力效果
-		if (selectedCard != null)
-		{
-			// 应用基地车能力（用于显示图标）
-			await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
-			await PowerCmd.Apply<SovietMCVPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, 1m, Owner.Creature, this);
-
-			// 将选择的卡牌加入手牌
-			await CardPileCmd.AddGeneratedCardToCombat(selectedCard, PileType.Hand, Owner);
-
-			GD.Print("[SovietMCV] 玩家选择了建筑，基地车将正常进入弃牌堆");
-		}
-		else
-		{
-			GD.Print("[SovietMCV] 玩家取消选择，基地车放回手牌");
-			await CardUtils.HandleCardCancellation(play, this, Owner);
-		}
+		return availableCards;
 	}
 
-	private BuildingTechTree CreateTechTreeFromDeck()
+	private static BuildingTechTree CreateTechTreeFromDeck(Player owner)
 	{
 		var techTree = SovietTechTreeConfig.CreateTechTree();
 		
-		if (Owner?.Creature?.Powers == null)
+		if (owner?.Creature?.Powers == null)
 		{
 			return techTree;
 		}
 
-		techTree.UnlockTechFromPowers(Owner.Creature.Powers);
+		techTree.UnlockTechFromPowers(owner.Creature.Powers);
 
 		return techTree;
 	}
 
-	private void AddDeckBuildings(ref List<CardModel> availableCards, TechLevel currentTechLevel)
+	private static void AddDeckBuildings(Player owner, bool isUpgraded, ref List<CardModel> availableCards, TechLevel currentTechLevel)
 	{
-		if (Owner?.Deck?.Cards == null)
+		if (owner?.Deck?.Cards == null)
 		{
 			return;
 		}
 
-		foreach (var card in Owner.Deck.Cards)
+		foreach (var card in owner.Deck.Cards)
 		{
 			var cardType = card.GetType();
 			
@@ -139,9 +126,9 @@ public sealed class SovietMCV : CardModel, ICancellableCardPlay
 			var model = GetCardModel(cardType);
 			if (model != null)
 			{
-				var newCard = Owner.Creature.CombatState.CreateCard(model, Owner);
+				var newCard = owner.Creature.CombatState.CreateCard(model, owner);
 				
-				if (base.IsUpgraded)
+				if (isUpgraded)
 				{
 					CardCmd.Upgrade(newCard);
 				}

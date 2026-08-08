@@ -2774,6 +2774,122 @@ protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 
 ---
 
+## 🔀 多人选择的异步执行机制（握手与约束）
+
+### 为什么选择要“暂停/恢复”
+
+卡牌 `OnPlay` 中间的选牌发生在动作内部。若直接 await 面板，`PlayCardAction` 一直处于 **Executing**，
+占死 `ActionExecutor`，队友的卡牌也无法执行。因此需要 `SignalPlayerChoiceBegun` 让动作**暂停**，
+释放执行器给队友，选择完成后再 `SignalPlayerChoiceEnded` **恢复**。
+
+### 关键约束：暂停/恢复是主机中转握手
+
+```csharp
+// HookPlayerChoiceContext
+await context.SignalPlayerChoiceBegun(player, PlayerChoiceOptions.CancelPlayCardActions);
+// ... 本机面板 / 远端 WaitForRemoteChoice ...
+await context.SignalPlayerChoiceEnded();
+```
+
+- **客户端**上，暂停（`RequestEnqueueHookAction`）与恢复（`RequestResumeActionAfterPlayerChoice`）
+  都是“客户端 → 主机 → 客户端”的握手，顺序由主机统一裁定，保证两端校验和一致；
+- **绝不能**用本机锁/信号量包住暂停或恢复阶段——本地锁会与握手互相等待造成卡死；
+- 只有**纯本地、无握手**的处理（如 `CardUtils.HandleCardCancellation` 的返能/回手）可以用
+  `MultiplayerSyncHelper.RunSerialized` 串行化。
+
+### 恢复时的出牌队列视觉舞步
+
+恢复动作会走 `NCardPlayQueue.ReAddCardAfterPlayerChoice`（卡牌重新入队）等视觉流程，
+该流程假定“同一时间只有一张卡在暂停”。两卡并发暂停/恢复时可能产生节点无父级/双释放，
+由 `NCardPlayQueueChoiceResumePatch` 防御性兜底（无父级节点先挂回、待删除节点跳过）。
+
+---
+
+## 🏭 生产建筑 A2 预选模式（先选后打）
+
+兵营/重工/船厂/空指部/MCV/出售建筑已改为 **A2 预选模式**：点击手牌只弹本地面板，
+确认后才真正打出；取消则零副作用（卡牌留在手牌），彻底绕开“取消回手”与暂停/恢复的视觉竞态。
+
+### 流程
+
+```
+点击手牌（NPlayerHand.StartCardPlay 被拦截）
+→ 本地预选面板（卡牌不出手、不扣费、不暂停）
+→ 确认 → 入队两个动作：
+    ├─ PlayCardAction（正常打出，OnPlay 最小化）
+    └─ BuildingResolutionAction（扣费/加能力/生产序列/出售，载荷=选择结果）
+→ 取消 → 只关面板，什么都不发生
+```
+
+### 关键组件
+
+| 组件 | 作用 |
+|------|------|
+| `BuildingPrePlayHelper` | 拦截判断、打开预选面板、入队打出+结算；`RunSerialized` 无握手限制 |
+| `BuildingPrePlayInterceptPatch` | Harmony 前缀拦截 `NPlayerHand.StartCardPlay` |
+| `BuildingResolutionAction` + `NetBuildingResolutionAction` | 结算动作与跨端序列化（`ActionTypes` 自动注册 Mod 的 `INetAction`） |
+| `CardUtils.GetCardModelByEntry` | 结算时按 Entry 重建单位信息 |
+
+### 新增一张生产建筑卡要做的
+
+1. 在 `*CardValues.cs` 注册数值与映射；
+2. 在 `*CardRegistry.cs` 的 `BuildingCards`/`Vehicles` 等注册；
+3. **候选构建**：把“可用单位列表 + 国旗/科技过滤 + 升级处理”抽成静态
+   `GetPrePlayCandidates(Player owner, bool isUpgraded)`；
+4. **OnPlay 最小化**：只留音效/动画，不弹面板、不处理取消；
+5. 在 `BuildingPrePlayHelper.OpenPanelAsync` 的 switch 中注册该卡的候选与数值映射；
+6. 在 `BuildingResolutionAction` 中按 `BuildingEntry` 增加扣费/加能力/生产序列逻辑；
+7. 若该卡会被“自动打出”，OnPlay 的兜底会自动补开面板（确认后只入队结算）。
+
+### 待结算标记（防止重复）
+
+手动 A2 确认时，`EnqueuePlay` **先** `MarkPendingResolution(card)` **再**入队打出动作——
+因为动作队列可能同步立刻执行 OnPlay；标记必须早于 OnPlay 设置，否则 OnPlay 会误走
+“自动打出兜底”再开一个面板，导致重复结算。
+
+---
+
+## ⚙️ 初始资源配置 与 开局方案（5 槽位）
+
+### 初始资源配置
+
+`CharacterConfig` 新增 `StartingGold` / `MaxHp`（**0 = 使用角色默认值**）：
+
+- 面板新增第三个功能页「初始资源配置」：两个 `SpinBox` 修改后立即
+  `UpdateCharacterConfig` 落盘并广播；
+- 开局应用在 `InitialDeckPatch.ApplyConfigToPlayer` 末尾：金币直接写 `Player.Gold`，
+  血量用 `Creature.SetMaxHpInternal / SetCurrentHpInternal` 同步（当前血量=配置上限，满血开局）；
+- JSON 字段为 `startingGold` / `maxHp`，多人模式随 `ConfigSyncGameAction` 按玩家同步。
+
+### 开局方案（动态槽位，不设上限）
+
+`ModConfigManager` 新增 `DeckConfigPreset`（`Name` + 全部角色 `CharacterConfig` 快照）：
+
+- **动态列表**：`_presets` 为 `List<DeckConfigPreset?>`，**高亮槽 = 当前方案**
+  （工作配置 `_configs` 绑定其上，索引 `activePresetIndex` 持久化），
+  末尾始终保持一个空槽（`EnsureTrailingEmptySlot`）用于“保存即新建”，**数量不设上限**；
+- JSON 根节点 `presets` 数组序列化：当前槽（即使为空）与已保存/已命名槽写入，
+  未命名空槽不写（加载时自动重建）；旧 5 槽配置自动迁移；
+- **绑定模型**：`Save()` 时把 `_configs` 深拷贝同步回当前槽（**编辑即同步**，无独立副本）；
+- `SavePreset(i)`：遍历 `ModelDb.AllCharacters`，把**全部角色**的配置
+  （未配置过的角色自动补默认项）用 `CharacterConfig.Clone()` 深拷贝写入；
+  空槽 = **新建方案**（保留已命名名字，未命名自动“方案N”）并追加新空槽；
+  已保存槽 = 覆盖内容（保留名字）；当前槽 = 重写内容（**不重命名**）；
+- `LoadPreset(i)`：**只移动高亮**（`_activePresetIndex = i`）并载入工作配置，
+  **不覆盖任何槽内容**；随后 `BroadcastAllLocalConfigs()` 重新广播本机配置；
+- `DeletePreset(i)`：任意槽可删（含当前槽），删除后 `RecoverActiveSlot` 把高亮
+  回退到最近的非空槽（全部为空则新建当前槽），并保持末尾空槽；
+- `RenamePreset(i, name)`：改槽位名字（空槽也可提前命名，保存时名字保留）；
+- UI（独立功能页「开局方案存储」，第 4 页签）：
+  - 动态槽位卡片，**高亮 = 当前方案**（金色边框 + 「当前」标签），单击不高亮不切换；
+  - 卡片左上角为「✏」编辑按钮（弹输入框命名），其后为方案名；
+  - 卡片右上角「✕」删除按钮（任意槽含当前槽，弹窗确认）；
+  - 卡片下方「保存」按钮 = 弹窗确认后把当前配置复制到该槽（空槽=新建，已占用=覆盖）；
+  - 「切换」按钮或**双击槽卡片** = 直接加载该槽为当前方案（无确认弹窗，
+    切换只移动高亮、不覆盖，随时可切回；空槽/当前槽无效）。
+
+---
+
 ## 🚀 卡牌存储与消耗机制（IFV / 步兵车系列）
 
 ### IFV 存储普通士兵的消耗逻辑

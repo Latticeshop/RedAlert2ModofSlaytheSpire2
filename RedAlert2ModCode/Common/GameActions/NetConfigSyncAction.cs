@@ -19,6 +19,8 @@ public struct NetConfigSyncAction : INetAction, IPacketSerializable
     public string baseCarMode;
     public bool luckyCrateMode;
     public string cratePoolMode;
+    public int startingGold;
+    public int maxHp;
 
     public GameAction ToGameAction(Player player)
     {
@@ -31,7 +33,9 @@ public struct NetConfigSyncAction : INetAction, IPacketSerializable
             startingRelicTypes ?? new List<string>(),
             baseCarMode,
             luckyCrateMode,
-            cratePoolMode);
+            cratePoolMode,
+            startingGold,
+            maxHp);
     }
 
     public void Serialize(PacketWriter writer)
@@ -58,6 +62,8 @@ public struct NetConfigSyncAction : INetAction, IPacketSerializable
         writer.WriteString(baseCarMode);
         writer.WriteBool(luckyCrateMode);
         writer.WriteString(cratePoolMode);
+        writer.WriteInt(startingGold);
+        writer.WriteInt(maxHp);
     }
 
     public void Deserialize(PacketReader reader)
@@ -80,6 +86,8 @@ public struct NetConfigSyncAction : INetAction, IPacketSerializable
         baseCarMode = reader.ReadString();
         luckyCrateMode = reader.ReadBool();
         cratePoolMode = reader.ReadString();
+        startingGold = reader.ReadInt();
+        maxHp = reader.ReadInt();
     }
 
     public override string ToString()

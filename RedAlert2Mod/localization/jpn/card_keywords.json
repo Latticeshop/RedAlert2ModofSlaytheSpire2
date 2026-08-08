@@ -78,6 +78,7 @@
     "ui.chrono_warp.title": "パイルを選択",
     "ui.chrono_warp.source": "カードソースを選択：",
     "ui.chrono_warp.target": "ターゲット位置を選択：",
+    "ui.chrono_warp.select_prompt": "転送するカードを{0}-{1}枚選択する。",
     "ui.deploy_choice.title": "行動を選択",
     "ui.production_queue.title": "開始または停止する生産シーケンスを選択してください",
     "ui.production_queue.cancel": "X キャンセル",

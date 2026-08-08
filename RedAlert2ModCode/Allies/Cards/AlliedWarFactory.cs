@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -76,119 +77,43 @@ public sealed class AlliedWarFactory : CardModel, ICancellableCardPlay
 		BuildingSoundHelper.PlayBuildingPlaceSound();
 		
 		GD.Print($"[AlliedWarFactory] OnPlay 被调用 - IsUpgraded={base.IsUpgraded}");
+		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+		// 注：A2 预选模式下，选择在打出前完成；扣费/重工能力/生产序列由 BuildingResolutionAction 结算。
+		// 自动打出兜底：若没有手动 A2 的待结算标记，则本地补开预选面板（确认后由结算动作执行效果）
+		if (BuildingPrePlayHelper.TryConsumePendingResolution(this))
+			return;
+		if (MultiplayerSyncHelper.IsLocalPlayer(Owner))
+			BuildingPrePlayHelper.OpenAutoPlayPanel(this);
+	}
 
-		// 使用盟军卡牌注册管理器获取所有装甲单位卡
-		List<CardModel> availableCards = AlliedCardRegistry.CreateVehicles(Owner);
-		GD.Print($"[AlliedWarFactory] 可用卡牌数量: {availableCards.Count}");
+	/// <summary>
+	/// A2 预选面板候选：与结算动作共用同一套确定性候选构建。
+	/// </summary>
+	public static List<CardModel> GetPrePlayCandidates(Player owner, bool isUpgraded)
+	{
+		List<CardModel> availableCards = AlliedCardRegistry.CreateVehicles(owner);
 
-		// 检测是否有盟军维修厂能力，有则添加盟军MCV选项
-		bool hasRepairDepot = Owner.Creature.Powers.OfType<AlliedRepairDepotPower>().Any();
+		bool hasRepairDepot = owner.Creature.Powers.OfType<AlliedRepairDepotPower>().Any();
 		if (hasRepairDepot)
 		{
-			var mcvCard = Owner.Creature.CombatState.CreateCard(ModelDb.Card<AlliedMCV>(), Owner);
-			if (base.IsUpgraded)
-			{
+			var mcvCard = owner.Creature.CombatState.CreateCard(ModelDb.Card<AlliedMCV>(), owner);
+			if (isUpgraded)
 				CardCmd.Upgrade(mcvCard);
-			}
 			availableCards.Add(mcvCard);
-			GD.Print("[AlliedWarFactory] 检测到盟军维修厂能力，添加盟军MCV选项");
 		}
 
-		// 如果没有德国国旗，移除坦克杀手选项
-		if (!FlagManager.HasGermany(Owner))
+		if (!FlagManager.HasGermany(owner))
 		{
 			availableCards = availableCards.Where(c => c.GetType() != typeof(TankDestroyer)).ToList();
-			GD.Print($"[AlliedWarFactory] 无德国国旗，移除坦克杀手选项，剩余卡牌数量: {availableCards.Count}");
 		}
-		
-		// 如果盟军重工是升级过的，创建的卡牌也显示为升级版本
-		if (base.IsUpgraded)
+
+		if (isUpgraded)
 		{
 			foreach (var card in availableCards)
-			{
 				CardCmd.Upgrade(card);
-			}
 		}
 
-		// 使用自定义选择面板，支持多选和数量选择
-		// 传递数值映射，让UI面板能够正确显示费用
-		// 合并普通装甲单位和高科技单位的数值映射
-		var cardValuesMap = AlliesCardValues.CreateVehicleValuesMap();
-		var highTechValuesMap = AlliesCardValues.CreateHighTechValuesMap();
-		foreach (var kvp in highTechValuesMap)
-		{
-			cardValuesMap[kvp.Key] = kvp.Value;
-		}
-		var selectedResults = await CardSelectionSyncHelper.ShowSelectionWithQuantitySync(availableCards, Owner, cardValuesMap, FactionType.Allied);
-
-		GD.Print($"[AlliedWarFactory] 选择结果数量: {(selectedResults != null ? selectedResults.Count : 0)}");
-
-		// 如果取消选择（selectedResults == null），返还能量，卡牌返回手中
-		if (selectedResults == null)
-		{
-			GD.Print("[AlliedWarFactory] 取消选择，返还能量，卡牌返回手中");
-			await CardUtils.HandleCardCancellation(play, this, Owner);
-			return;
-		}
-
-		// 选择确认后才扣除资金（空选也消耗资金）
-		var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
-		if (dollarPower != null)
-		{
-			dollarPower.AddDollar(-(int)AlliesCardValues.AlliedWarFactory.DollarValue);
-			GD.Print($"[AlliedWarFactory] 扣除建筑资金 {AlliesCardValues.AlliedWarFactory.DollarValue}");
-		}
-
-		// 添加重工能力（用于科技线检查），每次打出都增加层数
-		await PowerCmd.Apply<AlliedWarFactoryPower>(ctx, Owner.Creature, 1, Owner.Creature, this);
-		GD.Print("[AlliedWarFactory] 添加重工能力");
-
-		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
-
-		// 如果玩家选择了卡牌，创建对应的生产序列能力（同一批相同单位叠层）
-		if (selectedResults.Count > 0)
-		{
-			foreach (var result in selectedResults)
-			{
-				CardModel selectedCard = result.Card;
-				int count = result.Count;
-				
-				GD.Print($"[AlliedWarFactory] 创建生产序列 - CardId={selectedCard.Id.Entry}, Count={count}");
-				
-				// 升级预览卡后的 Title 会带“+”，生产序列名称由 IsUpgraded 标记统一追加，避免“++”
-				string unitName = selectedCard.Title.ToString();
-				if (selectedCard.IsUpgraded && unitName.EndsWith("+"))
-				{
-					unitName = unitName.Substring(0, unitName.Length - 1);
-				}
-
-				// 获取单位价格
-				int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
-				
-				// 超时空矿车和基地车不消耗（exhaustWhenPlayed: false）
-				bool exhaustWhenPlayed = selectedCard is not ChronoMiner and not AlliedMCV;
-				
-				// 同一批相同单位合并为一个能力（叠层）
-				await TrainingQueuePower.ApplyTrainingQueue(
-					owner: Owner.Creature,
-					cardId: selectedCard.Id.Entry,
-					unitName: unitName,
-					iconPath: selectedCard.PortraitPath,
-					unitPrice: unitPrice,
-					isUpgraded: base.IsUpgraded,
-					sourceCard: this,
-					exhaustWhenPlayed: exhaustWhenPlayed,
-					amount: count
-				);
-				
-				GD.Print($"[AlliedWarFactory] 应用训练队列 - CardId={selectedCard.Id.Entry}, ExhaustWhenPlayed={exhaustWhenPlayed}, Count={count}");
-			}
-		}
-		else
-		{
-			// 空选：仅获得建筑能力，不创建生产序列
-			GD.Print("[AlliedWarFactory] 空选，仅获得建筑能力");
-		}
+		return availableCards;
 	}
 
 	protected override void OnUpgrade()

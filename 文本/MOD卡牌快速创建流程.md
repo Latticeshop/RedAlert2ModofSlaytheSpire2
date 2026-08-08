@@ -133,10 +133,48 @@ MCV选项 = 核心建筑（自动显示） + 牌组建筑（牌组存在 + 科�
 
 - **建筑抽牌**：通过 `DollarPower.AfterApplied` 自动挂载，所有获得刀乐能力的玩家默认持有
 - **防御塔**：只触发城市化，不触发建筑抽牌
-- **选择面板类建筑卡**（重工/兵营/MCV等）：取消选择时调用 `CardUtils.HandleCardCancellation(play, this, Owner)` 即可，两套系统会自动跳过取消的打出
+- **A2 预选模式建筑卡**（兵营/重工/船厂/空指部/MCV/出售）：取消发生在**打出之前**（见下节），
+  不会进入 OnPlay，因此不调用 `CardUtils.HandleCardCancellation`，两套系统天然不触发
 - **禁止**在 `OnPlay` 中硬编码 `CardPileCmd.Draw(ctx, 1, Owner)` 或 `UrbanizationPower.TriggerOnSuccessfulPlay(...)`
 
 > 详细实现请查阅 API 文档「建筑打出系统」章节。
+
+### 10. 生产建筑 A2 预选模式（先选后打）
+
+兵营/重工/船厂/空指部/MCV/出售建筑现在采用 **A2 预选模式**：
+
+```
+点击手牌（NPlayerHand.StartCardPlay 被拦截）
+→ 本地预选面板（卡牌不出手、不扣费、不暂停）
+→ 确认 → 入队：PlayCardAction（打出）+ BuildingResolutionAction（结算：扣费/能力/生产序列）
+→ 取消 → 只关面板，卡牌留在手牌，零副作用
+```
+
+新增一张**生产建筑**卡需要：
+
+1. 把“可用单位列表 + 国旗/科技过滤 + 升级处理”抽成静态
+   `GetPrePlayCandidates(Player owner, bool isUpgraded)`（面板与结算共用）；
+2. `OnPlay` 最小化（只留音效/动画），不再弹面板、不再处理取消；
+3. 在 `BuildingPrePlayHelper.OpenPanelAsync` 的 switch 注册该卡的候选与数值映射；
+4. 在 `BuildingResolutionAction` 中按 `BuildingEntry` 增加结算逻辑（扣费/加能力/生产序列）；
+5. 若会被自动打出：OnPlay 兜底会自动补开面板（确认后只入队结算）。
+
+> 详细实现请查阅 API 文档「生产建筑 A2 预选模式」章节。
+
+---
+
+### 11. 初始资源配置 与 开局方案（5 槽位）
+
+- **初始资源配置**：`CharacterConfig` 新增 `StartingGold` / `MaxHp`
+  （0 = 角色默认值）；面板第三页「初始资源配置」直接改配置，
+  开局由 `InitialDeckPatch.ApplyConfigToPlayer` 写入金币并同步血量上限。
+- **开局方案**：动态槽位列表（不设上限）——高亮槽 = 当前方案（编辑其他页自动同步，
+  无独立副本），末尾始终有一个空槽（保存即新建，自动递增）。
+  UI 为独立功能页「开局方案存储」：每槽左上角「✏」命名、右上角「✕」删除、
+  「保存」（空槽=新建、已占用=覆盖，弹窗确认）与「切换」（只移高亮、不覆盖任何槽，
+  直接生效无确认；双击槽卡片也可直接切换）。
+
+> 详细实现请查阅 API 文档「初始资源配置 与 开局方案」章节。
 
 ---
 
@@ -181,6 +219,14 @@ dotnet build RedAlert2Mod.csproj -c Release -o build
 将 `build` 目录下的 `RedAlert2Mod.dll`, `RedAlert2Mod.json`, `RedAlert2Mod.pck` 复制到游戏 `mods/RedAlert2Mod/` 目录。
 
 ### 3. 多人联机
+
+多人选择走**主机中转握手**（客户端→主机→客户端）保证两端顺序一致：
+
+- 暂停/恢复阶段**不能**用本机锁包住，否则会与握手互相等待造成卡死；
+- 只有纯本地的取消/回手处理（`CardUtils.HandleCardCancellation`）可以用
+  `MultiplayerSyncHelper.RunSerialized` 串行化；
+- A2 生产建筑的选择是**纯本地面板**，结果随 `BuildingResolutionAction` 动作载荷跨端同步，
+  不涉及暂停/恢复，因此没有并发视觉竞态。
 -   **多人限制**：通过重写 `MultiplayerConstraint` 属性设置。
 -   **目标类型**：队友使用 `TargetType.AnyAlly` / `AllAllies`。
 -   **联机同步**：涉及随机数或 UI 选择时，必须使用同步方法（详见 API 文档）。

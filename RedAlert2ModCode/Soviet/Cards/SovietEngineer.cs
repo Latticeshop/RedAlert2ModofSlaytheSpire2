@@ -47,7 +47,7 @@ public sealed class SovietEngineer : CardModel
 
 		List<Choice> choices = EngineerChoiceHelper.GenerateRandomChoices(IsUpgraded, Owner);
 
-		var selectedChoice = await ChoiceSelectionScreen.ShowSelectionWithSync(choices, PortraitPath, Owner, FactionType.Soviet);
+		var selectedChoice = await ChoiceSelectionScreen.ShowSelectionWithSync(ctx, choices, PortraitPath, Owner, FactionType.Soviet);
 
 		if (selectedChoice != null)
 		{

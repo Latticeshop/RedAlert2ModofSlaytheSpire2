@@ -90,7 +90,7 @@ public sealed class SpyCard : CardModel
 
         while (true)
         {
-            int? choice = await SpyChoiceScreen.ShowSelectionWithSync(Owner);
+		int? choice = await SpyChoiceScreen.ShowSelectionWithSync(ctx, Owner);
 
             if (choice == null)
                 return;
@@ -104,7 +104,7 @@ public sealed class SpyCard : CardModel
                     return;
                 }
 
-                Player? targetTeammate = await SpyTeammateSelectScreen.ShowSelectionWithSync(teammates, Owner);
+		Player? targetTeammate = await SpyTeammateSelectScreen.ShowSelectionWithSync(ctx, teammates, Owner);
                 if (targetTeammate == null)
                     continue;
 
@@ -127,7 +127,7 @@ public sealed class SpyCard : CardModel
         if (buildingOptions.Count == 0)
             return;
 
-        int? selectedOptionIndex = await SpyInfiltrateScreen.ShowSelectionWithSync(buildingOptions, Owner);
+		int? selectedOptionIndex = await SpyInfiltrateScreen.ShowSelectionWithSync(ctx, buildingOptions, Owner);
         if (selectedOptionIndex == null)
             return;
 
@@ -151,7 +151,7 @@ public sealed class SpyCard : CardModel
             })
             .ToList();
 
-        var selectedChoice = await ChoiceSelectionScreen.ShowSelectionWithSync(choiceItems, PortraitPath, Owner, FactionType.Allied);
+		var selectedChoice = await ChoiceSelectionScreen.ShowSelectionWithSync(ctx, choiceItems, PortraitPath, Owner, FactionType.Allied);
 
         if (selectedChoice == null)
             return;

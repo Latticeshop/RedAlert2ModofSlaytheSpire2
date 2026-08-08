@@ -4,6 +4,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 
 namespace RedAlert2ModCode.UI;
@@ -98,9 +99,9 @@ public sealed partial class ChronoWarpScreen : Control, IOverlayScreen
         NOverlayStack.Instance?.Remove(this);
     }
 
-    public static async Task<int?> ShowPileSelectionWithSync(string prompt, Player player)
+    public static async Task<int?> ShowPileSelectionWithSync(PlayerChoiceContext context, string prompt, Player player)
     {
-        return await MultiplayerSyncHelper.ExecuteSyncChoice(player, async () =>
+        return await MultiplayerSyncHelper.ExecuteSyncChoice(context, player, async () =>
         {
             return await ShowPileSelection(prompt, player);
         });

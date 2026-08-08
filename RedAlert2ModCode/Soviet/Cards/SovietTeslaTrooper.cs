@@ -79,7 +79,7 @@ public sealed class SovietTeslaTrooper : CardModel
 				}
 			};
 
-			var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, new LocString("card_keywords", "ui.tesla_trooper.title"), options, FactionType.Soviet);
+		var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(ctx, Owner, new LocString("card_keywords", "ui.tesla_trooper.title"), options, FactionType.Soviet);
 
 		if (selectedIndex == 0)
 		{

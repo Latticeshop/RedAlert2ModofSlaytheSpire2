@@ -165,40 +165,92 @@ public static class CardUtils
 	
 	public static async Task HandleCardCancellation(CardPlay play, CardModel cardModel, Player owner)
 	{
-		// 标记本次打出操作已取消，供 UrbanizationPower.AfterCardPlayed 跳过城市化抽牌
-		MarkCardPlayCancelled(play);
+		// 与 MultiplayerSyncHelper 的“卡牌执行/入队”阶段共用串行队列：
+		// 保证取消处理的入队/回手操作与另一张卡牌的选择恢复（加入出牌队列）依次执行，避免并发修改出牌队列。
+		await RedAlert2ModCode.UI.MultiplayerSyncHelper.RunSerialized(async () =>
+		{
+			// 标记本次打出操作已取消，供 UrbanizationPower.AfterCardPlayed 跳过城市化抽牌
+			MarkCardPlayCancelled(play);
 
-		var cost = GetCardEnergyCost(cardModel);
-		
-		GD.Print($"[CardUtils] 取消选择卡牌，费用={cost}");
-		
-		if (cost > 0 && owner != null)
-		{
-			await PlayerCmd.GainEnergy(cost, owner);
-			GD.Print($"[CardUtils] 已返还 {cost} 能量给玩家");
-		}
-		else if (cost > 0)
-		{
-			GD.PrintErr("[CardUtils] 无法获取 Player 对象，能量返还失败");
-		}
-		
-		var cardToReturn = play?.Card ?? cardModel;
-		
-		if (cardToReturn != null)
-		{
-			// 参考运输船逻辑：能力卡被移出战斗后，设置 HasBeenRemovedFromState = false 使其能重新进入战斗
-			cardToReturn.HasBeenRemovedFromState = false;
-			GD.Print($"[CardUtils] 重置卡牌状态 HasBeenRemovedFromState = false");
+			var cost = GetCardEnergyCost(cardModel);
 			
-			// 使用 CardPileCmd.Add 添加回手牌，第四个参数传递 cardModel（调用者的 this），与运输船保持一致
-			await CardPileCmd.Add(cardToReturn, PileType.Hand, CardPilePosition.Bottom, cardModel);
+			GD.Print($"[CardUtils] 取消选择卡牌，费用={cost}");
 			
-			GD.Print($"[CardUtils] 卡牌已放回手牌底部，当前手牌数: {PileType.Hand.GetPile(cardToReturn.Owner).Cards.Count}");
-		}
-		else
+			if (cost > 0 && owner != null)
+			{
+				await PlayerCmd.GainEnergy(cost, owner);
+				GD.Print($"[CardUtils] 已返还 {cost} 能量给玩家");
+			}
+			else if (cost > 0)
+			{
+				GD.PrintErr("[CardUtils] 无法获取 Player 对象，能量返还失败");
+			}
+			
+			var cardToReturn = play?.Card ?? cardModel;
+			
+			if (cardToReturn != null)
+			{
+				// 参考运输船逻辑：能力卡被移出战斗后，设置 HasBeenRemovedFromState = false 使其能重新进入战斗
+				cardToReturn.HasBeenRemovedFromState = false;
+				GD.Print($"[CardUtils] 重置卡牌状态 HasBeenRemovedFromState = false");
+				
+				// 使用 CardPileCmd.Add 添加回手牌，第四个参数传递 cardModel（调用者的 this），与运输船保持一致
+				await CardPileCmd.Add(cardToReturn, PileType.Hand, CardPilePosition.Bottom, cardModel);
+				
+				GD.Print($"[CardUtils] 卡牌已放回手牌底部，当前手牌数: {PileType.Hand.GetPile(cardToReturn.Owner).Cards.Count}");
+			}
+			else
+			{
+				GD.PrintErr("[CardUtils] 无法获取实际卡牌实体，放回手牌失败");
+			}
+		});
+	}
+
+	/// <summary>
+	/// 按卡牌 Entry（如 RED_ALERT2_MOD_CARD_...）解析规范 CardModel。
+	/// 用于 A2 预选模式的结算动作在远端重建单位信息（名称/立绘/费用）。
+	/// </summary>
+	public static CardModel? GetCardModelByEntry(string entry)
+	{
+		if (string.IsNullOrEmpty(entry))
+			return null;
+
+		string cardName = entry.ToUpperInvariant();
+		// 移除常见前缀，得到纯卡牌名
+		const string prefix1 = "RED_ALERT2_MOD_CARD_";
+		const string prefix2 = "MOD_CARD_";
+		const string prefix3 = "CARD_";
+		if (cardName.StartsWith(prefix1))
+			cardName = cardName.Substring(prefix1.Length);
+		else if (cardName.StartsWith(prefix2))
+			cardName = cardName.Substring(prefix2.Length);
+		else if (cardName.StartsWith(prefix3))
+			cardName = cardName.Substring(prefix3.Length);
+
+		string[] parts = cardName.Split('_');
+		string typeName = string.Concat(parts.Select(p => char.ToUpper(p[0]) + p.Substring(1).ToLowerInvariant()));
+
+		System.Type? cardType = FindCardType(typeName);
+		if (cardType == null && parts.Length > 0)
 		{
-			GD.PrintErr("[CardUtils] 无法获取实际卡牌实体，放回手牌失败");
+			string upperTypeName = string.Concat(parts.Select(p => p.Length <= 3 ? p.ToUpperInvariant() : char.ToUpper(p[0]) + p.Substring(1).ToLowerInvariant()));
+			cardType = FindCardType(upperTypeName);
 		}
+		if (cardType == null)
+			return null;
+
+		var method = typeof(ModelDb).GetMethod("Card", System.Type.EmptyTypes)?.MakeGenericMethod(cardType);
+		return method?.Invoke(null, null) as CardModel;
+	}
+
+	private static System.Type? FindCardType(string typeName)
+	{
+		var asm = typeof(CardUtils).Assembly;
+		var type = asm.GetType($"RedAlert2ModCode.Allies.Cards.{typeName}");
+		if (type == null) type = asm.GetType($"RedAlert2ModCode.Soviet.Cards.{typeName}");
+		if (type == null) type = asm.GetType($"RedAlert2ModCode.Common.Cards.{typeName}");
+		if (type == null) type = typeof(CardModel).Assembly.GetType($"MegaCrit.Sts2.Core.Models.Cards.{typeName}");
+		return type;
 	}
 	
 	public static int GetCardDollarCost(CardModel cardModel)

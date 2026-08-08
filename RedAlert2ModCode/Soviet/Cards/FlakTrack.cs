@@ -105,7 +105,7 @@ public sealed partial class FlakTrack : CardModel
             }
         };
 
-        var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(Owner, new LocString("card_keywords", "ui.flak_track.title"), options, FactionType.Soviet);
+		var selectedIndex = await DeployChoiceScreen.ShowSelectionWithSync(ctx, Owner, new LocString("card_keywords", "ui.flak_track.title"), options, FactionType.Soviet);
 
         if (selectedIndex == 0)
         {

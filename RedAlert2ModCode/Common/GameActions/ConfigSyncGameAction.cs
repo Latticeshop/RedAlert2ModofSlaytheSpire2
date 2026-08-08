@@ -37,6 +37,10 @@ public class ConfigSyncGameAction : GameAction
 
     public string CratePoolMode { get; }
 
+    public int StartingGold { get; }
+
+    public int MaxHp { get; }
+
     public ConfigSyncGameAction(Player sender, CharacterConfig config)
     {
         Sender = sender;
@@ -48,6 +52,8 @@ public class ConfigSyncGameAction : GameAction
         BaseCarMode = config.BaseCarMode.ToString();
         LuckyCrateMode = config.LuckyCrateMode;
         CratePoolMode = config.CratePoolMode.ToString();
+        StartingGold = config.StartingGold;
+        MaxHp = config.MaxHp;
     }
 
     public ConfigSyncGameAction(
@@ -59,7 +65,9 @@ public class ConfigSyncGameAction : GameAction
         List<string> startingRelicTypes,
         string baseCarMode,
         bool luckyCrateMode,
-        string cratePoolMode)
+        string cratePoolMode,
+        int startingGold = 0,
+        int maxHp = 0)
     {
         Sender = sender;
         CharacterId = characterId;
@@ -70,6 +78,8 @@ public class ConfigSyncGameAction : GameAction
         BaseCarMode = baseCarMode;
         LuckyCrateMode = luckyCrateMode;
         CratePoolMode = cratePoolMode;
+        StartingGold = startingGold;
+        MaxHp = maxHp;
     }
 
     protected override async Task ExecuteAction()
@@ -83,6 +93,8 @@ public class ConfigSyncGameAction : GameAction
             StartingRelicTypes = new List<string>(StartingRelicTypes),
             LuckyCrateMode = LuckyCrateMode,
             CratePoolMode = RedAlert2ModCode.DeckConfig.CratePoolMode.None,
+            StartingGold = StartingGold,
+            MaxHp = MaxHp,
         };
         if (Enum.TryParse<BaseCarMode>(BaseCarMode, true, out var baseCar))
         {
@@ -108,6 +120,8 @@ public class ConfigSyncGameAction : GameAction
             baseCarMode = BaseCarMode,
             luckyCrateMode = LuckyCrateMode,
             cratePoolMode = CratePoolMode,
+            startingGold = StartingGold,
+            maxHp = MaxHp,
         };
     }
 
