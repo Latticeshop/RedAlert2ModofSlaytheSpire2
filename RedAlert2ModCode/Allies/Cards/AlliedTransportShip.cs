@@ -89,6 +89,15 @@ public sealed class AlliedTransportShip : CardModel
         
         GD.Print($"[AlliedTransportShip] 准备存储最多 {countToStore} 张卡牌");
 
+        // 手牌中没有可存储的卡牌时，跳过选择界面，直接正常打出（避免卡死）
+        var handPile = PileType.Hand.GetPile(Owner);
+        if (!handPile.Cards.Any(c => c != this))
+        {
+            GD.Print("[AlliedTransportShip] 手牌中没有可存储的卡牌，跳过选择并正常打出");
+            await CardPileCmd.Add(this, Keywords.Contains(CardKeyword.Exhaust) ? PileType.Exhaust : PileType.Discard, CardPilePosition.Bottom, this);
+            return;
+        }
+
         var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_ALLIED_TRANSPORT_SHIP.select_prompt");
         selectPrompt.Add("0", 0);
         selectPrompt.Add("1", countToStore);

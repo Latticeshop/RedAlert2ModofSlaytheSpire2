@@ -94,6 +94,13 @@ public static class EngineerChoiceHelper
                 break;
 
             case ChoiceSelectionScreen.ChoiceType.RepairBridge:
+                // 手牌为空时无法选择消耗牌，跳过（避免卡死）
+                if (!PileType.Hand.GetPile(card.Owner).Cards.Any())
+                {
+                    GD.Print("[EngineerChoiceHelper] 手牌为空，跳过维修桥梁选择");
+                    break;
+                }
+
                 // 使用原版手牌选择UI，让玩家选择1张牌来消耗（参考苏联维修厂实现）
                 var repairSelectPrompt = new LocString("card_keywords", "engineer_choice.repair_bridge.select_prompt");
                 repairSelectPrompt.Add("0", 1);

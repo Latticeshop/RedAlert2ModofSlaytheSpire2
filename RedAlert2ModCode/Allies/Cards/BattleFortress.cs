@@ -89,7 +89,8 @@ public sealed class BattleFortress : CardModel
 		
 		if (soldierCards.Count == 0)
 		{
-			await CardPileCmd.Add(this, PileType.Hand, CardPilePosition.Bottom, this);
+			GD.Print("[BattleFortress] 手牌中没有士兵卡牌，跳过部署选择并正常打出");
+			await CardPileCmd.Add(this, Keywords.Contains(CardKeyword.Exhaust) ? PileType.Exhaust : PileType.Discard, CardPilePosition.Bottom, this);
 			return;
 		}
 

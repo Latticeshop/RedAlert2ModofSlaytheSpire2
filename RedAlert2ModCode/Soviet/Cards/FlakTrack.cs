@@ -122,6 +122,14 @@ public sealed partial class FlakTrack : CardModel
         // 抽牌
         await CardPileCmd.Draw(ctx, (int)DynamicVars["DrawCount"].BaseValue, Owner);
         
+        // 手牌中没有可弃的卡牌时，跳过弃牌选择界面（避免卡死）
+        var handPile = PileType.Hand.GetPile(Owner);
+        if (!handPile.Cards.Any(c => c != this))
+        {
+            GD.Print("[FlakTrack] 手牌中没有可弃卡牌，跳过弃牌选择");
+            return;
+        }
+
         // 弃牌选择：参考苏联维修厂的原版UI
         int maxDiscard = (int)DynamicVars["DiscardCount"].BaseValue;
         var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_FLAK_TRACK.discard_prompt");
@@ -151,6 +159,14 @@ public sealed partial class FlakTrack : CardModel
     private async Task ExecuteDeploy(PlayerChoiceContext ctx, CardPlay play)
     {
         var soldierCards = GetSoldierCardsFromHand();
+
+        // 手牌中没有士兵卡牌时，跳过部署选择界面，直接正常打出（避免卡死）
+        if (soldierCards.Count == 0)
+        {
+            GD.Print("[FlakTrack] 手牌中没有士兵卡牌，跳过部署选择并正常打出");
+            await CardPileCmd.Add(this, Keywords.Contains(CardKeyword.Exhaust) ? PileType.Exhaust : PileType.Discard, CardPilePosition.Bottom, this);
+            return;
+        }
 
         var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_FLAK_TRACK.select_prompt");
         selectPrompt.Add("0", 0);

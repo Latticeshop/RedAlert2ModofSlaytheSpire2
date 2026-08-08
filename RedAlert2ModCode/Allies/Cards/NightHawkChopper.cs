@@ -136,6 +136,14 @@ public sealed partial class NightHawkChopper : CardModel
     {
         var soldierCards = GetSoldierCardsFromHand();
 
+        // 手牌中没有士兵卡牌时，跳过部署选择界面，直接正常打出（避免卡死）
+        if (soldierCards.Count == 0)
+        {
+            GD.Print("[NightHawkChopper] 手牌中没有士兵卡牌，跳过部署选择并正常打出");
+            await CardPileCmd.Add(this, Keywords.Contains(CardKeyword.Exhaust) ? PileType.Exhaust : PileType.Discard, CardPilePosition.Bottom, this);
+            return;
+        }
+
         var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_NIGHT_HAWK_CHOPPER.select_prompt");
         selectPrompt.Add("0", 0);
         selectPrompt.Add("1", 5);

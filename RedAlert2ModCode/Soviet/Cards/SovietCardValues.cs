@@ -501,7 +501,8 @@ public static class SovietCardValues
 			{ "WARMINER", WarMiner },
 			{ "V3ROCKET", V3Rocket },
 			{ "DEMOLITIONTRUCKCARD", DemolitionTruck },
-			{ "TESLATANK", TeslaTank }
+			{ "TESLATANK", TeslaTank },
+			{ "KIROV", Kirov }
 		};
 	}
 	

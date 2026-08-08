@@ -98,6 +98,15 @@ public sealed class AlliesBarracksCard : CardModel, ICancellableCardPlay
 		
 		GD.Print($"[AlliesBarracksCard] 可用卡牌数量: {availableCards.Count}");
 
+		// 如果兵营是升级过的，创建的卡牌也显示为升级版本（文本和数值）
+		if (base.IsUpgraded)
+		{
+			foreach (var card in availableCards)
+			{
+				CardCmd.Upgrade(card);
+			}
+		}
+
 		// 使用自定义选择面板，支持多选和数量选择
 		var cardValuesMap = AlliesCardValues.CreateSoldierValuesMap();
 		var selectedResults = await CardSelectionSyncHelper.ShowSelectionWithQuantitySync(availableCards, Owner, cardValuesMap, FactionType.Allied);
@@ -136,6 +145,13 @@ public sealed class AlliesBarracksCard : CardModel, ICancellableCardPlay
 				
 				GD.Print($"[AlliesBarracksCard] 创建生产序列 - CardId={selectedCard.Id.Entry}, Count={count}");
 				
+				// 升级预览卡后的 Title 会带“+”，生产序列名称由 IsUpgraded 标记统一追加，避免“++”
+				string unitName = selectedCard.Title.ToString();
+				if (selectedCard.IsUpgraded && unitName.EndsWith("+"))
+				{
+					unitName = unitName.Substring(0, unitName.Length - 1);
+				}
+
 				// 获取单位价格
 				int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
 				
@@ -143,7 +159,7 @@ public sealed class AlliesBarracksCard : CardModel, ICancellableCardPlay
 				await TrainingQueuePower.ApplyTrainingQueue(
 					owner: Owner.Creature,
 					cardId: selectedCard.Id.Entry,
-					unitName: selectedCard.Title.ToString(),
+					unitName: unitName,
 					iconPath: selectedCard.PortraitPath,
 					unitPrice: unitPrice,
 					isUpgraded: base.IsUpgraded,

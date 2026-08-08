@@ -84,6 +84,14 @@ public sealed class SovietRepairDepot : CardModel
 
 		int exhaustCount = base.IsUpgraded ? UPGRADED_STATUS_COUNT : BASE_STATUS_COUNT;
 
+		// 手牌中没有可消耗的卡牌时，跳过选择界面（避免卡死）
+		var handPile = PileType.Hand.GetPile(base.Owner);
+		if (!handPile.Cards.Any(c => c != this))
+		{
+			GD.Print("[SovietRepairDepot] 手牌中没有可消耗的卡牌，跳过选择");
+			return;
+		}
+
 		// 使用原版手牌选择UI，让玩家选择要消耗的卡牌（0到exhaustCount张）
 		var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_SOVIET_REPAIR_DEPOT.select_prompt");
 		selectPrompt.Add("0", 0);

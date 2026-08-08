@@ -2340,6 +2340,74 @@ CardCmd.Enchant<MyEnchant>(card, 1m);
 
 ---
 
+## 🗣️ 先古之民对话本地化（RitsuLib）
+
+### 核心原理
+
+先古之民（Neow、建筑师 `THE_ARCHITECT`、Darv、Orobas 等）的对话通过 `ancients.json` 的本地化键定义。角色通过 `[RegisterCharacter]` 注册到 RitsuLib 后，RitsuLib 会在 `AncientDialogueSet.PopulateLocKeys` 执行前，自动把本地化表里属于该角色的对话**追加**进对话集——**无需也不应再写 Harmony 补丁硬编码对话**，否则会与 RitsuLib 的追加叠加，导致列表索引错位、生成缺失键。
+
+### 键名格式
+
+```text
+{ANCIENT}.talk.{角色Entry}.{对话序号}-{行序号}[r].{ancient|char}
+{ANCIENT}.talk.{角色Entry}.{对话序号}-{行序号}[r].next
+```
+
+| 部分 | 说明 |
+|------|------|
+| `ANCIENT` | 先古 ID，如 `NEOW`、`THE_ARCHITECT` |
+| `角色Entry` | 角色的 **ModelId Entry**（如 `RED_ALERT2_MOD_CHARACTER_ALLIES`），不是短别名 |
+| `对话序号` | 从 0 开始连续编号；扫描到首个缺失序号即停止 |
+| `行序号` | 该段对话内的行，从 0 开始连续编号 |
+| `r` | 可选；带 `r` 表示该段对话可重复（进入重复池，多次通关后仍会随机出现） |
+| `ancient` / `char` | 发言者：`.ancient` 为先古说，`.char` 为角色说；同一行优先读 `.ancient` |
+| `.next` | 除最后一行外，每行必须配“继续”按钮文本；不带 `.ancient/.char` 后缀 |
+
+### 建筑师（THE_ARCHITECT）特殊规则
+
+- 对话序号即拜访序号：`VisitIndex = dialogueIndex`（RitsuLib 自动解析），角色第 N 次通关显示第 N-1 段（`charVisits = TotalWins`）。
+- 超过最后一段后，只从带 `r` 后缀的对话中随机复用；因此建议每段都加 `r`。
+- 攻击演出可选键（值为 `None` / `Player` / `Architect` / `Both`）：
+  - `{对话序号}-attack`：结束攻击者
+  - `{对话序号}-startattack`：开场攻击者
+  - `{对话序号}-endattack`：结束攻击者（缺省 `Architect`）
+
+### Neow 等其他先古的规则
+
+- 拜访序号映射：`0→0`、`1→1`、`2→4`，之后每段 `+3`（与原版 Neow 一致）。
+- 原版 Neow 对话不带 `r`，默认不重复。
+
+### 完整示例
+
+```json
+{
+  "NEOW.talk.RED_ALERT2_MOD_CHARACTER_ALLIES.0-0.ancient": "……盟军……指挥官……",
+  "NEOW.talk.RED_ALERT2_MOD_CHARACTER_ALLIES.0-0.next": "回应",
+  "NEOW.talk.RED_ALERT2_MOD_CHARACTER_ALLIES.0-1.char": "盟军永不退缩。",
+  "NEOW.talk.RED_ALERT2_MOD_CHARACTER_ALLIES.0-1.next": "继续",
+  "NEOW.talk.RED_ALERT2_MOD_CHARACTER_ALLIES.0-2.ancient": "……很好……去吧……",
+
+  "THE_ARCHITECT.talk.RED_ALERT2_MOD_CHARACTER_ALLIES.0-0r.ancient": "盟军。你的科技令人印象深刻。",
+  "THE_ARCHITECT.talk.RED_ALERT2_MOD_CHARACTER_ALLIES.0-0r.next": "回应",
+  "THE_ARCHITECT.talk.RED_ALERT2_MOD_CHARACTER_ALLIES.0-1r.char": "不可避免？盟军总能找到出路！",
+  "THE_ARCHITECT.talk.RED_ALERT2_MOD_CHARACTER_ALLIES.0-1r.next": "继续",
+  "THE_ARCHITECT.talk.RED_ALERT2_MOD_CHARACTER_ALLIES.0-2r.ancient": "没有目的的智慧只是噪音。",
+  "THE_ARCHITECT.talk.RED_ALERT2_MOD_CHARACTER_ALLIES.0-2r.next": "继续",
+  "THE_ARCHITECT.talk.RED_ALERT2_MOD_CHARACTER_ALLIES.0-3r.char": "我们的目标很明确！",
+  "THE_ARCHITECT.talk.RED_ALERT2_MOD_CHARACTER_ALLIES.0-endattack": "Both"
+}
+```
+
+### 注意事项
+
+1. **角色 Entry 必须用真实 ID**：代码中通过 `ModelDb.GetId<Allies>().Entry` 获取（例如 `RED_ALERT2_MOD_CHARACTER_ALLIES`），不要写 `ALLIES` 这类短别名，否则键永远不会被读到。
+2. **不要同时硬编码 `TheArchitect.DefineDialogues` 补丁**：RitsuLib 会按本地化键再追加一份，两套叠加后列表下标偏移，会出现 `THE_ARCHITECT.talk.XXX.7-0.char` 之类的缺失键（原样显示键名）。
+3. 修改 `ancients.json` 后需要重新导出 pck（本地化文件在 pck 内）；若同时改了代码，DLL 也要一起替换。
+4. 各语言文件（zhs / eng / jpn / kor 等）的键集合必须保持一致，只翻译值。
+5. 若某角色完全没配置对话，RitsuLib 的“空对话回退”需要开启调试兼容总开关 + Ancient/THE_ARCHITECT 兼容设置才会生效（避免 PROCEED 时空引用崩溃）；对话追加本身不依赖该开关。
+
+---
+
 ## 🎨 UI选择页面本地化配置
 
 ### 核心原理

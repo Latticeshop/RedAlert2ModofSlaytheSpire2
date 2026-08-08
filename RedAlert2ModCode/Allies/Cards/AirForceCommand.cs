@@ -132,6 +132,13 @@ public sealed class AirForceCommand : CardModel, ICancellableCardPlay
 
 				GD.Print($"[AirForceCommand] 创建生产序列 - CardId={selectedCard.Id.Entry}, Count={count}");
 
+				// 升级预览卡后的 Title 会带“+”，生产序列名称由 IsUpgraded 标记统一追加，避免“++”
+				string unitName = selectedCard.Title.ToString();
+				if (selectedCard.IsUpgraded && unitName.EndsWith("+"))
+				{
+					unitName = unitName.Substring(0, unitName.Length - 1);
+				}
+
 				// 获取单位价格
 				int unitPrice = AlliesCardValues.GetDollarValue(selectedCard.Id.Entry);
 
@@ -139,7 +146,7 @@ public sealed class AirForceCommand : CardModel, ICancellableCardPlay
 				await TrainingQueuePower.ApplyTrainingQueue(
 					owner: Owner.Creature,
 					cardId: selectedCard.Id.Entry,
-					unitName: selectedCard.Title.ToString(),
+					unitName: unitName,
 					iconPath: selectedCard.PortraitPath,
 					unitPrice: unitPrice,
 					isUpgraded: base.IsUpgraded,

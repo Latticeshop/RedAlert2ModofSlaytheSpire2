@@ -12,6 +12,8 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Rooms;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet.Cards;
@@ -107,8 +109,13 @@ public sealed class NuclearAttackPower : PowerModel
             return;
         }
 
-        // 触发能力时播放核弹爆炸音效
+        // 触发能力时播放核弹爆炸音效，并对全部敌人播放“下砸+火焰”攻击特效
         PlayNuclearExplosionSound();
+        foreach (var enemy in enemies)
+        {
+            PlayNuclearImpactVfx(enemy);
+        }
+        await Cmd.Wait(0.4f);
 
         var ctx = new ThrowingPlayerChoiceContext();
         for (int i = 0; i < stacks; i++)
@@ -123,6 +130,32 @@ public sealed class NuclearAttackPower : PowerModel
 
         // 触发后移除
         await PowerCmd.Remove(this);
+    }
+
+    /// <summary>
+    /// 播放核弹“下砸+火焰”攻击特效（复用原版 vfx_heavy_blunt + NFireBurningVfx）
+    /// </summary>
+    private void PlayNuclearImpactVfx(Creature target)
+    {
+        try
+        {
+            if (target == null)
+                return;
+
+            VfxCmd.PlayOnCreatureCenter(target, "vfx/vfx_heavy_blunt");
+
+            var fireVfx = NFireBurningVfx.Create(target, 1.5f, goingRight: true);
+            if (fireVfx != null)
+            {
+                NCombatRoom.Instance?.CombatVfxContainer.AddChild(fireVfx);
+            }
+
+            GD.Print($"[NuclearAttackPower] 播放核弹下砸+火焰特效 - 目标: {target.Name}");
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[NuclearAttackPower] 播放核弹特效失败: {ex.Message}");
+        }
     }
 
     private void PlayNuclearExplosionSound()

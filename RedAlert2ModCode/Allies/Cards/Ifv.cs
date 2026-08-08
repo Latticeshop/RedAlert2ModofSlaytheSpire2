@@ -128,6 +128,14 @@ public sealed class Ifv : CardModel
 		UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Allies");
 		await CardPileCmd.Draw(ctx, (int)DynamicVars["DrawCount"].BaseValue, Owner);
 
+		// 手牌中没有可弃的卡牌时，跳过弃牌选择界面（避免卡死）
+		var handPile = PileType.Hand.GetPile(Owner);
+		if (!handPile.Cards.Any(c => c != this))
+		{
+			GD.Print("[Ifv] 手牌中没有可弃卡牌，跳过弃牌选择");
+			return;
+		}
+
 		int maxDiscard = (int)DynamicVars["DiscardCount"].BaseValue;
 		var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_IFV.select_prompt");
 		selectPrompt.Add("0", 0);

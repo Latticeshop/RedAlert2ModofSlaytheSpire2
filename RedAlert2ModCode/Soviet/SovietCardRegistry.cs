@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Godot;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
@@ -331,6 +332,13 @@ public static class SovietCardRegistry
         if (HasRadarPower(owner.Creature))
         {
             vehicles.AddRange(CreateRadarVehicles(owner));
+        }
+
+        // 基洛夫（T3空军）：苏联空军由雷达解锁，基洛夫需要作战实验室（T3）后才能在重工生产
+        if (HasRadarPower(owner.Creature) && HasBattleLabPower(owner.Creature))
+        {
+            vehicles.Add(owner.Creature.CombatState.CreateCard(ModelDb.Card<Kirov>(), owner));
+            GD.Print("[SovietCardRegistry] 检测到雷达+作战实验室，重工加入基洛夫选项");
         }
 
         return vehicles;

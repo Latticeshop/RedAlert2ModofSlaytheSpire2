@@ -65,6 +65,15 @@ public sealed class RepairVehicle : IfvVehicleBase
 			RequireManualConfirmation = true
 		};
 
+		// 手牌中没有可维修的单位卡牌时，跳过选择界面（避免卡死）
+		var handPile = PileType.Hand.GetPile(Owner);
+		if (!handPile.Cards.Any(c => c != this && (isUpgraded || IsUnitCard(c))))
+		{
+			GD.Print("[RepairVehicle] 手牌中没有可维修的单位卡牌，跳过选择并正常打出");
+			await ConsumeEffectWithExhaust();
+			return;
+		}
+
 		var selectedCards = (await CardSelectCmd.FromHand(
 			ctx,
 			Owner,

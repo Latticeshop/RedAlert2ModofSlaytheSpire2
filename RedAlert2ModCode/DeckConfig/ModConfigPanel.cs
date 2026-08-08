@@ -47,6 +47,7 @@ internal static class ModConfigPanel
     private static CharacterConfig? _currentConfig;
     private static CardLibraryTab? _cardLibraryTab;
     private static RelicLibraryTab? _relicLibraryTab;
+    private static bool _wasVisibleBeforeInspect;
 
     private static readonly Dictionary<string, Texture2D> _iconCache = new();
 
@@ -1309,6 +1310,8 @@ internal static class ModConfigPanel
     {
         if (_layer != null && GodotObject.IsInstanceValid(_layer))
         {
+            // 记录打开详情前的可见状态，仅当配置面板本来就在显示时才在关闭后恢复
+            _wasVisibleBeforeInspect = _layer.Visible;
             _layer.ZIndex = -1;
             // 隐藏配置面板，让点击任意位置都落到详情页背板，点击即可关闭
             _layer.Visible = false;
@@ -1323,7 +1326,7 @@ internal static class ModConfigPanel
         if (_layer != null && GodotObject.IsInstanceValid(_layer))
         {
             _layer.ZIndex = OverlayZIndex;
-            _layer.Visible = true;
+            _layer.Visible = _wasVisibleBeforeInspect;
         }
     }
 
