@@ -197,11 +197,14 @@ public class BuildingResolutionAction : GameAction
         else
             await PowerCmd.Apply<AlliedMCVPower>(new ThrowingPlayerChoiceContext(), creature, 1m, creature, null);
 
+        // 先获得建筑牌到手牌，再抽牌（建筑抽牌由 BuildingDrawPower 跳过 MCV、改在此处执行），
+        // 避免手牌满时先抽牌导致建筑卡无法入手。
         var card = creature.CombatState.CreateCard(model, Owner);
         if (IsUpgraded && !card.IsUpgraded)
             CardCmd.Upgrade(card);
         await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, Owner);
-        Godot.GD.Print($"[BuildingResolutionAction] MCV 选择建筑加入手牌: {selectedEntry}");
+        await CardPileCmd.Draw(new ThrowingPlayerChoiceContext(), 1, Owner);
+        Godot.GD.Print($"[BuildingResolutionAction] MCV 已先获得建筑 {selectedEntry} 再抽牌");
     }
 
     private async Task ApplyBuildingPower(Creature creature, string buildingKey)

@@ -299,6 +299,16 @@ public sealed class AlliesCardPool : CardPoolModel
 - **单位卡**的价格由生产序列能力在选择时消耗，一般不在本地化描述中展示价格
 - 示例：`"ALLIED_WALL_CARD.description": "价格：${DollarNumber}。获得 {Block} 点护盾。将此牌返回你的手牌。"`
 
+**规则3：动态数值显示（`diff()` 格式化器，容易遗漏）**
+- 卡牌描述中的伤害/格挡变量**必须**写成 `{Damage:diff()}`、`{Block:diff()}`、`{DeployDamage:diff()}` 等带 `:diff()` 的格式；
+- 若写成裸 `{Damage}`，卡牌只会显示 `BaseValue`（基础/升级值），战斗中力量、易伤、虚弱、敏捷等 buff 对数值的修正**不会显示**在卡牌上（这就是"易伤增伤没显示"的根因）；
+- 机制：`DamageVar`/`BlockVar.UpdateCardPreview` 通过 `Hook.ModifyDamage/ModifyBlock` 计算修正后的 `PreviewValue`；
+  `NCard.UpdateVisuals` 在手牌/打出堆中运行全局 hooks（`runGlobalHooks=true`）；
+  悬停/锁定敌人时 `NCardPlay.SetPreviewTarget` 提供目标，目标身上的易伤/虚弱等 debuff 才会参与计算；
+  修正后数值与基础值不同时自动绿色（变高）/红色（变低）高亮，与原版 Strike 行为一致；
+- 适用于：`Damage`、`Block`、`DefendDamage`、`DeployDamage`、`DeployVigor` 等攻击/防御类变量；
+- 不要乱加：`Repeat`、`Poison`、`StoredCards`、`{0}`/`{1}` 等非 hook 修正值保持 `{Var}` 原样。
+
 **数值存储示例**：
 ```csharp
 // AlliesCardValues.cs - 统一数值存储

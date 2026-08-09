@@ -30,6 +30,8 @@
 
 ### 8. 本地化
 在 `cards.json` 中添加卡牌 `title` 和 `description`。
+- **伤害/格挡变量必须写 `{Damage:diff()}` / `{Block:diff()}`**，不能写裸 `{Damage}`——
+  否则战斗中的力量/易伤/虚弱/敏捷修正不会显示在卡牌上（详见 API 文档「规则3」）。
 
 ### 9. 遗物转换注册（重要）
 
@@ -248,6 +250,7 @@ dotnet build RedAlert2Mod.csproj -c Release -o build
 | 核心建筑(TechTreeConfig) | — | ✅ 核心建筑 | — | — |
 | 牌组建筑(BuildingCardUtils) | — | ✅ 防御塔/超武/围墙 | — | — |
 | BuildingModelMap | — | ✅（MCV造价显示） | — | — |
+| 数值变量 :diff() 格式化器 | ✅ | ✅ | ✅ | ✅（双份） |
 | 本地化 | ✅ | ✅ | ✅ | ✅（双份） |
 | 音效播放 | ✅ | ✅ **强制统一** | ❌ | ❌ |
 

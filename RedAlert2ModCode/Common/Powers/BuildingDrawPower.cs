@@ -7,7 +7,9 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
+using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.Soviet.Cards;
 
 namespace RedAlert2ModCode.Common.Powers;
 
@@ -34,6 +36,14 @@ public sealed class BuildingDrawPower : PowerModel
     {
         if (cardPlay.Card.Owner != base.Owner.Player)
             return;
+
+        // MCV 的抽牌由 BuildingResolutionAction 在“先获得建筑、后抽牌”的顺序中处理，
+        // 避免手牌满时先抽牌导致建筑卡无法入手；这里跳过，防止重复抽牌。
+        if (cardPlay.Card is AlliedMCV or SovietMCV)
+        {
+            GD.Print($"[BuildingDrawPower] MCV 卡牌抽牌延后到获得建筑之后，跳过此处");
+            return;
+        }
 
         // 只有非围墙且非防御塔的建筑才触发抽牌（围墙和防御塔都不触发）
         if (!CardUtils.IsNonWallNonDefenseTowerBuilding(cardPlay.Card))
