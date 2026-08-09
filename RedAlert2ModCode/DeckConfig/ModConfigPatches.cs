@@ -527,10 +527,13 @@ public static class ModConfigPatches
                 {
                     relic.FloorAddedToDeck = 1;
                     try { SaveManager.Instance.MarkRelicAsSeen(relic); } catch { }
-                    player.AddRelicInternal(relic, -1, false);
+                    // 不立即加入/触发：星盘、美味饼干等遗物的 AfterObtained 会打开选择面板，
+                    // 而 FinalizeStartingRelics 在 NRun 场景与 LocalContext.NetId 就绪之前调用它，
+                    // 单机会抛 "Cannot wait for remote choice in singleplayer!" 导致开局卡死。
+                    // 统一延迟到 NRun UI 就绪后由 StartingRelicPickupQueue 加入并执行拾取效果；
+                    // 联机时先按一致顺序分发、再按同一顺序执行，避免共享 RNG 流分叉。
+                    StartingRelicPickupQueue.Enqueue(player, relic);
                 }
-                // 事件添加的图标默认隐藏（startsShown=false），这里把本地玩家遗物栏图标恢复可见
-                RevealLocalRelicInventoryIcons(player);
                 Logger.Info($"[ModConfig] 已应用自定义初始遗物，角色: {player.Character?.Id?.Entry}, 遗物数: {newRelics.Count}");
             }
             catch (Exception ex)
@@ -539,7 +542,7 @@ public static class ModConfigPatches
             }
         }
 
-        private static void RevealLocalRelicInventoryIcons(Player player)
+        internal static void RevealLocalRelicInventoryIcons(Player player)
         {
             try
             {
