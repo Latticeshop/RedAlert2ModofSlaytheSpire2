@@ -185,5 +185,11 @@
     "CONFIG_PRESET_DELETE_TOOLTIP": "このプリセットを削除",
     "CONFIG_PRESET_DELETE_TITLE": "プリセット削除",
     "CONFIG_PRESET_DELETE_DESC": "プリセット「{0}」を削除しますか？元に戻せません。",
-    "CONFIG_PRESET_DELETED": "プリセット「{0}」を削除しました"
+    "CONFIG_PRESET_DELETED": "プリセット「{0}」を削除しました",
+    "CONFIG_FEATURE_RA2_SETTINGS": "RA2 Mod設定",
+    "CONFIG_RA2_SETTINGS_TITLE": "🔧 RA2 Mod設定",
+    "CONFIG_RA2_SETTINGS_DESC": "RA2専用のゲームプレイオプション（キャラクターごとに保存）。",
+    "CONFIG_RA2_TECH_SW_TITLE": "⚡ テックツリー超兵器",
+    "CONFIG_RA2_TECH_SW_DESC": "有効にすると、MCVの建築選択で、対応する陣営の戦争研究所能力を持っている場合に超兵器を解放します。",
+    "CONFIG_RA2_TECH_SW_TOGGLE": "テックツリーで超兵器を解放"
 }

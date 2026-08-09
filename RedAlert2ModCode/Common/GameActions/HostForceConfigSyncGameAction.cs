@@ -85,6 +85,7 @@ public struct NetCharacterConfig : IPacketSerializable
     public string cratePoolMode;
     public int startingGold;
     public int maxHp;
+    public bool enableTechSuperWeapons;
 
     public NetCharacterConfig(CharacterConfig config)
     {
@@ -98,6 +99,7 @@ public struct NetCharacterConfig : IPacketSerializable
         cratePoolMode = config.CratePoolMode.ToString();
         startingGold = config.StartingGold;
         maxHp = config.MaxHp;
+        enableTechSuperWeapons = config.EnableTechSuperWeapons;
     }
 
     public CharacterConfig ToConfig()
@@ -121,6 +123,7 @@ public struct NetCharacterConfig : IPacketSerializable
         }
         config.StartingGold = startingGold;
         config.MaxHp = maxHp;
+        config.EnableTechSuperWeapons = enableTechSuperWeapons;
         return config;
     }
 
@@ -150,6 +153,7 @@ public struct NetCharacterConfig : IPacketSerializable
         writer.WriteString(cratePoolMode ?? "None");
         writer.WriteInt(startingGold);
         writer.WriteInt(maxHp);
+        writer.WriteBool(enableTechSuperWeapons);
     }
 
     public void Deserialize(PacketReader reader)
@@ -174,6 +178,7 @@ public struct NetCharacterConfig : IPacketSerializable
         cratePoolMode = reader.ReadString();
         startingGold = reader.ReadInt();
         maxHp = reader.ReadInt();
+        enableTechSuperWeapons = reader.ReadBool();
     }
 }
 

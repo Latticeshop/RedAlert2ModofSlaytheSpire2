@@ -13,6 +13,7 @@ using RedAlert2ModCode.Common;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Soviet.Powers;
 using RedAlert2ModCode.Soviet.Utils;
+using RedAlert2ModCode.DeckConfig;
 using RedAlert2ModCode.UI;
 
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -81,7 +82,27 @@ public sealed class SovietMCV : CardModel, ICancellableCardPlay
 
 		AddDeckBuildings(owner, isUpgraded, ref availableCards, techTree.CurrentTechLevel);
 
+		// 科技线添加超武：开启且拥有苏联作战实验室能力时，解锁铁幕装置与核弹井
+		if (ModConfigManager.GetConfigForPlayer(owner)?.EnableTechSuperWeapons == true
+			&& SovietCardRegistry.HasBattleLabPower(owner.Creature))
+		{
+			TryAddSuperWeapon<IronCurtainCard>(availableCards, owner, isUpgraded);
+			TryAddSuperWeapon<NuclearMissileSiloCard>(availableCards, owner, isUpgraded);
+		}
+
 		return availableCards;
+	}
+
+	private static void TryAddSuperWeapon<T>(List<CardModel> availableCards, Player owner, bool isUpgraded)
+		where T : CardModel
+	{
+		if (availableCards.Any(c => c is T)) return;
+		var model = GetCardModel(typeof(T));
+		if (model == null) return;
+		var card = owner.Creature.CombatState.CreateCard(model, owner);
+		if (isUpgraded && !card.IsUpgraded)
+			CardCmd.Upgrade(card);
+		availableCards.Add(card);
 	}
 
 	private static BuildingTechTree CreateTechTreeFromDeck(Player owner)

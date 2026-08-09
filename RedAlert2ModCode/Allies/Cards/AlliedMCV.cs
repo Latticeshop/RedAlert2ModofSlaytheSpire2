@@ -16,6 +16,7 @@ using RedAlert2ModCode.Allies.Utils;
 using RedAlert2ModCode.Common;
 using RedAlert2ModCode.Common.Powers;
 using RedAlert2ModCode.Common.Utils;
+using RedAlert2ModCode.DeckConfig;
 using RedAlert2ModCode.UI;
 
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -105,7 +106,27 @@ public sealed class AlliedMCV : CardModel, ICancellableCardPlay
 			availableCards = availableCards.Where(c => c is not GrandCannon).ToList();
 		}
 
+		// 科技线添加超武：开启且拥有盟军作战实验室能力时，解锁超时空传送仪与天气控制器
+		if (ModConfigManager.GetConfigForPlayer(owner)?.EnableTechSuperWeapons == true
+			&& AlliedCardRegistry.HasBattleLabPower(owner.Creature))
+		{
+			TryAddSuperWeapon<ChronoSphere>(availableCards, owner, isUpgraded);
+			TryAddSuperWeapon<WeatherController>(availableCards, owner, isUpgraded);
+		}
+
 		return availableCards;
+	}
+
+	private static void TryAddSuperWeapon<T>(List<CardModel> availableCards, Player owner, bool isUpgraded)
+		where T : CardModel
+	{
+		if (availableCards.Any(c => c is T)) return;
+		var model = GetCardModel(typeof(T));
+		if (model == null) return;
+		var card = owner.Creature.CombatState.CreateCard(model, owner);
+		if (isUpgraded && !card.IsUpgraded)
+			CardCmd.Upgrade(card);
+		availableCards.Add(card);
 	}
 
 	private static BuildingTechTree CreateTechTreeFromDeck(Player owner)

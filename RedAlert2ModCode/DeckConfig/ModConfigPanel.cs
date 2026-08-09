@@ -26,13 +26,17 @@ internal static class ModConfigPanel
     private const string LocTable = "characters";
     private const string OverlayName = "RedAlert2ModConfigOverlay";
     private const int OverlayZIndex = 1000;
-    private static readonly string[] FeatureIds = { "deck_config", "relic_config", "resource_config", "preset_config" };
+    private static readonly string[] FeatureIds =
+    {
+        "deck_config", "relic_config", "resource_config", "preset_config", "redalert_settings",
+    };
     private static string[] FeatureNames => new[]
     {
         L("CONFIG_FEATURE_DECK"),
         L("CONFIG_FEATURE_RELIC"),
         L("CONFIG_FEATURE_RESOURCE"),
         L("CONFIG_FEATURE_PRESET"),
+        L("CONFIG_FEATURE_RA2_SETTINGS"),
     };
     private static readonly MegaCrit.Sts2.Core.Logging.Logger Logger = new("ModConfigPanel", MegaCrit.Sts2.Core.Logging.LogType.Generic);
 
@@ -512,6 +516,9 @@ internal static class ModConfigPanel
                 break;
             case 2:
                 BuildResourceConfigContent(_contentContainer, config);
+                break;
+            case 4:
+                BuildRa2SettingsContent(_contentContainer, config);
                 break;
         }
     }
@@ -1247,6 +1254,74 @@ internal static class ModConfigPanel
             RefreshContent();
         };
         btnRow.AddChild(resetBtn);
+
+        var saveBtn = CreateActionButton(L("CONFIG_SAVE"), StsColors.green);
+        saveBtn.CustomMinimumSize = new Vector2(120, 36);
+        saveBtn.Pressed += () =>
+        {
+            ShowConfirmDialog(
+                L("CONFIG_CONFIRM_SAVE_TITLE"),
+                L("CONFIG_CONFIRM_SAVE_DESC"),
+                () =>
+                {
+                    ModConfigManager.Save();
+                    ShowNotification(L("CONFIG_SAVED"));
+                });
+        };
+        btnRow.AddChild(saveBtn);
+    }
+
+    /// <summary>
+    /// 红警MOD设置页：红警2专属玩法选项（按角色独立保存）。
+    /// </summary>
+    private static void BuildRa2SettingsContent(VBoxContainer container, CharacterConfig config)
+    {
+        var header = CreateSectionHeader(L("CONFIG_RA2_SETTINGS_TITLE"));
+        container.AddChild(header);
+
+        var desc = new Label();
+        desc.Text = L("CONFIG_RA2_SETTINGS_DESC");
+        desc.AddThemeFontSizeOverride("font_size", 13);
+        desc.AddThemeColorOverride("font_color", StsColors.gray);
+        desc.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+        container.AddChild(desc);
+
+        AddDivider(container);
+
+        var swHeader = CreateSectionHeader(L("CONFIG_RA2_TECH_SW_TITLE"));
+        container.AddChild(swHeader);
+
+        var swDesc = new Label();
+        swDesc.Text = L("CONFIG_RA2_TECH_SW_DESC");
+        swDesc.AddThemeFontSizeOverride("font_size", 13);
+        swDesc.AddThemeColorOverride("font_color", StsColors.gray);
+        swDesc.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+        container.AddChild(swDesc);
+
+        var toggleRow = new HBoxContainer();
+        toggleRow.AddThemeConstantOverride("separation", 12);
+        container.AddChild(toggleRow);
+
+        var toggleLabel = new Label();
+        toggleLabel.Text = L("CONFIG_RA2_TECH_SW_TOGGLE");
+        toggleLabel.AddThemeFontSizeOverride("font_size", 15);
+        toggleLabel.AddThemeColorOverride("font_color", StsColors.cream);
+        toggleRow.AddChild(toggleLabel);
+
+        var enableBtn = CreateToggleButton(config.EnableTechSuperWeapons,
+            config.EnableTechSuperWeapons ? L("CONFIG_ENABLED") : L("CONFIG_DISABLED"));
+        enableBtn.Pressed += () =>
+        {
+            config.EnableTechSuperWeapons = !config.EnableTechSuperWeapons;
+            ModConfigManager.UpdateCharacterConfig(config);
+            RefreshContent();
+        };
+        toggleRow.AddChild(enableBtn);
+
+        var btnRow = new HBoxContainer();
+        btnRow.AddThemeConstantOverride("separation", 10);
+        btnRow.Alignment = BoxContainer.AlignmentMode.Center;
+        container.AddChild(btnRow);
 
         var saveBtn = CreateActionButton(L("CONFIG_SAVE"), StsColors.green);
         saveBtn.CustomMinimumSize = new Vector2(120, 36);

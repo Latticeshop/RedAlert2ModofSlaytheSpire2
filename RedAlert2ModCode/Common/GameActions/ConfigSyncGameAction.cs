@@ -41,6 +41,8 @@ public class ConfigSyncGameAction : GameAction
 
     public int MaxHp { get; }
 
+    public bool EnableTechSuperWeapons { get; }
+
     public ConfigSyncGameAction(Player sender, CharacterConfig config)
     {
         Sender = sender;
@@ -54,6 +56,7 @@ public class ConfigSyncGameAction : GameAction
         CratePoolMode = config.CratePoolMode.ToString();
         StartingGold = config.StartingGold;
         MaxHp = config.MaxHp;
+        EnableTechSuperWeapons = config.EnableTechSuperWeapons;
     }
 
     public ConfigSyncGameAction(
@@ -67,7 +70,8 @@ public class ConfigSyncGameAction : GameAction
         bool luckyCrateMode,
         string cratePoolMode,
         int startingGold = 0,
-        int maxHp = 0)
+        int maxHp = 0,
+        bool enableTechSuperWeapons = false)
     {
         Sender = sender;
         CharacterId = characterId;
@@ -80,6 +84,7 @@ public class ConfigSyncGameAction : GameAction
         CratePoolMode = cratePoolMode;
         StartingGold = startingGold;
         MaxHp = maxHp;
+        EnableTechSuperWeapons = enableTechSuperWeapons;
     }
 
     protected override async Task ExecuteAction()
@@ -95,6 +100,7 @@ public class ConfigSyncGameAction : GameAction
             CratePoolMode = RedAlert2ModCode.DeckConfig.CratePoolMode.None,
             StartingGold = StartingGold,
             MaxHp = MaxHp,
+            EnableTechSuperWeapons = EnableTechSuperWeapons,
         };
         if (Enum.TryParse<BaseCarMode>(BaseCarMode, true, out var baseCar))
         {
@@ -122,6 +128,7 @@ public class ConfigSyncGameAction : GameAction
             cratePoolMode = CratePoolMode,
             startingGold = StartingGold,
             maxHp = MaxHp,
+            enableTechSuperWeapons = EnableTechSuperWeapons,
         };
     }
 

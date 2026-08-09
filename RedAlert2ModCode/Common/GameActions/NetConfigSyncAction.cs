@@ -21,6 +21,7 @@ public struct NetConfigSyncAction : INetAction, IPacketSerializable
     public string cratePoolMode;
     public int startingGold;
     public int maxHp;
+    public bool enableTechSuperWeapons;
 
     public GameAction ToGameAction(Player player)
     {
@@ -35,7 +36,8 @@ public struct NetConfigSyncAction : INetAction, IPacketSerializable
             luckyCrateMode,
             cratePoolMode,
             startingGold,
-            maxHp);
+            maxHp,
+            enableTechSuperWeapons);
     }
 
     public void Serialize(PacketWriter writer)
@@ -64,6 +66,7 @@ public struct NetConfigSyncAction : INetAction, IPacketSerializable
         writer.WriteString(cratePoolMode);
         writer.WriteInt(startingGold);
         writer.WriteInt(maxHp);
+        writer.WriteBool(enableTechSuperWeapons);
     }
 
     public void Deserialize(PacketReader reader)
@@ -88,6 +91,7 @@ public struct NetConfigSyncAction : INetAction, IPacketSerializable
         cratePoolMode = reader.ReadString();
         startingGold = reader.ReadInt();
         maxHp = reader.ReadInt();
+        enableTechSuperWeapons = reader.ReadBool();
     }
 
     public override string ToString()

@@ -120,6 +120,11 @@ public class CharacterConfig
     public int MaxHp { get; set; }
 
     /// <summary>
+    /// 科技线添加超武：开启后 MCV 在拥有对应阵营作战实验室能力时解锁该阵营超武选项。
+    /// </summary>
+    public bool EnableTechSuperWeapons { get; set; }
+
+    /// <summary>
     /// 深拷贝当前配置（供方案快照使用，避免引用共享导致方案被后续编辑污染）。
     /// </summary>
     public CharacterConfig Clone()
@@ -134,6 +139,7 @@ public class CharacterConfig
             CratePoolMode = CratePoolMode,
             StartingGold = StartingGold,
             MaxHp = MaxHp,
+            EnableTechSuperWeapons = EnableTechSuperWeapons,
         };
         // 基地车/幸运方块互斥：直接按源状态回填私有字段，避免 setter 互相清空
         clone.SetBaseCarState(BaseCarMode, LuckyCrateMode);
@@ -367,7 +373,8 @@ public static class ModConfigManager
                         luckyCrateMode = kv.Value.LuckyCrateMode,
                         cratePoolMode = kv.Value.CratePoolMode.ToString(),
                         startingGold = kv.Value.StartingGold,
-                        maxHp = kv.Value.MaxHp
+                        maxHp = kv.Value.MaxHp,
+                        enableTechSuperWeapons = kv.Value.EnableTechSuperWeapons
                     }
                 ),
                 ["presets"] = BuildPresetsJson(),
@@ -819,6 +826,7 @@ public static class ModConfigManager
                     cratePoolMode = kv.Value.CratePoolMode.ToString(),
                     startingGold = kv.Value.StartingGold,
                     maxHp = kv.Value.MaxHp,
+                    enableTechSuperWeapons = kv.Value.EnableTechSuperWeapons,
                 };
             }
 
@@ -1053,6 +1061,11 @@ public static class ModConfigManager
         if (element.TryGetProperty("maxHp", out var maxHp))
         {
             config.MaxHp = maxHp.GetInt32();
+        }
+
+        if (element.TryGetProperty("enableTechSuperWeapons", out var enableTechSw))
+        {
+            config.EnableTechSuperWeapons = enableTechSw.GetBoolean();
         }
 
         return config;

@@ -185,5 +185,11 @@
     "CONFIG_PRESET_DELETE_TOOLTIP": "이 프리셋 삭제",
     "CONFIG_PRESET_DELETE_TITLE": "프리셋 삭제",
     "CONFIG_PRESET_DELETE_DESC": "프리셋 \"{0}\"을(를) 삭제하시겠습니까? 되돌릴 수 없습니다.",
-    "CONFIG_PRESET_DELETED": "프리셋 \"{0}\"이(가) 삭제되었습니다"
+    "CONFIG_PRESET_DELETED": "프리셋 \"{0}\"이(가) 삭제되었습니다",
+    "CONFIG_FEATURE_RA2_SETTINGS": "RA2 모드 설정",
+    "CONFIG_RA2_SETTINGS_TITLE": "🔧 RA2 모드 설정",
+    "CONFIG_RA2_SETTINGS_DESC": "RA2 전용 게임플레이 옵션(캐릭터별 저장).",
+    "CONFIG_RA2_TECH_SW_TITLE": "⚡ 테크트리 초무기",
+    "CONFIG_RA2_TECH_SW_DESC": "활성화하면 MCV 건물 선택 시 해당 진영의 배틀 랩 능력을 보유했을 때 초무기를 해금합니다.",
+    "CONFIG_RA2_TECH_SW_TOGGLE": "테크트리 초무기 해금"
 }

@@ -185,5 +185,11 @@
     "CONFIG_PRESET_DELETE_TOOLTIP": "删除该方案",
     "CONFIG_PRESET_DELETE_TITLE": "删除方案",
     "CONFIG_PRESET_DELETE_DESC": "确定要删除方案“{0}”吗？删除后不可恢复。",
-    "CONFIG_PRESET_DELETED": "方案“{0}”已删除"
+    "CONFIG_PRESET_DELETED": "方案“{0}”已删除",
+    "CONFIG_FEATURE_RA2_SETTINGS": "红警MOD设置",
+    "CONFIG_RA2_SETTINGS_TITLE": "🔧 红警MOD设置",
+    "CONFIG_RA2_SETTINGS_DESC": "红警2专属玩法选项，按角色独立保存。",
+    "CONFIG_RA2_TECH_SW_TITLE": "⚡ 科技线添加超武",
+    "CONFIG_RA2_TECH_SW_DESC": "开启后，基地车（MCV）选择建筑时，若已拥有对应阵营的作战实验室能力，将解锁该阵营的超武选项。",
+    "CONFIG_RA2_TECH_SW_TOGGLE": "科技线解锁超武"
 }

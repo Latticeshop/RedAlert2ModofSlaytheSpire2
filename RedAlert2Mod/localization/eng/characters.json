@@ -185,5 +185,11 @@
     "CONFIG_PRESET_DELETE_TOOLTIP": "Delete this preset",
     "CONFIG_PRESET_DELETE_TITLE": "Delete Preset",
     "CONFIG_PRESET_DELETE_DESC": "Delete preset \"{0}\"? This cannot be undone.",
-    "CONFIG_PRESET_DELETED": "Preset \"{0}\" deleted"
+    "CONFIG_PRESET_DELETED": "Preset \"{0}\" deleted",
+    "CONFIG_FEATURE_RA2_SETTINGS": "RA2 Mod Settings",
+    "CONFIG_RA2_SETTINGS_TITLE": "🔧 RA2 Mod Settings",
+    "CONFIG_RA2_SETTINGS_DESC": "RA2-exclusive gameplay options, saved per character.",
+    "CONFIG_RA2_TECH_SW_TITLE": "⚡ Tech-Tree Superweapons",
+    "CONFIG_RA2_TECH_SW_DESC": "When enabled, the MCV's building selection unlocks that faction's superweapons once you have the matching Battle Lab.",
+    "CONFIG_RA2_TECH_SW_TOGGLE": "Tech-Tree Superweapons"
 }
