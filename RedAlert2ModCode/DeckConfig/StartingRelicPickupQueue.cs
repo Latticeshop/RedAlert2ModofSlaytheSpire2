@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Saves;
 
 namespace RedAlert2ModCode.DeckConfig;
 
@@ -45,12 +46,28 @@ internal static class StartingRelicPickupQueue
     public static void Enqueue(Player player, RelicModel relic)
     {
         if (player == null || relic == null) return;
+        // 同一遗物实例不重复入队（防止恢复标记时同名/同实例重复）
+        if (Pending.Any(p => ReferenceEquals(p.Relic, relic))) return;
         Pending.Add(new PendingRelic(player, relic));
         if (!_runnerRunning)
         {
             _runnerRunning = true;
             TaskHelper.RunSafely(ProcessPendingAsync());
         }
+    }
+
+    /// <summary>
+    /// 继续游戏（LoadRun）后调用：读取本地“未完成拾取效果”标记，
+    /// 把仍在该局玩家身上的遗物重新入队，恢复选择面板。
+    /// </summary>
+    public static void CheckPendingPickupsAfterLoad(RunState runState)
+    {
+        try
+        {
+            if (runState == null) return;
+            TaskHelper.RunSafely(RestorePendingAfterLoadAsync(runState));
+        }
+        catch { }
     }
 
     private static async Task ProcessPendingAsync()
@@ -62,16 +79,63 @@ internal static class StartingRelicPickupQueue
                 List<PendingRelic> batch = TakePending();
                 if (batch.Count == 0) break;
 
-                if (!await WaitUntilRunUiReadyAsync(batch))
+                // 阶段1：等 NRun UI 就绪后立刻“分发”（把遗物加入玩家）。
+                // 必须在开局首次存档（EnterMapPointInternal → SaveRun）之前完成：
+                // 该存档发生在进入首个房间之前，若遗物此时还未加入玩家，
+                // “立即保存退出→继续游戏”会丢失全部自定义遗物。
+                if (!await WaitUntilRunUiReadyAsync(batch, requireRoomSettled: false))
                 {
-                    Logger.Warn($"[ModConfig] 开局遗物拾取效果等待超时或开局已中断，跳过 {batch.Count} 个遗物效果");
+                    Logger.Warn($"[ModConfig] 开局遗物分发等待超时或开局已中断，跳过 {batch.Count} 个遗物效果");
                     break;
                 }
                 // 等待 UI 期间新入队的遗物合并进本批。
                 // 各端入队顺序一致（state.Players 顺序），无论在哪一帧合并，
                 // 拼接结果都等于完整入队顺序，保证全端执行顺序相同。
                 batch.AddRange(TakePending());
-                Logger.Info($"[ModConfig] 队列批次开始处理: 遗物数={batch.Count}, 遗物=[{string.Join(",", batch.Select(b => b.Relic.GetType().Name))}]");
+                Logger.Info($"[ModConfig] 队列批次开始分发: 遗物数={batch.Count}, 遗物=[{string.Join(",", batch.Select(b => b.Relic.GetType().Name))}]");
+
+                foreach (PendingRelic pending in batch)
+                {
+                    try
+                    {
+                        if (!IsCurrentRun(pending.Player)) continue;
+                        TryAddRelic(pending);
+                        ModConfigPatches.InitialDeckPatch.RevealLocalRelicInventoryIcons(pending.Player);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error($"[ModConfig] 分发遗物失败 {pending.Relic.GetType().Name}: {ex.Message}");
+                    }
+                }
+
+                // 记录“已分发但效果未完成”的遗物：SL 后按标记恢复面板。
+                // 必须与分发同步落盘（早于开局首次存档）。
+                try
+                {
+                    var state = RunManager.Instance?.DebugOnlyGetState();
+                    if (state != null)
+                    {
+                        var playerList = state.Players.ToList();
+                        PendingRelicMarker.Merge(state, batch.Select(b =>
+                        {
+                            int idx = playerList.IndexOf(b.Player);
+                            string name = b.Relic.GetType().Name;
+                            int occurrence = b.Player.Relics
+                                .Where(r => r.GetType().Name == name)
+                                .ToList()
+                                .IndexOf(b.Relic);
+                            return (idx, name, occurrence);
+                        }));
+                    }
+                }
+                catch { }
+
+                // 阶段2：等开局房间落定后再逐个执行拾取效果（选择面板不被地图/房间切换遮挡）。
+                if (!await WaitUntilRunUiReadyAsync(batch, requireRoomSettled: true))
+                {
+                    Logger.Warn($"[ModConfig] 开局房间落定等待超时或开局已中断，遗物已分发但跳过拾取效果 ({batch.Count} 个)");
+                    break;
+                }
 
                 bool reopenMapAfterSelection = false;
                 try
@@ -87,23 +151,9 @@ internal static class StartingRelicPickupQueue
                         await NGame.Instance.ToSignal(NGame.Instance.GetTree(), SceneTree.SignalName.ProcessFrame);
                     }
 
-                    // 第一遍：按全端一致的顺序把遗物全部加入玩家（先完成“分发”，
-                    // 让所有人立刻看到遗物，而不是等前面的选择面板执行完）。
-                    foreach (PendingRelic pending in batch)
-                    {
-                        try
-                        {
-                            if (!IsCurrentRun(pending.Player)) continue;
-                            TryAddRelic(pending);
-                            ModConfigPatches.InitialDeckPatch.RevealLocalRelicInventoryIcons(pending.Player);
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Error($"[ModConfig] 分发遗物失败 {pending.Relic.GetType().Name}: {ex.Message}");
-                        }
-                    }
-
-                    // 第二遍：按同一顺序逐个执行拾取效果。
+                    // 按同一顺序逐个执行拾取效果。
+                    // 星盘/沉重石板等效果消耗全队共享的 RNG 流（RunState.Rng.Niche），
+                    // 执行顺序一旦各端不一致就会进入战斗时 checksum 分叉，因此绝不能按“本机优先”乱序。
                     foreach (PendingRelic pending in batch)
                     {
                         try
@@ -121,8 +171,33 @@ internal static class StartingRelicPickupQueue
                             }
 
                             Logger.Info($"[ModConfig] 开始执行遗物拾取效果: {pending.Relic.GetType().Name}");
-                            await ProcessRelicWithAbandonGuardAsync(pending);
+                            bool completed = await ProcessRelicWithAbandonGuardAsync(pending);
                             Logger.Info($"[ModConfig] 遗物拾取效果完成: {pending.Relic.GetType().Name}");
+                            if (completed)
+                            {
+                                try
+                                {
+                                    var state = RunManager.Instance?.DebugOnlyGetState();
+                                    if (state != null)
+                                    {
+                                        int idx = state.Players.ToList().IndexOf(pending.Player);
+                                        string name = pending.Relic.GetType().Name;
+                                        int occurrence = pending.Player.Relics
+                                            .Where(r => r.GetType().Name == name)
+                                            .ToList()
+                                            .IndexOf(pending.Relic);
+                                        bool allDone = PendingRelicMarker.RemoveCompleted(state, idx, name, occurrence);
+                                        // 全部拾取效果完成且标记清空时立即落盘，
+                                        // 避免“完成面板后立即保存退出”留下效果前的旧存档。
+                                        if (allDone)
+                                        {
+                                            try { TaskHelper.RunSafely(SaveManager.Instance.SaveRun(null)); }
+                                            catch { }
+                                        }
+                                    }
+                                }
+                                catch { }
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -166,7 +241,8 @@ internal static class StartingRelicPickupQueue
     /// 华美手镯/大抱抱等遗物重写了 AfterObtained 但没有重写该属性（基类默认为 false），
     /// 原版 FinalizeStartingRelics 与 RelicCmd.Obtain 都是无条件调用，基类实现本身是空操作。
     /// </summary>
-    private static async Task ProcessRelicWithAbandonGuardAsync(PendingRelic pending)
+    /// <returns>true=效果已执行完成；false=中途放弃（本局结束/切换）。</returns>
+    private static async Task<bool> ProcessRelicWithAbandonGuardAsync(PendingRelic pending)
     {
         using var cts = new System.Threading.CancellationTokenSource();
         Task pickup = pending.Relic.AfterObtained();
@@ -176,11 +252,12 @@ internal static class StartingRelicPickupQueue
         {
             cts.Cancel();
             await pickup; // 完成或抛出
-            return;
+            return true;
         }
 
         cts.Cancel();
         Logger.Warn($"[ModConfig] {pending.Relic.GetType().Name} 的选择面板未完成时本局已结束，放弃剩余拾取效果");
+        return false;
     }
 
     private static async Task WaitUntilRunEndsAsync(Player player, System.Threading.CancellationToken token)
@@ -197,19 +274,82 @@ internal static class StartingRelicPickupQueue
         }
     }
 
-    private static async Task<bool> WaitUntilRunUiReadyAsync(List<PendingRelic> batch)
+    /// <summary>
+    /// 继续游戏后：等 NRun 就绪且房间落定，读取标记并重新入队未完成的拾取效果。
+    /// 顺序保持标记中的原分发顺序（全端一致）。
+    /// </summary>
+    private static async Task RestorePendingAfterLoadAsync(RunState runState)
+    {
+        try
+        {
+            if (!await WaitForLoadedRunUiReadyAsync(runState)) return;
+
+            var marker = PendingRelicMarker.Load();
+            if (marker == null || !marker.Matches(runState))
+            {
+                // 残留标记与当前局不符（旧局已结束/新开局），清理避免误触发
+                PendingRelicMarker.DeleteIfExists();
+                return;
+            }
+
+            foreach (var entry in marker.Pending.ToList())
+            {
+                if (entry.PlayerIndex < 0 || entry.PlayerIndex >= runState.Players.Count) continue;
+                var player = runState.Players[entry.PlayerIndex];
+                if (player == null) continue;
+                var sameType = player.Relics
+                    .Where(r => r.GetType().Name == entry.RelicTypeName)
+                    .ToList();
+                if (entry.OccurrenceIndex < 0 || entry.OccurrenceIndex >= sameType.Count) continue;
+                var relic = sameType[entry.OccurrenceIndex];
+                Enqueue(player, relic);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Warn($"[ModConfig] 恢复未完成的遗物拾取效果失败: {ex.Message}");
+        }
+    }
+
+    private static async Task<bool> WaitForLoadedRunUiReadyAsync(RunState runState)
     {
         const int MaxFrames = 60 * 20;
         for (int frame = 0; frame < MaxFrames; frame++)
         {
-            if (IsRunUiReady(batch)) return true;
+            if (IsLoadedRunUiReady(runState)) return true;
             if (NGame.Instance == null) return false;
             await NGame.Instance.ToSignal(NGame.Instance.GetTree(), SceneTree.SignalName.ProcessFrame);
         }
         return false;
     }
 
-    private static bool IsRunUiReady(List<PendingRelic> batch)
+    private static bool IsLoadedRunUiReady(RunState runState)
+    {
+        if (LocalContext.NetId == null) return false;
+        NRun? nRun = NRun.Instance;
+        if (nRun == null || !GodotObject.IsInstanceValid(nRun)) return false;
+        if (nRun.GlobalUi?.Overlays == null || nRun.GlobalUi?.TopBar == null) return false;
+        RunState? state = RunManager.Instance?.DebugOnlyGetState();
+        if (state == null || !ReferenceEquals(state, runState)) return false;
+        if (NMapScreen.Instance == null) return false;
+        if (NMapScreen.Instance.IsOpen) return true;
+        AbstractRoom? room = state.CurrentRoom;
+        return room != null && room is not MapRoom;
+    }
+
+    private static async Task<bool> WaitUntilRunUiReadyAsync(List<PendingRelic> batch, bool requireRoomSettled)
+    {
+        const int MaxFrames = 60 * 20;
+        for (int frame = 0; frame < MaxFrames; frame++)
+        {
+            if (IsRunUiReady(batch, requireRoomSettled)) return true;
+            if (NGame.Instance == null) return false;
+            await NGame.Instance.ToSignal(NGame.Instance.GetTree(), SceneTree.SignalName.ProcessFrame);
+        }
+        return false;
+    }
+
+    private static bool IsRunUiReady(List<PendingRelic> batch, bool requireRoomSettled)
     {
         if (LocalContext.NetId == null) return false;
         NRun? nRun = NRun.Instance;
@@ -218,6 +358,10 @@ internal static class StartingRelicPickupQueue
         RunState? state = RunManager.Instance?.DebugOnlyGetState();
         if (state == null) return false;
         if (!batch.All(p => ReferenceEquals(p.Player.RunState, state))) return false;
+
+        // 分发阶段只需 NRun UI 就绪即可，无需等房间落定，
+        // 确保在开局首次存档之前完成遗物加入。
+        if (!requireRoomSettled) return true;
 
         // 等开局房间落定再弹面板：EnterAct 过程中（地图未开、房间未进）若过早处理，
         // 选择面板会被随后打开的地图隐藏或与房间切换竞争。
