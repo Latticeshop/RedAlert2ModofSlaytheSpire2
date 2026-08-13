@@ -20,6 +20,7 @@ using MegaCrit.Sts2.Core.Models.CardPools;
 using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet;
+using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Yuri;
 namespace RedAlert2ModCode.Common.Cards;
 
@@ -77,21 +78,12 @@ public sealed class SupportCard : CardModel
 
 		GD.Print($"[SupportCard] 选择 {selectCount} 张单位卡送给队友");
 
-		CardSelectorPrefs prefs = new CardSelectorPrefs(
-			new LocString("cards", "RED_ALERT2_MOD_CARD_SUPPORT_CARD.select_prompt"),
-			0,
-			selectCount
-		);
-
-		IEnumerable<CardModel> selectedCards = await CardSelectCmd.FromHand(
-			choiceContext,
-			Owner,
-			prefs,
-			(CardModel c) => unitTypes.Contains(c.GetType()),
-			this
-		);
-
-		List<CardModel> cardsToGive = selectedCards.ToList();
+		// 原版 FromHand 会触发 CancelAllCardPlay（取消回手流程），联机中会阻塞其他玩家出牌；
+		// 改用与超时空传送一致的 ExecuteSyncChoice + mod 选择 UI。
+		var unitCards = PileType.Hand.GetPile(Owner).Cards.Where(c => unitTypes.Contains(c.GetType())).ToList();
+		List<CardModel> cardsToGive = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(
+			choiceContext, unitCards, selectCount, 0, Owner)
+			?? new List<CardModel>();
 
 		GD.Print($"[SupportCard] 选中了 {cardsToGive.Count} 张单位卡");
 

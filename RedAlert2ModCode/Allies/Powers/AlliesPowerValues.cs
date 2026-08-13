@@ -53,6 +53,12 @@ public static class AlliesPowerValues
 	{
 		// 基地车主要是功能能力
 	};
+
+	/// <summary>间谍卫星能力 - 免疫虚弱与脆弱（可叠层，叠层无额外效果）</summary>
+	public static CardValueStore.CardValues SpySatellitePower => new()
+	{
+		// 标记能力，无数值
+	};
 	
 	/// <summary>训练队列能力</summary>
 	public static CardValueStore.CardValues TrainingQueuePower => new()

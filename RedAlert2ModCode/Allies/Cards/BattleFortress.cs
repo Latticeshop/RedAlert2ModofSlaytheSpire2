@@ -95,21 +95,11 @@ public sealed class BattleFortress : CardModel
 		}
 
 		var storeCount = ((IntVar)DynamicVars["StoreCount"]).IntValue;
-		var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_BATTLE_FORTRESS.select_prompt");
-		selectPrompt.Add("0", 0);
-		selectPrompt.Add("1", storeCount);
-		var prefs = new CardSelectorPrefs(selectPrompt, 0, storeCount)
-		{
-			RequireManualConfirmation = true
-		};
-
-		var selectedCards = (await CardSelectCmd.FromHand(
-			choiceContext,
-			Owner,
-			prefs,
-			c => soldierCards.Contains(c),
-			this
-		)).ToList();
+		// 原版 FromHand 会触发 CancelAllCardPlay（取消回手流程），联机中选择时会阻塞其他玩家出牌；
+		// 改用与超时空传送一致的 ExecuteSyncChoice + mod 选择 UI（仅暂停选择者，不取消回手）。
+		var selectedCards = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(
+			choiceContext, soldierCards, storeCount, 0, Owner)
+			?? new List<CardModel>();
 
 		foreach (var card in selectedCards)
 		{

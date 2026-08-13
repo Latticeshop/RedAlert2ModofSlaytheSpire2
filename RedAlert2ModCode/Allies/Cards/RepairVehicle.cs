@@ -15,6 +15,7 @@ using MegaCrit.Sts2.Core.Models;
 using RedAlert2ModCode.Allies.Powers;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet;
+using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Yuri;
 
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -57,14 +58,6 @@ public sealed class RepairVehicle : IfvVehicleBase
 
 		bool isUpgraded = IsUpgraded;
 
-		var selectPrompt = new MegaCrit.Sts2.Core.Localization.LocString("cards", "RED_ALERT2_MOD_CARD_REPAIR_VEHICLE.repair_select_prompt");
-		selectPrompt.Add("0", 0);
-		selectPrompt.Add("1", 1);
-		var prefs = new CardSelectorPrefs(selectPrompt, 0, 1)
-		{
-			RequireManualConfirmation = true
-		};
-
 		// 手牌中没有可维修的单位卡牌时，跳过选择界面（避免卡死）
 		var handPile = PileType.Hand.GetPile(Owner);
 		if (!handPile.Cards.Any(c => c != this && (isUpgraded || IsUnitCard(c))))
@@ -74,13 +67,12 @@ public sealed class RepairVehicle : IfvVehicleBase
 			return;
 		}
 
-		var selectedCards = (await CardSelectCmd.FromHand(
-			ctx,
-			Owner,
-			prefs,
-			c => c != this && (isUpgraded || IsUnitCard(c)),
-			this
-		)).ToList();
+		// 原版 FromHand 会触发 CancelAllCardPlay（取消回手流程），联机中会阻塞其他玩家出牌；
+		// 改用与超时空传送一致的 ExecuteSyncChoice + mod 选择 UI。
+		var selectableCards = handPile.Cards.Where(c => c != this && (isUpgraded || IsUnitCard(c))).ToList();
+		var selectedCards = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(
+			ctx, selectableCards, 1, 0, Owner)
+			?? new List<CardModel>();
 
 		foreach (var card in selectedCards)
 		{

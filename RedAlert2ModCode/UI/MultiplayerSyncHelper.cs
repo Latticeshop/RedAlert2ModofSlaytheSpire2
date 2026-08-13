@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
+using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace RedAlert2ModCode.UI;
@@ -93,6 +94,8 @@ public static class MultiplayerSyncHelper
             await context.SignalPlayerChoiceBegun(player, PlayerChoiceOptions.CancelPlayCardActions);
             try
             {
+                // 与原版 FromCombatPile/FromHand 一致：暂停后把手牌播放中的卡牌抽出，展示在头顶出牌队列
+                PullCardToPlayQueue();
                 return await localChoiceFunc();
             }
             finally
@@ -107,6 +110,7 @@ public static class MultiplayerSyncHelper
             await context.SignalPlayerChoiceBegun(player, PlayerChoiceOptions.CancelPlayCardActions);
             try
             {
+                PullCardToPlayQueue();
                 return await localChoiceFunc();
             }
             finally
@@ -121,6 +125,7 @@ public static class MultiplayerSyncHelper
         {
             if (IsLocalPlayer(player))
             {
+                PullCardToPlayQueue();
                 int? result = await localChoiceFunc();
                 SyncLocalChoice(synchronizer, player, choiceId, result);
                 return result;
@@ -150,6 +155,7 @@ public static class MultiplayerSyncHelper
             await context.SignalPlayerChoiceBegun(player, PlayerChoiceOptions.CancelPlayCardActions);
             try
             {
+                PullCardToPlayQueue();
                 return (await localChoiceFunc()) ?? new List<int>();
             }
             finally
@@ -164,6 +170,7 @@ public static class MultiplayerSyncHelper
             await context.SignalPlayerChoiceBegun(player, PlayerChoiceOptions.CancelPlayCardActions);
             try
             {
+                PullCardToPlayQueue();
                 return (await localChoiceFunc()) ?? new List<int>();
             }
             finally
@@ -178,6 +185,7 @@ public static class MultiplayerSyncHelper
         {
             if (IsLocalPlayer(player))
             {
+                PullCardToPlayQueue();
                 List<int>? result = await localChoiceFunc();
                 SyncLocalMultiChoice(synchronizer, player, choiceId, result);
                 return result ?? new List<int>();
@@ -203,6 +211,24 @@ public static class MultiplayerSyncHelper
         }
 
         return RunManager.Instance.PlayerChoiceSynchronizer;
+    }
+
+    /// <summary>
+    /// 与原版 CardSelectCmd 本地选择分支一致：暂停后调用 NPlayerHand.CancelAllCardPlay，
+    /// 把手牌中播放中/待入队的卡牌抽出，展示在头顶出牌队列（NCardPlayQueue）。
+    /// 仅作用于“打出后选择”的同步选择（ExecuteSyncChoice 路径）；A2 预选（MCV/生产建筑）
+    /// 不经过此处，行为保持不变。
+    /// </summary>
+    private static void PullCardToPlayQueue()
+    {
+        try
+        {
+            NPlayerHand.Instance?.CancelAllCardPlay();
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"[MultiplayerSync] 抽出卡牌到出牌队列失败: {ex.Message}");
+        }
     }
 
     private static void SyncLocalChoice(PlayerChoiceSynchronizer synchronizer, Player player, uint choiceId, int? selectedIndex)

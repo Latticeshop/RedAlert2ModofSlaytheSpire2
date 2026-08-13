@@ -137,21 +137,12 @@ public sealed class Ifv : CardModel
 		}
 
 		int maxDiscard = (int)DynamicVars["DiscardCount"].BaseValue;
-		var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_IFV.select_prompt");
-		selectPrompt.Add("0", 0);
-		selectPrompt.Add("1", maxDiscard);
-		var prefs = new CardSelectorPrefs(selectPrompt, 0, maxDiscard)
-		{
-			RequireManualConfirmation = true
-		};
-
-		var selectedCards = (await CardSelectCmd.FromHand(
-			ctx,
-			Owner,
-			prefs,
-			c => c != this,
-			this
-		)).ToList();
+		// 原版 FromHand 会触发 CancelAllCardPlay（取消回手流程），联机中会阻塞其他玩家出牌；
+		// 改用与超时空传送一致的 ExecuteSyncChoice + mod 选择 UI。
+		var discardableCards = PileType.Hand.GetPile(Owner).Cards.Where(c => c != this).ToList();
+		var selectedCards = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(
+			ctx, discardableCards, maxDiscard, 0, Owner)
+			?? new List<CardModel>();
 
 		foreach (var card in selectedCards)
 		{
@@ -174,21 +165,11 @@ public sealed class Ifv : CardModel
 			return;
 		}
 
-		var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_IFV.deploy_select_prompt");
-		selectPrompt.Add("0", 0);
-		selectPrompt.Add("1", 1);
-		var prefs = new CardSelectorPrefs(selectPrompt, 0, 1)
-		{
-			RequireManualConfirmation = true
-		};
-
-		var selectedCards = (await CardSelectCmd.FromHand(
-			ctx,
-			Owner,
-			prefs,
-			c => soldierCards.Contains(c),
-			this
-		)).ToList();
+		// 原版 FromHand 会触发 CancelAllCardPlay（取消回手流程），联机中会阻塞其他玩家出牌；
+		// 改用与超时空传送一致的 ExecuteSyncChoice + mod 选择 UI。
+		var selectedCards = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(
+			ctx, soldierCards, 1, 0, Owner)
+			?? new List<CardModel>();
 
 		if (selectedCards.Count == 0)
 		{

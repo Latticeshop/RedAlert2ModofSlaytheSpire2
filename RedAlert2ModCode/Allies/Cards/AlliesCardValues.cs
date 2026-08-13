@@ -546,6 +546,32 @@ public static class AlliesCardValues
 		DollarValueUpgraded = 1000
 	};
 
+	/// <summary>遥控坦克 - 0费攻击卡（Token），控制中心解锁，价格600。造成4(升级7)伤害，获得5(升级8)格挡，赋予1层易伤</summary>
+	public static CardValueStore.CardValues RoboTank => new()
+	{
+		Cost = 0,
+		Damage = 4,
+		DamageUpgraded = 3,
+		Block = 5,
+		BlockUpgraded = 3,
+		MagicNumber = 1,        // 易伤层数
+		DollarValue = 600       // 资金花费（打出时消耗，参考文档价格）
+	};
+
+	/// <summary>控制中心 - 0费能力卡（uncommon），需要空指部/雷达，价格600。盟军重工解锁遥控坦克</summary>
+	public static CardValueStore.CardValues ControlCenter => new()
+	{
+		Cost = 0,
+		DollarValue = 600
+	};
+
+	/// <summary>间谍卫星 - 0费能力卡（rare金卡），需要盟军作战实验室，价格1500。免疫虚弱和脆弱</summary>
+	public static CardValueStore.CardValues SpySatellite => new()
+	{
+		Cost = 0,
+		DollarValue = 1500
+	};
+
 	/// <summary>修理厂 - 2费能力卡（升级后1费），回合开始时花费$1000从消耗牌堆选择一张牌加入弃牌堆，价格800</summary>
 	public static CardValueStore.CardValues RepairDepot => new()
 	{
@@ -681,7 +707,8 @@ public static class AlliesCardValues
 			{ "ALLIEDMCV", AlliedMCV },
 			{ "CHRONOMINER", ChronoMiner },
 			{ "BATTLEFORTRESS", BattleFortress },
-			{ "TANKDESTROYER", TankDestroyer }
+			{ "TANKDESTROYER", TankDestroyer },
+			{ "ROBOTANK", RoboTank }
 		};
 	}
 	
@@ -726,7 +753,9 @@ public static class AlliesCardValues
 			{ "WEATHERCONTROLLER", WeatherController },
 			{ "CHRONOSPHERE", ChronoSphere },
 			{ "ALLIESREPAIRDEPOT", RepairDepot },
-			{ "FORTIFIEDWALL", AlliedFortifiedWall }
+			{ "FORTIFIEDWALL", AlliedFortifiedWall },
+			{ "CONTROLCENTER", ControlCenter },
+			{ "SPYSATELLITE", SpySatellite }
 		};
 	}
 
@@ -769,7 +798,9 @@ public static class AlliesCardValues
 			() => ModelDb.Card<ChronoSphere>(),
 			() => ModelDb.Card<WeatherController>(),
 			() => ModelDb.Card<AlliesRepairDepot>(),
-			() => ModelDb.Card<OreRefineryCard>()
+			() => ModelDb.Card<OreRefineryCard>(),
+			() => ModelDb.Card<ControlCenter>(),
+			() => ModelDb.Card<SpySatellite>()
 		};
 	}
 
@@ -816,7 +847,9 @@ public static class AlliesCardValues
 		{ typeof(ChronoSphere), () => ModelDb.Card<ChronoSphere>() },
 		{ typeof(WeatherController), () => ModelDb.Card<WeatherController>() },
 		{ typeof(AlliesRepairDepot), () => ModelDb.Card<AlliesRepairDepot>() },
-		{ typeof(OreRefineryCard), () => ModelDb.Card<OreRefineryCard>() }
+		{ typeof(OreRefineryCard), () => ModelDb.Card<OreRefineryCard>() },
+		{ typeof(ControlCenter), () => ModelDb.Card<ControlCenter>() },
+		{ typeof(SpySatellite), () => ModelDb.Card<SpySatellite>() }
 	};
 	
 	public static System.Collections.Generic.Dictionary<string, CardValueStore.CardValues> CreateAllValuesMap()

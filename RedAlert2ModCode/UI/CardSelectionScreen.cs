@@ -879,6 +879,11 @@ public sealed partial class CardSelectionScreen : Control, IOverlayScreen
         // 处理 {IfUpgraded:show:xxx|} 格式的条件标签
         desc = ProcessIfUpgradedTags(desc, isUpgraded);
 
+        // 剥离 DynamicVar 格式化器（如 {Damage:diff()} → {Damage}），
+        // 使 ReplaceVarsFromStore / ReplaceDynamicVars 能正确替换数值
+        desc = System.Text.RegularExpressions.Regex.Replace(desc,
+            @"\{([A-Za-z0-9_]+):[A-Za-z0-9_]*(\([^}]*\))?\}", "{$1}");
+
         // 优先从数值映射中获取数值替换变量
         desc = ReplaceVarsFromStore(card, desc, isUpgraded);
 

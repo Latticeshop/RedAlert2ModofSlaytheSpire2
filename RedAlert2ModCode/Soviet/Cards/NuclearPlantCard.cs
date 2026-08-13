@@ -39,7 +39,8 @@ public sealed class NuclearPlantCard : CardModel
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
         ModCardKeywords.TechLevelT3.CreateHoverTip(),
-        ModCardKeywords.Building.CreateHoverTip()
+        ModCardKeywords.Building.CreateHoverTip(),
+        HoverTipFactory.FromCard<SovietBattleLab>()
     ];
 
     protected override bool IsPlayable

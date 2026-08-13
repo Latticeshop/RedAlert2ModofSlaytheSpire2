@@ -65,6 +65,12 @@ public static class AlliedCardRegistry
         () => ModelDb.Card<BattleFortress>()
     };
 
+    /// <summary>控制中心解锁装甲单位 - 需要控制中心能力解锁</summary>
+    public static List<Func<CardModel>> ControlCenterVehicles { get; } = new()
+    {
+        () => ModelDb.Card<RoboTank>()
+    };
+
     public static List<Func<CardModel>> Aircraft { get; } = new()
     {
         () => ModelDb.Card<Intruder>(),
@@ -245,6 +251,14 @@ public static class AlliedCardRegistry
     }
 
     /// <summary>
+    /// 获取所有控制中心解锁装甲单位 - 需要控制中心能力解锁
+    /// </summary>
+    public static List<CardModel> GetAllControlCenterVehicles()
+    {
+        return ControlCenterVehicles.Select(s => s()).ToList();
+    }
+
+    /// <summary>
     /// 获取所有雷达解锁装甲单位 - 需要空指部解锁
     /// </summary>
     public static List<CardModel> GetAllRadarVehicles()
@@ -286,6 +300,7 @@ public static class AlliedCardRegistry
         units.AddRange(GetAllVehicles());
         units.AddRange(GetAllRadarVehicles());
         units.AddRange(GetAllHighTechVehicles());
+        units.AddRange(GetAllControlCenterVehicles());
         units.AddRange(GetAllAircraft());
         units.AddRange(GetAllShips());
         units.AddRange(GetAllHighTechShips());
@@ -314,6 +329,8 @@ public static class AlliedCardRegistry
         foreach (var factory in RadarVehicles)
             types.Add(factory().GetType());
         foreach (var factory in HighTechVehicles)
+            types.Add(factory().GetType());
+        foreach (var factory in ControlCenterVehicles)
             types.Add(factory().GetType());
         foreach (var factory in Aircraft)
             types.Add(factory().GetType());
@@ -503,6 +520,12 @@ public static class AlliedCardRegistry
         {
             vehicles.AddRange(CreateHighTechVehicles(owner));
         }
+
+        // 检查是否有控制中心能力，如果有则添加控制中心解锁单位（遥控坦克）
+        if (HasControlCenterPower(owner.Creature))
+        {
+            vehicles.AddRange(CreateControlCenterVehicles(owner));
+        }
         
         return vehicles;
     }
@@ -521,6 +544,22 @@ public static class AlliedCardRegistry
     public static List<CardModel> CreateHighTechVehicles(Player owner)
     {
         return HighTechVehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+    }
+
+    /// <summary>
+    /// 创建控制中心解锁装甲单位卡牌列表（遥控坦克）
+    /// </summary>
+    public static List<CardModel> CreateControlCenterVehicles(Player owner)
+    {
+        return ControlCenterVehicles.Select(s => owner.Creature.CombatState.CreateCard(s(), owner)).ToList();
+    }
+
+    /// <summary>
+    /// 检查是否有控制中心能力（盟军重工解锁遥控坦克）
+    /// </summary>
+    public static bool HasControlCenterPower(Creature creature)
+    {
+        return creature.Powers.Any(p => p.GetType().Name == typeof(ControlCenterPower).Name);
     }
 
     /// <summary>

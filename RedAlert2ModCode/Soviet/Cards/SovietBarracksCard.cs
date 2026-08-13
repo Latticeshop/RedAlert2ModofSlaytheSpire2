@@ -96,7 +96,6 @@ public sealed class SovietBarracksCard : CardModel, ICancellableCardPlay
 		if (!SovietCardRegistry.HasRadarPower(owner.Creature))
 		{
 			availableCards = availableCards.Where(c =>
-				c is not SovietTeslaTrooper &&
 				c is not Desolator &&
 				c is not TerrorMan
 			).ToList();

@@ -15,6 +15,7 @@ using RedAlert2ModCode.Allies;
 using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Common.Utils;
 using RedAlert2ModCode.Soviet.Powers;
+using RedAlert2ModCode.UI;
 using RedAlert2ModCode.Yuri;
 
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -98,21 +99,11 @@ public sealed class BattleBunkerCard : CardModel
 		if (soldierCards.Count == 0)
 			return;
 
-		var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_BATTLE_BUNKER.select_prompt");
-		selectPrompt.Add("0", 0);
-		selectPrompt.Add("1", maxSelect);
-		var prefs = new CardSelectorPrefs(selectPrompt, 0, maxSelect)
-		{
-			RequireManualConfirmation = true
-		};
-
-		var selectedCards = (await CardSelectCmd.FromHand(
-			choiceContext,
-			Owner,
-			prefs,
-			c => soldierCards.Contains(c),
-			this
-		)).ToList();
+		// 原版 FromHand 会触发 CancelAllCardPlay（取消回手流程），联机中选择时会阻塞其他玩家出牌；
+		// 改用与超时空传送一致的 ExecuteSyncChoice + mod 选择 UI（仅暂停选择者，不取消回手）。
+		var selectedCards = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(
+			choiceContext, soldierCards, maxSelect, 0, Owner)
+			?? new List<CardModel>();
 
 		if (selectedCards == null || selectedCards.Count == 0)
 			return;

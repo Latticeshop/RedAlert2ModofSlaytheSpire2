@@ -21,11 +21,11 @@ public static class SovietCardRegistry
         () => ModelDb.Card<SovietEngineer>(),
         () => ModelDb.Card<SovietAttackDog>(),
         () => ModelDb.Card<SovietFlakTrooper>(), // 防空步兵 - T1基础单位
+        () => ModelDb.Card<SovietTeslaTrooper>(), // 磁暴步兵 - T1基础单位（红警2原版无需雷达）
     };
 
     public static List<Func<CardModel>> RadarSoldiers { get; } = new()
     {
-        () => ModelDb.Card<SovietTeslaTrooper>(),
         () => ModelDb.Card<Desolator>(),
         () => ModelDb.Card<TerrorMan>(),
         () => ModelDb.Card<CrazyIvanCard>(),
@@ -61,6 +61,8 @@ public static class SovietCardRegistry
     {
         () => ModelDb.Card<SpyPlane>(),
         () => ModelDb.Card<Kirov>(),
+        () => ModelDb.Card<HelicopterFlight>(),
+        () => ModelDb.Card<HelicopterCannon>(),
     };
 
     public static List<Func<CardModel>> Ships { get; } = new()
@@ -339,6 +341,10 @@ public static class SovietCardRegistry
         {
             vehicles.Add(owner.Creature.CombatState.CreateCard(ModelDb.Card<Kirov>(), owner));
             GD.Print("[SovietCardRegistry] 检测到雷达+作战实验室，重工加入基洛夫选项");
+
+            // 武装直升机（飞行形态，T3空军）：同样需要雷达+作战实验室解锁；生产出来默认是飞行形态
+            vehicles.Add(owner.Creature.CombatState.CreateCard(ModelDb.Card<HelicopterFlight>(), owner));
+            GD.Print("[SovietCardRegistry] 检测到雷达+作战实验室，重工加入武装直升机（飞行形态）选项");
         }
 
         return vehicles;

@@ -98,8 +98,40 @@ public class Eagle500kgPower : DesperateMeasurePowerBase
 		}
 	}
 
+	/// <summary>
+	/// 播放核弹攻击同款爆炸音效（复用核弹井 nuclear_explosion.wav）
+	/// </summary>
+	private void PlayNuclearExplosionSound()
+	{
+		try
+		{
+			var audioPlayer = new AudioStreamPlayer();
+			audioPlayer.Name = "Eagle500kgExplosion";
+			var root = Engine.GetMainLoop() as SceneTree;
+			if (root != null)
+			{
+				root.Root.AddChild(audioPlayer);
+				var soundFile = GD.Load<AudioStream>("res://RedAlert2ModResources/audio/SovietUnits/NuclearMissile/nuclear_explosion.wav");
+				if (soundFile != null)
+				{
+					audioPlayer.Stream = soundFile;
+					audioPlayer.VolumeDb = -5;
+					audioPlayer.Play();
+					GD.Print("[Eagle500kgPower] 播放核弹爆炸音效");
+				}
+			}
+		}
+		catch (System.Exception ex)
+		{
+			GD.PrintErr($"[Eagle500kgPower] 播放核弹爆炸音效失败: {ex.Message}");
+		}
+	}
+
 	protected override async Task ExecuteAttackEffect(Creature target, PlayerChoiceContext ctx)
 	{
+		// 0. 播放核弹攻击同款爆炸音效
+		PlayNuclearExplosionSound();
+
 		// 1. 播放轰击+燃烧特效
 		PlayBombardmentAndFireEffect(target);
 		await Cmd.Wait(0.3f);

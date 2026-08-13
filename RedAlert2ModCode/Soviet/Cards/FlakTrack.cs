@@ -130,23 +130,13 @@ public sealed partial class FlakTrack : CardModel
             return;
         }
 
-        // 弃牌选择：参考苏联维修厂的原版UI
+        // 弃牌选择：原版 FromHand 会触发 CancelAllCardPlay（取消回手流程），联机中会阻塞其他玩家出牌；
+        // 改用与超时空传送一致的 ExecuteSyncChoice + mod 选择 UI。
         int maxDiscard = (int)DynamicVars["DiscardCount"].BaseValue;
-        var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_FLAK_TRACK.discard_prompt");
-        selectPrompt.Add("0", 0);
-        selectPrompt.Add("1", maxDiscard);
-        var prefs = new CardSelectorPrefs(selectPrompt, 0, maxDiscard)
-        {
-            RequireManualConfirmation = true
-        };
-
-        var selectedCards = (await CardSelectCmd.FromHand(
-            ctx,
-            Owner,
-            prefs,
-            c => c != this,
-            this
-        )).ToList();
+        var discardableCards = PileType.Hand.GetPile(Owner).Cards.Where(c => c != this).ToList();
+        var selectedCards = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(
+            ctx, discardableCards, maxDiscard, 0, Owner)
+            ?? new List<CardModel>();
 
         // 弃掉选中的牌
         foreach (var card in selectedCards)
@@ -168,21 +158,11 @@ public sealed partial class FlakTrack : CardModel
             return;
         }
 
-        var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_FLAK_TRACK.select_prompt");
-        selectPrompt.Add("0", 0);
-        selectPrompt.Add("1", 5);
-        var prefs = new CardSelectorPrefs(selectPrompt, 0, 5)
-        {
-            RequireManualConfirmation = true
-        };
-
-        var selectedCards = (await CardSelectCmd.FromHand(
-            ctx,
-            Owner,
-            prefs,
-            c => soldierCards.Contains(c),
-            this
-        )).ToList();
+        // 原版 FromHand 会触发 CancelAllCardPlay（取消回手流程），联机中会阻塞其他玩家出牌；
+        // 改用与超时空传送一致的 ExecuteSyncChoice + mod 选择 UI。
+        var selectedCards = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(
+            ctx, soldierCards, 5, 0, Owner)
+            ?? new List<CardModel>();
 
         // 定时炸弹检测：若选中的卡牌中有带定时炸弹的，转化为自爆步兵车
         var timedBombCard = selectedCards.FirstOrDefault(c =>

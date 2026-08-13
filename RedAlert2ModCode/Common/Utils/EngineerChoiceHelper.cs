@@ -101,31 +101,15 @@ public static class EngineerChoiceHelper
                     break;
                 }
 
-                // 使用原版手牌选择UI，让玩家选择1张牌来消耗（参考苏联维修厂实现）
-                var repairSelectPrompt = new LocString("card_keywords", "engineer_choice.repair_bridge.select_prompt");
-                repairSelectPrompt.Add("0", 1);
-                repairSelectPrompt.Add("1", 1);
-                var repairPrefs = new CardSelectorPrefs(repairSelectPrompt, 1, 1)
-                {
-                    RequireManualConfirmation = true
-                };
+                // 原版 FromHand 会触发 CancelAllCardPlay（取消回手流程），联机中选择时会阻塞其他玩家出牌；
+                // 改用与超时空传送一致的 ExecuteSyncChoice + mod 选择 UI（仅暂停选择者，不取消回手）。
+                var handCards = PileType.Hand.GetPile(card.Owner).Cards.ToList();
+                var repairCard = await CardSelectionSyncHelper.ShowSelectionWithSync(ctx, handCards, card.Owner);
 
-                var repairSelectedCards = (await CardSelectCmd.FromHand(
-                    ctx,
-                    card.Owner,
-                    repairPrefs,
-                    c => true,
-                    card
-                )).ToList();
-
-                foreach (var repairCard in repairSelectedCards)
+                if (repairCard != null)
                 {
                     await CardPileCmd.Add(repairCard, PileType.Exhaust);
                     GD.Print($"[EngineerChoiceHelper] 维修桥梁：消耗手牌 {repairCard.Id.Entry}");
-                }
-
-                if (repairSelectedCards.Any())
-                {
                     await CardPileCmd.Draw(ctx, 2, card.Owner);
                     GD.Print("[EngineerChoiceHelper] 维修桥梁：抽2张牌");
                 }

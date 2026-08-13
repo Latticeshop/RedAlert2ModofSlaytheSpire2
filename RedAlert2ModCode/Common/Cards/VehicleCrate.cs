@@ -109,6 +109,8 @@ public class VehicleCrate : CardModel
             list.Add(Owner.Creature.CombatState.CreateCard(v, Owner));
         foreach (var v in AlliedCardRegistry.GetAllHighTechVehicles())
             list.Add(Owner.Creature.CombatState.CreateCard(v, Owner));
+        foreach (var v in AlliedCardRegistry.GetAllControlCenterVehicles())
+            list.Add(Owner.Creature.CombatState.CreateCard(v, Owner));
 
         return list;
     }

@@ -92,22 +92,12 @@ public sealed class SovietRepairDepot : CardModel
 			return;
 		}
 
-		// 使用原版手牌选择UI，让玩家选择要消耗的卡牌（0到exhaustCount张）
-		var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_SOVIET_REPAIR_DEPOT.select_prompt");
-		selectPrompt.Add("0", 0);
-		selectPrompt.Add("1", exhaustCount);
-		var prefs = new CardSelectorPrefs(selectPrompt, 0, exhaustCount)
-		{
-			RequireManualConfirmation = true
-		};
-
-		var selectedCards = (await CardSelectCmd.FromHand(
-			ctx,
-			base.Owner,
-			prefs,
-			c => c != this,
-			this
-		)).ToList();
+		// 原版 FromHand 会触发 CancelAllCardPlay（取消回手流程），联机中选择时会阻塞其他玩家出牌；
+		// 改用与超时空传送一致的 ExecuteSyncChoice + mod 选择 UI（仅暂停选择者，不取消回手）。
+		var selectableCards = PileType.Hand.GetPile(base.Owner).Cards.Where(c => c != this).ToList();
+		var selectedCards = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(
+			ctx, selectableCards, exhaustCount, 0, base.Owner)
+			?? new List<CardModel>();
 
 		foreach (var card in selectedCards)
 		{

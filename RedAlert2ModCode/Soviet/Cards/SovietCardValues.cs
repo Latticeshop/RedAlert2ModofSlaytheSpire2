@@ -230,6 +230,27 @@ public static class SovietCardValues
 		DollarValue = 2000
 	};
 
+	/// <summary>武装直升机（飞行形态）- 1费，本回合获得2(升级3)敏捷，造成3点伤害2(升级3)次，价格1100</summary>
+	public static CardValueStore.CardValues HelicopterFlight => new()
+	{
+		Cost = 1,
+		Damage = 3,
+		Repeat = 2,
+		RepeatUpgraded = 1,
+		MagicNumber = 2,          // 敏捷
+		MagicNumberUpgraded = 1,  // 升级后敏捷3
+		DollarValue = 1100
+	};
+
+	/// <summary>武装直升机（炮形态）- 1费，造成12(升级15)点溅射伤害，价格1100</summary>
+	public static CardValueStore.CardValues HelicopterCannon => new()
+	{
+		Cost = 1,
+		Damage = 12,
+		DamageUpgraded = 3,
+		DollarValue = 1100
+	};
+
 	/// <summary>V3火箭 - 1费，赋予目标锁定和V3火箭能力，每回合造成12伤害（升级15），价格800</summary>
 	public static CardValueStore.CardValues V3Rocket => new()
 	{
@@ -511,7 +532,9 @@ public static class SovietCardValues
 		return new Dictionary<string, CardValueStore.CardValues>
 		{
 			{ "KIROV", Kirov },
-			{ "SPY_PLANE", SpyPlane }
+			{ "SPY_PLANE", SpyPlane },
+			{ "HELICOPTERFLIGHT", HelicopterFlight },
+			{ "HELICOPTERCANNON", HelicopterCannon }
 		};
 	}
 	
