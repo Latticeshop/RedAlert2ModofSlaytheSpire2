@@ -29,6 +29,8 @@ public static class BuildingCardUtils
         { typeof(WeatherController), TechLevel.T3 },
         { typeof(ChronoSphere), TechLevel.T3 },
         { typeof(OreRefineryCard), TechLevel.T3 },
+        { typeof(SpySatellite), TechLevel.T3 },
+        { typeof(GapGenerator), TechLevel.T3 },
 
         // === 苏军牌组建筑 ===
         { typeof(SovietWallCard), TechLevel.T1 },
@@ -53,6 +55,8 @@ public static class BuildingCardUtils
         typeof(AlliesPillboxCard), typeof(AlliesRepairDepot),
         typeof(PrismTowerCard), typeof(PatriotMissile), typeof(GrandCannon),
         typeof(WeatherController), typeof(ChronoSphere), typeof(OreRefineryCard),
+        typeof(SpySatellite),
+        typeof(GapGenerator),
     };
 
     /// <summary>

@@ -51,8 +51,6 @@ public sealed class HelicopterFlight : CardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Soviet");
-
         var options = new List<DeployChoiceScreen.ChoiceOption>
         {
             new()
@@ -85,6 +83,10 @@ public sealed class HelicopterFlight : CardModel
 
     private async Task ExecuteAttack(PlayerChoiceContext ctx, CardPlay play)
     {
+        // 随机无后缀语音 + 随机直升机机枪音效
+        UnitVoiceHelper.PlayUnitVoice("HelicopterFlight", "Soviet");
+        UnitVoiceHelper.PlayUnitVoice("HelicopterFlightMG", "Soviet");
+
         // 本回合获得敏捷
         int dexterity = IsUpgraded ? Values.MagicNumber + Values.MagicNumberUpgraded : Values.MagicNumber;
         await PowerCmd.Apply<HelicopterTemporaryDexterityPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, dexterity, Owner.Creature, this);
@@ -104,6 +106,8 @@ public sealed class HelicopterFlight : CardModel
     /// </summary>
     private async Task SwitchToCannonForm(PlayerChoiceContext ctx)
     {
+        UnitVoiceHelper.PlayUnitVoice("HelicopterDeploy", "Soviet");
+
         var cannonTemplate = ModelDb.Card<HelicopterCannon>();
         var cannonCard = Owner.Creature.CombatState.CreateCard(cannonTemplate, Owner);
         if (IsUpgraded)

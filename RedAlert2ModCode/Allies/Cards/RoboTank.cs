@@ -40,13 +40,15 @@ public sealed class RoboTank : CardModel
     {
         new DamageVar(Values.Damage, ValueProp.Move),
         new BlockVar(Values.Block, ValueProp.Move),
-        new IntVar("VulnerableStacks", Values.MagicNumber)
+        new IntVar("VulnerableStacks", Values.MagicNumber),
+        new EnergyVar(1)
     };
 
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
         ModCardKeywords.TechLevelT2.CreateHoverTip(),
-        ModCardKeywords.Vehicle.CreateHoverTip()
+        ModCardKeywords.Vehicle.CreateHoverTip(),
+        HoverTipFactory.FromPower<EnergyNextTurnPower>()
     ];
 
     /// <summary>
@@ -69,7 +71,9 @@ public sealed class RoboTank : CardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Allies");
+        // 有能量打出：播放随机无后缀语音 + 攻击音效
+        UnitVoiceHelper.PlayUnitVoice("RoboTank", "Allied");
+        UnitVoiceHelper.PlayUnitVoice("RoboTankAttack", "Allied");
 
         Creature? target = play.Target as Creature;
         if (target == null)

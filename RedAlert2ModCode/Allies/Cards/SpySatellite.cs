@@ -77,6 +77,7 @@ public sealed class SpySatellite : CardModel
     {
         GD.Print("[SpySatellite] OnPlay 被调用");
         BuildingSoundHelper.PlayBuildingPlaceSound();
+        UnitVoiceHelper.PlaySound("res://RedAlert2ModResources/audio/CommonSFX/vision_gain.wav");
 
         // 扣除资金
         var dollarPower = Owner.Creature.Powers.OfType<DollarPower>().FirstOrDefault();
@@ -86,9 +87,9 @@ public sealed class SpySatellite : CardModel
             GD.Print($"[SpySatellite] 扣除资金 {Values.DollarValue}");
         }
 
-        // 获得间谍卫星能力（可叠层，叠层无额外效果）
-        await PowerCmd.Apply<SpySatellitePower>(new ThrowingPlayerChoiceContext(), Owner.Creature, 1m, Owner.Creature, this);
-        GD.Print("[SpySatellite] 已获得间谍卫星能力（免疫虚弱与脆弱）");
+        // 获得间谍卫星能力（升级/未升级独立叠层，叠层无额外效果）
+        await SpySatellitePower.ApplySpySatellite(Owner.Creature, IsUpgraded);
+        GD.Print($"[SpySatellite] 已获得间谍卫星能力（升级={IsUpgraded}）");
     }
 
     protected override void OnUpgrade()

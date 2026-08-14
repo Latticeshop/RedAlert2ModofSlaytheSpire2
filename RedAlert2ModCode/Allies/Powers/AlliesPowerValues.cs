@@ -59,6 +59,18 @@ public static class AlliesPowerValues
 	{
 		// 标记能力，无数值
 	};
+
+	/// <summary>裂缝产生器能力 - 每回合降低全体敌人力量（可叠层，层数=裂缝产生器数量）</summary>
+	public static CardValueStore.CardValues GapGeneratorPower => new()
+	{
+		MagicNumber = 1   // 每层降低的力量
+	};
+
+	/// <summary>黑幕能力 - 全体敌人失去力量（可叠层，层数=失去力量叠加）</summary>
+	public static CardValueStore.CardValues BlackCurtainPower => new()
+	{
+		MagicNumber = 1   // 每层降低的力量
+	};
 	
 	/// <summary>训练队列能力</summary>
 	public static CardValueStore.CardValues TrainingQueuePower => new()

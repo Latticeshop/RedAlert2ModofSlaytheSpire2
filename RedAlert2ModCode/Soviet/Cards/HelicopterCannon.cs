@@ -33,7 +33,7 @@ public sealed class HelicopterCannon : CardModel
 
     public HelicopterCannon() : base((int)Values.Cost, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy) { }
 
-    public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/soviet/schpicon.png";
+    public override string PortraitPath => "res://RedAlert2ModResources/images/packed/card_portraits/soviet/helicopter_cannon.png";
 
     protected override List<DynamicVar> CanonicalVars => new()
     {
@@ -51,8 +51,6 @@ public sealed class HelicopterCannon : CardModel
 
     protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
     {
-        UnitVoiceHelper.PlayUnitVoice(this.GetType(), "Soviet");
-
         var options = new List<DeployChoiceScreen.ChoiceOption>
         {
             new()
@@ -85,6 +83,10 @@ public sealed class HelicopterCannon : CardModel
 
     private async Task ExecuteCannonAttack(PlayerChoiceContext ctx, CardPlay play)
     {
+        // 随机 "-power" 语音 + "Vchoat2a-能力攻击" 攻击音效
+        UnitVoiceHelper.PlayUnitVoice("HelicopterCannon", "Soviet");
+        UnitVoiceHelper.PlayUnitVoice("HelicopterCannonAttack", "Soviet");
+
         Creature? target = play.Target as Creature;
         if (target == null)
         {
@@ -121,6 +123,8 @@ public sealed class HelicopterCannon : CardModel
     /// </summary>
     private async Task SwitchToFlightForm(PlayerChoiceContext ctx)
     {
+        UnitVoiceHelper.PlayUnitVoice("HelicopterDeploy", "Soviet");
+
         var flightTemplate = ModelDb.Card<HelicopterFlight>();
         var flightCard = Owner.Creature.CombatState.CreateCard(flightTemplate, Owner);
         if (IsUpgraded)

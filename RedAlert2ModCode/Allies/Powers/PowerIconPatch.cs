@@ -48,6 +48,8 @@ public static class PowerIconPatch
         { typeof(BattleLabPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/techicon.png" },
         { typeof(ControlCenterPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/rbccicon.png" },
         { typeof(SpySatellitePower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/asaticon.png" },
+        { typeof(GapGeneratorPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/gapicon.png" },
+        { typeof(BlackCurtainPower), "res://RedAlert2ModResources/images/packed/powers/black_curtain.png" },
         { typeof(PatriotMissilePower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/samicon.png" },
         { typeof(HornetPower), "res://RedAlert2ModResources/images/packed/card_portraits/allies/hornet.png" },
         { typeof(TargetLockedPower), "res://RedAlert2ModResources/images/packed/powers/target_locked.png" },

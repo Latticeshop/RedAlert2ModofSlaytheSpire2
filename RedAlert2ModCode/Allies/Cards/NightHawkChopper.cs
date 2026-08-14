@@ -124,6 +124,9 @@ public sealed partial class NightHawkChopper : CardModel
             return;
         }
 
+        // 选择攻击：播放随机直升机机枪音效
+        UnitVoiceHelper.PlayUnitVoice("NightHawkMG", "Allied");
+
         int dexterity = IsUpgraded ? Values.MagicNumber + Values.MagicNumberUpgraded : Values.MagicNumber;
         await PowerCmd.Apply<NightHawkTemporaryDexterityPower>(new ThrowingPlayerChoiceContext(), Owner.Creature, dexterity, Owner.Creature, this);
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)

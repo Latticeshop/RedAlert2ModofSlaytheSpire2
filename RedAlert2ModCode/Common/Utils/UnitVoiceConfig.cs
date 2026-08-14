@@ -110,6 +110,26 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/AlliedUnits/NightHawk/Vblhmod.mp3",
             "res://RedAlert2ModResources/audio/AlliedUnits/NightHawk/Vblhseb.mp3",
         },
+        ["NightHawkMG"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/CommonSFX/HelicopterMG/helicopter_mg_1.wav",
+            "res://RedAlert2ModResources/audio/CommonSFX/HelicopterMG/helicopter_mg_2.wav",
+        },
+        ["RoboTank"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/RoboTank/Vrobatca.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/RoboTank/Vrobmova.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/RoboTank/Vrobmovb.mp3",
+            "res://RedAlert2ModResources/audio/AlliedUnits/RoboTank/Vrobsela.mp3",
+        },
+        ["RoboTankAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/RoboTank/Vrobatta-attack.mp3",
+        },
+        ["RoboTankNoEnergy"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/AlliedUnits/RoboTank/Vrobse2a_noenergy.mp3",
+        },
         ["PrismTank"] = new List<string>
         {
             "res://RedAlert2ModResources/audio/AlliedUnits/PrismTank/Vpriata.mp3",
@@ -640,6 +660,40 @@ public static class UnitVoiceConfig
             "res://RedAlert2ModResources/audio/SovietUnits/Kirov/Vkirseb.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/Kirov/Vkirsec.mp3",
             "res://RedAlert2ModResources/audio/SovietUnits/Kirov/Vkirsed.mp3",
+        },
+        ["HelicopterFlight"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchoa1b.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchoa1c.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchoa1d.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchomob.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchomoc.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchomod.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchosea.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchoseb.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchosec.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchosed.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchosee.mp3",
+        },
+        ["HelicopterFlightMG"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/CommonSFX/HelicopterMG/helicopter_mg_1.wav",
+            "res://RedAlert2ModResources/audio/CommonSFX/HelicopterMG/helicopter_mg_2.wav",
+        },
+        ["HelicopterCannon"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchoa2a-power.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchoa2b-power.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchoa2c-power.mp3",
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchoa2d-power.mp3",
+        },
+        ["HelicopterCannonAttack"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchoat2a_attack.mp3",
+        },
+        ["HelicopterDeploy"] = new List<string>
+        {
+            "res://RedAlert2ModResources/audio/SovietUnits/Helicopter/Vchodepa_deploy.mp3",
         },
         ["SpyPlaneEngine"] = new List<string>
         {

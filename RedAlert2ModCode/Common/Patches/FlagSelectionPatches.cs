@@ -84,6 +84,13 @@ public static class FlagSelectionPatches
 			}
 			else
 			{
+				// 强制房主配置：先等待房主整套配置同步到位（最多约 20 秒），
+				// 否则客机在基地车模式国旗选择时拿不到房主配置（本地未配置则缺国旗选项事件）。
+				if (ModConfigManager.IsForceHostConfigEnabled)
+				{
+					await WaitForForcedHostConfigsAsync();
+				}
+
 				GD.Print("[RedAlert2Mod] Multiplayer native flag round...");
 				await EnsureFlagsSelectedMultiplayer(runState.Players.ToList());
 				// 基地车模式跨阵营/同阵营的第二轮国旗选择（与原生国旗一样走同步器）
@@ -99,6 +106,21 @@ public static class FlagSelectionPatches
 		{
 			_selectionInProgress = false;
 		}
+	}
+
+	private static async Task WaitForForcedHostConfigsAsync()
+	{
+		DateTimeOffset deadline = DateTimeOffset.UtcNow + TimeSpan.FromSeconds(20);
+		while (DateTimeOffset.UtcNow < deadline)
+		{
+			if (ModConfigManager.HasForcedHostConfigs())
+			{
+				GD.Print("[RedAlert2Mod] 强制房主配置已同步，开始国旗选择");
+				return;
+			}
+			await Task.Delay(100);
+		}
+		GD.Print("[RedAlert2Mod] 等待强制房主配置超时，国旗选择按当前可用配置进行");
 	}
 
 	/// <summary>
@@ -153,7 +175,10 @@ public static class FlagSelectionPatches
 		{
 			string? characterId = player?.Character?.Id?.Entry;
 			if (string.IsNullOrEmpty(characterId)) return FlagManager.Faction.None;
-			var config = ModConfigManager.GetCharacterConfig(characterId, player.NetId);
+			// 必须走 GetConfigForPlayer：强制房主配置开启时，客机也要用房主同步的基地车配置，
+			// 而不是客机本地配置（否则客机本地未配置基地车时缺国旗选项事件）。
+			var config = ModConfigManager.GetConfigForPlayer(player);
+			if (config == null) return FlagManager.Faction.None;
 			return config.BaseCarMode switch
 			{
 				BaseCarMode.Allied => FlagManager.Faction.Allies,

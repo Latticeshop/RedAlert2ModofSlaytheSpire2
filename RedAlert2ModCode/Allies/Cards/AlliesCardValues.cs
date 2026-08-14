@@ -546,12 +546,12 @@ public static class AlliesCardValues
 		DollarValueUpgraded = 1000
 	};
 
-	/// <summary>遥控坦克 - 0费攻击卡（Token），控制中心解锁，价格600。造成4(升级7)伤害，获得5(升级8)格挡，赋予1层易伤</summary>
+	/// <summary>遥控坦克 - 0费攻击卡（Token），控制中心解锁，价格600。造成3(升级5)伤害，获得5(升级8)格挡，赋予1层易伤</summary>
 	public static CardValueStore.CardValues RoboTank => new()
 	{
 		Cost = 0,
-		Damage = 4,
-		DamageUpgraded = 3,
+		Damage = 3,
+		DamageUpgraded = 2,
 		Block = 5,
 		BlockUpgraded = 3,
 		MagicNumber = 1,        // 易伤层数
@@ -570,6 +570,15 @@ public static class AlliesCardValues
 	{
 		Cost = 0,
 		DollarValue = 1500
+	};
+
+	/// <summary>裂缝产生器 - 3费(升级2)防御塔，价格1000。每回合降低全体敌人1点力量（需要能量）</summary>
+	public static CardValueStore.CardValues GapGenerator => new()
+	{
+		Cost = 3,
+		CostUpgraded = -1,
+		MagicNumber = 1,       // 降低力量
+		DollarValue = 1000
 	};
 
 	/// <summary>修理厂 - 2费能力卡（升级后1费），回合开始时花费$1000从消耗牌堆选择一张牌加入弃牌堆，价格800</summary>
@@ -755,7 +764,8 @@ public static class AlliesCardValues
 			{ "ALLIESREPAIRDEPOT", RepairDepot },
 			{ "FORTIFIEDWALL", AlliedFortifiedWall },
 			{ "CONTROLCENTER", ControlCenter },
-			{ "SPYSATELLITE", SpySatellite }
+			{ "SPYSATELLITE", SpySatellite },
+			{ "GAPGENERATOR", GapGenerator }
 		};
 	}
 
@@ -811,7 +821,8 @@ public static class AlliesCardValues
 			() => ModelDb.Card<PrismTowerCard>(),
 			() => ModelDb.Card<AlliesPillboxCard>(),
 			() => ModelDb.Card<PatriotMissile>(),
-			() => ModelDb.Card<GrandCannon>()
+			() => ModelDb.Card<GrandCannon>(),
+			() => ModelDb.Card<GapGenerator>()
 		};
 	}
 
@@ -849,7 +860,8 @@ public static class AlliesCardValues
 		{ typeof(AlliesRepairDepot), () => ModelDb.Card<AlliesRepairDepot>() },
 		{ typeof(OreRefineryCard), () => ModelDb.Card<OreRefineryCard>() },
 		{ typeof(ControlCenter), () => ModelDb.Card<ControlCenter>() },
-		{ typeof(SpySatellite), () => ModelDb.Card<SpySatellite>() }
+		{ typeof(SpySatellite), () => ModelDb.Card<SpySatellite>() },
+		{ typeof(GapGenerator), () => ModelDb.Card<GapGenerator>() }
 	};
 	
 	public static System.Collections.Generic.Dictionary<string, CardValueStore.CardValues> CreateAllValuesMap()
