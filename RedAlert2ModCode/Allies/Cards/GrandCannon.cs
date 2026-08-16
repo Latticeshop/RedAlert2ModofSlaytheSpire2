@@ -44,9 +44,6 @@ public sealed class GrandCannon : CardModel
             if (!CardUtils.HasMcvPower(Owner.Creature))
                 return false;
 
-            if (!AlliedCardRegistry.HasAirForceCommandPower(Owner.Creature))
-                return false;
-
             var dollarPower = Owner.Creature.Powers.OfType<Common.Powers.DollarPower>().FirstOrDefault();
             if (dollarPower == null || dollarPower.DollarValue < Values.DollarValue)
                 return false;

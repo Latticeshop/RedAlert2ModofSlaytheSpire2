@@ -20,7 +20,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace RedAlert2ModCode.Allies.Cards;
 
 /// <summary>
-/// 控制中心 - 盟军高科技建筑卡（T2，需要空指部/雷达能力）
+/// 控制中心 - 盟军高科技建筑卡（T2）
 /// 0费能力卡，uncommon 蓝卡，价格600
 /// 效果：盟军重工解锁遥控坦克（获得控制中心能力，重工生产选项中展示遥控坦克）。
 /// </summary>
@@ -47,7 +47,7 @@ public sealed class ControlCenter : CardModel
     ];
 
     /// <summary>
-    /// 需要 MCV（建造厂）、足够资金、以及空指部/雷达能力（T2 科技）才可打出。
+    /// 需要 MCV（建造厂）、足够资金才可打出。
     /// </summary>
     protected override bool IsPlayable
     {
@@ -57,10 +57,6 @@ public sealed class ControlCenter : CardModel
                 return false;
 
             if (!CardUtils.HasMcvPower(Owner.Creature))
-                return false;
-
-            // 检查有“空指部”/“雷达”能力（T2 科技）
-            if (!AlliedCardRegistry.HasAirForceCommandPower(Owner.Creature))
                 return false;
 
             var dollarPower = Owner.Creature.Powers.OfType<DollarPower>().FirstOrDefault();

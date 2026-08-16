@@ -48,7 +48,6 @@ public sealed class RoboTank : CardModel
     [
         ModCardKeywords.TechLevelT2.CreateHoverTip(),
         ModCardKeywords.Vehicle.CreateHoverTip(),
-        HoverTipFactory.FromPower<EnergyNextTurnPower>()
     ];
 
     /// <summary>

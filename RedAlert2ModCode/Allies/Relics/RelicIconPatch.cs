@@ -129,4 +129,35 @@ public static class RelicIconPatch
         return true;
     }
 
+    /// <summary>
+    /// 拦截RelicModel.PackedIconOutlinePath属性的getter，
+    /// 为自定义遗物提供轮廓图路径，避免回退到 missing_power 占位图（游戏里表现为图标背景的 NOPE 阴影）。
+    /// 优先使用与图标同名的 _outline.png；不存在时退回图标本身（与其它 mod 的写法一致）。
+    /// </summary>
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(RelicModel), "PackedIconOutlinePath", MethodType.Getter)]
+    public static bool PackedIconOutlinePathPrefix(RelicModel __instance, ref string __result)
+    {
+        if (__instance == null)
+            return true;
+
+        Type type = __instance.GetType();
+
+        if (!_customIconPaths.TryGetValue(type, out string iconPath))
+            return true;
+
+        string outlinePath = InsertOutlineSuffix(iconPath);
+        __result = ResourceLoader.Exists(outlinePath) ? outlinePath : iconPath;
+        return false;
+    }
+
+    /// <summary>
+    /// 在文件扩展名前插入 _outline，例如 xxx.png -> xxx_outline.png
+    /// </summary>
+    private static string InsertOutlineSuffix(string path)
+    {
+        int extIndex = path.LastIndexOf('.');
+        return extIndex <= 0 ? path : path.Insert(extIndex, "_outline");
+    }
+
 }

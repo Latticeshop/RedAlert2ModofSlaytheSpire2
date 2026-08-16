@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -134,7 +135,14 @@ public sealed class CrazyIvanCard : CardModel
             return;
         }
 
-		CardModel? selectedCard = await CardSelectionSyncHelper.ShowSelectionWithSync(ctx, unitCards, Owner, null, FactionType.Soviet);
+		// 卡牌选择使用原版选择器（原版同款异步：卡牌从队列抽出展示，不阻塞出牌队列）
+		var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_CRAZY_IVAN_CARD.deploy_select_prompt");
+		var prefs = new CardSelectorPrefs(selectPrompt, 0, 1)
+		{
+			RequireManualConfirmation = true
+		};
+		var selectedCards = (await CardSelectCmd.FromHand(ctx, Owner, prefs, c => unitTypes.Contains(c.GetType()), this)).ToList();
+		CardModel? selectedCard = selectedCards.FirstOrDefault();
 
         if (selectedCard != null)
         {

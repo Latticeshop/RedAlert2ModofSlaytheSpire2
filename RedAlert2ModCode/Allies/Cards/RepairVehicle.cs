@@ -67,12 +67,22 @@ public sealed class RepairVehicle : IfvVehicleBase
 			return;
 		}
 
-		// 原版 FromHand 会触发 CancelAllCardPlay（取消回手流程），联机中会阻塞其他玩家出牌；
-		// 改用与超时空传送一致的 ExecuteSyncChoice + mod 选择 UI。
-		var selectableCards = handPile.Cards.Where(c => c != this && (isUpgraded || IsUnitCard(c))).ToList();
-		var selectedCards = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(
-			ctx, selectableCards, 1, 0, Owner)
-			?? new List<CardModel>();
+		// 卡牌选择使用原版选择器（原版同款异步：卡牌从队列抽出展示，不阻塞出牌队列）
+		var selectPrompt = new MegaCrit.Sts2.Core.Localization.LocString("cards", "RED_ALERT2_MOD_CARD_REPAIR_VEHICLE.repair_select_prompt");
+		selectPrompt.Add("0", 0);
+		selectPrompt.Add("1", 1);
+		var prefs = new CardSelectorPrefs(selectPrompt, 0, 1)
+		{
+			RequireManualConfirmation = true
+		};
+
+		var selectedCards = (await CardSelectCmd.FromHand(
+			ctx,
+			Owner,
+			prefs,
+			c => c != this && (isUpgraded || IsUnitCard(c)),
+			this
+		)).ToList();
 
 		foreach (var card in selectedCards)
 		{

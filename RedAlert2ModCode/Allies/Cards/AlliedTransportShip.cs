@@ -99,12 +99,22 @@ public sealed class AlliedTransportShip : CardModel
             return;
         }
 
-        // 原版 FromHand 会触发 CancelAllCardPlay（取消回手流程），联机中选择时会阻塞其他玩家出牌；
-        // 改用与超时空传送一致的 ExecuteSyncChoice + mod 选择 UI（仅暂停选择者，不取消回手）。
-        var selectableCards = PileType.Hand.GetPile(base.Owner).Cards.Where(c => c != this).ToList();
-        var selectedCards = await CardSelectionSyncHelper.ShowMultiSelectionWithSync(
-            choiceContext, selectableCards, countToStore, 0, base.Owner)
-            ?? new List<CardModel>();
+        // 卡牌选择使用原版选择器（原版同款异步：卡牌从队列抽出展示，不阻塞出牌队列）
+        var selectPrompt = new LocString("cards", "RED_ALERT2_MOD_CARD_ALLIED_TRANSPORT_SHIP.select_prompt");
+        selectPrompt.Add("0", 0);
+        selectPrompt.Add("1", countToStore);
+        var prefs = new CardSelectorPrefs(selectPrompt, 0, countToStore)
+        {
+            RequireManualConfirmation = true
+        };
+
+        var selectedCards = (await CardSelectCmd.FromHand(
+            choiceContext,
+            base.Owner,
+            prefs,
+            c => c != this,
+            this
+        )).ToList();
 
         foreach (var card in selectedCards)
         {

@@ -47,7 +47,6 @@ public sealed class GapGenerator : CardModel
     [
         ModCardKeywords.TechLevelT3.CreateHoverTip(),
         ModCardKeywords.DefenseTower.CreateHoverTip(),
-        HoverTipFactory.FromPower<EnergyNextTurnPower>(),
         HoverTipFactory.FromPower<BlackCurtainPower>()
     ];
 

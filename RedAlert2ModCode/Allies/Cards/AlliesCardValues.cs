@@ -572,10 +572,10 @@ public static class AlliesCardValues
 		DollarValue = 1500
 	};
 
-	/// <summary>裂缝产生器 - 3费(升级2)防御塔，价格1000。每回合降低全体敌人1点力量（需要能量）</summary>
+	/// <summary>裂缝产生器 - 1费(升级0)防御塔，价格1000。每回合降低全体敌人1点力量（需要能量）</summary>
 	public static CardValueStore.CardValues GapGenerator => new()
 	{
-		Cost = 3,
+		Cost = 1,
 		CostUpgraded = -1,
 		MagicNumber = 1,       // 降低力量
 		DollarValue = 1000

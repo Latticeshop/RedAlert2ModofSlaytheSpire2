@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Random;
 using RedAlert2ModCode.Allies;
+using RedAlert2ModCode.Allies.Cards;
 using RedAlert2ModCode.Common.Cards;
 using RedAlert2ModCode.Soviet;
 
@@ -21,7 +22,8 @@ public static class RandomUnitHelper
     {
         typeof(YuriCard),
         typeof(YuriPrimeCard),
-        typeof(PsiCommandoCard)
+        typeof(PsiCommandoCard),
+        typeof(RoboTank)   // 遥控坦克为盟军控制中心解锁单位，尤里随机单位不能抽到
     };
 
     public static List<Type> GetUnitPool(bool includeT3)
