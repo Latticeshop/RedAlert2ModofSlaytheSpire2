@@ -65,6 +65,8 @@ public sealed class SovietCardPool : TypeListCardPoolModel
         typeof(NavyCrate),
         typeof(MoneyCrate),
         typeof(RandomCrate),
+        typeof(FullMapVisionCrate),
+        typeof(VisionLossCrate),
     };
     
     /// <summary>

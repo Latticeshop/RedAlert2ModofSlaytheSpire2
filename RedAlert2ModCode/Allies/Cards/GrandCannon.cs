@@ -31,7 +31,8 @@ public sealed class GrandCannon : CardModel
     protected override IEnumerable<IHoverTip> ExtraHoverTips =>
     [
         ModCardKeywords.TechLevelT2.CreateHoverTip(),
-        ModCardKeywords.DefenseTower.CreateHoverTip()
+        ModCardKeywords.DefenseTower.CreateHoverTip(),
+        ModCardKeywords.Splash.CreateHoverTip()
     ];
 
     protected override bool IsPlayable

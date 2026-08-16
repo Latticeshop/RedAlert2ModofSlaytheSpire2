@@ -26,7 +26,7 @@
     "tech_level_t3.title": "T3",
     "tech_level_t3.description": "[gold]作戦実験室[/gold]を建設してアンロック。",
     "Ra2_splash.title": "スプラッシュ",
-    "Ra2_splash.description": "他の敵に50%ダメージを与える。",
+    "Ra2_splash.description": "他の対象に50%ダメージを与える。",
     "target_locked.title": "ターゲットロック",
     "target_locked.description": "攻撃対象。",
     "hornet.title": "ホーネット艦載機",

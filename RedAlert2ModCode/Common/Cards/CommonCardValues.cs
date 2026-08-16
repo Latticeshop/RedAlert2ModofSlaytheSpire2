@@ -355,6 +355,22 @@ public static class CommonCardValues
 		CostUpgraded = -1
 	};
 
+	/// <summary>全图视野箱子 - 1费(升级保留)，本回合免疫虚弱和脆弱(Token)</summary>
+	public static CardValueStore.CardValues FullMapVisionCrate => new()
+	{
+		Cost = 1,
+		CostUpgraded = 0
+	};
+
+	/// <summary>视野丢失箱子 - 0费，获得2(升级1)层虚弱(Token)，只能随机箱子出</summary>
+	public static CardValueStore.CardValues VisionLossCrate => new()
+	{
+		Cost = 0,
+		CostUpgraded = 0,
+		MagicNumber = 2,
+		MagicNumberUpgraded = -1  // 升级后1 = 2 + (-1)
+	};
+
 	#endregion
 
 	private static Dictionary<Type, decimal> _sellablePowerDollarMap;

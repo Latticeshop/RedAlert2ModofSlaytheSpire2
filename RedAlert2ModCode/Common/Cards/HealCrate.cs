@@ -18,7 +18,7 @@ public class HealCrate : CardModel
 {
     private static readonly CardValueStore.CardValues Values = CommonCardValues.HealCrate;
 
-    public HealCrate() : base((int)Values.Cost, CardType.Skill, CardRarity.Uncommon, TargetType.Self) {}
+    public HealCrate() : base((int)Values.Cost, CardType.Skill, CardRarity.Rare, TargetType.Self) {}
 
     public override IEnumerable<CardKeyword> CanonicalKeywords => new[] { CardKeyword.Exhaust };
 

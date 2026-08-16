@@ -115,6 +115,25 @@ public sealed class GrandCannonPower : PowerModel
                         MegaCrit.Sts2.Core.ValueProps.ValueProp.Move,
                         null,
                         null);
+
+                    // 溅射：对其他敌人造成50%伤害
+                    var otherEnemies = combatState.Enemies
+                        .Where(e => e.Side == CombatSide.Enemy && e.IsAlive && e != target)
+                        .ToList();
+                    if (otherEnemies.Count > 0)
+                    {
+                        decimal splashDamage = SplashDamageHelper.CalculateSplashDamage((decimal)CurrentDamage);
+                        GD.Print($"[GrandCannonPower] 对其他 {otherEnemies.Count} 个敌人造成 {splashDamage} 点溅射伤害");
+                        foreach (var other in otherEnemies)
+                        {
+                            await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(),
+                                other,
+                                splashDamage,
+                                MegaCrit.Sts2.Core.ValueProps.ValueProp.Move,
+                                null,
+                                null);
+                        }
+                    }
                 }
             }
         }

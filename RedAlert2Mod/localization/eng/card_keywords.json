@@ -26,7 +26,7 @@
     "tech_level_t3.title": "T3",
     "tech_level_t3.description": "Unlocked by building [gold]Battle Lab[/gold].",
     "Ra2_splash.title": "Splash",
-    "Ra2_splash.description": "Deals 50% damage to other enemies.",
+    "Ra2_splash.description": "Deals 50% damage to other targets.",
     "target_locked.title": "Target Locked",
     "target_locked.description": "The target of attacks.",
     "hornet.title": "Hornet",

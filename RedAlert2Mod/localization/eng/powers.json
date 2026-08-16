@@ -47,6 +47,8 @@
     "SPY_SATELLITE_POWER.title": "Spy Satellite",
     "SPY_SATELLITE_POWER.description": "Immune to [gold]Weak[/gold].",
     "SPY_SATELLITE_POWER_UPGRADED.description": "Immune to [gold]Weak[/gold] and [gold]Frail[/gold].",
+    "FULL_MAP_VISION_POWER.title": "Full Map Vision",
+    "FULL_MAP_VISION_POWER.description": "This turn, immune to [gold]Weak[/gold] and [gold]Frail[/gold]. Removed at the start of your turn.",
     "GAP_GENERATOR_POWER.title": "Gap Generator",
     "GAP_GENERATOR_POWER.description": "Each turn, all enemies lose {StrengthLoss} Strength. Fails if you have no {Energy:energyIcons()} at turn end.",
     "BLACK_CURTAIN_POWER.title": "Black Curtain",

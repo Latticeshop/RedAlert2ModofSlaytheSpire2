@@ -47,6 +47,8 @@
     "SPY_SATELLITE_POWER.title": "スパイ衛星",
     "SPY_SATELLITE_POWER.description": "[gold]虚弱[/gold]を無効化。",
     "SPY_SATELLITE_POWER_UPGRADED.description": "[gold]虚弱[/gold]と[gold]脆弱[/gold]を無効化。",
+    "FULL_MAP_VISION_POWER.title": "全図視野",
+    "FULL_MAP_VISION_POWER.description": "このターン、[gold]虚弱[/gold]と[gold]脆弱[/gold]に免疫になる。自分のターン開始時に解除される。",
     "GAP_GENERATOR_POWER.title": "ギャップジェネレーター",
     "GAP_GENERATOR_POWER.description": "毎ターン敵全体の筋力を{StrengthLoss}減少。ターン終了時に{Energy:energyIcons()}がないと無効化。",
     "BLACK_CURTAIN_POWER.title": "ブラックカーテン",

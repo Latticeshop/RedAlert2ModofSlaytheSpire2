@@ -47,6 +47,8 @@
     "SPY_SATELLITE_POWER.title": "间谍卫星",
     "SPY_SATELLITE_POWER.description": "免疫[gold]虚弱[/gold]。",
     "SPY_SATELLITE_POWER_UPGRADED.description": "免疫[gold]虚弱[/gold]和[gold]脆弱[/gold]。",
+    "FULL_MAP_VISION_POWER.title": "全图视野",
+    "FULL_MAP_VISION_POWER.description": "本回合免疫[gold]虚弱[/gold]和[gold]脆弱[/gold]。玩家回合开始时移除。",
     "GAP_GENERATOR_POWER.title": "裂缝产生器",
     "GAP_GENERATOR_POWER.description": "每回合降低全体敌人 {StrengthLoss} 点力量，若回合结束没有{Energy:energyIcons()}则失效。",
     "BLACK_CURTAIN_POWER.title": "黑幕",

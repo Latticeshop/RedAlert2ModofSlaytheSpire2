@@ -415,12 +415,12 @@ public static class AlliesCardValues
 		DollarValue = 1000
 	};
 
-	/// <summary>巨炮 - 2费攻击卡，金卡，回合开始时对敌人造成20(升级30)点伤害，需要空指部/雷达解锁，价格2000</summary>
+	/// <summary>巨炮 - 2费攻击卡，金卡，回合开始时对敌人造成25(升级30)点伤害，溅射，需要空指部/雷达解锁，价格2000</summary>
 	public static CardValueStore.CardValues GrandCannon => new()
 	{
 		Cost = 2,
-		Damage = 27,
-		DamageUpgraded = 9,  // 升级后36 = 27 + 9
+		Damage = 25,
+		DamageUpgraded = 5,  // 升级后30 = 25 + 5
 		DollarValue = 2000
 	};
 	

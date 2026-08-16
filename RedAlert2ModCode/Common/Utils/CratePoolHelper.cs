@@ -26,6 +26,8 @@ public static class CratePoolHelper
         typeof(SpeedCrate), typeof(FirepowerCrate), typeof(HealCrate),
         typeof(VehicleCrate), typeof(SoldierCrate), typeof(AirForceCrate),
         typeof(NavyCrate), typeof(MoneyCrate), typeof(RandomCrate),
+        typeof(FullMapVisionCrate),
+        typeof(VisionLossCrate),
     };
 
     /// <summary>
