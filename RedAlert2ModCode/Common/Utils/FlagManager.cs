@@ -119,6 +119,26 @@ public static class FlagManager
 		return result;
 	}
 
+	/// <summary>
+	/// 为基地车模式选择一张联机同步的随机国旗。
+	/// 使用游戏 RunState.Rng，并排除已拥有的同阵营旗帜。
+	/// </summary>
+	public static RelicModel? GetRandomFlag(Player player, Faction faction)
+	{
+		if (player == null) return null;
+
+		List<RelicModel> candidates = GetAllFlags(faction)
+			.Where(flag => !player.Relics.Any(existing => existing.GetType() == flag.GetType()))
+			.ToList();
+		if (candidates.Count == 0) return null;
+
+		// 与教程中的联机随机写法一致：所有客户端使用同一条 RunState RNG 流，
+		// 调用方按固定玩家顺序执行，确保各端消耗 RNG 的顺序完全一致。
+		var rng = player.RunState?.Rng?.CombatCardSelection;
+		if (rng == null) return null;
+		return candidates[rng.NextInt(candidates.Count)];
+	}
+
 	public static bool PlayerHasAnyFlag(Player player)
 	{
 		var allFlags = AlliedFlags.Concat(SovietFlags).Concat(YuriFlags);

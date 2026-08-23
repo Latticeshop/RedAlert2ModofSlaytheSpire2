@@ -282,12 +282,13 @@ public static class CommonCardValues
 		CostUpgraded = 0
 	};
 
-	/// <summary>回血箱子 - 1费(升级0费)，全体回5血</summary>
+	/// <summary>回血箱子 - 1费(升级0费)，全体回5/7血</summary>
 	public static CardValueStore.CardValues HealCrate => new()
 	{
 		Cost = 1,
 		CostUpgraded = -1,
-		Damage = 5  // 回血量
+		Damage = 5,  // 基础回血量
+		DamageUpgraded = 2  // 升级后为 7
 	};
 
 	/// <summary>火力箱子 - 1费(升级0费)，本回合单位卡伤害+50%</summary>

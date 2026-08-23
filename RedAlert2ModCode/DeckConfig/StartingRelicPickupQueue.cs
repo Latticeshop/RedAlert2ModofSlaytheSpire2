@@ -56,6 +56,11 @@ internal static class StartingRelicPickupQueue
         }
     }
 
+    public static bool HasPendingRelic(Player player, Type relicType)
+    {
+        return Pending.Any(p => ReferenceEquals(p.Player, player) && p.Relic.GetType() == relicType);
+    }
+
     /// <summary>
     /// 继续游戏（LoadRun）后调用：读取本地“未完成拾取效果”标记，
     /// 把仍在该局玩家身上的遗物重新入队，恢复选择面板。

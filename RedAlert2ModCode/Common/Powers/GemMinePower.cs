@@ -16,15 +16,18 @@ namespace RedAlert2ModCode.Common.Powers;
 
 public class GemMinePower : PowerModel
 {
-    private static readonly CardValueStore.CardValues Values = CommonPowerValues.GemMinePower;
-
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
 
     public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
 
-    public int CurrentReserve { get; set; } = (int)Values.DollarValue;
+    // 直接使用能力层数保存储备，这样能力图标上的层数就是当前储备数值。
+    public int CurrentReserve
+    {
+        get => (int)Amount;
+        set => SetAmount(value);
+    }
 
     public bool IsUpgraded { get; set; } = false;
 

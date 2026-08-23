@@ -55,6 +55,8 @@ internal static class ModConfigPanel
 
     private static string? _selectedCharacterId;
     private static CharacterConfig? _currentConfig;
+    private static SpinBox? _goldSpinBox;
+    private static SpinBox? _hpSpinBox;
     private static CardLibraryTab? _cardLibraryTab;
     private static RelicLibraryTab? _relicLibraryTab;
     private static bool _wasVisibleBeforeInspect;
@@ -94,6 +96,10 @@ internal static class ModConfigPanel
             root.AddChild(_layer);
         }
 
+        if (_layer.Visible)
+        {
+            SaveCurrentCharacterConfig();
+        }
         _layer.Visible = !_layer.Visible;
     }
 
@@ -132,6 +138,7 @@ internal static class ModConfigPanel
     {
         if (_layer != null && GodotObject.IsInstanceValid(_layer))
         {
+            SaveCurrentCharacterConfig();
             _layer.Visible = false;
         }
     }
@@ -434,6 +441,7 @@ internal static class ModConfigPanel
 
     private static void SwitchFeature(int index)
     {
+        SaveCurrentCharacterConfig();
         _activeFeature = index;
         // 初始遗物配置页不显示基地车/幸运方块子页签
         if (_subTabBar != null) _subTabBar.Visible = index == 0;
@@ -443,6 +451,7 @@ internal static class ModConfigPanel
 
     private static void SwitchSubTab(int index)
     {
+        SaveCurrentCharacterConfig();
         _activeSubTab = index;
         UpdateSubTabHighlights();
         RefreshContent();
@@ -478,6 +487,10 @@ internal static class ModConfigPanel
 
     private static void RefreshContent()
     {
+        // 导航回调会在刷新前保存当前控件值；这里仅清理旧控件引用，避免把已替换的配置对象写回。
+        _goldSpinBox = null;
+        _hpSpinBox = null;
+
         if (_contentContainer == null) return;
         ClearChildren(_contentContainer);
 
@@ -600,13 +613,6 @@ internal static class ModConfigPanel
         desc.AddThemeFontSizeOverride("font_size", 13);
         desc.AddThemeColorOverride("font_color", StsColors.gray);
         container.AddChild(desc);
-
-        // 阵营信息（从角色头部移入基地车模式内容）
-        var factionLabel = new Label();
-        factionLabel.Text = GetCharacterFactionInfo(config.CharacterId);
-        factionLabel.AddThemeFontSizeOverride("font_size", 13);
-        factionLabel.AddThemeColorOverride("font_color", StsColors.cream);
-        container.AddChild(factionLabel);
 
         var currentLabel = new Label();
         currentLabel.Text = L("CONFIG_BASE_CAR_CURRENT", config.BaseCarMode);
@@ -776,6 +782,9 @@ internal static class ModConfigPanel
                 () =>
                 {
                     ModConfigManager.ResetCharacterConfig(_selectedCharacterId!);
+                    _currentConfig = null;
+                    _goldSpinBox = null;
+                    _hpSpinBox = null;
                     RefreshContent();
                 });
         };
@@ -858,6 +867,7 @@ internal static class ModConfigPanel
         string charId = character.Id.Entry;
         iconBtn.Pressed += () =>
         {
+            SaveCurrentCharacterConfig();
             _selectedCharacterId = charId;
             RefreshContent();
         };
@@ -934,24 +944,24 @@ internal static class ModConfigPanel
 
     // ============ 数据辅助方法 ============
 
-    private static string GetCharacterFactionInfo(string characterId)
+    private static void SaveCurrentCharacterConfig()
     {
+        if (_currentConfig == null || string.IsNullOrEmpty(_selectedCharacterId)) return;
+
         try
         {
-            var faction = FlagManager.Faction.None;
-            if (characterId.Equals("Allies", StringComparison.OrdinalIgnoreCase))
-                faction = FlagManager.Faction.Allies;
-            else if (characterId.Equals("Soviet", StringComparison.OrdinalIgnoreCase))
-                faction = FlagManager.Faction.Soviet;
-            else if (characterId.Contains("YURI", StringComparison.OrdinalIgnoreCase))
-                faction = FlagManager.Faction.Yuri;
+            if (_goldSpinBox != null && GodotObject.IsInstanceValid(_goldSpinBox))
+                _currentConfig.StartingGold = (int)_goldSpinBox.Value;
+            if (_hpSpinBox != null && GodotObject.IsInstanceValid(_hpSpinBox))
+                _currentConfig.MaxHp = (int)_hpSpinBox.Value;
 
-            if (faction != FlagManager.Faction.None)
-                return L("CONFIG_FACTION", faction) + L("CONFIG_FACTION_DESC_RA2");
-
-            return L("CONFIG_FACTION", faction) + L("CONFIG_FACTION_DESC_NORMAL");
+            _currentConfig.CharacterId = _selectedCharacterId;
+            ModConfigManager.UpdateCharacterConfig(_currentConfig);
         }
-        catch { return string.Empty; }
+        catch (Exception ex)
+        {
+            Logger.Warn($"保存当前角色配置失败: {ex.Message}");
+        }
     }
 
     private static void ShowDefaultDeckInfo(VBoxContainer container, string characterId)
@@ -1196,6 +1206,7 @@ internal static class ModConfigPanel
         goldSpin.Value = config.StartingGold;
         goldSpin.CustomMinimumSize = new Vector2(180, 36);
         goldSpin.AddThemeFontSizeOverride("font_size", 14);
+        _goldSpinBox = goldSpin;
         goldSpin.ValueChanged += v =>
         {
             config.StartingGold = (int)v;
@@ -1228,6 +1239,7 @@ internal static class ModConfigPanel
         hpSpin.Value = config.MaxHp;
         hpSpin.CustomMinimumSize = new Vector2(180, 36);
         hpSpin.AddThemeFontSizeOverride("font_size", 14);
+        _hpSpinBox = hpSpin;
         hpSpin.ValueChanged += v =>
         {
             config.MaxHp = (int)v;
@@ -2100,9 +2112,13 @@ internal static class ModConfigPanel
     private static void SwitchToPreset(int index)
     {
         if (!ModConfigManager.HasPreset(index)) return;
+        SaveCurrentCharacterConfig();
         string presetName = ModConfigManager.GetPreset(index)?.Name ?? L("CONFIG_PRESET_SLOT", index);
         if (ModConfigManager.LoadPreset(index))
         {
+            _currentConfig = null;
+            _goldSpinBox = null;
+            _hpSpinBox = null;
             RefreshContent();
             ShowNotification(L("CONFIG_PRESET_LOADED", presetName));
         }

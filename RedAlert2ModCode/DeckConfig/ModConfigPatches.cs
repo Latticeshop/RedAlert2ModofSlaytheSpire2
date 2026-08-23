@@ -236,7 +236,7 @@ public static class ModConfigPatches
             Logger.Error($"[ModConfig] 大厅面板补丁安装失败: {ex.Message}");
         }
 
-        // 补丁4: 拦截FlagManager.GetPlayerFaction以支持MCV模式国旗事件
+        // 补丁4: 拦截FlagManager.GetPlayerFaction以支持MCV模式阵营查询
         try
         {
             var getFactionMethod = AccessTools.Method(typeof(FlagManager), "GetPlayerFaction");
@@ -246,12 +246,12 @@ public static class ModConfigPatches
                     original: getFactionMethod,
                     postfix: new HarmonyMethod(typeof(FactionPatch), nameof(FactionPatch.Postfix))
                 );
-                Logger.Info("[ModConfig] MCV模式国旗补丁安装成功");
+                Logger.Info("[ModConfig] MCV模式阵营查询补丁安装成功");
             }
         }
         catch (Exception ex)
         {
-            Logger.Error($"[ModConfig] MCV模式国旗补丁安装失败: {ex.Message}");
+            Logger.Error($"[ModConfig] MCV模式阵营查询补丁安装失败: {ex.Message}");
         }
 
         // 补丁5: 卡池奖励模式 - 直接给奖励候选注入箱子卡（不修改角色池，原版角色也生效）
@@ -820,12 +820,14 @@ public static class ModConfigPatches
                 }
 
                 // 补授刀乐遗物（本mod角色已自带，不重复授予）
-                if (!player.Relics.Any(r => r is DollarRelic))
+                if (!player.Relics.Any(r => r is DollarRelic)
+                    && !StartingRelicPickupQueue.HasPendingRelic(player, typeof(DollarRelic)))
                 {
                     var relic = ModelDb.Relic<DollarRelic>().ToMutable();
                     relic.FloorAddedToDeck = 1;
                     try { SaveManager.Instance.MarkRelicAsSeen(relic); } catch { }
-                    player.AddRelicInternal(relic, -1, true);
+                    // 与自定义初始遗物使用同一延迟队列，避免自定义遗物初始化时序把刀乐覆盖掉。
+                    StartingRelicPickupQueue.Enqueue(player, relic);
                     Logger.Info($"[ModConfig] 基地车模式: 已补授刀乐遗物给 {characterId}");
                 }
             }
@@ -1314,8 +1316,8 @@ public static class ModConfigPatches
     }
 
     /// <summary>
-    /// 阵营补丁 - 支持MCV模式触发国旗事件
-    /// 当玩家配置了MCV模式时，即使不是RA2角色也能获得对应阵营的国旗
+    /// 阵营补丁 - 支持MCV模式阵营查询
+    /// 当玩家配置了MCV模式时，即使不是RA2角色也能使用对应阵营的卡牌/箱子逻辑。
     /// </summary>
     public static class FactionPatch
     {
@@ -1377,6 +1379,7 @@ public static class ModConfigPatches
                 // 使用 GetConfigForPlayer：强制房主配置开启时也按房主配置决定奖励池
                 var config = ModConfigManager.GetConfigForPlayer(player);
                 if (config == null) return;
+                if (!config.LuckyCrateMode) return;
                 if (config.CratePoolMode == CratePoolMode.None) return;
 
                 var crateCards = CratePoolHelper.GetAllCrateCards().ToList();

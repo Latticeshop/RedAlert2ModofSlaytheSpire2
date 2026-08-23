@@ -323,7 +323,7 @@
     "NAVY_CRATE.title": "해군 상자",
     "NAVY_CRATE.description": "랜덤 {IfUpgraded:show:강화된 |}해군 유닛 카드 1장을 얻습니다.",
     "HEAL_CRATE.title": "회복 상자",
-    "HEAL_CRATE.description": "아군 전체의 HP를 5 회복합니다.",
+    "HEAL_CRATE.description": "아군 전체의 HP를 {HealAmount} 회복합니다.",
     "FIREPOWER_CRATE.title": "화력 상자",
     "FIREPOWER_CRATE.description": "이번 턴 유닛 카드 피해 +50%.",
     "SPEED_CRATE.title": "속도 상자",

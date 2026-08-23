@@ -62,7 +62,7 @@ public class GemMineCard : CardModel
         }
         else
         {
-            var newPower = await PowerCmd.Apply<GemMinePower>(ctx, Owner.Creature, 1m, Owner.Creature, null);
+            var newPower = await PowerCmd.Apply<GemMinePower>(ctx, Owner.Creature, amount, Owner.Creature, null);
             if (newPower != null)
             {
                 newPower.CurrentReserve = amount;

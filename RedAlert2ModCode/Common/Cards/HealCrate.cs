@@ -60,5 +60,6 @@ public class HealCrate : CardModel
     protected override void OnUpgrade()
     {
         EnergyCost.UpgradeBy(-1);
+        DynamicVars["HealAmount"].UpgradeValueBy((int)Values.DamageUpgraded);
     }
 }

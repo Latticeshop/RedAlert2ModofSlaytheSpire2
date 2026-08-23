@@ -325,7 +325,7 @@
     "NAVY_CRATE.title": "海军箱子",
     "NAVY_CRATE.description": "随机获得一张{IfUpgraded:show:升级的|}海军单位卡牌。",
     "HEAL_CRATE.title": "回血箱子",
-    "HEAL_CRATE.description": "我方全体回5点生命。",
+    "HEAL_CRATE.description": "我方全体回 {HealAmount} 点生命。",
     "FIREPOWER_CRATE.title": "火力箱子",
     "FIREPOWER_CRATE.description": "本回合单位卡牌伤害+50%。",
     "SPEED_CRATE.title": "移速箱子",

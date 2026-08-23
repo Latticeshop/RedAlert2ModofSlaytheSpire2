@@ -78,14 +78,14 @@ public static class FlagSelectionPatches
 				foreach (Player player in runState.Players)
 				{
 					await EnsureFlagSelected(player);
-					// 基地车模式跨阵营时，依次触发另一阵营的国旗选择
-					await EnsureBaseCarFlagSelected(player);
+					// 基地车模式只自动加入对应阵营随机国旗，不插入第二个选择事件。
+					await EnsureBaseCarFlagRandomly(player);
 				}
 			}
 			else
 			{
 				// 强制房主配置：先等待房主整套配置同步到位（最多约 20 秒），
-				// 否则客机在基地车模式国旗选择时拿不到房主配置（本地未配置则缺国旗选项事件）。
+				// 否则客机在基地车模式随机国旗时拿不到房主配置。
 				if (ModConfigManager.IsForceHostConfigEnabled)
 				{
 					await WaitForForcedHostConfigsAsync();
@@ -93,9 +93,10 @@ public static class FlagSelectionPatches
 
 				GD.Print("[RedAlert2Mod] Multiplayer native flag round...");
 				await EnsureFlagsSelectedMultiplayer(runState.Players.ToList());
-				// 基地车模式跨阵营/同阵营的第二轮国旗选择（与原生国旗一样走同步器）
-				GD.Print("[RedAlert2Mod] Multiplayer base-car flag round...");
-				await EnsureFlagsSelectedMultiplayer(runState.Players.ToList(), baseCarRound: true);
+				// 基地车模式不再打开第二轮选择界面；各端按本局种子加入同一随机旗帜。
+				GD.Print("[RedAlert2Mod] Multiplayer base-car random flag round...");
+				foreach (Player player in runState.Players.OrderBy(static player => player.NetId))
+					await EnsureBaseCarFlagRandomly(player);
 			}
 		}
 		catch (Exception ex)
@@ -124,45 +125,42 @@ public static class FlagSelectionPatches
 	}
 
 	/// <summary>
-	/// 基地车模式：跨阵营时补授/选择基地车阵营的国旗（原生阵营国旗由 EnsureFlagSelected 处理）。
-	/// 盟军选盟军/无 = 无额外效果；盟军选苏联 = 追加苏联国旗（可与盟军国旗依次触发）；尤里 = 仅授尤里国旗。
+	/// 基地车模式：自动加入一张对应阵营的随机国旗。
+	/// 不打开基地车专用选择面板，交给开局遗物队列串行加入，避免与 Neow 同时修改遗物栏。
 	/// </summary>
-	private static async Task<bool> EnsureBaseCarFlagSelected(Player player)
+	private static Task<bool> EnsureBaseCarFlagRandomly(Player player)
 	{
 		try
 		{
 			string? characterId = player?.Character?.Id?.Entry;
-			if (string.IsNullOrEmpty(characterId)) return false;
+			if (string.IsNullOrEmpty(characterId)) return Task.FromResult(false);
 
 			var baseFaction = GetBaseCarFaction(player);
-			if (baseFaction == FlagManager.Faction.None) return false;
+			if (baseFaction == FlagManager.Faction.None) return Task.FromResult(false);
 
-			// 同阵营：额外重复一轮国旗选择（可再选一枚同阵营国旗）；
-			// 跨阵营且已拥有该阵营国旗时跳过，避免重复
+			// 跨阵营且已经拥有该阵营国旗时跳过；同阵营从剩余旗帜中随机一张。
 			bool sameFaction = baseFaction == FlagManager.GetNativePlayerFaction(player);
-			if (!sameFaction && FlagManager.PlayerHasFlag(player, baseFaction)) return false;
+			if (!sameFaction && FlagManager.PlayerHasFlag(player, baseFaction))
+				return Task.FromResult(false);
 
-			if (baseFaction == FlagManager.Faction.Yuri)
+			RelicModel? selected = FlagManager.GetRandomFlag(player, baseFaction);
+			if (selected == null)
 			{
-				// 尤里体系未实现：直接授予尤里国旗
-				if (FlagManager.PlayerHasFlag(player, FlagManager.Faction.Yuri)) return false;
-				RelicModel yuriFlag = FlagManager.GetAllFlags(FlagManager.Faction.Yuri)[0];
-				await RelicCmd.Obtain(yuriFlag.ToMutable(), player);
-				GD.Print("[RedAlert2Mod] 基地车模式（尤里）：自动授予尤里国旗");
-				return true;
+				GD.Print($"[RedAlert2Mod] 基地车模式没有可加入的 {baseFaction} 国旗: player={player.NetId}");
+				return Task.FromResult(false);
 			}
 
-			GD.Print($"[RedAlert2Mod] Opening base-car flag selection for faction={baseFaction}...");
-			RelicModel? selected = await SelectFlagWithLocalScreen(baseFaction);
-			if (selected == null) return false;
-			await RelicCmd.Obtain(selected.ToMutable(), player);
-			GD.Print($"[RedAlert2Mod] 基地车模式国旗已授予: {selected.Title.GetFormattedText()}");
-			return true;
+			RelicModel mutable = selected.ToMutable();
+			mutable.FloorAddedToDeck = 1;
+			try { SaveManager.Instance.MarkRelicAsSeen(mutable); } catch { }
+			StartingRelicPickupQueue.Enqueue(player, mutable);
+			GD.Print($"[RedAlert2Mod] 基地车模式已排队加入随机国旗: player={player.NetId}, faction={baseFaction}, flag={selected.Title.GetFormattedText()}");
+			return Task.FromResult(true);
 		}
 		catch (Exception ex)
 		{
-			GD.PrintErr($"[RedAlert2Mod] EnsureBaseCarFlagSelected error: {ex}");
-			return false;
+			GD.PrintErr($"[RedAlert2Mod] EnsureBaseCarFlagRandomly error: {ex}");
+			return Task.FromResult(false);
 		}
 	}
 
@@ -235,7 +233,7 @@ public static class FlagSelectionPatches
 		return true;
 	}
 
-	private static async Task<bool> EnsureFlagsSelectedMultiplayer(IReadOnlyList<Player> players, bool baseCarRound = false)
+	private static async Task<bool> EnsureFlagsSelectedMultiplayer(IReadOnlyList<Player> players)
 	{
 		RunManager runManager = RunManager.Instance;
 
@@ -253,9 +251,7 @@ public static class FlagSelectionPatches
 			// 如果没有同步器，退回到单机逻辑
 			foreach (Player player in orderedPlayers)
 			{
-				changed |= baseCarRound
-					? await EnsureBaseCarFlagSelected(player)
-					: await EnsureFlagSelected(player);
+				changed |= await EnsureFlagSelected(player);
 			}
 			return changed;
 		}
@@ -264,28 +260,16 @@ public static class FlagSelectionPatches
 		List<PendingFlagSelection> pendingSelections = new();
 		foreach (Player player in orderedPlayers)
 		{
-			FlagManager.Faction faction;
-			if (baseCarRound)
+			if (FlagManager.PlayerHasAnyFlag(player)) continue;
+			FlagManager.Faction faction = FlagManager.GetNativePlayerFaction(player);
+			if (faction == FlagManager.Faction.None)
 			{
-				faction = GetBaseCarFaction(player);
-				if (faction == FlagManager.Faction.None) continue;
-				// 同阵营：重复一轮国旗选择；跨阵营且已有该阵营国旗：跳过
-				if (faction != FlagManager.GetNativePlayerFaction(player) && FlagManager.PlayerHasFlag(player, faction)) continue;
-			}
-			else
-			{
-				if (FlagManager.PlayerHasAnyFlag(player)) continue;
-				faction = FlagManager.GetNativePlayerFaction(player);
-				if (faction == FlagManager.Faction.None)
-				{
-					GD.Print($"[RedAlert2Mod] Multiplayer: player {player.NetId} is not a RA2 character, skipping.");
-					continue;
-				}
+				GD.Print($"[RedAlert2Mod] Multiplayer: player {player.NetId} is not a RA2 character, skipping.");
+				continue;
 			}
 
-			// 本局同一阵营国旗只授一次（同阵营重复轮除外）
-			bool isSameFactionRepeat = baseCarRound && faction == FlagManager.GetNativePlayerFaction(player);
-			if (!isSameFactionRepeat && _grantedFlagsThisRun.Contains((player.NetId, faction)))
+			// 本局同一阵营国旗只授一次。
+			if (_grantedFlagsThisRun.Contains((player.NetId, faction)))
 			{
 				GD.Print($"[RedAlert2Mod] Multiplayer: player {player.NetId} already granted {faction} this run, skipping.");
 				continue;

@@ -325,7 +325,7 @@
     "NAVY_CRATE.title": "Navy Crate",
     "NAVY_CRATE.description": "Gain a random {IfUpgraded:show:upgraded |}naval unit card.",
     "HEAL_CRATE.title": "Heal Crate",
-    "HEAL_CRATE.description": "Heal all allies for 5 HP.",
+    "HEAL_CRATE.description": "Heal all allies for {HealAmount} HP.",
     "FIREPOWER_CRATE.title": "Firepower Crate",
     "FIREPOWER_CRATE.description": "Unit card damage +50% this turn.",
     "SPEED_CRATE.title": "Speed Crate",

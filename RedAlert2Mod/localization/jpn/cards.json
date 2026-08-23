@@ -323,7 +323,7 @@
     "NAVY_CRATE.title": "海軍の箱",
     "NAVY_CRATE.description": "ランダムな{IfUpgraded:show:強化された|}海軍ユニットカードを1枚獲得する。",
     "HEAL_CRATE.title": "回復の箱",
-    "HEAL_CRATE.description": "味方全体のHPを5回復する。",
+    "HEAL_CRATE.description": "味方全体のHPを{HealAmount}回復する。",
     "FIREPOWER_CRATE.title": "火力の箱",
     "FIREPOWER_CRATE.description": "本回合、ユニットカードのダメージ+50%。",
     "SPEED_CRATE.title": "移動の箱",

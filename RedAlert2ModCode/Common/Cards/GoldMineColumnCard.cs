@@ -63,7 +63,7 @@ public class GoldMineColumnCard : CardModel
         }
         else
         {
-            var newGoldMinePower = await PowerCmd.Apply<GoldMinePower>(ctx, Owner.Creature, 1m, Owner.Creature, null);
+            var newGoldMinePower = await PowerCmd.Apply<GoldMinePower>(ctx, Owner.Creature, amount, Owner.Creature, null);
             if (newGoldMinePower != null)
             {
                 newGoldMinePower.CurrentReserve = amount;
